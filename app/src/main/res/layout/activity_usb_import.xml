@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/import_tab"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/goods_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:padding="5dip"
+            android:text="@string/txt_goods"
+            android:textColor="@color/color_611D64" />
+
+        <RadioButton
+            android:id="@+id/warehouse_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="12dip"
+            android:text="@string/txt_warehouse"
+            android:textColor="@color/color_611D64" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_divide" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:id="@+id/content_frame">
+    </FrameLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="35dip"
+        android:background="@drawable/table_header_bg"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="12dip"
+        android:layout_marginRight="12dip">
+
+        <LinearLayout
+            android:id="@+id/sequence_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

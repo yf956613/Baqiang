@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:clickable="true"
+    android:gravity="center"
+    android:background="@color/bg_dialog"
+    android:orientation="vertical">
+
+        <include layout="@layout/tip_wating_dialog_layout"/>
+  <!--  <com.jiebao.kuaijiebao.views.CusProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:pwText="@string/loading_cn"
+        app:pwTextColor="@color/gray"
+        app:pwTextSize="14sp"
+        android:layout_gravity="center_horizontal" >
+    </com.jiebao.kuaijiebao.views.CusProgressBar>-->
+</LinearLayout>

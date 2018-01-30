@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dip"
+    android:paddingLeft="12dip"
+    android:paddingRight="12dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_bar"
+            android:textColor="@color/white"/>
+
+        <EditText
+            android:id="@+id/edit_number"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/stroke_button_frame"
+            android:focusable="true"
+            android:singleLine="true"
+            android:paddingLeft="5dip"
+            />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/mListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:divider="@null"
+        android:dividerHeight="0dip"
+        android:focusable="false"
+        android:cacheColorHint="@null"
+        android:listSelector="@android:color/transparent" >
+	    
+    </ListView>
+
+</LinearLayout>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="5dip"
+    android:paddingRight="5dip"
+    android:paddingTop="5dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/authorize_customer_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_authorize_customer"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/authorize_customer"
+            android:layout_marginLeft="10dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip">
+
+        <TextView
+            android:id="@+id/full_version_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_full_version"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/full_version"
+            android:layout_marginLeft="10dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip">
+
+        <TextView
+            android:id="@+id/release_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_release_date"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_marginLeft="10dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_device_id"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/deveice_id_tv"
+            android:layout_marginLeft="15dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textIsSelectable ="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dip">
+
+        <TextView
+            android:id="@+id/set_authorize_customer_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_authorize_customer"
+            android:textColor="@color/white"/>
+
+        <EditText
+            android:id="@+id/authorize_customer_et"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:layout_marginLeft="10dip"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/stroke_button_frame"
+            android:duplicateParentState="true"
+            android:textColor="@color/color_611D64"
+            android:textSize="16.0dip"
+            android:singleLine="true"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dip">
+
+        <TextView
+            android:id="@+id/language_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="@string/txt_language" />
+
+        <TextView
+            android:id="@+id/language"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:layout_marginLeft="10dip"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/stroke_button_frame"
+            android:drawableRight="@drawable/arrow_down"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip"
+            android:duplicateParentState="true"
+            android:textColor="@color/color_611D64"
+            android:textSize="16.0dip"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

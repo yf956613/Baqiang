@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/import_set_tab"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <RadioButton
+            android:id="@+id/networkBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="12dip"
+            android:text="@string/tab_network"
+            android:textColor="@color/color_611D64" />
+
+        <RadioButton
+            android:id="@+id/paramBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="10dip"
+            android:text="@string/tab_param"
+            android:textColor="@color/color_611D64" />
+        <RadioButton
+            android:id="@+id/systemBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="10dip"
+            android:text="@string/tab_system"
+            android:textColor="@color/color_611D64" />
+    </RadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_divide"/>
+    <FrameLayout 
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="3dip"
+        android:paddingTop="3dip">"
+        
+    </FrameLayout>
+
+</LinearLayout>

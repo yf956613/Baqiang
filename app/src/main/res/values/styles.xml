@@ -1,0 +1,140 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.NoActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="listItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:descendantFocusability">blocksDescendants</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:paddingRight">8dip</item>
+    </style>
+
+    <style name="listItemControl">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:focusable">false</item>
+    <item name="android:focusableInTouchMode">false</item>
+    <item name="android:clickable">false</item>
+    <item name="android:minHeight">52dip</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:duplicateParentState">true</item>
+    </style>
+
+    <style name="itemChoice">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dip</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingRight">10dip</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="datePicker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:spinnersShown" >true</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+
+    <style name="fcSelectableItemBackground">
+        <item name="android:background">@android:drawable/list_selector_background</item>
+    </style>
+
+    <style name="fcBorderlessButtonBackground" parent="@android:style/Widget.Button"></style>
+
+    <style name="fcButtonDividerVerticalBackground">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="fcButtonDividerHorizontalBackground">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="myLoadingTheme" parent="android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="Widget.GifMoviewView" parent="@android:style/Widget"></style>
+
+    <style name="NumberProgressBar_Default">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="progress_max">100</item>
+        <item name="progress_current">0</item>
+        <item name="progress_unreached_color">#77d065</item>
+        <item name="progress_reached_color">#3498db</item>
+        <item name="progress_text_size">18sp</item>
+        <item name="progress_text_color">#3498DB</item>
+        <item name="progress_reached_bar_height">3.5dip</item>
+        <item name="progress_unreached_bar_height">2.75dip</item>
+    </style>
+    <!-- 列表项标题文字样式-->
+    <style name="list_item_title_style" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/color_list_item_title</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <!-- 列表项子文字样式-->
+    <style name="list_item_sub_style" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/color_1</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!-- 单据列表项子文字样式-->
+    <style name="list_item_document_sub_style" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/color_list_item_sub</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <!-- toolbar弹出菜单样式 -->
+    <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.Light">
+        <!--<item name="android:colorBackground">#212121</item>-->
+    </style>
+
+    <!-- toolbar菜单样式 -->
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <!--<item name="searchViewStyle">@style/search_style</item>-->
+        <item name="actionMenuTextAppearance">@style/ToolbarMenuTextSize</item>
+        <!--<item name="queryBackground">@drawable/bg_item_column</item>-->
+        <!--&lt;!&ndash;<item name="submitBackground">@drawable/abc_textfield_search_material</item>&ndash;&gt;-->
+        <!--<item name="closeIcon">@drawable/icon_delete</item>-->
+        <!--<item name="searchIcon">@drawable/icon_action_search</item>-->
+        <!--<item name="searchHintIcon">@drawable/icon_action_search</item>-->
+        <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!-- toolbar菜单文字尺寸 -->
+    <style name="ToolbarMenuTextSize" parent="@style/TextAppearance.AppCompat.Menu">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <!---标题栏三个点的样式-->
+    <style name="OverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="srcCompat">@drawable/icon_overflow</item>
+    </style>
+    <!-- 输入框文字样式-->
+    <style name="edittext_hint" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/color_list_item_sub</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+</resources>

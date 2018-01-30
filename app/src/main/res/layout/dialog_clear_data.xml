@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dip">
+
+        <TextView
+            android:id="@+id/goods_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_goods"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/goods_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:duplicateParentState="true"
+            android:layout_marginLeft="20dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dip">
+
+        <TextView
+            android:id="@+id/warehouse_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_warehouse"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/warehouse_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:duplicateParentState="true"
+            android:layout_marginLeft="20dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dip">
+
+        <TextView
+            android:id="@+id/check_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_check"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/check_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:duplicateParentState="true"
+            android:layout_marginLeft="20dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dip">
+
+        <TextView
+            android:id="@+id/storage_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_storage"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/storage_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:duplicateParentState="true"
+            android:layout_marginLeft="20dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dip">
+
+        <TextView
+            android:id="@+id/output_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_output"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/output_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:duplicateParentState="true"
+            android:layout_marginLeft="20dip" />
+    </LinearLayout>
+</LinearLayout>

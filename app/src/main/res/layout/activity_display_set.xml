@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/display_set_tab"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <RadioButton
+            android:id="@+id/check_cb"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:paddingLeft="3dip"
+            android:paddingRight="3dip"
+            android:text="@string/tab_check"
+            android:textColor="@color/color_611D64"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+
+        <RadioButton
+            android:id="@+id/stock_cb"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="3dip"
+            android:paddingRight="3dip"
+            android:text="@string/tab_storage"
+            android:textColor="@color/color_611D64"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <RadioButton
+            android:id="@+id/exWarehouse_cb"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="3dip"
+            android:paddingRight="3dip"
+            android:text="@string/tab_output"
+            android:textColor="@color/color_611D64"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_divide"/>
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="5dip"/>
+
+</LinearLayout>

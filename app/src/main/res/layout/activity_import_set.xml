@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/import_set_tab"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <RadioButton
+            android:id="@+id/goods_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="10dip"
+            android:text="@string/txt_goods"
+            android:textColor="@color/color_611D64" />
+
+        <RadioButton
+            android:id="@+id/warehouse_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:background="@drawable/tab_button_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingLeft="5dip"
+            android:paddingRight="15dip"
+            android:text="@string/txt_warehouse"
+            android:textColor="@color/color_611D64" />
+    </RadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_divide"/>
+
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="8dip"/>
+</LinearLayout>

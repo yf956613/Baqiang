@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/listItem">
+
+    <CheckBox 
+        android:id="@+id/check"
+        style="@style/listItemControl"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/choice_text"
+        style="@style/itemChoice"
+        tools:text="Item" />
+
+</LinearLayout>

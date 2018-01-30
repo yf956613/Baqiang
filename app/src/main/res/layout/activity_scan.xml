@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/topScanInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/billnumberTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="65dip"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/billNumber"
+                android:layout_width="match_parent"
+                android:layout_height="28dip"
+                android:background="@drawable/stroke_button_frame"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:text=""
+                android:textColor="@color/color_611D64"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/warehouse_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:focusable="false"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/warehouseTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="65dip"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/warehouse_select"
+                android:layout_width="0dip"
+                android:layout_height="28dip"
+                android:layout_weight="1"
+                android:background="@drawable/stroke_button_frame"
+                android:drawableRight="@drawable/arrow_down"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:textColor="@color/color_611D64"
+                android:textSize="13sp"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:layout_marginTop="5dip"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/warehousenumberTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="65dip"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:singleLine="true"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/locationSelect"
+                    android:layout_width="0dip"
+                    android:layout_height="28dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/stroke_button_frame"
+                    android:drawableRight="@drawable/arrow_down"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="2dip"
+                    android:paddingRight="2dip"
+                    android:textColor="@color/color_611D64"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
+
+                <Button
+                    android:id="@+id/locationAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dip"
+                    android:layout_marginLeft="1dip"
+                    android:background="@drawable/custom_btn_selector"
+                    android:focusable="false"
+                    android:padding="1dip"
+                    android:text="@string/btn_add"
+                    android:textColor="@color/color_611D64"
+                    android:textSize="@dimen/top_font_size" />
+
+                <Button
+                    android:id="@+id/locationDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dip"
+                    android:layout_marginLeft="1dip"
+                    android:background="@drawable/custom_btn_selector"
+                    android:focusable="false"
+                    android:padding="1dip"
+                    android:text="@string/txt_delete"
+                    android:textColor="@color/color_611D64"
+                    android:textSize="@dimen/top_font_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/barcodeTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="65dip"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:singleLine="true"/>
+
+            <EditText
+                android:id="@+id/editBarcode"
+                android:layout_width="0dip"
+                android:layout_height="28dip"
+                android:layout_weight="1"
+                android:background="@drawable/stroke_button_frame"
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:hint=""
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:singleLine="true"
+                android:textColor="@color/color_611D64"
+                android:textSize="13sp"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="75dip"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/goodsName"
+                android:layout_width="match_parent"
+                android:layout_height="25dip"
+                android:background="@drawable/stroke_button_frame"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/listview_bg"
+        android:minHeight="200dip">
+
+        <HorizontalScrollView
+            android:id="@+id/tableScrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+
+            android:fillViewport="false"
+
+            android:visibility="gone">
+
+            <com.jiebao.baqiang.custView.TableView
+                android:id="@+id/tableView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </HorizontalScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_total"
+                android:textColor="@android:color/holo_orange_dark"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bill_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text=""
+                android:textColor="@android:color/holo_orange_dark" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_current_location"
+                android:textColor="@android:color/holo_orange_dark"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/current_storage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text=""
+                android:textColor="@android:color/holo_orange_dark" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

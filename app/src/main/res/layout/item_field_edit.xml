@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"
+    android:background="@drawable/selector_list_item"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/field_name"
+        android:layout_width="70dip"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_number"
+        android:focusable="false"/>
+
+    <EditText
+        android:id="@+id/field_value"
+        android:layout_width="match_parent"
+        android:layout_height="35dip"
+        android:minHeight="35dip"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/stroke_button_frame"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:maxLength="30"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/color_611D64"
+        android:textSize="16.0dip"
+        android:paddingLeft="2dip"
+        android:focusable="true"
+        />
+</LinearLayout>

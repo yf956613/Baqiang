@@ -1,0 +1,197 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="false"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_weight="0.00" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_item_column"
+                android:orientation="vertical">
+
+
+                <com.jiebao.baqiang.view.JBItemEdit
+                    android:id="@+id/next_station"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:orientation="horizontal"
+                    android:src="@drawable/icon_action_choice"
+                    android:text="@string/next_station" />
+
+                <com.jiebao.baqiang.view.JBItemEdit
+                    android:id="@+id/express_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:orientation="horizontal"
+                    android:src="@drawable/icon_action_choice"
+                    android:text="@string/express_type" />
+
+                <com.jiebao.baqiang.view.JBItemEdit
+                    android:id="@+id/tracking_numb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:lth="100"
+                    android:text="@string/tracking_numb" />
+            </LinearLayout>
+
+            <!--   <include layout="@layout/include_expand_button" />-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_item_column"
+                    android:gravity="center_vertical"
+                    android:minHeight="10dip"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/margin_mid"
+                    android:paddingRight="@dimen/margin_mid">
+
+                    <TextView
+                        android:id="@+id/material_title"
+                        style="@style/list_item_title_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/kjb_data_material_list" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/list_mode_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_item_column_bottom"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/title_material_prepare"
+                        style="@style/list_item_document_sub_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin_min"
+                        android:layout_marginRight="@dimen/margin_min"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/has_prepare_goods" />
+
+                    <TextView
+                        android:id="@+id/item_number"
+                        style="@style/list_item_document_sub_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin_min"
+                        android:layout_marginRight="@dimen/margin_min"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/count" />
+
+                    <TextView
+                        android:id="@+id/item_price"
+                        style="@style/list_item_document_sub_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/unit_price" />
+
+                    <TextView
+                        android:id="@+id/item_discount"
+                        style="@style/list_item_document_sub_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/dicount" />
+
+                    <TextView
+                        android:id="@+id/item_amount"
+                        style="@style/list_item_document_sub_style"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/aggregate_amount" />
+                </LinearLayout>
+
+                <!--  <android.support.v7.widget.RecyclerView
+                      android:id="@+id/purchase_storage_listview"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:background="@color/white"
+                      android:dividerHeight="1dp" />-->
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/purchase_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/bg_item_column"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_min">
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/list_item_title_style"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_yellow_selector"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/cancel_action"
+            style="@style/list_item_title_style"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:layout_marginStart="@dimen/margin_min"
+            android:background="@drawable/bg_green_selector"
+            android:text="@string/tab_back"
+            android:textColor="@color/white"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+</LinearLayout>

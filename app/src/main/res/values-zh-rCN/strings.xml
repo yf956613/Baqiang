@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">巴枪</string>
+    <string name="saleId">网点编号</string>
+    <string name="userName">用户账号</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="setserverinfo">设置服务器信息</string>
+    <string name="ip">设置 IP</string>
+    <string name="port">设置 端口</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="loginresult">登录结果</string>
+    <string name="func1">功能1</string>
+    <string name="func2">功能2</string>
+</resources>

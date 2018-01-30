@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.jiebao.baqiang.custView.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical|start"
+    android:paddingLeft="3dip"
+    android:paddingRight="3dip"
+    >
+    <RadioButton style="@style/listItemControl" />
+    <TextView
+        android:id="@+id/choice_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="52dip"
+        android:textSize="18sp"
+        android:gravity="center_vertical"
+        android:paddingRight="5dip"
+        tools:text="Item"
+        android:textColor="@color/black"
+        android:singleLine="true"
+        android:ellipsize="end"/>
+
+</com.jiebao.baqiang.custView.CheckableLinearLayout>

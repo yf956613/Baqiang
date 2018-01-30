@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_maxi"
+        android:paddingTop="@dimen/padding_maxi">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/logo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_max"
+        android:layout_marginRight="@dimen/margin_max"
+        android:background="@drawable/input_plate_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_min">
+
+        <EditText
+            android:id="@+id/et_sale_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:background="@null"
+            android:hint="@string/hint_sales_service"
+            android:maxEms="30"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_mid_size" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_user_name" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_max"
+        android:layout_marginRight="@dimen/margin_max"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:background="@drawable/input_plate_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_min">
+
+        <EditText
+            android:id="@+id/et_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:background="@null"
+            android:hint="@string/hint_user_name"
+            android:maxEms="30"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_mid_size" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_user_name" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_max"
+        android:layout_marginRight="@dimen/margin_max"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:background="@drawable/input_plate_selector"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_min">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/passward" />
+
+        <EditText
+            android:id="@+id/et_passward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:background="@null"
+            android:hint="@string/hint_passward"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_mid_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/remember_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="@dimen/margin_mid"
+        android:layout_marginRight="@dimen/margin_mid"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding_min">
+
+        <CheckBox
+            android:id="@+id/cv_psw_remember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/pwd_remember_check_selector"
+            android:button="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:text="@string/txt_remember_psw"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_max"
+        android:layout_marginRight="@dimen/margin_max"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:background="@drawable/btn_login_bg_selector"
+        android:gravity="center"
+        android:text="@string/login"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_min_size" />
+
+    <Button
+        android:id="@+id/btn_ip_configurate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_max"
+        android:layout_marginRight="@dimen/margin_max"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:background="@drawable/btn_login_bg_selector"
+        android:gravity="center"
+        android:text="@string/setserverinfo"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_min_size" />
+</LinearLayout>

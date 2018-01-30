@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/loading_bg"
+    android:gravity="center"
+    android:padding="5dip"
+    android:visibility="visible">
+
+    <com.jiebao.baqiang.custView.GifMovieView
+        android:id="@+id/loading_gif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_weight="1"
+        android:onClick="onGifClick"
+        custom:gif="@drawable/loading"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/id_load_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dip"
+        android:layout_marginRight="10dip"
+        android:text="@string/txt_operating_wait"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+</LinearLayout>

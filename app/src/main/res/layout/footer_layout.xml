@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dip"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:id="@+id/footerLayout"
+    android:paddingLeft="2dip"
+    android:paddingRight="2dip"
+    android:background="#40000000">
+    
+     <TextView
+        android:id="@+id/footerBtn0"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical|left"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+     
+     <TextView
+        android:id="@+id/footerBtn1"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+     
+     <TextView
+        android:id="@+id/footerBtn2"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+     
+     <TextView
+        android:id="@+id/footerBtn3"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical|right"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+
+</LinearLayout>

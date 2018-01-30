@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  android:inputType="none"//输入普通字符
+    android:inputType="text"//输入普通字符
+    android:inputType="textCapCharacters"//输入普通字符
+    android:inputType="textCapWords"//单词首字母大小
+    android:inputType="textCapSentences"//仅第一个字母大小
+    android:inputType="textAutoCorrect"//前两个自动完成
+    android:inputType="textAutoComplete"//前两个自动完成
+    android:inputType="textMultiLine"//多行输入
+    android:inputType="textImeMultiLine"//输入法多行（不一定支持）
+    android:inputType="textNoSuggestions"//不提示
+    android:inputType="textUri"//URI格式
+    android:inputType="textEmailAddress"//电子邮件地址格式
+    android:inputType="textEmailSubject"//邮件主题格式
+    android:inputType="textShortMessage"//短消息格式
+    android:inputType="textLongMessage"//长消息格式
+    android:inputType="textPersonName"//人名格式
+    android:inputType="textPostalAddress"//邮政格式
+    android:inputType="textPassword"//密码格式
+    android:inputType="textVisiblePassword"//密码可见格式
+    android:inputType="textWebEditText"//作为网页表单的文本格式
+    android:inputType="textFilter"//文本筛选格式
+    android:inputType="textPhonetic"//拼音输入格式
+    //数值类型
+    decLength 小数为长度
+    android:inputType="number"//数字格式
+    android:inputType="numberSigned"//有符号数字格式
+    android:inputType="numberDecimal"//可以带小数点的浮点格式
+    android:inputType="phone"//拨号键盘
+    android:inputType="datetime"//日期+时间格式
+    android:inputType="date"//日期键盘
+    android:inputType="time"//时间键盘-->
+    <declare-styleable name="JBItemEdit">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:enabled"/>
+        <attr name="android:text"/>
+        <attr name="rightText" format="string"/>
+        <attr name="android:hint"/>
+        <attr name="android:src"/>
+        <attr name="leftDrawable" format="reference"/>
+        <attr name="enabledLeft" format="boolean"/>
+        <attr name="android:singleLine"/>
+        <attr name="android:background" value="@null"/>
+        <attr name="lth" format="reference|integer"/>
+        <attr name="left_width" format="dimension"/>
+        <attr name="left_text_color" format="reference|color"/>
+        <attr name="left_text_size" format="dimension"/>
+        <attr name="right_text_color" format="reference|color"/>
+        <attr name="right_text_size" format="dimension"/>
+        <attr name="android:inputType"/>
+        <attr name="android:digits"/>
+    </declare-styleable>
+    <declare-styleable name="JBSearchView">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:enabled"/>
+        <attr name="android:text"/>
+        <attr name="android:hint"/>
+        <attr name="android:singleLine"/>
+        <attr name="backgroundColor" format="color" value="@null"/>
+        <attr name="android:inputType"/>
+        <attr name="android:digits"/>
+    </declare-styleable>
+
+    <declare-styleable name="LineEdit">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:enabled"/>
+        <attr name="android:text"/>
+        <attr name="android:hint"/>
+        <attr name="android:src"/>
+        <attr name="decLength" format="reference|integer"/>
+        <attr name="android:singleLine"/>
+        <attr name="android:background" value="@null"/>
+        <attr name="android:inputType"/>
+    </declare-styleable>
+
+    <declare-styleable name="SwitchButton">
+        <attr name="kswThumbDrawable" format="reference"/>
+        <attr name="kswThumbColor" format="color|reference"/>
+        <attr name="kswThumbMargin" format="dimension|reference"/>
+        <attr name="kswThumbMarginTop" format="dimension|reference"/>
+        <attr name="kswThumbMarginBottom" format="dimension|reference"/>
+        <attr name="kswThumbMarginLeft" format="dimension|reference"/>
+        <attr name="kswThumbMarginRight" format="dimension|reference"/>
+        <attr name="kswThumbWidth" format="dimension|reference"/>
+        <attr name="kswThumbHeight" format="dimension|reference"/>
+        <attr name="kswThumbRadius" format="dimension|reference"/>
+        <attr name="kswBackRadius" format="dimension|reference"/>
+        <attr name="kswBackDrawable" format="reference"/>
+        <attr name="kswBackColor" format="color|reference"/>
+        <attr name="kswFadeBack" format="boolean"/>
+        <attr name="kswBackMeasureRatio" format="float"/>
+        <attr name="kswAnimationDuration" format="integer"/>
+        <attr name="kswTintColor" format="color|reference"/>
+        <attr name="kswTextOn" format="string"/>
+        <attr name="kswTextOff" format="string"/>
+        <attr name="kswTextMarginH" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="DragSortListView">
+        <attr name="collapsed_height" format="dimension"/>
+        <attr name="drag_scroll_start" format="float"/>
+        <attr name="max_drag_scroll_speed" format="float"/>
+        <attr name="float_background_color" format="color"/>
+        <attr name="remove_mode">
+            <enum name="clickRemove" value="0"/>
+            <enum name="flingRemove" value="1"/>
+        </attr>
+        <attr name="track_drag_sort" format="boolean"/>
+        <attr name="float_alpha" format="float"/>
+        <attr name="slide_shuffle_speed" format="float"/>
+        <attr name="remove_animation_duration" format="integer"/>
+        <attr name="drop_animation_duration" format="integer"/>
+        <attr name="drag_enabled" format="boolean"/>
+        <attr name="sort_enabled" format="boolean"/>
+        <attr name="remove_enabled" format="boolean"/>
+        <attr name="drag_start_mode">
+            <enum name="onDown" value="0"/>
+            <enum name="onMove" value="1"/>
+            <enum name="onLongPress" value="2"/>
+        </attr>
+        <attr name="drag_handle_id" format="integer"/>
+        <attr name="fling_handle_id" format="integer"/>
+        <attr name="click_remove_id" format="integer"/>
+        <attr name="use_default_controller" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="SwipeLayout">
+        <attr name="drag_edge">
+            <flag name="left" value="1"/>
+            <flag name="right" value="2"/>
+            <flag name="top" value="4"/>
+            <flag name="bottom" value="8"/>
+        </attr>
+        <attr name="leftEdgeSwipeOffset" format="dimension"/>
+        <attr name="rightEdgeSwipeOffset" format="dimension"/>
+        <attr name="topEdgeSwipeOffset" format="dimension"/>
+        <attr name="bottomEdgeSwipeOffset" format="dimension"/>
+        <attr name="show_mode" format="enum">
+            <enum name="lay_down" value="0"/>
+            <enum name="pull_out" value="1"/>
+        </attr>
+        <attr name="clickToClose" format="boolean"/>
+    </declare-styleable>
+
+</resources>
