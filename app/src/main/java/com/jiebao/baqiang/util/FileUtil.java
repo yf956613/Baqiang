@@ -13,6 +13,8 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.global.Constant;
 
+import org.apache.http.util.EncodingUtils;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +37,8 @@ public class FileUtil {
     public static boolean isUsbConnect() {
         try {
             String storageState = Environment.getExternalStorageState();
-            if(storageState.equals(Environment.MEDIA_SHARED) || storageState.equals(Environment.MEDIA_UNMOUNTED))
+            if (storageState.equals(Environment.MEDIA_SHARED) || storageState.equals(Environment
+                    .MEDIA_UNMOUNTED))
                 return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,12 +48,29 @@ public class FileUtil {
 
     public static boolean isCanUseSD() {
         try {
-            return Environment.getExternalStorageState().equals(
-                    Environment.MEDIA_MOUNTED);
+            return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 从SDCard中读取文件
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public static String readSDFile(String fileName) throws IOException {
+        File file = new File(fileName);
+        FileInputStream fis = new FileInputStream(file);
+        int length = fis.available();
+        byte[] buffer = new byte[length];
+        fis.read(buffer);
+        String res = EncodingUtils.getString(buffer, "UTF-8");
+        fis.close();
+
+        return res;
     }
 
     /**
@@ -123,8 +143,7 @@ public class FileUtil {
                     parent.mkdirs();
 
                 }
-                if (!file.exists())
-                    file.createNewFile();
+                if (!file.exists()) file.createNewFile();
 
             }
             fos = new FileOutputStream(path);
@@ -142,7 +161,8 @@ public class FileUtil {
         }
     }
 
-    public static void copyDatabase(Context context, String dbName, String outDir) throws IOException {
+    public static void copyDatabase(Context context, String dbName, String outDir) throws
+            IOException {
 
         InputStream is = context.getResources().openRawResource(R.raw.dbstockbao);
         // 欲导入的数据库
@@ -162,8 +182,7 @@ public class FileUtil {
 
         SQLiteDatabase checkDB = null;
         try {
-            checkDB = SQLiteDatabase.openDatabase(dbPath, null,
-                    SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
 
         } catch (SQLiteException e) {
         }
@@ -175,8 +194,9 @@ public class FileUtil {
         return checkDB != null ? true : false;
     }
 
-    public static String saveFileByBinary(byte[] data, String fileName) {                   /***加载附件***/
-        String dirName = BaqiangApplication.getAdminDir()+ File.separator;
+    public static String saveFileByBinary(byte[] data, String fileName) {
+        /***加载附件***/
+        String dirName = BaqiangApplication.getAdminDir() + File.separator;
         File f = new File(dirName);
         if (!f.exists()) {      //判断文件夹是否存在
             f.mkdir();        //如果不存在、则创建一个新的文件夹
@@ -207,13 +227,16 @@ public class FileUtil {
     }
 
 //    public static void checkDBFile() throws IOException {
-//        File dbFile = new File(StockBaoApplication.getDbDir(StockBaoApplication.getContext()) + DbHelper.DBNAME);
+//        File dbFile = new File(StockBaoApplication.getDbDir(StockBaoApplication.getContext()) +
+// DbHelper.DBNAME);
 //        if (!dbFile.exists())
-//            FileUtil.copyDatabase(StockBaoApplication.getContext(), DbHelper.DBNAME, StockBaoApplication.getDbDir(StockBaoApplication.getContext()));
+//            FileUtil.copyDatabase(StockBaoApplication.getContext(), DbHelper.DBNAME,
+// StockBaoApplication.getDbDir(StockBaoApplication.getContext()));
 //    }
 //
 //    public static String readDeviceIdInThread() {
-//        SharedPreferences sharedPreferences = StockBaoApplication.getContext().getSharedPreferences(Constant.PREFERENCE_KEY_SYSTEM_ARG, Context.MODE_PRIVATE);
+//        SharedPreferences sharedPreferences = StockBaoApplication.getContext()
+// .getSharedPreferences(Constant.PREFERENCE_KEY_SYSTEM_ARG, Context.MODE_PRIVATE);
 //        String deviceId = sharedPreferences.getString(Constant.PREFERENCE_KEY_DEVICE_ID, "");
 //        if(!StringUtil.isEmpty(deviceId)) {
 //            return deviceId;
@@ -280,9 +303,8 @@ public class FileUtil {
             BufferedReader in = new BufferedReader(new FileReader(filename));
             String s;
             //sb = new StringBuilder();
-            while ((s = in.readLine()) != null)
-                lines.add(s);
-                //sb.append(s);
+            while ((s = in.readLine()) != null) lines.add(s);
+            //sb.append(s);
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -296,11 +318,13 @@ public class FileUtil {
 
     /**
      * 得到内置或外置SD卡的路径
-     * @param isExSD   true=外置SD卡
+     *
+     * @param isExSD true=外置SD卡
      * @return
      */
     public static String getStoragePath(boolean isExSD) {
-        StorageManager mStorageManager = (StorageManager) BaqiangApplication.getContext().getSystemService(Context.STORAGE_SERVICE);
+        StorageManager mStorageManager = (StorageManager) BaqiangApplication.getContext()
+                .getSystemService(Context.STORAGE_SERVICE);
         Class<?> storageVolumeClazz = null;
         try {
             storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
@@ -332,7 +356,8 @@ public class FileUtil {
 
     private static String[] getExternalDirs(Context context) {
         Context mContext = context.getApplicationContext();
-        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context
+                .STORAGE_SERVICE);
         try {
             Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
             Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
@@ -353,7 +378,8 @@ public class FileUtil {
 
 //    public static String getStoragePath(Context mContext, boolean is_removale) {
 //
-//        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+//        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context
+// .STORAGE_SERVICE);
 //        Class<?> storageVolumeClazz = null;
 //        try {
 //            storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
@@ -384,14 +410,14 @@ public class FileUtil {
 
 
     public static String rootPath = null;
+
     /**
      * 获取SD卡的根目录
      *
      * @return null：不存在SD卡
      */
     public static File getRootDirectory() {
-        if(rootPath != null)
-            return new File(rootPath);
+        if (rootPath != null) return new File(rootPath);
         File root;
         String[] paths = getExternalDirs(BaqiangApplication.getContext());
 //        String externalPath = getStoragePath(true);
@@ -400,15 +426,14 @@ public class FileUtil {
 //        }else{
 //            root = Environment.getExternalStorageDirectory();
 //        }
-        if(paths!= null && paths.length > 1&& !TextUtils.isEmpty(paths[1])) {
+        if (paths != null && paths.length > 1 && !TextUtils.isEmpty(paths[1])) {
             //创建测试文件
             try {
-                File testFile = new File(paths[1] + File.separator+"test.txt");
+                File testFile = new File(paths[1] + File.separator + "test.txt");
                 boolean isSuccess = testFile.createNewFile();
-                if(!isSuccess) {
+                if (!isSuccess) {
                     root = Environment.getExternalStorageDirectory();
-                }
-                else {
+                } else {
                     testFile.delete();
                     root = new File(paths[1]);
                 }
@@ -416,19 +441,17 @@ public class FileUtil {
                 e.printStackTrace();
                 root = Environment.getExternalStorageDirectory();
             }
-        }
-        else {
+        } else {
             root = Environment.getExternalStorageDirectory();
         }
         return root;
     }
 
-    public static boolean exist(String path){
+    public static boolean exist(String path) {
         File file = new File(path);
         if (!file.exists()) {
             return false;
-        }else
-            return true;
+        } else return true;
 
     }
 }

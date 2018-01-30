@@ -1,19 +1,21 @@
 package com.jiebao.baqiang.data.UpdateData;
 
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.SalesServiceList;
-import com.jiebao.baqiang.global.NetworkConstant;
+import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
-import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,8 +23,7 @@ import java.util.List;
  */
 
 public class UpdateSalesServiceData {
-    private static final String TAG = UpdateSalesServiceData.class
-            .getSimpleName();
+    private static final String TAG = UpdateSalesServiceData.class.getSimpleName();
 
     private static String mSalesServiceUrl = "";
     private volatile static UpdateSalesServiceData mInstance;
@@ -48,10 +49,10 @@ public class UpdateSalesServiceData {
      * @return
      */
     public boolean updateSalesService() {
-        mSalesServiceUrl = SharedUtil.getServletAddresFromSP
+        /*mSalesServiceUrl = SharedUtil.getServletAddresFromSP
                 (BaqiangApplication.getContext(), NetworkConstant
                         .NEXT_SALES_SERVICE_SERVLET);
-        LogUtil.d(TAG, "Server salesService url: " + mSalesServiceUrl);
+        LogUtil.e(TAG, "Server salesService url: " + mSalesServiceUrl);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
         params.addQueryStringParameter("userName", "jiebao");
@@ -86,7 +87,9 @@ public class UpdateSalesServiceData {
             public void onFinished() {
                 LogUtil.trace();
             }
-        });
+        });*/
+
+        storageData(testResolveData(testServiceBackContent()));
 
         return false;
     }
@@ -111,8 +114,16 @@ public class UpdateSalesServiceData {
 
                 for (int index = 0; index < saleInfo.size(); index++) {
                     try {
-                        db.save(new SalesService(saleInfo.get(index).get网点编号
-                                (), saleInfo.get(index).get网点名称()));
+                        SalesService salesService = new SalesService(saleInfo.get(index).get网点编号
+                                (), saleInfo.get(index).get网点名称(), saleInfo.get(index).get所属网点(),
+                                saleInfo.get(index).get所属财务中心(), saleInfo.get(index).get启用标识(),
+                                saleInfo.get(index).get允许到付(), saleInfo.get(index).get城市(),
+                                saleInfo.get(index).get省份(), saleInfo.get(index).get更新状态(),
+                                saleInfo.get(index).get更新时间(), saleInfo.get(index).get类型(),
+                                saleInfo.get(index).get所属提交货中心(), saleInfo.get(index).get县());
+                        LogUtil.e(TAG, salesService.toString());
+
+                        db.save(salesService);
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
@@ -123,5 +134,29 @@ public class UpdateSalesServiceData {
         return true;
     }
 
+
+    private String testServiceBackContent() {
+        String value = "";
+        try {
+            LogUtil.trace("path:" + Environment.getExternalStorageDirectory() + "/tmp/salesInfo"
+                    + ".txt");
+            value = FileUtil.readSDFile(Environment.getExternalStorageDirectory() +
+                    "/tmp/salesInfo.txt");
+
+            LogUtil.trace("vaue:" + value);
+        } catch (IOException e) {
+            LogUtil.trace("file is not exist...");
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+    private SalesServiceList testResolveData(String saleServices) {
+        Gson gson = new Gson();
+        SalesServiceList salesServiceList = gson.fromJson(saleServices, SalesServiceList.class);
+        LogUtil.trace("size:" + salesServiceList.getCount());
+        return salesServiceList;
+    }
 
 }

@@ -1,14 +1,15 @@
 package com.jiebao.baqiang.activity;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -63,6 +64,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         setFootLayout(footerLayout);
 
         setContent(R.layout.activity_login);
+        verifyStoragePermissions(LoginActivity.this);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         remember_layout.setOnClickListener(this);
 
         boolean isRememberPsw = SharedUtil.getBoolean(this, Constant.KEY_IS_REMEMBER_PSW);
-        LogUtil.d(TAG, "isRememberPsq:" + isRememberPsw);
+        LogUtil.e(TAG, "isRememberPsq:" + isRememberPsw);
         if (isRememberPsw) {
             cv_remember_psw.setChecked(isRememberPsw);
             String salesService = SharedUtil.getString(LoginActivity.this, Constant
@@ -93,7 +95,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             mEtSalesService.setText(salesService);
             et_user_name.setText(userName);
             et_passward.setText(psw);
-            LogUtil.d(TAG, "salesService:" + salesService + "; userName:" + userName + "; psw:" +
+            LogUtil.e(TAG, "salesService:" + salesService + "; userName:" + userName + "; psw:" +
                     psw);
         }
     }
@@ -161,13 +163,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         LogUtil.trace("path:" + mLoginUrl);
 
         if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
+            // TODO 增加对IP地址和端口为空的判断
             //listener.loginFailed("账户名或者密码不能为空");
         } else {
             RequestParams params = new RequestParams(mLoginUrl);
-            params.addQueryStringParameter("saleId", "捷宝");
-            params.addQueryStringParameter("userName", "捷宝");
-            params.addQueryStringParameter("password", "捷宝");
-            LogUtil.d(TAG, "saleId:" + saleId + "; userName:" + account + "; pwd:" + pwd);
+            params.addQueryStringParameter("saleId", saleId);
+            params.addQueryStringParameter("userName", account);
+            params.addQueryStringParameter("password", pwd);
+            LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; pwd:" + pwd);
 
             // TODO 从日志看出，下述回调都是在MainThread运行的
             final Callback.Cancelable post = x.http().post(params, new Callback
@@ -183,6 +186,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         if ("1".equals(loginResponse.getAuthRet())) {
                             Toast.makeText(BaqiangApplication.getContext(), "登陆成功", Toast
                                     .LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {
                             Toast.makeText(BaqiangApplication.getContext(), "用户名或密码", Toast
                                     .LENGTH_SHORT).show();
@@ -207,26 +211,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 public void onFinished() {
                     LogUtil.trace();
 
-                    /*showLoadinDialog();
-                    startDataSync();*/
+                    showLoadinDialog();
+                    startDataSync();
                 }
             });
         }
     }
 
     private void startDataSync() {
-        //启动数据同步
         startService(new Intent(getApplicationContext(), DataSyncService.class));
-        bindService(new Intent(LoginActivity.this, DataSyncService.class), connection, Service
-                .BIND_AUTO_CREATE);
+        bindService(new Intent(LoginActivity.this, DataSyncService.class), mServiceConnection,
+                Service.BIND_AUTO_CREATE);
     }
 
-    /**
-     * 连接数据同步服务
-     */
-    ServiceConnection connection = new ServiceConnection() {
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            LogUtil.trace();
+
             DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder) service;
             dataSyncService = myBinder.getService();
             dataSyncService.setDataSyncNotifity(LoginActivity.this);
@@ -234,7 +237,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            LogUtil.trace();
         }
     };
 
@@ -269,6 +272,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_SALE_SERVICE, "");
         SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, "");
         SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, "");
+    }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE" };
+
+    public static void verifyStoragePermissions(Activity activity) {
+
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

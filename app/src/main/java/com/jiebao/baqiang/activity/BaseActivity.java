@@ -43,7 +43,8 @@ import java.util.List;
 
 //import com.jiebao.baqiang.zxing.CaptureActivity;
 
-public abstract class BaseActivity extends FragmentActivity implements Header, Footer, Content,View.OnTouchListener{
+public abstract class BaseActivity extends FragmentActivity implements Header, Footer, Content,
+        View.OnTouchListener {
     public final int REQUEST_CAMARA_CODE = 100;
 
     private ViewGroup contentLayout;
@@ -74,8 +75,8 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     public int currentSelectIndex = 0;
 
     protected Button floatButton;
-    private int mLastX    = 0;
-    private int mLastY    = 0;
+    private int mLastX = 0;
+    private int mLastY = 0;
     private int initialTouchX = 0;
 
     public abstract void initView();
@@ -99,24 +100,23 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         mContentViewParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT);
 
-        contentLayout  =  (ViewGroup) View.inflate(this, R.layout.activity_base_content, null);
-        mGlobalLayout = (RelativeLayout)contentLayout.findViewById(R.id.global_layout);
-        floatButton = (Button)contentLayout.findViewById(R.id.floatButton);
+        contentLayout = (ViewGroup) View.inflate(this, R.layout.activity_base_content, null);
+        mGlobalLayout = (RelativeLayout) contentLayout.findViewById(R.id.global_layout);
+        floatButton = (Button) contentLayout.findViewById(R.id.floatButton);
 
-        mHeaderLayoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        mFooterLayoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT);
-        mContentLayoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mHeaderLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        mFooterLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        mContentLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT);
 
         mFooterLayout.setLayoutParams(mFooterLayoutParams);
         mHeaderLayout.setLayoutParams(mHeaderLayoutParams);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
+                .LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
@@ -130,25 +130,25 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 
         int footTxtNum = getFootTxtNum();
         String[] footTxtStr = getFootTxtStr();
-        if(footTxtNum > 0 && footTxtStr != null){
-            for(int index = 0; index < FOOTER_BUTTONS_NUM; index ++){
-                TextView footTxt = (TextView)mFooterLayout.getChildAt(index);
+        if (footTxtNum > 0 && footTxtStr != null) {
+            for (int index = 0; index < FOOTER_BUTTONS_NUM; index++) {
+                TextView footTxt = (TextView) mFooterLayout.getChildAt(index);
                 String[] suffStrs = getFootTxtPrefix();
-                if(index < footTxtNum){
-                    if(BaqiangApplication.getOperateType() == 1 && suffStrs != null)
+                if (index < footTxtNum) {
+                    if (BaqiangApplication.getOperateType() == 1 && suffStrs != null)
                         footTxt.setText(suffStrs[index] + footTxtStr[index]);
-                    else
-                        footTxt.setText(footTxtStr[index]);
+                    else footTxt.setText(footTxtStr[index]);
 
-                    if(index == footTxtNum - 1) {
+                    if (index == footTxtNum - 1) {
                         footTxt.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
                     }
 //                    }else if(index == 0 && LanguageUtil.getLanguageEnv().equals("en")){
-//                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)footTxt.getLayoutParams();
+//                        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)footTxt
+// .getLayoutParams();
 //                        lp.weight = 0.75f;
 //                        footTxt.setLayoutParams(lp);
 //                    }
-                }else{
+                } else {
                     footTxt.setVisibility(View.GONE);
                 }
             }
@@ -163,7 +163,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 //        startActivityForResult(openCameraIntent, 0);
 //    }
 
-    public void setCameraScanVisible(){
+    public void setCameraScanVisible() {
         floatButton.setVisibility(View.VISIBLE);
         floatButton.setOnTouchListener(this);
         floatButton.setOnClickListener(new View.OnClickListener() {
@@ -174,10 +174,13 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         });
     }
 
-    public void setCameraScanPisition(){
-        final FrameLayout.LayoutParams floatLp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        floatLp.leftMargin = AppUtil.getWindowWidthSize()/2 - floatButton.getBackground().getIntrinsicWidth()/2;
-        floatLp.topMargin = AppUtil.getWindowHeightSize()/2 - floatButton.getBackground().getIntrinsicHeight()/2;
+    public void setCameraScanPisition() {
+        final FrameLayout.LayoutParams floatLp = new FrameLayout.LayoutParams(FrameLayout
+                .LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        floatLp.leftMargin = AppUtil.getWindowWidthSize() / 2 - floatButton.getBackground()
+                .getIntrinsicWidth() / 2;
+        floatLp.topMargin = AppUtil.getWindowHeightSize() / 2 - floatButton.getBackground()
+                .getIntrinsicHeight() / 2;
         floatButton.setLayoutParams(floatLp);
     }
 
@@ -309,13 +312,11 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     };
 
     public <T> boolean checkSelectStatusValid(List<T> datas) {
-        if (ListUtil.isEmpty(datas)
-                || currentSelectIndex > datas.size() - 1)
-            return false;
+        if (ListUtil.isEmpty(datas) || currentSelectIndex > datas.size() - 1) return false;
         return true;
     }
 
-    public void showQuizWin(){
+    public void showQuizWin() {
         String title = getString(R.string.txt_system_hint);
         String message = getString(R.string.hint_whether_quiz);
 //        DialogUtil.showCustomDialog(this, title, message, false, "", new ICustomDialogListener() {
@@ -333,18 +334,20 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 //        });
     }
 
-    public void showCheckAdmin(){
+    public void showCheckAdmin() {
         String title = getString(R.string.title_system_admin_check);
         String numberHint = getString(R.string.txt_passward);
         String message = getString(R.string.hint_admin_input_passward);
-//        DialogUtil.showInputNumberDialog(this, title, numberHint, "",message, true, new ICustomDialogListener() {
+//        DialogUtil.showInputNumberDialog(this, title, numberHint, "",message, true, new
+// ICustomDialogListener() {
 //            @Override
 //            public void onDialogPositiveClick(int requestCode, String inputArg, Object object) {
 ////                if (inputArg.equals(CacheManager.INIT_PASSWARD)) {
 ////                    finish();
 ////                    System.exit(0);
 ////                } else
-////                    DialogUtil.showAlertDialog(BaseActivity.this, getString(R.string.msg_passward_no_correct));
+////                    DialogUtil.showAlertDialog(BaseActivity.this, getString(R.string
+/// .msg_passward_no_correct));
 //            }
 //
 //            @Override
@@ -392,7 +395,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
             }
             case MotionEvent.ACTION_UP:
                 v.setBackgroundResource(R.drawable.float_button_normal);
-                if(Math.abs(event.getRawX()-initialTouchX )<=2){
+                if (Math.abs(event.getRawX() - initialTouchX) <= 2) {
                     v.performClick();
                     return false;
                 }
@@ -400,15 +403,15 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         return true;
     }
 
-    protected int getFootTxtNum(){
+    protected int getFootTxtNum() {
         return 0;
     }
 
-    protected String[] getFootTxtStr(){
+    protected String[] getFootTxtStr() {
         return null;
     }
 
-    protected String[] getFootTxtPrefix(){
+    protected String[] getFootTxtPrefix() {
         return null;
     }
 
@@ -418,25 +421,23 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         }
 
         if (null == loadingBulider) {
-            View view = LayoutInflater.from(this).inflate(
-                    R.layout.layout_widget_loading, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    new ContextThemeWrapper(this, R.style.myLoadingTheme));
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
+                    .style.myLoadingTheme));
             loadingBulider = builder.create();
             loadingBulider.setCancelable(false);
             loadingBulider.setView(view, 0, 0, 0, 0);
-            loadingBulider
-                    .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface dialog,
-                                             int keyCode, KeyEvent event) {
-                            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                                closeLoadinDialog();
-                                loadingBulider = null;
-                            }
-                            return false;
-                        }
-                    });
+            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener() {
+
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        closeLoadinDialog();
+                        loadingBulider = null;
+                    }
+                    return false;
+                }
+            });
             loadingBulider.setCanceledOnTouchOutside(false);
         }
         if (!loadingBulider.isShowing()) {
@@ -458,11 +459,12 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     @Override
     protected void onResume() {
         super.onResume();
-       // BaqiangApplication.mTopActivity = this;
-        if(isSupportScan()) {
+        // BaqiangApplication.mTopActivity = this;
+        if (isSupportScan()) {
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
-            ScanHelper.getInstance().setScanListener(this.getClass().getName(), scanListener,isActivityNeedFocus);
+            ScanHelper.getInstance().setScanListener(this.getClass().getName(), scanListener,
+                    isActivityNeedFocus);
         }
     }
 
@@ -478,19 +480,19 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         }
     };
 
-    protected void fillCode(String barcode){
+    protected void fillCode(String barcode) {
 
     }
 
-    protected void dspStat(String barcode){
+    protected void dspStat(String barcode) {
 
     }
 
-    protected boolean isSupportScan(){
+    protected boolean isSupportScan() {
         return true;
     }
 
-    protected boolean isActivityNeedFocus(){
+    protected boolean isActivityNeedFocus() {
         return true;
     }
 }

@@ -1,6 +1,9 @@
 package com.jiebao.baqiang.activity;
 
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 
@@ -8,20 +11,27 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentDispatchFileName;
 import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentUploadFile;
+import com.jiebao.baqiang.data.bean.SalesService;
+import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
+import org.xutils.x;
 
 /**
  * Created by open on 2018/1/22.
  */
 
-public class FajianActivity extends BaseActivity implements View.OnClickListener{
+public class FajianActivity extends BaseActivity implements View.OnClickListener {
+    private static final String TAG = "FajianActivity";
 
-    Button ok_button,cancel_button;
+    private Button mBtnSure, mBtnCancel;
     private ShipmentDispatchFileName mShipmentDispatchFileName;
     private ShipmentFileContent mShipmentFileContent;
     private ShipmentUploadFile mShipmentUploadFile;
-    private static final String TAG="FajianActivity";
+
     @Override
     public void initView() {
         setContent(R.layout.fajian);
@@ -32,33 +42,63 @@ public class FajianActivity extends BaseActivity implements View.OnClickListener
         setHeaderCenterViewText(getString(R.string.main_output));
     }
 
-    @Override
-    public void initData() {
-        ok_button = (Button)findViewById(R.id.ok_button);
-        cancel_button = (Button)findViewById(R.id.cancel_button);
-        ok_button.setOnClickListener(this);
-        cancel_button.setOnClickListener(this);
-        mShipmentDispatchFileName = new ShipmentDispatchFileName();
-        boolean isAllSuccess = mShipmentDispatchFileName.linkToTXTFile();
-        LogUtil.d(TAG, "isAllSuccess:" + isAllSuccess);
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
 
-        mShipmentFileContent = getShipmentFileContent();
+    public static void verifyStoragePermissions(Activity activity) {
 
-        LogUtil.trace(mShipmentFileContent.toString());
-
-        mShipmentUploadFile = new ShipmentUploadFile
-                (mShipmentDispatchFileName.getFileInstance());
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity, "android.permission" +
+                    ".WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void onClick(View view){
-        switch (view.getId()){
+    @Override
+    public void initData() {
+        verifyStoragePermissions(FajianActivity.this);
+
+        mBtnSure = (Button) findViewById(R.id.ok_button);
+        mBtnCancel = (Button) findViewById(R.id.cancel_button);
+        mBtnSure.setOnClickListener(this);
+        mBtnCancel.setOnClickListener(this);
+
+        mShipmentDispatchFileName = new ShipmentDispatchFileName();
+        boolean isAllSuccess = mShipmentDispatchFileName.linkToTXTFile();
+        LogUtil.e(TAG, "isAllSuccess:" + isAllSuccess);
+
+        mShipmentFileContent = getShipmentFileContent();
+        LogUtil.trace(mShipmentFileContent.toString());
+        mShipmentUploadFile = new ShipmentUploadFile(mShipmentDispatchFileName.getFileInstance());
+
+
+        DbManager.DaoConfig mDaoConfig = BQDataBaseHelper.getDaoConfig();
+        DbManager dbManager = x.getDb(mDaoConfig);
+        try {
+            SalesService childInfo = dbManager.findFirst(SalesService.class);
+            LogUtil.trace("childInfo::" + childInfo.get网点名称());
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.ok_button:
-                mShipmentFileContent.scanDateChanged(TextStringUtil
-                        .getFormatTimeString());
+                mShipmentFileContent.scanDateChanged(TextStringUtil.getFormatTimeString());
                 LogUtil.d(TAG, mShipmentFileContent.toString());
 
-                mShipmentUploadFile.writeContentToFile(mShipmentFileContent
-                        .getmCurrentValue() + "\r\n", true);
+                mShipmentUploadFile.writeContentToFile(mShipmentFileContent.getmCurrentValue() +
+                        "\r\n", true);
                 mShipmentUploadFile.uploadFile();
                 break;
             case R.id.cancel_button:
@@ -67,7 +107,8 @@ public class FajianActivity extends BaseActivity implements View.OnClickListener
         }
 
     }
-    protected void onCreate(Bundle savedInstanceState){
+
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
@@ -89,8 +130,7 @@ public class FajianActivity extends BaseActivity implements View.OnClickListener
         String operateDate = TextStringUtil.getFormatTime();
         String weight = "";
 
-        return new ShipmentFileContent(nextStation, scanDate, goodsType,
-                shipmentType, shipmentNumber, scanEmployeeNumber,
-                operateDate, weight);
+        return new ShipmentFileContent(nextStation, scanDate, goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight);
     }
 }

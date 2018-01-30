@@ -8,9 +8,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="0.00"
         android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_weight="0.00" />
+        android:focusableInTouchMode="true" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -52,8 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:lth="100"
-                    android:text="@string/tracking_numb" />
+                    android:text="@string/tracking_numb"
+                    app:lth="100" />
             </LinearLayout>
 
             <!--   <include layout="@layout/include_expand_button" />-->
@@ -83,6 +83,7 @@
                         android:text="@string/kjb_data_material_list" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -178,11 +179,11 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_yellow_selector"
             android:text="@string/save"
-            android:textColor="@color/white"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/cancel_action"
+            android:id="@+id/cancel_button"
             style="@style/list_item_title_style"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -190,8 +191,8 @@
             android:layout_marginStart="@dimen/margin_min"
             android:background="@drawable/bg_green_selector"
             android:text="@string/tab_back"
-            android:textColor="@color/white"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>
