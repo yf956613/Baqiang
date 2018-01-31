@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.SetServerInfoActivity;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
@@ -29,6 +29,7 @@ import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.service.DataSyncService;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
+import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -41,18 +42,20 @@ import org.xutils.x;
  * @date 2016年11月2日
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, CompoundButton
+public class LoginActivity extends BaseActivity implements View
+        .OnClickListener, CompoundButton
         .OnCheckedChangeListener, DataSyncService.DataSyncNotifity {
+    private static final String TAG = "LoginActivity";
 
     private EditText mEtSalesService;
-    private EditText et_user_name;
-    private EditText et_passward;
-    private Button btn_login;
+    private EditText mEtUserName;
+    private EditText mEtPassward;
+    private Button mBtnLogin;
     private Button mBtnConfigurate;
-    private CheckBox cv_remember_psw;
-    private LinearLayout remember_layout;
+    private CheckBox mCbRememberPassword;
+    private LinearLayout mLLRemember;
     private String mLoginUrl = "";
-    private static final String TAG = "LoginActivity";
+
     private DataSyncService dataSyncService;
 
     @Override
@@ -72,30 +75,37 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         LogUtil.trace();
 
         mEtSalesService = LoginActivity.this.findViewById(R.id.et_sale_service);
-        et_user_name = (EditText) findViewById(R.id.et_user_name);
-        et_passward = (EditText) findViewById(R.id.et_passward);
-        btn_login = (Button) findViewById(R.id.btn_login);
-        mBtnConfigurate = LoginActivity.this.findViewById(R.id.btn_ip_configurate);
-        cv_remember_psw = (CheckBox) findViewById(R.id.cv_psw_remember);
-        remember_layout = (LinearLayout) findViewById(R.id.remember_layout);
+        mEtUserName = LoginActivity.this.findViewById(R.id.et_user_name);
+        mEtPassward = LoginActivity.this.findViewById(R.id.et_passward);
+        mBtnLogin = findViewById(R.id.btn_login);
+        mBtnConfigurate = LoginActivity.this.findViewById(R.id
+                .btn_ip_configurate);
+        mCbRememberPassword = LoginActivity.this.findViewById(R.id
+                .cv_psw_remember);
+        mLLRemember = LoginActivity.this.findViewById(R.id.remember_layout);
 
-        btn_login.setOnClickListener(this);
+        mBtnLogin.setOnClickListener(this);
         mBtnConfigurate.setOnClickListener(this);
-        cv_remember_psw.setOnCheckedChangeListener(this);
-        remember_layout.setOnClickListener(this);
+        mCbRememberPassword.setOnCheckedChangeListener(this);
+        mLLRemember.setOnClickListener(this);
 
-        boolean isRememberPsw = SharedUtil.getBoolean(this, Constant.KEY_IS_REMEMBER_PSW);
-        LogUtil.e(TAG, "isRememberPsq:" + isRememberPsw);
+        boolean isRememberPsw = SharedUtil.getBoolean(this, Constant
+                .KEY_IS_REMEMBER_PSW);
         if (isRememberPsw) {
-            cv_remember_psw.setChecked(isRememberPsw);
-            String salesService = SharedUtil.getString(LoginActivity.this, Constant
-                    .PREFERENCE_KEY_SALE_SERVICE);
-            String userName = SharedUtil.getString(this, Constant.PREFERENCE_KEY_USERNAME);
-            String psw = SharedUtil.getString(this, Constant.PREFERENCE_KEY_PSW);
+            mCbRememberPassword.setChecked(isRememberPsw);
+            String salesService = SharedUtil.getString(LoginActivity.this,
+                    Constant
+                            .PREFERENCE_KEY_SALE_SERVICE);
+            String userName = SharedUtil.getString(this, Constant
+                    .PREFERENCE_KEY_USERNAME);
+            String psw = SharedUtil.getString(this, Constant
+                    .PREFERENCE_KEY_PSW);
             mEtSalesService.setText(salesService);
-            et_user_name.setText(userName);
-            et_passward.setText(psw);
-            LogUtil.e(TAG, "salesService:" + salesService + "; userName:" + userName + "; psw:" +
+            mEtUserName.setText(userName);
+            mEtPassward.setText(psw);
+
+            LogUtil.e(TAG, "salesService:" + salesService + "; userName:" +
+                    userName + "; psw:" +
                     psw);
         }
     }
@@ -104,38 +114,67 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login: {
-                if (TextUtils.isEmpty(et_user_name.getText().toString())) {
-                    //DialogUtil.showAlertDialog(this,getString(R.string.hint_user_name));
-                    return;
-                }
-                if (TextUtils.isEmpty(et_passward.getText().toString())) {
-                    // DialogUtil.showAlertDialog(this,getString(R.string.hint_passward));
+                if (!isCheckNetworkAddressAccess()) {
+                    Toast.makeText(LoginActivity.this, "请先设置IP地址和端口！", Toast
+                            .LENGTH_SHORT).show();
+
                     return;
                 }
                 closeSoftKeyBoard();
+                showLoadinDialog();
 
-                String salesService = mEtSalesService.getText().toString().trim();
-                String userName = et_user_name.getText().toString().trim();
-                String psw = et_passward.getText().toString().trim();
+                String salesService = mEtSalesService.getText().toString()
+                        .trim();
+                String userName = mEtUserName.getText().toString().trim();
+                String psw = mEtPassward.getText().toString().trim();
+                setConfigurateLogin(salesService, userName, psw);
 
                 login(salesService, userName, psw);
-                setConfigurateLogin(salesService, userName, psw);
 
                 break;
             }
 
             case R.id.remember_layout:
-                cv_remember_psw.setChecked(!cv_remember_psw.isChecked());
+                mCbRememberPassword.setChecked(!mCbRememberPassword.isChecked
+                        ());
                 break;
 
             case R.id.btn_ip_configurate: {
                 Intent intent = new Intent();
-                intent.setClass(LoginActivity.this, SetServerInfoActivity.class);
+                intent.setClass(LoginActivity.this, SetServerInfoActivity
+                        .class);
                 startActivity(intent);
 
                 break;
             }
 
+        }
+    }
+
+    /**
+     * 判断IP地址和端口是否设置
+     *
+     * @return true 表示可供使用；false 表示不能使用
+     */
+    private boolean isCheckNetworkAddressAccess() {
+        SharedPreferences sp = BaqiangApplication
+                .getContext().getSharedPreferences("ServerInfo", Context
+                        .MODE_PRIVATE);
+        if (sp != null) {
+            String ip = sp.getString("Ip", "");
+            String port = sp.getString("Port", "");
+            LogUtil.trace("ip:" + ip + "; port:" + port);
+
+            if (TextUtils.isEmpty(ip) || TextUtils.isEmpty(port)) {
+                LogUtil.d(TAG, "set ip or port is null...");
+                return false;
+            } else if (!TextStringUtil.isIpAddressAvailable(ip) ||
+                    !TextStringUtil.isPortCheckAvailable(port)) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -145,32 +184,38 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         switch (buttonView.getId()) {
             case R.id.cv_psw_remember:
-                SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, isChecked);
+                SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
+                        isChecked);
 
                 if (!isChecked) {
-                    SharedUtil.putString(LoginActivity.this, Constant
-                            .PREFERENCE_KEY_SALE_SERVICE, "");
-                    SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, "");
-                    SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, "");
+                    clearConfigurateLogin();
                 }
                 break;
         }
     }
 
-    public void login(final String saleId, final String account, final String pwd) {
-        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+    public void login(final String saleId, final String account, final String
+            pwd) {
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                        .getContext(),
                 NetworkConstant.LOGIN_SERVLET);
         LogUtil.trace("path:" + mLoginUrl);
 
-        if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
+        if (TextUtils.isEmpty(saleId) || TextUtils.isEmpty(account) ||
+                TextUtils.isEmpty(pwd)) {
             // TODO 增加对IP地址和端口为空的判断
-            //listener.loginFailed("账户名或者密码不能为空");
+            setLoginFailed("账户名或者密码不能为空");
         } else {
             RequestParams params = new RequestParams(mLoginUrl);
-            params.addQueryStringParameter("saleId", saleId);
+            // TODO 测试阶段写死
+            /*params.addQueryStringParameter("saleId", saleId);
             params.addQueryStringParameter("userName", account);
-            params.addQueryStringParameter("password", pwd);
-            LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; pwd:" + pwd);
+            params.addQueryStringParameter("password", pwd);*/
+            params.addQueryStringParameter("saleId", "贵州毕节");
+            params.addQueryStringParameter("userName", "贵州毕节");
+            params.addQueryStringParameter("password", "123456789");
+            LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
+                    "pwd:" + pwd);
 
             // TODO 从日志看出，下述回调都是在MainThread运行的
             final Callback.Cancelable post = x.http().post(params, new Callback
@@ -181,19 +226,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     LogUtil.trace("return s:" + s);
 
                     Gson gson = new Gson();
-                    LoginResponse loginResponse = gson.fromJson(s, LoginResponse.class);
+                    LoginResponse loginResponse = gson.fromJson(s,
+                            LoginResponse.class);
                     if (loginResponse != null) {
                         if ("1".equals(loginResponse.getAuthRet())) {
-                            Toast.makeText(BaqiangApplication.getContext(), "登陆成功", Toast
-                                    .LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            Toast.makeText(BaqiangApplication.getContext(),
+                                    "登录成功", Toast
+                                            .LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this,
+                                    MainActivity.class));
+
+                            startDataSync();
                         } else {
-                            Toast.makeText(BaqiangApplication.getContext(), "用户名或密码", Toast
-                                    .LENGTH_SHORT).show();
+                            Toast.makeText(BaqiangApplication.getContext(),
+                                    "用户名或密码错误，请重新登录", Toast
+                                            .LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(BaqiangApplication.getContext(), "服务器数据解析错误", Toast
-                                .LENGTH_SHORT).show();
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "服务器数据解析错误", Toast
+                                        .LENGTH_SHORT).show();
                     }
                 }
 
@@ -211,16 +263,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 public void onFinished() {
                     LogUtil.trace();
 
-                    showLoadinDialog();
-                    startDataSync();
+                    /*startActivity(new Intent(LoginActivity.this,
+                            MainActivity.class));
+                    startDataSync();*/
+
+                    closeLoadinDialog();
                 }
             });
         }
     }
 
     private void startDataSync() {
-        startService(new Intent(getApplicationContext(), DataSyncService.class));
-        bindService(new Intent(LoginActivity.this, DataSyncService.class), mServiceConnection,
+        startService(new Intent(getApplicationContext(), DataSyncService
+                .class));
+        bindService(new Intent(LoginActivity.this, DataSyncService.class),
+                mServiceConnection,
                 Service.BIND_AUTO_CREATE);
     }
 
@@ -230,7 +287,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.trace();
 
-            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder) service;
+            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder)
+                    service;
             dataSyncService = myBinder.getService();
             dataSyncService.setDataSyncNotifity(LoginActivity.this);
         }
@@ -261,37 +319,49 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    private void setConfigurateLogin(String salesService, String userName, String password) {
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_SALE_SERVICE,
+    private void setConfigurateLogin(String salesService, String userName,
+                                     String password) {
+        SharedUtil.putString(LoginActivity.this, Constant
+                        .PREFERENCE_KEY_SALE_SERVICE,
                 salesService);
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, userName);
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, password);
+        SharedUtil.putString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_USERNAME, userName);
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
+                password);
     }
 
     private void clearConfigurateLogin() {
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_SALE_SERVICE, "");
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, "");
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, "");
+        SharedUtil.putString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_SALE_SERVICE, "");
+        SharedUtil.putString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_USERNAME, "");
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
+                "");
     }
 
+    // TODO 申请读写权限
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE" };
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     public static void verifyStoragePermissions(Activity activity) {
-
         try {
             //检测是否有写的权限
             int permission = ActivityCompat.checkSelfPermission(activity,
                     "android.permission.WRITE_EXTERNAL_STORAGE");
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(activity,
+                        PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setLoginFailed(String msg) {
+        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

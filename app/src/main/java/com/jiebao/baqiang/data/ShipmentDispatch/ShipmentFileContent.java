@@ -3,10 +3,16 @@ package com.jiebao.baqiang.data.ShipmentDispatch;
 
 import com.jiebao.baqiang.util.LogUtil;
 
+import org.xutils.db.annotation.Column;
+import org.xutils.db.annotation.Table;
+
 /**
  * 封装发件功能中，待存储文件中每一个内容，文件内容编码为：gb2312
+ * <p>
+ * 同时，作为SQLite数据表存储的JavaBean
  */
 
+@Table(name = "fajian")
 public class ShipmentFileContent implements IContentChanged {
     private static final String TAG = ShipmentFileContent.class.getSimpleName();
 
@@ -37,17 +43,58 @@ public class ShipmentFileContent implements IContentChanged {
     private static final int OTHERS = 17;
 
     private static final String TYPE_SUFFIX = "02";
+
+    @Column(name = "mNextStation")
     private String mNextStation;
+
+    @Column(name = "mScanDate")
     private String mScanDate;
+
+    @Column(name = "mGoodsType")
     private String mGoodsType;
+
+    @Column(name = "mShipmentType")
     private String mShipmentType;
+
+    @Column(name = "mShipmentNumber")
     private String mShipmentNumber;
+
+    @Column(name = "mScanEmployeeNumber")
     private String mScanEmployeeNumber;
+
+    @Column(name = "mOperateDate")
     private String mOperateDate;
+
+    @Column(name = "mWeight")
     private String mWeight;
+
+    // 是否上传状态标识
+    private String mStatus;
 
     // 待写入文件的一行数据
     private String mCurrentValue;
+
+    public ShipmentFileContent() {
+
+    }
+
+    public ShipmentFileContent(String mNextStation, String mScanDate, String
+            mGoodsType, String mShipmentType, String mShipmentNumber, String
+                                       mScanEmployeeNumber, String
+                                       mOperateDate, String mWeight, String
+                                       mStatus) {
+        this.mNextStation = mNextStation;
+        this.mScanDate = mScanDate;
+        this.mGoodsType = mGoodsType;
+        this.mShipmentType = mShipmentType;
+        this.mShipmentNumber = mShipmentNumber;
+        this.mScanEmployeeNumber = mScanEmployeeNumber;
+        this.mOperateDate = mOperateDate;
+        this.mWeight = mWeight;
+        this.mStatus = mStatus;
+
+        this.mCurrentValue = releaseLineContent();
+    }
 
     public String getmCurrentValue() {
         return mCurrentValue;
@@ -117,23 +164,12 @@ public class ShipmentFileContent implements IContentChanged {
         this.mWeight = weight;
     }
 
-    public ShipmentFileContent() {
-
+    public String getmStatus() {
+        return mStatus;
     }
 
-    public ShipmentFileContent(String mNextStation, String mScanDate, String mGoodsType, String
-            mShipmentType, String mShipmentNumber, String mScanEmployeeNumber, String
-            mOperateDate, String mWeight) {
-        this.mNextStation = mNextStation;
-        this.mScanDate = mScanDate;
-        this.mGoodsType = mGoodsType;
-        this.mShipmentType = mShipmentType;
-        this.mShipmentNumber = mShipmentNumber;
-        this.mScanEmployeeNumber = mScanEmployeeNumber;
-        this.mOperateDate = mOperateDate;
-        this.mWeight = mWeight;
-
-        this.mCurrentValue = releaseLineContent();
+    public void setmStatus(String mStatus) {
+        this.mStatus = mStatus;
     }
 
     /**
@@ -147,7 +183,8 @@ public class ShipmentFileContent implements IContentChanged {
 
         // 添加网点编号
         stringBuffer.append(this.mNextStation);
-        stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mNextStation,
+                NEXT_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -162,11 +199,13 @@ public class ShipmentFileContent implements IContentChanged {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
+                SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
+                SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -287,11 +326,16 @@ public class ShipmentFileContent implements IContentChanged {
 
     @Override
     public String toString() {
-        return "ShipmentFileContent{" + "mNextStation='" + mNextStation + '\'' + ", mScanDate='"
-                + mScanDate + '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", mShipmentType='" +
-                mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", mOperateDate='" +
-                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", mCurrentValue='" +
+        return "ShipmentFileContent{" + "mNextStation='" + mNextStation +
+                '\'' + ", mScanDate='"
+                + mScanDate + '\'' + ", mGoodsType='" + mGoodsType + '\'' +
+                ", mShipmentType='" +
+                mShipmentType + '\'' + ", mShipmentNumber='" +
+                mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " +
+                "mOperateDate='" +
+                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", " +
+                "mCurrentValue='" +
                 mCurrentValue + '\'' + '}';
     }
 }

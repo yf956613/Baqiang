@@ -38,6 +38,7 @@ import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.scan.ScanListener;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.ListUtil;
+import com.jiebao.baqiang.util.LogUtil;
 
 import java.util.List;
 
@@ -415,6 +416,9 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         return null;
     }
 
+    /**
+     * 如何交互？
+     */
     public void showLoadinDialog() {
         if (mIsDestroyed) {
             return;
@@ -461,6 +465,8 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         super.onResume();
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
+            LogUtil.trace("This Device is support Scanner function...");
+
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
             ScanHelper.getInstance().setScanListener(this.getClass().getName(), scanListener,
@@ -469,6 +475,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     }
 
     private ScanListener scanListener = new ScanListener() {
+
         @Override
         public void fillCode(String barcode) {
             BaseActivity.this.fillCode(barcode);

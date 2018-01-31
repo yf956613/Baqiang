@@ -7,9 +7,7 @@
     android:orientation="horizontal"
     android:paddingTop="@dimen/padding_max"
     android:paddingBottom="@dimen/padding_max">
-    <!--
-    android:background="#40000000"
-    -->
+
     <TextView
         android:id="@+id/footerBtn0"
         android:layout_width="wrap_content"

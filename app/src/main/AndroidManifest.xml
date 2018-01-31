@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SetServerInfoActivity"></activity>
+        <activity android:name=".activity.SetServerInfoActivity"></activity>
         <activity android:name=".MainFuncsActivity"></activity>
         <activity android:name=".activity.UploadActivity"></activity>
         <activity android:name=".activity.DaojianActivity"></activity>

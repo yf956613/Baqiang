@@ -42,6 +42,7 @@ public class SharedUtil {
         SharedPreferences sharedPreferences = getDefaultSharedPreferences(context);
         return sharedPreferences.getBoolean(key,false);
     }
+
     /**
      * 从SharedPreferences中获取到存储的IP地址和端口号
      *

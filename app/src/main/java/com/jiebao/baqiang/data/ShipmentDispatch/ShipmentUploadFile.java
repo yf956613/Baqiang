@@ -68,7 +68,7 @@ public class ShipmentUploadFile implements IShipmentFileUpload {
         params.addBodyParameter("file", mFile);
         LogUtil.d(TAG, "name:"+mFile.getName());
 
-        // params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
+        params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
         params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "63");
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");

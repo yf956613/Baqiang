@@ -1,11 +1,10 @@
 package com.jiebao.baqiang.data.db;
 
-import com.jiebao.baqiang.util.AsyThreadFactory;
-import com.jiebao.baqiang.util.LogUtil;
-
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.jiebao.baqiang.util.AsyThreadFactory;
+import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.DbManager;
 import org.xutils.DbManager.DaoConfig;
@@ -25,31 +24,36 @@ public class BQDataBaseHelper {
 
     public static DaoConfig getDaoConfig() {
         if (mDaoConfig == null) {
+            LogUtil.trace("mDaoConfig is null...");
+
             mDaoConfig = new DaoConfig().setDbName("baqiang.db").setDbVersion(1)
                     .setAllowTransaction(true).setDbDir(new File("/sdcard/"))
                     .setDbUpgradeListener(new DbUpgradeListener() {
 
-                @Override
-                public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
+                        @Override
+                        public void onUpgrade(DbManager db, int oldVersion,
+                                              int newVersion) {
 
-                }
-            }).setTableCreateListener(new DbManager.TableCreateListener() {
+                        }
+                    }).setTableCreateListener(new DbManager
+                            .TableCreateListener() {
 
-                @Override
-                public void onTableCreated(DbManager dbManager, TableEntity<?> tableEntity) {
-                    LogUtil.e(TAG, "start to create table...");
-                    String name = tableEntity.getName();
-                    LogUtil.e(TAG, "name:" + name);
-                }
-            }).setDbOpenListener(new DbManager.DbOpenListener() {
+                        @Override
+                        public void onTableCreated(DbManager dbManager,
+                                                   TableEntity<?> tableEntity) {
+                            LogUtil.e(TAG, "start to create table...");
+                            String name = tableEntity.getName();
+                            LogUtil.e(TAG, "name:" + name);
+                        }
+                    }).setDbOpenListener(new DbManager.DbOpenListener() {
 
-                @Override
-                public void onDbOpened(DbManager dbManager) {
-                    LogUtil.d(TAG, "start to open database...");
-                    // 开启多线程操作 开启WAL, 对写入加速提升巨大
-                    dbManager.getDatabase().enableWriteAheadLogging();
-                }
-            });
+                        @Override
+                        public void onDbOpened(DbManager dbManager) {
+                            LogUtil.d(TAG, "start to open database...");
+                            // 开启多线程操作 开启WAL, 对写入加速提升巨大
+                            dbManager.getDatabase().enableWriteAheadLogging();
+                        }
+                    });
         }
 
         return mDaoConfig;
@@ -67,7 +71,8 @@ public class BQDataBaseHelper {
         }
     }
 
-    public static List<?> queryData(Class<?> cls, String columnName, String op, Object value)
+    public static List<?> queryData(Class<?> cls, String columnName, String
+            op, Object value)
             throws DbException {
         return getDb().selector(cls).where(columnName, op, value).findAll();
     }
