@@ -59,6 +59,7 @@ public class UpdateSalesServiceData {
         LogUtil.e(TAG, "Server salesService url: " + mSalesServiceUrl);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
+        params.addQueryStringParameter("saleId", "jiebao");
         params.addQueryStringParameter("userName", "jiebao");
         params.addQueryStringParameter("password", "jiebao");
 
@@ -66,20 +67,20 @@ public class UpdateSalesServiceData {
 
             @Override
             public void onSuccess(String saleServices) {
-                LogUtil.trace();
+                LogUtil.trace("saleServices:"+saleServices);
 
-                /*Gson gson = new Gson();
+                // TODO 数据量大，希望服务器将数据存储到.txt文档，供app端下载文件解析
+                Gson gson = new Gson();
                 SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
                 LogUtil.trace("size:" + salesServiceList.getCount());
 
-                storageData(salesServiceList);*/
+                // storageData(salesServiceList);
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace(throwable.getMessage());
-
             }
 
             @Override

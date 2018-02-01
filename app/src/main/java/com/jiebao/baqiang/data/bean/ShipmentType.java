@@ -16,19 +16,11 @@ public class ShipmentType {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name = "number")
+    @Column(name = "类型编号")
     private String 类型编号;
 
-    @Column(name = "name")
+    @Column(name = "类型名称")
     private String 类型名称;
-
-    public String get类型编号() {
-        return 类型编号;
-    }
-
-    public String get类型名称() {
-        return 类型名称;
-    }
 
     public ShipmentType() {
     }
@@ -38,4 +30,11 @@ public class ShipmentType {
         this.类型名称 = 类型名称;
     }
 
+    public String get类型编号() {
+        return 类型编号;
+    }
+
+    public String get类型名称() {
+        return 类型名称;
+    }
 }

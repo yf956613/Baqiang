@@ -63,6 +63,10 @@ public class ShipmentUploadFile implements IShipmentFileUpload {
         LogUtil.d(TAG, "Server login url: " + mUploadUrl);
 
         RequestParams params = new RequestParams(mUploadUrl);
+
+        params.addQueryStringParameter("saleId", "贵州毕节");
+        params.addQueryStringParameter("userName", "贵州毕节");
+        params.addQueryStringParameter("password", "123456789");
         // params.setMultipart(true);
         // 传输文件
         params.addBodyParameter("file", mFile);
@@ -70,7 +74,7 @@ public class ShipmentUploadFile implements IShipmentFileUpload {
 
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
-        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "63");
+        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, ""+this.mFile.length());
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");

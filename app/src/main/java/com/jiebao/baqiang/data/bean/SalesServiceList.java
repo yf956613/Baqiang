@@ -9,13 +9,13 @@ import java.util.List;
 public class SalesServiceList {
 
     // 营业网点统计个数，类型可以由String-->int
-    private int salesInfo;
+    private int salesInfoCnt;
 
     // 营业网点具体信息集合
     private List<SalesService> saleInfo;
 
     public int getCount() {
-        return salesInfo;
+        return salesInfoCnt;
     }
 
     public List<SalesService> getSalesServiceList() {

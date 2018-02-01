@@ -1,5 +1,8 @@
 package com.jiebao.baqiang.data.UpdateData;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.ShipmentType;
@@ -52,7 +55,7 @@ public class UpdateShipmentType {
                         .GOOD_TYPE_SERVLET);
 
         RequestParams params = new RequestParams(mUpdateShipmentTpyeUrl);
-
+        params.addQueryStringParameter("saleId", "jiebao");
         params.addQueryStringParameter("userName", "jiebao");
         params.addQueryStringParameter("password", "jiebao");
 
@@ -65,11 +68,11 @@ public class UpdateShipmentType {
                 Gson gson = new Gson();
                 ShipmentTypeList list = gson.fromJson(saleServices,
                         ShipmentTypeList.class);
-                LogUtil.trace("size:" + list.getGoodTypesCnt());
+                /*LogUtil.trace("size:" + list.getGoodTypesCnt());
                 for (int index = 0; index < list.getGoodTypesCnt(); index++) {
                     LogUtil.d(TAG, "-->" + list.getGoodTypeInfo().get(index)
                             .get类型名称());
-                }
+                }*/
 
                 storageData(list);
             }
@@ -94,13 +97,14 @@ public class UpdateShipmentType {
         return false;
     }
 
-    /**
-     * 保存数据到数据库
-     *
-     * @return
-     */
     private boolean storageData(final ShipmentTypeList shipmentTypeList) {
         LogUtil.trace();
+
+        if (tableIsExist("shipmenttype")) {
+            LogUtil.trace("not to update shipment type....");
+            // 如果已建立了表，则不会保存更新数据
+            return false;
+        }
 
         new Thread(new Runnable() {
 
@@ -110,8 +114,6 @@ public class UpdateShipmentType {
                 shipmentTypes = shipmentTypeList.getGoodTypeInfo();
 
                 DbManager db = BQDataBaseHelper.getDb();
-                LogUtil.trace("saleInfo.size():" + shipmentTypes.size());
-
                 for (int index = 0; index < shipmentTypes.size(); index++) {
                     try {
                         db.save(new ShipmentType(shipmentTypes.get(index)
@@ -125,6 +127,44 @@ public class UpdateShipmentType {
         }).start();
 
         return true;
+    }
+
+    /**
+     * 查询数据库文件中是否有快件类型表
+     *
+     * @return false：没有该数据表；true：存在该数据表
+     */
+    public boolean tableIsExist(String tableName) {
+        LogUtil.trace("tableName:" + tableName);
+        boolean result = false;
+
+        if (tableName == null) {
+            return false;
+        }
+
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbManager.getDatabase();
+            // 查询内置sqlite_master表，判断是否创建了对应表
+            String sql = "select count(*) from sqlite_master where type " +
+                    "='table' and name ='" +
+                    tableName.trim() + "' ";
+            cursor = db.rawQuery(sql, null);
+            if (cursor.moveToNext()) {
+                int count = cursor.getInt(0);
+                if (count > 0) {
+                    result = true;
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.trace(e.getMessage());
+            // TODO: handle exception
+        }
+
+        return result;
     }
 
 }
