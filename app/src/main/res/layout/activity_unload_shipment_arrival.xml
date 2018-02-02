@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_car_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/car_code"
+            android:textSize="25sp"/>
+
+        <!--设置最小的匹配输入次数-->
+        <AutoCompleteTextView
+            android:id="@+id/tv_car_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:completionThreshold="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_before_station"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_car_code"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/before_station"
+            android:textSize="25sp"/>
+
+        <!--设置最小的匹配输入次数-->
+        <AutoCompleteTextView
+            android:id="@+id/tv_before_station"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:completionThreshold="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shipment_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_before_station"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="运单号"
+            android:textSize="25sp"/>
+
+        <!--设置最小的匹配输入次数-->
+        <EditText
+            android:id="@+id/et_shipment_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:completionThreshold="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/listview_title"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/shipment_number"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="序号"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="单号"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="状态"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_btn_function"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_ensure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="确定"
+            android:textSize="30sp"/>
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="返回"
+            android:textSize="30sp"/>
+    </LinearLayout>
+
+    <com.jiebao.baqiang.custView.CouldDeleteListView
+        android:id="@+id/list_view_scan_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ll_btn_function"
+        android:layout_below="@id/listview_title"
+        android:transcriptMode="alwaysScroll"></com.jiebao.baqiang.custView.CouldDeleteListView>
+
+</RelativeLayout>
