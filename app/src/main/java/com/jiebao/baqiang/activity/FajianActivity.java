@@ -10,12 +10,12 @@ import android.widget.EditText;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FajianAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.dispatch.ShipmentDispatchFileName;
-import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
-import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.bean.FajianListViewBean;
 import com.jiebao.baqiang.data.bean.ShipmentType;
+import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.data.dispatch.ShipmentDispatchFileName;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
@@ -217,7 +217,6 @@ public class FajianActivity extends BaseActivity implements View
                 break;
             }
         }
-
     }
 
     /**

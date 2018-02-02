@@ -53,14 +53,14 @@ public class DataSyncService extends Service {
         LogUtil.trace();
 
         //UpdateVehicleInfo.getInstance().updateVehicleInfo();
-        //UpdateLiuCangType.getInstance().updateLiuCangType();
+
         // UpdateSalesServiceData.getInstance().updateSalesService();
 
         // TODO 更新快件类型正常
         UpdateShipmentType.getInstance().updateShipmentType();
+        // TODO 更新留仓原因正常
         UpdateLiuCangType.getInstance().updateLiuCangType();
-
-        // 更新车辆信息
+        // TODO 更新车辆信息正常
         UpdateVehicleInfo.getInstance().updateVehicleInfo();
 
         // TODO onStartCommand --> onServiceConnected 空指针异常

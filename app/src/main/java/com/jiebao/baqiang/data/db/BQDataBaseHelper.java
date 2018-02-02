@@ -100,6 +100,7 @@ public class BQDataBaseHelper {
 
         Executor executorService = AsyThreadFactory.getExecutorService();
         executorService.execute(new Runnable() {
+
             @Override
             public void run() {
                 try {

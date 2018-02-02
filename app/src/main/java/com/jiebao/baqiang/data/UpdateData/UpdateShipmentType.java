@@ -123,6 +123,8 @@ public class UpdateShipmentType extends UpdateInterface{
                         exception.printStackTrace();
                     }
                 }
+
+                LogUtil.trace("Update Shipment Type is over....");
             }
         }).start();
 

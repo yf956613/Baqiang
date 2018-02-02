@@ -3,24 +3,26 @@ package com.jiebao.baqiang.data.bean;
 /**
  * Created by open on 2018/1/23.
  */
-import com.google.gson.annotations.SerializedName;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
 /**
- * 车辆码
+ * 留仓原因
  */
-@Table(name ="liucang")
+@Table(name = "liucang")
 public class LiucangBean {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name="编号")
+    @Column(name = "编号")
     private String 编号;
 
-    @Column(name="名称")
+    @Column(name = "名称")
     private String 名称;
+
+    @Column(name = "备注")
+    private String 备注;
 
     public String get编号() {
         return 编号;
@@ -46,15 +48,12 @@ public class LiucangBean {
         this.备注 = 备注;
     }
 
-    @Column(name="备注")
-    private String 备注;
-
-
-    public LiucangBean(String number,String NAME,String REMARKS){
-        this.编号=number;
-        this.名称 =NAME;
-        this.备注=REMARKS;
+    public LiucangBean(String number, String NAME, String REMARKS) {
+        this.编号 = number;
+        this.名称 = NAME;
+        this.备注 = REMARKS;
     }
 
-    public LiucangBean(){}
+    public LiucangBean() {
+    }
 }
