@@ -123,10 +123,9 @@ public class LoginActivity extends BaseActivity implements View
                 closeSoftKeyBoard();
                 showLoadinDialog();
 
-                String salesService = mEtSalesService.getText().toString()
-                        .trim();
-                String userName = mEtUserName.getText().toString().trim();
-                String psw = mEtPassward.getText().toString().trim();
+                String salesService = "贵州毕节";
+                String userName = "贵州毕节";
+                String psw = "123456789";
                 setConfigurateLogin(salesService, userName, psw);
 
                 login(salesService, userName, psw);
@@ -263,9 +262,9 @@ public class LoginActivity extends BaseActivity implements View
                 public void onFinished() {
                     LogUtil.trace();
 
-                    /*startActivity(new Intent(LoginActivity.this,
-                            MainActivity.class));
-                    startDataSync();*/
+//                    startActivity(new Intent(LoginActivity.this,
+//                            MainActivity.class));
+                    /*startDataSync();*/
 
                     closeLoadinDialog();
                 }

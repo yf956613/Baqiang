@@ -11,46 +11,50 @@ import org.xutils.db.annotation.Table;
 /**
  * 车辆码
  */
-@Table(name ="car_code")
+@Table(name ="liucang")
 public class LiucangBean {
-    @Column(
-            name = "ID",
-            isId = true,
-            autoGen = true
-    )
+    @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @SerializedName("number")
     @Column(name="编号")
-    private String number;
+    private String 编号;
 
-    @SerializedName("NUME")
     @Column(name="名称")
-    private String NUME;
+    private String 名称;
 
-    @SerializedName("REMARKS")
+    public String get编号() {
+        return 编号;
+    }
+
+    public void set编号(String 编号) {
+        this.编号 = 编号;
+    }
+
+    public String get名称() {
+        return 名称;
+    }
+
+    public void set名称(String 名称) {
+        this.名称 = 名称;
+    }
+
+    public String get备注() {
+        return 备注;
+    }
+
+    public void set备注(String 备注) {
+        this.备注 = 备注;
+    }
+
     @Column(name="备注")
-    private String REMARKS;
-    public int get_id() {
-        return id;
-    }
-    public void set_id(int id) {
-        this.id = id;
+    private String 备注;
+
+
+    public LiucangBean(String number,String NAME,String REMARKS){
+        this.编号=number;
+        this.名称 =NAME;
+        this.备注=REMARKS;
     }
 
-    public String getNUME(){
-        return NUME;
-    }
-
-    public  void setNUME(String nume){
-        this.NUME =nume;
-    }
-
-    public String getREMARKS(){
-        return REMARKS;
-    }
-
-    public  void setREMARKS(String remarks){
-        this.REMARKS =remarks;
-    }
+    public LiucangBean(){}
 }

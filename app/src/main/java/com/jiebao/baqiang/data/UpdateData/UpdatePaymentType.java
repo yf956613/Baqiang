@@ -20,7 +20,7 @@ import java.util.List;
  * Created by yaya on 2018/1/26.
  */
 
-public class UpdatePaymentType {
+public class UpdatePaymentType extends UpdateInterface {
     private static final String TAG = UpdatePaymentType.class
             .getSimpleName();
 
@@ -49,8 +49,9 @@ public class UpdatePaymentType {
 
         RequestParams params = new RequestParams(mUpdatePaymentTypeUrl);
 
-        params.addQueryStringParameter("userName", "jiebao");
-        params.addQueryStringParameter("password", "jiebao");
+        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("userName", userName);
+        params.addQueryStringParameter("password", psw);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 

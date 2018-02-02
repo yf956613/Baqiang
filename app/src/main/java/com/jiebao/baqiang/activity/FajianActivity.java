@@ -92,8 +92,10 @@ public class FajianActivity extends BaseActivity implements View
         DbManager dbManager = x.getDb(mDaoConfig);
         try {
             List<SalesService> list = dbManager.findAll(SalesService.class);
-            for (int index = 0; index < list.size(); index++) {
-                LogUtil.trace("childInfo::" + list.get(index).get网点名称());
+            if(list!=null) {
+                for (int index = 0; index < list.size(); index++) {
+                    LogUtil.trace("childInfo::" + list.get(index).get网点名称());
+                }
             }
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
@@ -232,7 +234,7 @@ public class FajianActivity extends BaseActivity implements View
         String goodsType = "";
         // 快件类型
         String shipmentType = String.valueOf(mTvShipmentType.getText());
-        // 运单编号
+        // 运单编号fill
         String shipmentNumber = "";
         // 扫描员工编号
         String scanEmployeeNumber = "5955513";
@@ -284,7 +286,6 @@ public class FajianActivity extends BaseActivity implements View
             LogUtil.trace();
             e.printStackTrace();
         }
-
         return mData;
     }
 }

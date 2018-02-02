@@ -128,6 +128,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
         JBItemEdit jb1 = (JBItemEdit)findViewById(R.id.car_code);
         AutoCompleteTextView autoCompleteTextView1 = (AutoCompleteTextView)jb1.getRightText();
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,car_num);
+        autoCompleteTextView1.setAdapter(adapter1);
         JBItemEdit jb2 = (JBItemEdit)findViewById(R.id.before_station);
         AutoCompleteTextView autoCompleteTextView2 = (AutoCompleteTextView)jb1.getRightText();
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,before_station);

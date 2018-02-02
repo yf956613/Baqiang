@@ -10,22 +10,32 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
+import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.global.PermissionSettingManager;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 import com.zhy.m.permission.MPermissions;
 import com.zhy.m.permission.PermissionDenied;
 import com.zhy.m.permission.PermissionGrant;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
@@ -46,7 +56,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private TextView tv_check;
     private TextView tv_purin;
     private TextView tv_purout;
-
+    private String mLoginUrl = "";
+    private String salesId,userName,psw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,9 +132,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
+        salesId = SharedUtil.getString(this, Constant
+                .PREFERENCE_KEY_SALE_SERVICE);
+        userName = SharedUtil.getString(this, Constant
+                .PREFERENCE_KEY_USERNAME);
+        psw = SharedUtil.getString(this, Constant
+                .PREFERENCE_KEY_PSW);
         switch (view.getId()) {
             case R.id.scanLayout:
-                gotoUpload();
+                IfPrePay(salesId,userName,psw);
                 break;
 
             case R.id.storgeLayout:
@@ -187,6 +204,67 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
        // tv_purin.setText(CacheManager.getMainMenuAlias(ParamConstant.ALIAS_PURIN,getString(R.string.main_storge)));
         //tv_purout.setText(CacheManager.getMainMenuAlias(ParamConstant.ALIAS_PUROUT,getString(R.string.main_output)));
     }
+    public void IfPrePay(final String saleId, final String account, final String
+            pwd) {
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                        .getContext(),
+                NetworkConstant.PREPAY_STATE);
+        LogUtil.trace("path:" + mLoginUrl);
+
+        RequestParams params = new RequestParams(mLoginUrl);
+            // TODO 测试阶段写死
+            /*params.addQueryStringParameter("saleId", saleId);
+            params.addQueryStringParameter("userName", account);
+            params.addQueryStringParameter("password", pwd);*/
+            params.addQueryStringParameter("saleId", saleId);
+            params.addQueryStringParameter("userName", account);
+            params.addQueryStringParameter("password", pwd);
+            LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
+                    "pwd:" + pwd);
+
+            // TODO 从日志看出，下述回调都是在MainThread运行的
+            final Callback.Cancelable post = x.http().post(params, new Callback
+                    .CommonCallback<String>() {
+
+                @Override
+                public void onSuccess(String s) {
+                    LogUtil.trace("return s:" + s);
+
+                    Gson gson = new Gson();
+                    LoginResponse loginResponse = gson.fromJson(s,
+                            LoginResponse.class);
+                    if (loginResponse != null) {
+                        if ("1".equals(loginResponse.getAuthRet())) {
+                            gotoUpload();
+                        } else {
+                            Toast.makeText(BaqiangApplication.getContext(),
+                                    "预付款不足", Toast
+                                            .LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "预付款不足", Toast
+                                        .LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable throwable, boolean b) {
+                    LogUtil.trace("error exception: " + throwable.getMessage());
+                }
+
+                @Override
+                public void onCancelled(CancelledException e) {
+                    LogUtil.trace();
+                }
+
+                @Override
+                public void onFinished() {
+                    LogUtil.trace();
+                }
+            });
+    }
+    //验证是否有预付款
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -210,15 +288,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 case KeyEvent.KEYCODE_6:
                     //gotoSystemSet();
                     break;
-                case KeyEvent.KEYCODE_BACK:
-                    //boolean isCheck = CacheManager.getIsExitSystemCheck();
-//                    if(isCheck) {
-//                        showCheckAdmin();
-//                    }
-//                    else {
-//                        showQuizWin();
-//                    }
-                    return true;
                 default:
                     break;
             }

@@ -26,7 +26,7 @@ import java.util.List;
 快件类型
  */
 
-public class UpdateShipmentType {
+public class UpdateShipmentType extends UpdateInterface{
     private static final String TAG = UpdateShipmentType.class
             .getSimpleName();
 
@@ -55,9 +55,9 @@ public class UpdateShipmentType {
                         .GOOD_TYPE_SERVLET);
 
         RequestParams params = new RequestParams(mUpdateShipmentTpyeUrl);
-        params.addQueryStringParameter("saleId", "jiebao");
-        params.addQueryStringParameter("userName", "jiebao");
-        params.addQueryStringParameter("password", "jiebao");
+        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("userName", userName);
+        params.addQueryStringParameter("password", psw);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 

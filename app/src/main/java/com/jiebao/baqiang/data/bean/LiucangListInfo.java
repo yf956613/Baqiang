@@ -12,14 +12,14 @@ import java.util.List;
 
 public class LiucangListInfo {
 
-    private int liuCangCnt;
-    private List<LiucangBean> liuCangInfo;
+    private int storehousesCnt;
+    private List<LiucangBean> storehouseInfo;
 
     public int getLiuCangCnt() {
-        return liuCangCnt;
+        return storehousesCnt;
     }
 
     public List<LiucangBean> getLiuCangInfo() {
-        return liuCangInfo;
+        return storehouseInfo;
     }
 }

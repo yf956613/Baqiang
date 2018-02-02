@@ -29,6 +29,8 @@ public interface NetworkConstant {
     // TODO 快件类型
     String GOOD_TYPE_SERVLET = "/JBBaQiang/GoodType";
 
+    //TODO 预付款
+    String PREPAY_STATE = "/JBBaQiang/PrepayState";
     // TODO 车辆信息
     String VEHICLE_INFO_SERVLET = "/JBBaQiang/CarInfo";
 

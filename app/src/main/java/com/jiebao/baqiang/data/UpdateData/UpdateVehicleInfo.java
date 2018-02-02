@@ -5,6 +5,7 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.bean.VehicleInfoList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by yaya on 2018/1/26.
  */
 
-public class UpdateVehicleInfo {
+public class UpdateVehicleInfo extends UpdateInterface{
     private static final String TAG = UpdateVehicleInfo.class
             .getSimpleName();
 
@@ -49,8 +50,9 @@ public class UpdateVehicleInfo {
 
         RequestParams params = new RequestParams(mUpdateVehicleInfoUrl);
 
-        params.addQueryStringParameter("userName", "jiebao");
-        params.addQueryStringParameter("password", "jiebao");
+        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("userName", userName);
+        params.addQueryStringParameter("password", psw);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 

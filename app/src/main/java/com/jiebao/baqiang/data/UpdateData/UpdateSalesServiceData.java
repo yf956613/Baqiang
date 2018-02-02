@@ -25,7 +25,7 @@ import java.util.List;
  * 请求服务器的营业网点数据，并保持数据库
  */
 
-public class UpdateSalesServiceData {
+public class UpdateSalesServiceData extends UpdateInterface{
     private static final String TAG = UpdateSalesServiceData.class
             .getSimpleName();
 
@@ -59,10 +59,9 @@ public class UpdateSalesServiceData {
         LogUtil.e(TAG, "Server salesService url: " + mSalesServiceUrl);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
-        params.addQueryStringParameter("saleId", "jiebao");
-        params.addQueryStringParameter("userName", "jiebao");
-        params.addQueryStringParameter("password", "jiebao");
-
+        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("userName", userName);
+        params.addQueryStringParameter("password", psw);
         x.http().post(params, new Callback.CommonCallback<String>() {
 
             @Override

@@ -22,7 +22,7 @@ import java.util.List;
  * Created by yaya on 2018/1/26.
  */
 
-public class UpdateLiuCangType {
+public class UpdateLiuCangType extends UpdateInterface{
     private static final String TAG = UpdateLiuCangType.class
             .getSimpleName();
 
@@ -51,21 +51,23 @@ public class UpdateLiuCangType {
 
         RequestParams params = new RequestParams(mUpdateLiuCangTypeUrl);
 
-        params.addQueryStringParameter("userName", "jiebao");
-        params.addQueryStringParameter("password", "jiebao");
+        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("userName", userName);
+        params.addQueryStringParameter("password", psw);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 
             @Override
-            public void onSuccess(String saleServices) {
+            public void onSuccess(String liucang) {
                 LogUtil.trace();
 
+                LogUtil.d(TAG,"updateLiuCangType liucang:"+liucang);
                 Gson gson = new Gson();
-                LiucangListInfo list = gson.fromJson(saleServices,
+                LiucangListInfo list = gson.fromJson(liucang,
                         LiucangListInfo.class);
-                LogUtil.trace("size:" + list.getLiuCangCnt());
+                LogUtil.trace("updateLiuCangType size:" + list.getLiuCangCnt());
                 for (int index = 0; index < list.getLiuCangCnt(); index++) {
-                    LogUtil.d(TAG, "-->" + list.getLiuCangInfo().get(index).getNUME());
+                    LogUtil.d(TAG, "-->" + list.getLiuCangInfo().get(index).get名称());
                 }
 
                 storageData(list);
@@ -105,6 +107,7 @@ public class UpdateLiuCangType {
             public void run() {
                 List<LiucangBean> liucangBean;
                 liucangBean = liucangListInfo.getLiuCangInfo();
+                DbManager db = BQDataBaseHelper.getDb();
 
                // DbManager db = BQDataBaseHelper.getDb();
                 LogUtil.trace("saleInfo.size():" + liucangBean.size());
@@ -112,8 +115,9 @@ public class UpdateLiuCangType {
 //                for (int index = 0; index < liucangBean.size(); index++) {
 //                    // LogUtil.d(TAG, "index=" + index);
 //                    try {
-//                        db.save(new PaymentType(liucangBean.get(index)
-//                                .get付款方式编号(), paymentTypes.get(index).get付款方式名称()));
+////                        db.save(new LiucangBean(liucangBean.get(index)
+////                                .getNAME(),liucangBean.get(index).getREMARKS(),liucangBean.get(index).getNumber()));
+//
 //                    } catch (Exception exception) {
 //                        LogUtil.trace(exception.getMessage());
 //                        exception.printStackTrace();

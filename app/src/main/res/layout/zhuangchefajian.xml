@@ -29,19 +29,21 @@
                 android:orientation="vertical">
 
                 <com.jiebao.baqiang.view.JBItemEdit
-                    android:id="@+id/item_purchase_edit_document"
+                    android:id="@+id/car_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
+                    android:completionThreshold="1"
+                    android:enabled="true"
                     android:orientation="horizontal"
                     android:src="@drawable/icon_action_choice"
                     android:text="@string/car_code" />
 
                 <com.jiebao.baqiang.view.JBItemEdit
-                    android:id="@+id/item_purchase_edit_supplier"
+                    android:id="@+id/next_station"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
+                    android:completionThreshold="1"
+                    android:enabled="true"
                     android:orientation="horizontal"
                     android:src="@drawable/icon_action_choice"
                     android:text="@string/next_station" />
@@ -50,128 +52,69 @@
                     android:id="@+id/express_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
+                    android:completionThreshold="1"
+                    android:enabled="true"
                     android:orientation="horizontal"
                     android:src="@drawable/icon_action_choice"
                     android:text="@string/express_type" />
 
                 <com.jiebao.baqiang.view.JBItemEdit
-                    android:id="@+id/item_purchase_edit_warehouse"
+                    android:id="@+id/tracking_numb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:lth="100"
-                    android:text="@string/tracking_numb" />
+                    android:text="@string/tracking_numb"
+                    app:lth="100" />
             </LinearLayout>
 
             <!--   <include layout="@layout/include_expand_button" />-->
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical">
-
                 <LinearLayout
+                    android:id="@+id/listview_title"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_item_column"
-                    android:gravity="center_vertical"
-                    android:minHeight="10dip"
-                    android:orientation="vertical"
-                    android:paddingLeft="@dimen/margin_mid"
-                    android:paddingRight="@dimen/margin_mid">
+                    android:layout_height="30dp"
+                    android:layout_below="@id/shipment_number"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/material_title"
-                        style="@style/list_item_title_style"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:gravity="start|center_vertical"
-                        android:text="@string/kjb_data_material_list" />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/list_mode_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_item_column_bottom"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/title_material_prepare"
-                        style="@style/list_item_document_sub_style"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin_min"
-                        android:layout_marginRight="@dimen/margin_min"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:singleLine="true"
-                        android:text="@string/has_prepare_goods" />
+                        android:text="序号"
+                        android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/item_number"
-                        style="@style/list_item_document_sub_style"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin_min"
-                        android:layout_marginRight="@dimen/margin_min"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
                         android:gravity="center"
-                        android:singleLine="true"
-                        android:text="@string/count" />
+                        android:text="单号"
+                        android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/item_price"
-                        style="@style/list_item_document_sub_style"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:singleLine="true"
-                        android:text="@string/unit_price" />
+                        android:text="状态"
+                        android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/item_discount"
-                        style="@style/list_item_document_sub_style"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:singleLine="true"
-                        android:text="@string/dicount" />
-
-                    <TextView
-                        android:id="@+id/item_amount"
-                        style="@style/list_item_document_sub_style"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:singleLine="true"
-                        android:text="@string/aggregate_amount" />
                 </LinearLayout>
 
-                <!--  <android.support.v7.widget.RecyclerView
-                      android:id="@+id/purchase_storage_listview"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:background="@color/white"
-                      android:dividerHeight="1dp" />-->
-            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+    <com.jiebao.baqiang.custView.CouldDeleteListView
+        android:id="@+id/list_view_scan_data"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:transcriptMode="alwaysScroll"
+        android:layout_above="@id/ll_btn_function"
+        android:layout_below="@id/listview_title">
+    </com.jiebao.baqiang.custView.CouldDeleteListView>
 
     <LinearLayout
-        android:id="@+id/purchase_bottom_layout"
+        android:id="@+id/ll_btn_function"
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:background="@drawable/bg_item_column"
@@ -180,7 +123,7 @@
         android:padding="@dimen/margin_min">
 
         <Button
-            android:id="@+id/purchase_button_save"
+            android:id="@+id/ok_button"
             style="@style/list_item_title_style"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -190,7 +133,7 @@
             android:textAllCaps="false"/>
 
         <Button
-            android:id="@+id/purchase_button_pay"
+            android:id="@+id/cancel_button"
             style="@style/list_item_title_style"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

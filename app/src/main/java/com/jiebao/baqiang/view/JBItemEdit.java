@@ -172,7 +172,6 @@ public class JBItemEdit extends LinearLayout implements TextWatcher, View.OnFocu
             rightDisplayText.setVisibility(View.VISIBLE);
             rightInputText.setVisibility(View.GONE);
         }
-
         if (leftDrawable != null) {
             leftImg.setImageDrawable(leftDrawable);
         }
