@@ -10,9 +10,9 @@ import android.widget.EditText;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FajianAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentDispatchFileName;
-import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentFileContent;
-import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentUploadFile;
+import com.jiebao.baqiang.data.dispatch.ShipmentDispatchFileName;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
+import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.bean.FajianListViewBean;
 import com.jiebao.baqiang.data.bean.ShipmentType;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
@@ -40,7 +40,7 @@ public class FajianActivity extends BaseActivity implements View
     private ShipmentDispatchFileName mShipmentDispatchFileName;
     // 插入数据库中的一行数据
     private ShipmentFileContent mShipmentFileContent;
-    private ShipmentUploadFile mShipmentUploadFile;
+    private UploadServerFile mShipmentUploadFile;
 
     // 用于更新ListView界面数据
     private List<FajianListViewBean> mListData;
@@ -84,7 +84,7 @@ public class FajianActivity extends BaseActivity implements View
         mShipmentFileContent = getShipmentFileContent();
         LogUtil.trace("mShipmentFileContent:" + mShipmentFileContent.toString
                 ());
-        mShipmentUploadFile = new ShipmentUploadFile
+        mShipmentUploadFile = new UploadServerFile
                 (mShipmentDispatchFileName.getFileInstance());
 
 
@@ -201,7 +201,9 @@ public class FajianActivity extends BaseActivity implements View
                 try {
                     List<ShipmentFileContent> list = db.findAll
                             (ShipmentFileContent.class);
-                    LogUtil.trace("list:" + list.size());
+                    if(null != list){
+                        LogUtil.trace("list:" + list.size());
+                    }
                 } catch (DbException e) {
                     e.printStackTrace();
                 }

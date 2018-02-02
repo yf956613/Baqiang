@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-
 import com.jiebao.baqiang.data.UpdateData.UpdateShipmentType;
-
+import com.jiebao.baqiang.data.UpdateData.UpdateVehicleInfo;
 import com.jiebao.baqiang.util.LogUtil;
+
 import com.jiebao.baqiang.data.UpdateData.*;
 /**
  * Created by open on 2018/1/29.
@@ -55,8 +55,13 @@ public class DataSyncService extends Service {
         //UpdateVehicleInfo.getInstance().updateVehicleInfo();
         //UpdateLiuCangType.getInstance().updateLiuCangType();
         // UpdateSalesServiceData.getInstance().updateSalesService();
+
+        // TODO 更新快件类型正常
         UpdateShipmentType.getInstance().updateShipmentType();
         UpdateLiuCangType.getInstance().updateLiuCangType();
+
+        // 更新车辆信息
+        UpdateVehicleInfo.getInstance().updateVehicleInfo();
 
         // TODO onStartCommand --> onServiceConnected 空指针异常
         // mDataSyncNotifity.onSyncFinished(null);

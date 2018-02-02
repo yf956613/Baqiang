@@ -37,6 +37,7 @@
         <activity android:name=".activity.FajianActivity"></activity>
         <activity android:name=".activity.ZhuangcheActivity"></activity>
         <activity android:name=".activity.LiucangActivity"></activity>
+        <activity android:name=".activity.UnloadCargoArrivalActivity"></activity>
 
         <activity
             android:name="com.jiebao.baqiang.activity.MainActivity"

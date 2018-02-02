@@ -1,4 +1,4 @@
-package com.jiebao.baqiang.data.ShipmentDispatch;
+package com.jiebao.baqiang.data.dispatch;
 
 import com.jiebao.baqiang.global.FileConstant;
 import com.jiebao.baqiang.util.FileUtils;

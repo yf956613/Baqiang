@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -84,7 +83,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     public void gotoUpload() {
-       Intent intent = new Intent(this, UploadActivity.class);
+       Intent intent = new Intent(this, UnloadCargoArrivalActivity.class);
         startActivity(intent);
     }
 
@@ -261,6 +260,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 @Override
                 public void onFinished() {
                     LogUtil.trace();
+                    gotoUpload();
                 }
             });
     }

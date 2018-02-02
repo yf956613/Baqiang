@@ -1,9 +1,10 @@
-package com.jiebao.baqiang.data.ShipmentDispatch;
+package com.jiebao.baqiang.data.bean;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.jiebao.baqiang.application.BaqiangApplication;
+import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
 import com.jiebao.baqiang.util.LogUtil;
@@ -17,15 +18,17 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * 文件上传封装类，其功能包括将指定内容写到当前文件中
+ * <p>
+ * 上传服务器Servlet地址固定，UploadServerFile为全局文件上传类
  */
 
-public class ShipmentUploadFile implements IShipmentFileUpload {
-    private static final String TAG = ShipmentUploadFile.class.getSimpleName();
+public class UploadServerFile implements IShipmentFileUpload {
+    private static final String TAG = UploadServerFile.class.getSimpleName();
 
     private File mFile;
     private String mUploadUrl = "";
 
-    public ShipmentUploadFile(File file) {
+    public UploadServerFile(File file) {
         this.mFile = file;
     }
 
@@ -52,13 +55,13 @@ public class ShipmentUploadFile implements IShipmentFileUpload {
     public boolean uploadFile() {
         SharedPreferences sp = BaqiangApplication.getContext()
                 .getSharedPreferences
-                ("ServerInfo", Context.MODE_PRIVATE);
+                        ("ServerInfo", Context.MODE_PRIVATE);
         if (sp != null) {
             String ip = sp.getString("Ip", "");
             String port = sp.getString("Port", "");
             mUploadUrl = NetworkConstant.HTTP_DOMAIN + ip + ":" + port +
                     NetworkConstant
-                    .UPLOAD_SERVLET;
+                            .UPLOAD_SERVLET;
         }
         LogUtil.d(TAG, "Server login url: " + mUploadUrl);
 
@@ -70,11 +73,13 @@ public class ShipmentUploadFile implements IShipmentFileUpload {
         // params.setMultipart(true);
         // 传输文件
         params.addBodyParameter("file", mFile);
-        LogUtil.d(TAG, "name:"+mFile.getName());
+        LogUtil.d(TAG, "name:" + mFile.getName());
 
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
-        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
-        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, ""+this.mFile.length());
+        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile
+                .getName());
+        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "" + this
+                .mFile.length());
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");

@@ -1,4 +1,4 @@
-package com.jiebao.baqiang.data.ShipmentDispatch;
+package com.jiebao.baqiang.data.dispatch;
 
 
 import com.jiebao.baqiang.util.LogUtil;
@@ -69,7 +69,7 @@ public class ShipmentFileContent {
         this.mNextStation = nextStation;
     }
 
-    @Column(name = "扫描日期")
+    @Column(name = "扫描时间")
     private String mScanDate;
 
     public String getScanDate() {
@@ -171,7 +171,7 @@ public class ShipmentFileContent {
                                        mScanEmployeeNumber, String
                                        mOperateDate, String mWeight, String
                                        mStatus) {
-        this.mScannerType = "02";
+        this.mScannerType = TYPE_SUFFIX;
         this.mNextStation = mNextStation;
         this.mScanDate = mScanDate;
         this.mGoodsType = mGoodsType;

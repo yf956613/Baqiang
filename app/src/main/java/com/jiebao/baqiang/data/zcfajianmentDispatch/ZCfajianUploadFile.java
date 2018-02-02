@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.ShipmentDispatch.IShipmentFileUpload;
+import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
 import com.jiebao.baqiang.util.LogUtil;

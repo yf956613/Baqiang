@@ -12,9 +12,9 @@ public class VehicleInfo {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name = "number")
+    @Column(name = "车牌号")
     private String 车牌号;
-    @Column(name = "identify")
+    @Column(name = "车辆识别号")
     private String 车辆识别号;
 
     public VehicleInfo() {

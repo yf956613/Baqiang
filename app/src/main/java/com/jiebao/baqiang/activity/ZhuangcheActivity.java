@@ -1,10 +1,8 @@
 package com.jiebao.baqiang.activity;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -13,7 +11,6 @@ import android.widget.ListView;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FajianAdatper;
-import com.jiebao.baqiang.data.ShipmentDispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.bean.FajianListViewBean;
 import com.jiebao.baqiang.data.bean.LiucangBean;
 import com.jiebao.baqiang.data.bean.SalesService;

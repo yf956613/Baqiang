@@ -20,7 +20,7 @@ import org.xutils.x;
 import java.util.List;
 
 /**
- * Created by yaya on 2018/1/26.
+ * 更新快件类型的数据
  */
 /*
 快件类型

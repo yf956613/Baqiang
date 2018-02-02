@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LiucangBean;
 import com.jiebao.baqiang.data.bean.LiucangListInfo;
-import com.jiebao.baqiang.data.bean.PaymentType;
-import com.jiebao.baqiang.data.bean.PaymentTypeList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -22,7 +20,7 @@ import java.util.List;
  * Created by yaya on 2018/1/26.
  */
 
-public class UpdateLiuCangType extends UpdateInterface{
+public class UpdateLiuCangType extends UpdateInterface {
     private static final String TAG = UpdateLiuCangType.class
             .getSimpleName();
 

@@ -1,4 +1,4 @@
-package com.jiebao.baqiang.data.ShipmentDispatch;
+package com.jiebao.baqiang.data.dispatch;
 
 /**
  * 监听器，接收下述状态改变时，修改待写入文本的内容字段

@@ -327,4 +327,5 @@
                                           3.点击对应权限项，选择允许；\r\n
                                           4.回到快捷宝应用，重新打开当前页面即可。 </string>
 	<string name="scan_init_failure_info">扫描初始化失败，请重试!</string>
+
 </resources>
