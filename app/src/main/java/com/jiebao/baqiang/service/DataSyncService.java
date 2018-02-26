@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.jiebao.baqiang.data.UpdateData.UpdateShipmentType;
-import com.jiebao.baqiang.data.UpdateData.UpdateVehicleInfo;
+import com.jiebao.baqiang.data.updateData.UpdateShipmentType;
+import com.jiebao.baqiang.data.updateData.UpdateVehicleInfo;
 import com.jiebao.baqiang.util.LogUtil;
 
-import com.jiebao.baqiang.data.UpdateData.*;
+import com.jiebao.baqiang.data.updateData.*;
 /**
  * Created by open on 2018/1/29.
  */
@@ -52,9 +52,8 @@ public class DataSyncService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.trace();
 
-        //UpdateVehicleInfo.getInstance().updateVehicleInfo();
-
-        // UpdateSalesServiceData.getInstance().updateSalesService();
+        // TODO 更新网点数据
+        UpdateSalesServiceData.getInstance().updateSalesService();
 
         // TODO 更新快件类型正常
         UpdateShipmentType.getInstance().updateShipmentType();

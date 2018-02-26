@@ -1,4 +1,4 @@
-package com.jiebao.baqiang.data.UpdateData;
+package com.jiebao.baqiang.data.updateData;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

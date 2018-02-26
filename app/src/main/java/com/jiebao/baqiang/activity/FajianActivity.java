@@ -1,7 +1,12 @@
 package com.jiebao.baqiang.activity;
 
+import android.support.v7.widget.ListPopupWindow;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -11,6 +16,7 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FajianAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.ShipmentType;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
@@ -29,10 +35,14 @@ import java.util.List;
 import java.util.Map;
 
 public class FajianActivity extends BaseActivity implements View
-        .OnClickListener {
+        .OnClickListener, AdapterView.OnItemClickListener {
     private static final String TAG = "FajianActivity";
 
-    private AutoCompleteTextView mTvNextStation, mTvShipmentType;
+    private AutoCompleteTextView mTvShipmentType;
+
+    private EditText mTvNextStation;
+    private ListPopupWindow listPopupWindow;
+
     private Button mBtnSure, mBtnCancel;
     private CouldDeleteListView mListView;
     private EditText mEtShipmentNumber;
@@ -52,6 +62,7 @@ public class FajianActivity extends BaseActivity implements View
     private List<ShipmentType> mShipmentTypeList;
     private ArrayAdapter<String> mShipmentType;
     private HashMap<String, String> mShipmentDataTmp;
+    private List<String> mNextStationInfo;
 
     @Override
     public void initView() {
@@ -66,6 +77,64 @@ public class FajianActivity extends BaseActivity implements View
     @Override
     public void initData() {
         mTvNextStation = FajianActivity.this.findViewById(R.id.tv_next_station);
+        mTvNextStation.setInputType(InputType.TYPE_NULL);
+
+        listPopupWindow = new ListPopupWindow(FajianActivity.this);
+        mNextStationInfo = resolveNextStationData();
+        listPopupWindow.setAdapter(new ArrayAdapter(FajianActivity.this, R
+                .layout.list_item, mNextStationInfo));
+        listPopupWindow.setAnchorView(mTvNextStation);
+        listPopupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        listPopupWindow.setHeight(400);
+
+        listPopupWindow.setModal(true);
+        listPopupWindow.setOnItemClickListener(FajianActivity.this);
+        mTvNextStation.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                listPopupWindow.show();
+            }
+        });
+
+        View.OnKeyListener onKeyListener = new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(mTvNextStation.isFocused()){
+                    // 现在EditText获取了焦点
+                    LogUtil.trace("keyCode:"+keyCode+"; event:"+event.getAction());
+                    // keyCode 66 表示Enter确认键
+                    if(keyCode == 66){
+                        listPopupWindow.show();
+                    }
+                }
+
+                LogUtil.d(TAG, "press key:"+keyCode);
+
+                return false;
+            }
+        };
+
+        mTvNextStation.setOnKeyListener(onKeyListener);
+
+        // 监听EditText是否获取焦点
+        mTvNextStation.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    LogUtil.trace("hasFocus");
+
+                    // listPopupWindow.show();
+
+                } else {
+                    LogUtil.trace("no hasFocus");
+                }
+            }
+        });
+
         mTvShipmentType = FajianActivity.this.findViewById(R.id
                 .tv_shipment_type);
         mBtnSure = FajianActivity.this.findViewById(R.id.btn_ensure);
@@ -110,6 +179,12 @@ public class FajianActivity extends BaseActivity implements View
         mTvShipmentType.setAdapter(mShipmentType);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        LogUtil.trace("keyCode:"+keyCode);
+
+        return super.onKeyDown(keyCode, event);
+    }
 
     /**
      * 构造快件类型的填充数据
@@ -201,7 +276,7 @@ public class FajianActivity extends BaseActivity implements View
                 try {
                     List<ShipmentFileContent> list = db.findAll
                             (ShipmentFileContent.class);
-                    if(null != list){
+                    if (null != list) {
                         LogUtil.trace("list:" + list.size());
                     }
                 } catch (DbException e) {
@@ -288,5 +363,36 @@ public class FajianActivity extends BaseActivity implements View
             e.printStackTrace();
         }
         return mData;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+                            long id) {
+        mTvNextStation.setText(mNextStationInfo.get(position));
+        listPopupWindow.dismiss();
+    }
+
+    // 从数据库中提取下一站的网点信息
+    private List<String> resolveNextStationData() {
+        LogUtil.trace();
+
+        List<SalesService> mData = null;
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            mData = dbManager.findAll(SalesService.class);
+        } catch (DbException e) {
+            LogUtil.trace();
+            e.printStackTrace();
+        }
+
+        LogUtil.d(TAG, "mData:" + mData.size());
+
+        List<String> mArrayInfo = new ArrayList<>();
+        for (int index = 0; index < mData.size(); index++) {
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
+                    (index).get网点名称());
+        }
+
+        return mArrayInfo;
     }
 }

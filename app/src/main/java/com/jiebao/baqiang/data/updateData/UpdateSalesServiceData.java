@@ -1,5 +1,7 @@
-package com.jiebao.baqiang.data.UpdateData;
+package com.jiebao.baqiang.data.updateData;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
 import com.google.gson.Gson;
@@ -66,20 +68,24 @@ public class UpdateSalesServiceData extends UpdateInterface{
 
             @Override
             public void onSuccess(String saleServices) {
-                LogUtil.trace("saleServices:"+saleServices);
+                LogUtil.trace("saleServices: server return data"+ saleServices);
 
-                // TODO 数据量大，希望服务器将数据存储到.txt文档，供app端下载文件解析
-                Gson gson = new Gson();
+
+                // TODO 创建Gson对象时，指定时间格式
+                Gson gson = new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .create();
+
                 SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
                 LogUtil.trace("size:" + salesServiceList.getCount());
 
-                // storageData(salesServiceList);
+                storageData(salesServiceList);
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage());
+                LogUtil.trace(throwable.getMessage()+" "+throwable.getLocalizedMessage());
             }
 
             @Override
@@ -106,6 +112,12 @@ public class UpdateSalesServiceData extends UpdateInterface{
     private boolean storageData(final SalesServiceList salesServiceList) {
         LogUtil.trace();
 
+        if (tableIsExist("salesservice")) {
+            LogUtil.trace("not to update sales service....");
+            // 如果已建立了表，则不会保存更新数据
+            return false;
+        }
+
         new Thread(new Runnable() {
 
             @Override
@@ -127,7 +139,7 @@ public class UpdateSalesServiceData extends UpdateInterface{
                                 .get更新时间(), saleInfo.get(index).get类型(),
                                 saleInfo.get(index).get所属提交货中心(), saleInfo
                                 .get(index).get县());
-                        LogUtil.trace(salesService.toString());
+                        // LogUtil.trace(salesService.toString());
 
                         db.save(salesService);
                     } catch (Exception exception) {
@@ -135,6 +147,8 @@ public class UpdateSalesServiceData extends UpdateInterface{
                         exception.printStackTrace();
                     }
                 }
+
+                LogUtil.trace("sava data is over...");
             }
         }).start();
 
@@ -165,6 +179,44 @@ public class UpdateSalesServiceData extends UpdateInterface{
         SalesServiceList salesServiceList = gson.fromJson(saleServices,
                 SalesServiceList.class);
         return salesServiceList;
+    }
+
+    /**
+     * 查询数据库文件中是否有快件类型表
+     *
+     * @return false：没有该数据表；true：存在该数据表
+     */
+    public boolean tableIsExist(String tableName) {
+        LogUtil.trace("tableName:" + tableName);
+        boolean result = false;
+
+        if (tableName == null) {
+            return false;
+        }
+
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbManager.getDatabase();
+            // 查询内置sqlite_master表，判断是否创建了对应表
+            String sql = "select count(*) from sqlite_master where type " +
+                    "='table' and name ='" +
+                    tableName.trim() + "' ";
+            cursor = db.rawQuery(sql, null);
+            if (cursor.moveToNext()) {
+                int count = cursor.getInt(0);
+                if (count > 0) {
+                    result = true;
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.trace(e.getMessage());
+            // TODO: handle exception
+        }
+
+        return result;
     }
 
 }

@@ -5,6 +5,7 @@
     <string name="password">密码</string>
     <string name="login">登录</string>
     <string name="setserverinfo">设置服务器信息</string>
+    <string name="set_wifi">WIFI</string>
     <string name="ip">设置 IP</string>
     <string name="port">设置 端口</string>
     <string name="ok">确定</string>

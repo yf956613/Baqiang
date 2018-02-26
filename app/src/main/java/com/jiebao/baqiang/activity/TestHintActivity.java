@@ -6,7 +6,6 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
-
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
@@ -92,6 +90,7 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
                 if(productName.isFocused()){
                     // 现在EditText获取了焦点
                     LogUtil.trace("keyCode:"+keyCode+"; event:"+event.getAction());
+                    // keyCode 66 表示Enter确认键
                     if(keyCode == 66){
                         listPopupWindow.show();
                     }

@@ -65,4 +65,10 @@ public interface NetworkConstant {
 
     // TODO 预付款开账
 
+    // app软件更新
+    String APP_UPDATE_INFO = "/JBBaQiang/ServerInfo";
+
+    // apk下载路径
+    String APK_DOWNLOAD_URL = "/JBBaQiang/DownloadFile";
+
 }

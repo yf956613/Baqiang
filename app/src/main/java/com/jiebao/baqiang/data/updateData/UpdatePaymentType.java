@@ -1,4 +1,4 @@
-package com.jiebao.baqiang.data.UpdateData;
+package com.jiebao.baqiang.data.updateData;
 
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;

@@ -3,7 +3,7 @@ package com.jiebao.baqiang.data.bean;
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
-import java.util.Date;
+import java.sql.Date;
 
 
 /**
@@ -15,6 +15,8 @@ import java.util.Date;
  * ('16-05-2016 10:05:28', 'dd-mm-yyyy hh24:mi:ss'), '中心', null);
  *
  * Gson --> JavaBean --> 存入.db时，表中的列名必须和JavaBean字段相同
+ *
+ * app中在下一站处使用营业网点信息，包括：网点编号和网点名称
  */
 
 @Table(name = "salesservice")

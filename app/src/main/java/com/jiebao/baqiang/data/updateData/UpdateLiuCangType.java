@@ -1,12 +1,12 @@
-package com.jiebao.baqiang.data.UpdateData;
+package com.jiebao.baqiang.data.updateData;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.bean.VehicleInfo;
-import com.jiebao.baqiang.data.bean.VehicleInfoList;
+import com.jiebao.baqiang.data.bean.LiucangBean;
+import com.jiebao.baqiang.data.bean.LiucangListInfo;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -20,28 +20,24 @@ import org.xutils.x;
 import java.util.List;
 
 /**
- * 请求车辆信息表，来自数据视图：e3new.gprs_view_tab_车辆信息表
- * <p>
- * 数据包括："车牌号":"鲁BS8918","车辆识别号":"G0000150"
- * <p>
- * 与之对应的JavaBean是：VehicleInfo和VehicleInfoList
+ * 留仓原因
  */
 
-public class UpdateVehicleInfo extends UpdateInterface{
-    private static final String TAG = UpdateVehicleInfo.class
+public class UpdateLiuCangType extends UpdateInterface {
+    private static final String TAG = UpdateLiuCangType.class
             .getSimpleName();
 
-    private static String mUpdateVehicleInfoUrl = "";
-    private volatile static UpdateVehicleInfo mInstance;
+    private static String mUpdateLiuCangTypeUrl = "";
+    private volatile static UpdateLiuCangType mInstance;
 
-    private UpdateVehicleInfo() {
+    private UpdateLiuCangType() {
     }
 
-    public static UpdateVehicleInfo getInstance() {
+    public static UpdateLiuCangType getInstance() {
         if (mInstance == null) {
-            synchronized (UpdateVehicleInfo.class) {
+            synchronized (UpdateLiuCangType.class) {
                 if (mInstance == null) {
-                    mInstance = new UpdateVehicleInfo();
+                    mInstance = new UpdateLiuCangType();
                 }
             }
         }
@@ -49,13 +45,12 @@ public class UpdateVehicleInfo extends UpdateInterface{
         return mInstance;
     }
 
-    public boolean updateVehicleInfo() {
-        mUpdateVehicleInfoUrl = SharedUtil.getServletAddresFromSP
+    public boolean updateLiuCangType() {
+        mUpdateLiuCangTypeUrl = SharedUtil.getServletAddresFromSP
                 (BaqiangApplication.getContext(), NetworkConstant
-                        .VEHICLE_INFO_SERVLET);
+                        .LiuCang_TYPE);
 
-        // 记住：要在请求数据是都要带上下述3个字段参数
-        RequestParams params = new RequestParams(mUpdateVehicleInfoUrl);
+        RequestParams params = new RequestParams(mUpdateLiuCangTypeUrl);
 
         params.addQueryStringParameter("saleId",salesId);
         params.addQueryStringParameter("userName", userName);
@@ -64,18 +59,12 @@ public class UpdateVehicleInfo extends UpdateInterface{
         x.http().post(params, new Callback.CommonCallback<String>() {
 
             @Override
-            public void onSuccess(String vehicleInfo) {
+            public void onSuccess(String liucang) {
                 LogUtil.trace();
 
                 Gson gson = new Gson();
-                VehicleInfoList list = gson.fromJson(vehicleInfo,
-                        VehicleInfoList.class);
-                LogUtil.trace("size:" + list.getVehicleInfoCnt());
-                /*// TODO 模拟阶段先打印下述5个内容
-                for (int index = 0; index < 5; index++) {
-                    LogUtil.d(TAG, "-->" + list.getVehicleInfo().get(index)
-                            .get车牌号());
-                }*/
+                LiucangListInfo list = gson.fromJson(liucang,
+                        LiucangListInfo.class);
 
                 storageData(list);
             }
@@ -105,11 +94,11 @@ public class UpdateVehicleInfo extends UpdateInterface{
      *
      * @return
      */
-    private boolean storageData(final VehicleInfoList vehicleInfoList) {
+    private boolean storageData(final LiucangListInfo liucangListInfo) {
         LogUtil.trace();
 
-        if(tableIsExist("vehicleinfo")){
-            LogUtil.trace("not to update vehicle info....");
+        if (tableIsExist("liucang")) {
+            LogUtil.trace("not to update liucang reason....");
             // 如果已建立了表，则不会保存更新数据
             return false;
         }
@@ -118,23 +107,14 @@ public class UpdateVehicleInfo extends UpdateInterface{
 
             @Override
             public void run() {
-                List<VehicleInfo> vehicleInfos = null;
-                vehicleInfos = vehicleInfoList.getVehicleInfo();
-
+                List<LiucangBean> liucangBean;
+                liucangBean = liucangListInfo.getLiuCangInfo();
                 DbManager db = BQDataBaseHelper.getDb();
-                LogUtil.trace("vehicleInfos.size():" + vehicleInfos.size());
 
-                for (int index = 0; index < vehicleInfos.size(); index++) {
-                    try {
-                        db.save(new VehicleInfo(vehicleInfos.get(index)
-                                .get车牌号(), vehicleInfos.get(index).get车辆识别号()));
-                    } catch (Exception exception) {
-                        LogUtil.trace(exception.getMessage());
-                        exception.printStackTrace();
-                    }
-                }
+                LogUtil.trace("saleInfo.size():" + liucangBean.size());
+                BQDataBaseHelper.saveToDB(liucangBean);
 
-                LogUtil.trace("Update VehicleInfo is over....");
+                LogUtil.trace("Update Stay House Data is over....");
             }
         }).start();
 
@@ -142,7 +122,7 @@ public class UpdateVehicleInfo extends UpdateInterface{
     }
 
     /**
-     * 查询数据库文件中是否有车辆信息表
+     * 查询数据库文件中是否有快件类型表
      *
      * @return false：没有该数据表；true：存在该数据表
      */

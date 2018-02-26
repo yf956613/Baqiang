@@ -62,9 +62,9 @@ public class LoginActivity extends BaseActivity implements View
     public void initView() {
         LogUtil.trace();
 
-        LinearLayout footerLayout = (LinearLayout) View.inflate(this, R.layout
+        /*LinearLayout footerLayout = (LinearLayout) View.inflate(this, R.layout
                 .main_footer_layout, null);
-        setFootLayout(footerLayout);
+        setFootLayout(footerLayout);*/
 
         setContent(R.layout.activity_login);
         verifyStoragePermissions(LoginActivity.this);
@@ -79,7 +79,7 @@ public class LoginActivity extends BaseActivity implements View
         mEtPassward = LoginActivity.this.findViewById(R.id.et_passward);
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnConfigurate = LoginActivity.this.findViewById(R.id
-                .btn_ip_configurate);
+                .btn_wifi_setttings);
         mCbRememberPassword = LoginActivity.this.findViewById(R.id
                 .cv_psw_remember);
         mLLRemember = LoginActivity.this.findViewById(R.id.remember_layout);
@@ -114,18 +114,22 @@ public class LoginActivity extends BaseActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login: {
-                if (!isCheckNetworkAddressAccess()) {
+                /*if (!isCheckNetworkAddressAccess()) {
                     Toast.makeText(LoginActivity.this, "请先设置IP地址和端口！", Toast
                             .LENGTH_SHORT).show();
 
                     return;
-                }
+                }*/
                 closeSoftKeyBoard();
                 showLoadinDialog();
 
-                String salesService = "贵州毕节";
+                // TODO 测试阶段
+                /*String salesService = "贵州毕节";
                 String userName = "贵州毕节";
-                String psw = "123456789";
+                String psw = "123456789";*/
+                String salesService = mEtSalesService.getText().toString();
+                String userName = mEtUserName.getText().toString();
+                String psw = mEtPassward.getText().toString();
                 setConfigurateLogin(salesService, userName, psw);
 
                 login(salesService, userName, psw);
@@ -138,10 +142,14 @@ public class LoginActivity extends BaseActivity implements View
                         ());
                 break;
 
-            case R.id.btn_ip_configurate: {
-                Intent intent = new Intent();
+            case R.id.btn_wifi_setttings: {
+                /*Intent intent = new Intent();
                 intent.setClass(LoginActivity.this, SetServerInfoActivity
                         .class);
+                startActivity(intent);*/
+
+                Intent intent = new Intent();
+                intent.setAction("android.net.wifi.PICK_WIFI_NETWORK");
                 startActivity(intent);
 
                 break;
@@ -200,76 +208,82 @@ public class LoginActivity extends BaseActivity implements View
                 NetworkConstant.LOGIN_SERVLET);
         LogUtil.trace("path:" + mLoginUrl);
 
-        if (TextUtils.isEmpty(saleId) || TextUtils.isEmpty(account) ||
-                TextUtils.isEmpty(pwd)) {
-            // TODO 增加对IP地址和端口为空的判断
-            setLoginFailed("账户名或者密码不能为空");
-        } else {
-            RequestParams params = new RequestParams(mLoginUrl);
-            // TODO 测试阶段写死
-            /*params.addQueryStringParameter("saleId", saleId);
-            params.addQueryStringParameter("userName", account);
-            params.addQueryStringParameter("password", pwd);*/
-            params.addQueryStringParameter("saleId", "贵州毕节");
-            params.addQueryStringParameter("userName", "贵州毕节");
-            params.addQueryStringParameter("password", "123456789");
-            LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
-                    "pwd:" + pwd);
+        // TODO 管理员账号：000000 123695
+        if("000000".equals(account) && "123695".equals(pwd)){
+            LogUtil.trace("goto Administrator activity.");
 
-            // TODO 从日志看出，下述回调都是在MainThread运行的
-            final Callback.Cancelable post = x.http().post(params, new Callback
-                    .CommonCallback<String>() {
+            Intent intent = new Intent(LoginActivity.this, AdministratorSettingActivity.class);
+            LoginActivity.this.startActivity(intent);
 
-                @Override
-                public void onSuccess(String s) {
-                    LogUtil.trace("return s:" + s);
+            closeLoadinDialog();
+            return ;
+        }
 
-                    Gson gson = new Gson();
-                    LoginResponse loginResponse = gson.fromJson(s,
-                            LoginResponse.class);
-                    if (loginResponse != null) {
-                        if ("1".equals(loginResponse.getAuthRet())) {
-                            Toast.makeText(BaqiangApplication.getContext(),
-                                    "登录成功", Toast
-                                            .LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this,
-                                    MainActivity.class));
+        RequestParams params = new RequestParams(mLoginUrl);
+        // TODO 测试阶段写死
+        /*params.addQueryStringParameter("saleId", saleId);
+        params.addQueryStringParameter("userName", account);
+        params.addQueryStringParameter("password", pwd);*/
+        params.addQueryStringParameter("saleId", "贵州毕节");
+        params.addQueryStringParameter("userName", "贵州毕节");
+        params.addQueryStringParameter("password", "123456789");
+        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
+                "pwd:" + pwd);
 
-                            startDataSync();
-                        } else {
-                            Toast.makeText(BaqiangApplication.getContext(),
-                                    "用户名或密码错误，请重新登录", Toast
-                                            .LENGTH_SHORT).show();
-                        }
+        // TODO 从日志看出，下述回调都是在MainThread运行的
+        final Callback.Cancelable post = x.http().post(params, new Callback
+                .CommonCallback<String>() {
+
+            @Override
+            public void onSuccess(String s) {
+                LogUtil.trace("return s:" + s);
+
+                Gson gson = new Gson();
+                LoginResponse loginResponse = gson.fromJson(s,
+                        LoginResponse.class);
+                if (loginResponse != null) {
+                    if ("1".equals(loginResponse.getAuthRet())) {
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "登录成功", Toast
+                                        .LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this,
+                                MainActivity.class));
+
+                        startDataSync();
                     } else {
                         Toast.makeText(BaqiangApplication.getContext(),
-                                "服务器数据解析错误", Toast
+                                "用户名或密码错误，请重新登录", Toast
                                         .LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(BaqiangApplication.getContext(),
+                            "服务器数据解析错误", Toast
+                                    .LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onError(Throwable throwable, boolean b) {
-                    LogUtil.trace("error exception: " + throwable.getMessage());
-                }
+            @Override
+            public void onError(Throwable throwable, boolean b) {
+                LogUtil.trace("error exception: " + throwable.getMessage());
+            }
 
-                @Override
-                public void onCancelled(CancelledException e) {
-                    LogUtil.trace();
-                }
+            @Override
+            public void onCancelled(CancelledException e) {
+                LogUtil.trace();
+            }
 
-                @Override
-                public void onFinished() {
-                    LogUtil.trace();
+            @Override
+            public void onFinished() {
+                LogUtil.trace();
 
 //                    startActivity(new Intent(LoginActivity.this,
 //                            MainActivity.class));
                     /*startDataSync();*/
 
-                    closeLoadinDialog();
-                }
-            });
-        }
+                closeLoadinDialog();
+            }
+        });
+
     }
 
     private void startDataSync() {
