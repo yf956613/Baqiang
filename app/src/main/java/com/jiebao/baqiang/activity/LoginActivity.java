@@ -122,16 +122,13 @@ public class LoginActivity extends BaseActivity implements View
                 closeSoftKeyBoard();
                 showLoadinDialog();
 
-                // TODO 测试阶段
-                /*String salesService = "贵州毕节";
-                String userName = "贵州毕节";
-                String psw = "123456789";*/
-
                 String userName = mEtUserName.getText().toString();
                 String psw = mEtPassward.getText().toString();
                 if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(psw)) {
                     Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入",
                             Toast.LENGTH_SHORT).show();
+
+                    closeLoadinDialog();
                 } else {
                     saveConfigurateLogin(userName, psw);
                     login(userName, psw);
@@ -266,6 +263,8 @@ public class LoginActivity extends BaseActivity implements View
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace("error exception: " + throwable.getMessage());
+                Toast.makeText(LoginActivity.this, "服务器响应失败", Toast
+                        .LENGTH_SHORT).show();
             }
 
             @Override
@@ -319,7 +318,8 @@ public class LoginActivity extends BaseActivity implements View
 
     protected void showMainActivity() {
         closeLoadinDialog();
-        startActivity(new Intent(LoginActivity.this, DataCollectActivity.class));
+        startActivity(new Intent(LoginActivity.this, DataCollectActivity
+                .class));
         finish();
     }
 
@@ -383,10 +383,6 @@ public class LoginActivity extends BaseActivity implements View
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void setLoginFailed(String msg) {
-        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

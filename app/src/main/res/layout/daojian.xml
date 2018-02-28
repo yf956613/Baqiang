@@ -17,7 +17,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/before_station"
-            android:textSize="25sp"/>
+            android:textSize="18sp"/>
 
         <!--设置最小的匹配输入次数-->
         <AutoCompleteTextView
@@ -25,7 +25,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:completionThreshold="1"/>
+            android:completionThreshold="1"
+            android:dropDownHeight="300dp"
+            android:singleLine="true"/>
     </LinearLayout>
 
 
@@ -42,7 +44,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="运单号"
-            android:textSize="25sp"/>
+            android:textSize="18sp"/>
 
         <!--设置最小的匹配输入次数-->
         <EditText
@@ -69,10 +71,10 @@
             android:text="序号"
             android:textSize="20sp"/>
 
-            android:layout_weight="3"
-            android:gravity="center"
-            android:text="单号"
-            android:textSize="20sp"/>
+        android:layout_weight="3"
+        android:gravity="center"
+        android:text="单号"
+        android:textSize="20sp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -99,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="确定"
-            android:textSize="30sp"/>
+            android:textSize="20sp"/>
 
         <Button
             android:id="@+id/btn_back"
@@ -107,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="返回"
-            android:textSize="30sp"/>
+            android:textSize="20sp"/>
     </LinearLayout>
 
     <com.jiebao.baqiang.custView.CouldDeleteListView

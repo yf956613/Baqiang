@@ -28,15 +28,16 @@
                 android:layout_marginTop="5dip"
                 android:orientation="horizontal">
 
+                <!--1.录单-->
                 <LinearLayout
+                    android:id="@+id/ll_type_in"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/btn_"
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/goods_scan_selector"/>
@@ -46,14 +47,15 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_check"
+                        android:text="1.录单"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--2.收件-->
                 <LinearLayout
-                    android:id="@+id/storgeLayout"
+                    android:id="@+id/ll_receive_package"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -66,19 +68,19 @@
                         android:background="@drawable/goods_storage_selector"/>
 
                     <TextView
-                        android:id="@+id/tv_purin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_storge"
+                        android:text="2.收件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--3.到件-->
                 <LinearLayout
-                    android:id="@+id/outputLayout"
+                    android:id="@+id/ll_arrive_package"
                     android:layout_width="5dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -91,12 +93,203 @@
                         android:background="@drawable/goods_output_selector"/>
 
                     <TextView
-                        android:id="@+id/tv_purout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_output"
+                        android:text="3.到件"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@drawable/display_stand"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="5dip"
+                android:orientation="horizontal">
+
+                <!--4.发件-->
+                <LinearLayout
+                    android:id="@+id/ll_send_package"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/goods_query_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="4.发件"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <!--5.称重发件-->
+                <LinearLayout
+                    android:id="@+id/ll_weigh_send_package"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/data_import_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="5.称重发件"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <!--6.派件-->
+                <LinearLayout
+                    android:id="@+id/ll_delivery_package"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/system_set_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="6.派件"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@drawable/display_stand"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="5dip"
+                android:orientation="horizontal">
+
+                <!--7.签收-->
+                <LinearLayout
+                    android:id="@+id/ll_sign_for"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/goods_scan_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="7.签收"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <!--8.未签收-->
+                <LinearLayout
+                    android:id="@+id/ll_un_sign_for"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/goods_storage_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="8.未签收"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <!--9.快速签收-->
+                <LinearLayout
+                    android:id="@+id/ll_fast_sign_for"
+                    android:layout_width="5dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/goods_output_selector"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="9.快速签收"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
@@ -124,8 +317,9 @@
                 android:layout_marginTop="5dip"
                 android:orientation="horizontal">
 
+                <!--10.回单到件-->
                 <LinearLayout
-                    android:id="@+id/queryLayout"
+                    android:id="@+id/ll_replay_for_arrive_package"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -142,14 +336,15 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_query"
+                        android:text="10.回单到件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--11.回单发件-->
                 <LinearLayout
-                    android:id="@+id/dataImportLayout"
+                    android:id="@+id/ll_replay_for_send_package"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -162,19 +357,19 @@
                         android:background="@drawable/data_import_selector"/>
 
                     <TextView
-                        android:id="@+id/data_import"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_import"
+                        android:text="11.回单发件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--12.留仓件-->
                 <LinearLayout
-                    android:id="@+id/systemSetLayout"
+                    android:id="@+id/ll_leave_package"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -191,7 +386,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_set"
+                        android:text="12.留仓件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
@@ -219,8 +414,9 @@
                 android:layout_marginTop="5dip"
                 android:orientation="horizontal">
 
+                <!--13.装袋-->
                 <LinearLayout
-                    android:id="@+id/scanLayout"
+                    android:id="@+id/ll_bagging"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -238,14 +434,15 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_check"
+                        android:text="13.装袋"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--14.拆袋-->
                 <LinearLayout
-                    android:id="@+id/storgeLayout"
+                    android:id="@+id/ll_un_bagging"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -258,19 +455,19 @@
                         android:background="@drawable/goods_storage_selector"/>
 
                     <TextView
-                        android:id="@+id/tv_purin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_storge"
+                        android:text="14.拆袋"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
+                <!--15.托盘绑定-->
                 <LinearLayout
-                    android:id="@+id/outputLayout"
+                    android:id="@+id/ll_tray_binding"
                     android:layout_width="5dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -283,12 +480,11 @@
                         android:background="@drawable/goods_output_selector"/>
 
                     <TextView
-                        android:id="@+id/tv_purout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_output"
+                        android:text="15.托盘绑定"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
@@ -314,11 +510,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="5dip"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="3">
 
+                <!--16.托盘拆分-->
                 <LinearLayout
-                    android:id="@+id/queryLayout"
-                    android:layout_width="0dip"
+                    android:id="@+id/ll_tray_un_bagging"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
@@ -334,248 +532,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="@string/main_query"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/dataImportLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/data_import_selector"/>
-
-                    <TextView
-                        android:id="@+id/data_import"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_import"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/systemSetLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/system_set_selector"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_set"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/display_stand"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="@drawable/display_stand"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="5dip"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/scanLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/goods_scan_selector"/>
-
-                    <TextView
-                        android:id="@+id/tv_check"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_check"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/storgeLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/goods_storage_selector"/>
-
-                    <TextView
-                        android:id="@+id/tv_purin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_storge"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/outputLayout"
-                    android:layout_width="5dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/goods_output_selector"/>
-
-                    <TextView
-                        android:id="@+id/tv_purout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_output"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="@drawable/display_stand"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="5dip"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/queryLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/goods_query_selector"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_query"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/dataImportLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/data_import_selector"/>
-
-                    <TextView
-                        android:id="@+id/data_import"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_import"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/systemSetLayout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/system_set_selector"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@string/main_set"
+                        android:text="16.托盘拆分"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 

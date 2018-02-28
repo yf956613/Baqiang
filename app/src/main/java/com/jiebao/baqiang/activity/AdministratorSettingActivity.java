@@ -386,6 +386,7 @@ public class AdministratorSettingActivity extends Activity implements View
             case R.id.bussiness: {
                 LogUtil.trace("goto business settings");
 
+                // 业务预设
                 Intent intent = new Intent(AdministratorSettingActivity.this,
                         BusinessSettingsActivity.class);
                 AdministratorSettingActivity.this.startActivity(intent);

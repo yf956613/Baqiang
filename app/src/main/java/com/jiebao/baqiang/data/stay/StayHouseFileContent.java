@@ -186,7 +186,7 @@ public class StayHouseFileContent {
         stringBuffer.append(this.mScanDate);
         stringBuffer.append(countBlankAndAppend(this.mScanDate, SCAN_DATE));
 
-        // 物品类别
+        // 留仓原因
         stringBuffer.append(this.mStayReason);
         stringBuffer.append(countBlankAndAppend(this.mStayReason, STAY_REASON));
 

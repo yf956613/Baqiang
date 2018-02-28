@@ -17,18 +17,16 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/next_station"
-            android:textSize="25sp" />
+            android:textSize="18sp"/>
 
-        <!--android:focusable="true"
-        android:focusableInTouchMode="true"-->
-
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/tv_next_station"
             android:layout_width="0dp"
-            android:layout_weight="3"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="25sp" />
+            android:layout_weight="3"
+            android:dropDownHeight="300dp"
+            android:completionThreshold="1"
+            android:singleLine="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +42,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="快件类型"
-            android:textSize="25sp" />
+            android:textSize="18sp"/>
 
         <!--设置最小的匹配输入次数-->
         <AutoCompleteTextView
@@ -52,7 +50,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:completionThreshold="1" />
+            android:completionThreshold="1"
+            android:singleLine="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -68,7 +67,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/tracking_numb"
-            android:textSize="25sp" />
+            android:textSize="18sp"/>
 
         <!--设置最小的匹配输入次数-->
         <EditText
@@ -76,7 +75,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:completionThreshold="1" />
+            android:completionThreshold="1"
+            android:singleLine="true"/>
     </LinearLayout>
 
     <LinearLayout
@@ -93,7 +93,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="序号"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -101,7 +101,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="单号"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -109,7 +109,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="状态"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
     </LinearLayout>
 
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="确定"
-            android:textSize="30sp" />
+            android:textSize="20sp"/>
 
         <Button
             android:id="@+id/btn_back"
@@ -135,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="返回"
-            android:textSize="30sp" />
+            android:textSize="20sp"/>
     </LinearLayout>
 
 
@@ -143,9 +143,9 @@
         android:id="@+id/list_view_scan_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:transcriptMode="alwaysScroll"
         android:layout_above="@id/ll_btn_function"
-        android:layout_below="@id/listview_title"></com.jiebao.baqiang.custView.CouldDeleteListView>
+        android:layout_below="@id/listview_title"
+        android:transcriptMode="alwaysScroll"></com.jiebao.baqiang.custView.CouldDeleteListView>
 
 
 </RelativeLayout>

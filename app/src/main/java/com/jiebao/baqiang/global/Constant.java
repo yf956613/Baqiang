@@ -163,7 +163,7 @@ public class Constant {
     public static final String PREFERENCE_KEY_SALE_SERVICE = "sale_service";
     // 密码
     public static final String PREFERENCE_KEY_PSW = "psw";
-    // 用户名
+    // 用户名 需要注意：此处用户名不包含网点编号
     public static final String PREFERENCE_KEY_USERNAME = "username";
     // 数据库服务器地址
     public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS =

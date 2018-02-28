@@ -225,11 +225,6 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public void setHeaderCenterViewText(String centerText) {
         setHeaderCenterViewText(centerText, mHeaderCenterViewTextColor);
     }

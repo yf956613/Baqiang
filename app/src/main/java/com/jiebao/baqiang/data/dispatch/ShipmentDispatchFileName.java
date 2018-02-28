@@ -12,7 +12,8 @@ import java.io.File;
  */
 
 public class ShipmentDispatchFileName {
-    private static final String TAG = ShipmentDispatchFileName.class.getSimpleName();
+    private static final String TAG = ShipmentDispatchFileName.class
+            .getSimpleName();
 
     private static final String FILE_PREFIX = "fj";
 
@@ -49,10 +50,12 @@ public class ShipmentDispatchFileName {
      * @return
      */
     public boolean linkToTXTFile() {
-        String currentFileName = FILE_PREFIX + this.mTime + this.mNoRepeatString + FILE_SUFFIX;
-        final String fileName = FileConstant.APP_SDCARD_FILE_NAME + currentFileName;
+        String currentFileName = FILE_PREFIX + this.mTime + this
+                .mNoRepeatString + FILE_SUFFIX;
+        final String fileName = FileConstant.APP_SDCARD_FILE_NAME +
+                currentFileName;
 
-        // return FileUtils.createOrExistsFile(fileName) ? true : false;
+        // return FileUtils.createOrExistsFile(fileName) ? true : false; 创建文件
         if (FileUtils.createOrExistsFile(fileName)) {
             mCurrentFileName = fileName;
             return true;

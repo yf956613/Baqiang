@@ -7,7 +7,7 @@ import android.widget.Button;
 import com.jiebao.baqiang.R;
 
 /**
- * Created by yaya on 2018/2/27.
+ * 一级菜单界面，主要用户更新信息
  */
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {

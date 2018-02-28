@@ -1,13 +1,12 @@
 package com.jiebao.baqiang.data.bean;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
+import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -53,28 +52,14 @@ public class UploadServerFile implements IShipmentFileUpload {
     }
 
     public boolean uploadFile() {
-        SharedPreferences sp = BaqiangApplication.getContext()
-                .getSharedPreferences
-                        ("ServerInfo", Context.MODE_PRIVATE);
-        if (sp != null) {
-            String ip = sp.getString("Ip", "");
-            String port = sp.getString("Port", "");
-            mUploadUrl = NetworkConstant.HTTP_DOMAIN + ip + ":" + port +
-                    NetworkConstant
-                            .UPLOAD_SERVLET;
-        }
-        LogUtil.d(TAG, "Server login url: " + mUploadUrl);
-
+        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                .getContext(), NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
 
-        params.addQueryStringParameter("saleId", "贵州毕节");
-        params.addQueryStringParameter("userName", "贵州毕节");
-        params.addQueryStringParameter("password", "123456789");
-        // params.setMultipart(true);
-        // 传输文件
+        params.addQueryStringParameter("saleId", UpdateInterface.salesId);
+        params.addQueryStringParameter("userName", UpdateInterface.userName);
+        params.addQueryStringParameter("password", UpdateInterface.psw);
         params.addBodyParameter("file", mFile);
-        LogUtil.d(TAG, "name:" + mFile.getName());
-
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile
                 .getName());
@@ -83,8 +68,6 @@ public class UploadServerFile implements IShipmentFileUpload {
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");
-        // params.addQueryStringParameter(NetworkConstant.PKG_DATA, mFile,
-        // "multipart/form-data");
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 
