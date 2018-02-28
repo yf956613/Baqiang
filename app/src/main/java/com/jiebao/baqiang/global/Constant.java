@@ -4,12 +4,16 @@ public class Constant {
 
     public final static String CLIENT_VERSION = "1";
 
-    //public static final String UPDATE_URL_PREFIX = "http://120.76.79.124:8090/upgrade/";
-    public static final String UPDATE_URL_PREFIX = "http://www.kjb1688.com:8090/upgrade/";
-    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX + "external/checkupdate.htm";
+    //public static final String UPDATE_URL_PREFIX =
+    // "http://120.76.79.124:8090/upgrade/";
+    public static final String UPDATE_URL_PREFIX = "http://www" +
+            ".kjb1688.com:8090/upgrade/";
+    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX +
+            "external/checkupdate.htm";
 
 
-    public final static String APP_CODE = "stockbao_android";//"stockbao_android";
+    public final static String APP_CODE = "stockbao_android";
+    //"stockbao_android";
     public final static String APP_NAME = "stockbao";
     /**
      * DB目录.
@@ -146,13 +150,45 @@ public class Constant {
         return config.toString();
     }
 
-    public static final String PRERENCE_LANGUAGE_CHOICE = "multiLanguageChoiced";
+    // TODO 用户保存在SharedPreference中的数据key名称
+    public static final String PRERENCE_LANGUAGE_CHOICE =
+            "multiLanguageChoiced";
     public static final String PREFERENCE_KEY_LANGUAGE = "defaultLanguage";
     public static final String PREFERENCE_KEY_SYSTEM_ARG = "system_arg";
     public static final String PREFERENCE_KEY_DEVICE_ID = "device_id";
-    public static final String KEY_IS_REMEMBER_PSW = "is_remember_psw";
-    public static final String PREFERENCE_KEY_SALE_SERVICE = "sale_service";
-    public static final String PREFERENCE_KEY_PSW = "psw";
-    public static final String PREFERENCE_KEY_USERNAME = "username";
 
+    // 是否记住用户名和密码
+    public static final String KEY_IS_REMEMBER_PSW = "is_remember_psw";
+    // 网点编号，和员工编号相关
+    public static final String PREFERENCE_KEY_SALE_SERVICE = "sale_service";
+    // 密码
+    public static final String PREFERENCE_KEY_PSW = "psw";
+    // 用户名
+    public static final String PREFERENCE_KEY_USERNAME = "username";
+    // 数据库服务器地址
+    public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS =
+            "data_server_address";
+    // 数据库服务器端口
+    public static final String PREFERENCE_KEY_DATA_SERVER_PORT =
+            "data_server_port";
+    // 快件查询地址
+    public static final String PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS =
+            "express_address";
+    // 捷宝数据服务器地址
+    public static final String PREFERENCE_KEY_JB_SERVER =
+            "jiebao_server_address";
+    // 捷宝数据服务器端口
+    public static final String PREFERENCE_KEY_JB_SERVER_PORT =
+            "jiebao_server_port";
+    // 称重预付款设置
+    public static final String PREFERENCE_KEY_WEIGH_FORE_PAYMENT =
+            "weigh_fore_payment";
+    // 称重录单设置
+    public static final String PREFERENCE_KEY_WEIGH_INPUT_BUSINESS =
+            "weigh_input_business";
+    // 到件预付款设置
+    public static final String PREFERENCE_KEY_ARRIVAL_FORE_PAYMENT =
+            "arrival_fore_payment";
+    // 到/发件扫描判断开关
+    public static final String PREFERENCE_KEY_SCAN_SWITCH = "scan_switch";
 }

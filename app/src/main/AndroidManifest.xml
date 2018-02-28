@@ -42,6 +42,8 @@
         <activity android:name=".activity.ServerConfigActivity" />
 
 
+        <activity android:name=".activity.BusinessSettingsActivity" />
+        <activity android:name=".activity.BussinessSettingsInsideActivity"/>
         <activity android:name=".activity.SetServerInfoActivity"></activity>
         <activity android:name=".MainFuncsActivity"></activity>
         <activity android:name=".activity.UploadActivity"></activity>
@@ -50,6 +52,11 @@
         <activity android:name=".activity.ZhuangcheActivity"></activity>
         <activity android:name=".activity.LiucangActivity"></activity>
         <activity android:name=".activity.UnloadCargoArrivalActivity"></activity>
+
+        <activity
+            android:name="com.jiebao.baqiang.activity.DataCollectActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name="com.jiebao.baqiang.activity.MainActivity"

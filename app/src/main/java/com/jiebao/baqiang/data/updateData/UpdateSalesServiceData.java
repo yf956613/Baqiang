@@ -64,11 +64,13 @@ public class UpdateSalesServiceData extends UpdateInterface{
         params.addQueryStringParameter("saleId",salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
+        // params.addQueryStringParameter("exSaleId", "20029");
+
         x.http().post(params, new Callback.CommonCallback<String>() {
 
             @Override
             public void onSuccess(String saleServices) {
-                LogUtil.trace("saleServices: server return data"+ saleServices);
+                // LogUtil.trace("saleServices: server return data: "+ saleServices);
 
 
                 // TODO 创建Gson对象时，指定时间格式

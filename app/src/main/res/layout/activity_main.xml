@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity"
-    >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:weightSum="3"
+              tools:context="com.jiebao.baqiang.activity.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,86 +16,86 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@drawable/display_stand" />
+            android:background="@drawable/display_stand"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/scanLayout"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_data_collect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector" />
+                    android:background="@drawable/goods_scan_selector"/>
 
                 <TextView
                     android:id="@+id/tv_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_check"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="1.采集"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/storgeLayout"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_query"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_storage_selector" />
+                    android:background="@drawable/goods_storage_selector"/>
 
                 <TextView
                     android:id="@+id/tv_purin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_storge"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="2.查询"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/outputLayout"
                 android:layout_width="5dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_upload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_output_selector" />
+                    android:background="@drawable/goods_output_selector"/>
 
                 <TextView
                     android:id="@+id/tv_purout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_output"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="3.上传"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
@@ -106,111 +106,140 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1.2">
+        android:layout_weight="1">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@drawable/display_stand" />
+            android:background="@drawable/display_stand"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:layout_marginTop="20dip"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom">
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/queryLayout"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_phone_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_query_selector" />
+                    android:background="@drawable/goods_query_selector"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_query"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="4.电话&amp;短信"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/dataImportLayout"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_shipment_query"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/data_import_selector" />
+                    android:background="@drawable/data_import_selector"/>
 
                 <TextView
                     android:id="@+id/data_import"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_import"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="5.快件查询"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/systemSetLayout"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
+                    android:id="@+id/btn_area_query"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/system_set_selector" />
+                    android:background="@drawable/system_set_selector"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_set"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:text="6.区域查询"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
         </LinearLayout>
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="90dip"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_height="0dip"
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/deviceIdTv"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/wathet_blue"
-            android:textSize="16sp"
-            android:visibility="gone"/>
+            android:layout_gravity="bottom"
+            android:background="@drawable/display_stand"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="20dip"
+            android:weightSum="3"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/goods_query_selector"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="7.设置"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

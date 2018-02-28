@@ -27,7 +27,7 @@ public class BQDataBaseHelper {
             LogUtil.trace("mDaoConfig is null...");
 
             mDaoConfig = new DaoConfig().setDbName("baqiang.db").setDbVersion(1)
-                    .setAllowTransaction(true).setDbDir(new File("/sdcard/"))
+                    .setAllowTransaction(true).setDbDir(new File("/sdcard/bqDB/"))
                     .setDbUpgradeListener(new DbUpgradeListener() {
 
                         @Override

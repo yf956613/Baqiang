@@ -11,12 +11,9 @@ import com.jiebao.baqiang.util.SharedUtil;
 public class UpdateInterface {
 
     public static String salesId = SharedUtil.getString(BaqiangApplication
-            .getContext(), Constant
-            .PREFERENCE_KEY_SALE_SERVICE);
+            .getContext(), Constant.PREFERENCE_KEY_SALE_SERVICE);
     public static String userName = SharedUtil.getString(BaqiangApplication
-            .getContext(), Constant
-            .PREFERENCE_KEY_USERNAME);
+            .getContext(), Constant.PREFERENCE_KEY_USERNAME);
     public static String psw = SharedUtil.getString(BaqiangApplication
-            .getContext(), Constant
-            .PREFERENCE_KEY_PSW);
+            .getContext(), Constant.PREFERENCE_KEY_PSW);
 }

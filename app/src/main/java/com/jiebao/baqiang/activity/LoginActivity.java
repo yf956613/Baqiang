@@ -35,25 +35,20 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-/**
- * @author dengyuanming
- * @ClassName: LoginActivity
- * @Description:登陆activity
- * @date 2016年11月2日
- */
-
 public class LoginActivity extends BaseActivity implements View
         .OnClickListener, CompoundButton
         .OnCheckedChangeListener, DataSyncService.DataSyncNotifity {
     private static final String TAG = "LoginActivity";
 
-    private EditText mEtSalesService;
     private EditText mEtUserName;
     private EditText mEtPassward;
+
     private Button mBtnLogin;
     private Button mBtnConfigurate;
+
     private CheckBox mCbRememberPassword;
     private LinearLayout mLLRemember;
+
     private String mLoginUrl = "";
 
     private DataSyncService dataSyncService;
@@ -62,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View
     public void initView() {
         LogUtil.trace();
 
+        // TODO 登录界面底部 View
         /*LinearLayout footerLayout = (LinearLayout) View.inflate(this, R.layout
                 .main_footer_layout, null);
         setFootLayout(footerLayout);*/
@@ -74,12 +70,13 @@ public class LoginActivity extends BaseActivity implements View
     public void initData() {
         LogUtil.trace();
 
-        mEtSalesService = LoginActivity.this.findViewById(R.id.et_sale_service);
         mEtUserName = LoginActivity.this.findViewById(R.id.et_user_name);
         mEtPassward = LoginActivity.this.findViewById(R.id.et_passward);
+
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnConfigurate = LoginActivity.this.findViewById(R.id
                 .btn_wifi_setttings);
+
         mCbRememberPassword = LoginActivity.this.findViewById(R.id
                 .cv_psw_remember);
         mLLRemember = LoginActivity.this.findViewById(R.id.remember_layout);
@@ -88,25 +85,33 @@ public class LoginActivity extends BaseActivity implements View
         mBtnConfigurate.setOnClickListener(this);
         mCbRememberPassword.setOnCheckedChangeListener(this);
         mLLRemember.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         boolean isRememberPsw = SharedUtil.getBoolean(this, Constant
                 .KEY_IS_REMEMBER_PSW);
+        LogUtil.e(TAG, "initData:" + isRememberPsw);
         if (isRememberPsw) {
+            // 之前用户选择保存数据，回显数据
             mCbRememberPassword.setChecked(isRememberPsw);
-            String salesService = SharedUtil.getString(LoginActivity.this,
-                    Constant
-                            .PREFERENCE_KEY_SALE_SERVICE);
+
             String userName = SharedUtil.getString(this, Constant
                     .PREFERENCE_KEY_USERNAME);
             String psw = SharedUtil.getString(this, Constant
                     .PREFERENCE_KEY_PSW);
-            mEtSalesService.setText(salesService);
+
+            // 显示数据
             mEtUserName.setText(userName);
             mEtPassward.setText(psw);
 
-            LogUtil.e(TAG, "salesService:" + salesService + "; userName:" +
-                    userName + "; psw:" +
-                    psw);
+            LogUtil.d(TAG, "userName:" + userName + "; psw:" + psw);
+        } else {
+            // 手动清除EditText内容
+            mEtUserName.setText("");
+            mEtPassward.setText("");
         }
     }
 
@@ -114,12 +119,6 @@ public class LoginActivity extends BaseActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login: {
-                /*if (!isCheckNetworkAddressAccess()) {
-                    Toast.makeText(LoginActivity.this, "请先设置IP地址和端口！", Toast
-                            .LENGTH_SHORT).show();
-
-                    return;
-                }*/
                 closeSoftKeyBoard();
                 showLoadinDialog();
 
@@ -127,13 +126,16 @@ public class LoginActivity extends BaseActivity implements View
                 /*String salesService = "贵州毕节";
                 String userName = "贵州毕节";
                 String psw = "123456789";*/
-                String salesService = mEtSalesService.getText().toString();
+
                 String userName = mEtUserName.getText().toString();
                 String psw = mEtPassward.getText().toString();
-                setConfigurateLogin(salesService, userName, psw);
-
-                login(salesService, userName, psw);
-
+                if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(psw)) {
+                    Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    saveConfigurateLogin(userName, psw);
+                    login(userName, psw);
+                }
                 break;
             }
 
@@ -143,18 +145,12 @@ public class LoginActivity extends BaseActivity implements View
                 break;
 
             case R.id.btn_wifi_setttings: {
-                /*Intent intent = new Intent();
-                intent.setClass(LoginActivity.this, SetServerInfoActivity
-                        .class);
-                startActivity(intent);*/
-
                 Intent intent = new Intent();
                 intent.setAction("android.net.wifi.PICK_WIFI_NETWORK");
                 startActivity(intent);
 
                 break;
             }
-
         }
     }
 
@@ -191,44 +187,49 @@ public class LoginActivity extends BaseActivity implements View
 
         switch (buttonView.getId()) {
             case R.id.cv_psw_remember:
+                // 保存是否记住用户名和密码标识
                 SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
                         isChecked);
-
                 if (!isChecked) {
-                    clearConfigurateLogin();
+                    // clearConfigurateLogin();
                 }
                 break;
         }
     }
 
-    public void login(final String saleId, final String account, final String
+    public void login(final String account, final String
             pwd) {
+        // TODO 管理员账号：000000 123695
+        if ("000000".equals(account) && "123695".equals(pwd)) {
+            LogUtil.trace("goto Administrator activity.");
+
+            Intent intent = new Intent(LoginActivity.this,
+                    AdministratorSettingActivity.class);
+            LoginActivity.this.startActivity(intent);
+
+            closeLoadinDialog();
+            return;
+        }
+
         mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
                         .getContext(),
                 NetworkConstant.LOGIN_SERVLET);
         LogUtil.trace("path:" + mLoginUrl);
-
-        // TODO 管理员账号：000000 123695
-        if("000000".equals(account) && "123695".equals(pwd)){
-            LogUtil.trace("goto Administrator activity.");
-
-            Intent intent = new Intent(LoginActivity.this, AdministratorSettingActivity.class);
-            LoginActivity.this.startActivity(intent);
-
-            closeLoadinDialog();
-            return ;
+        if (TextUtils.isEmpty(mLoginUrl)) {
+            Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast
+                    .LENGTH_SHORT).show();
+            return;
         }
 
         RequestParams params = new RequestParams(mLoginUrl);
-        // TODO 测试阶段写死
-        /*params.addQueryStringParameter("saleId", saleId);
-        params.addQueryStringParameter("userName", account);
-        params.addQueryStringParameter("password", pwd);*/
-        params.addQueryStringParameter("saleId", "贵州毕节");
-        params.addQueryStringParameter("userName", "贵州毕节");
-        params.addQueryStringParameter("password", "123456789");
-        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
-                "pwd:" + pwd);
+        params.addQueryStringParameter("saleId", SharedUtil.getString
+                (LoginActivity.this, Constant.PREFERENCE_KEY_SALE_SERVICE));
+        params.addQueryStringParameter("userName", SharedUtil.getString
+                (LoginActivity.this, Constant.PREFERENCE_KEY_SALE_SERVICE) +
+                SharedUtil.getString(LoginActivity.this, Constant
+                        .PREFERENCE_KEY_USERNAME));
+        params.addQueryStringParameter("password", SharedUtil.getString
+                (LoginActivity.this, Constant.PREFERENCE_KEY_PSW));
 
         // TODO 从日志看出，下述回调都是在MainThread运行的
         final Callback.Cancelable post = x.http().post(params, new Callback
@@ -277,7 +278,7 @@ public class LoginActivity extends BaseActivity implements View
                 LogUtil.trace();
 
 //                    startActivity(new Intent(LoginActivity.this,
-//                            MainActivity.class));
+//                            DataCollectActivity.class));
                     /*startDataSync();*/
 
                 closeLoadinDialog();
@@ -318,7 +319,7 @@ public class LoginActivity extends BaseActivity implements View
 
     protected void showMainActivity() {
         closeLoadinDialog();
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(LoginActivity.this, DataCollectActivity.class));
         finish();
     }
 
@@ -332,11 +333,22 @@ public class LoginActivity extends BaseActivity implements View
         }
     }
 
-    private void setConfigurateLogin(String salesService, String userName,
-                                     String password) {
-        SharedUtil.putString(LoginActivity.this, Constant
-                        .PREFERENCE_KEY_SALE_SERVICE,
-                salesService);
+    /**
+     * 保存用户名和密码
+     *
+     * @param userName
+     * @param password
+     */
+    private void saveConfigurateLogin(String userName,
+                                      String password) {
+        // 保存是否记住用户名和密码标识
+        if (mCbRememberPassword.isChecked()) {
+            SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
+                    true);
+        } else {
+            SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
+                    false);
+        }
         SharedUtil.putString(LoginActivity.this, Constant
                 .PREFERENCE_KEY_USERNAME, userName);
         SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,

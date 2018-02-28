@@ -251,13 +251,13 @@ public class LogUtil {
 	}
 
 	// TODO for this style: I/BLUETOOTH_PHONE.TRACE( 1996):
-	// [main(1)][MainActivity.onCreate], output thread name, Class name, function name
+	// [main(1)][DataCollectActivity.onCreate], output thread name, Class name, function name
 	public static final int trace() {
 		return println(ERROR, TRACE_TAG, getTraceLog());
 	}
 
 	// TODO for this style: I/BLUETOOTH_PHONE.TRACE( 1996):
-	// [main(1)][MainActivity.onCreate]MainActivity, get more information
+	// [main(1)][DataCollectActivity.onCreate]DataCollectActivity, get more information
 	public static final int trace(String msg) {
 		return println(ERROR, TRACE_TAG, getTraceLog() + msg);
 	}

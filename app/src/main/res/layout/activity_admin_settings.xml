@@ -101,7 +101,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/bussiness"
+
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -109,6 +109,7 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/bussiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/goods_scan_selector"/>
@@ -118,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="3.业务设置"
+                    android:text="4.业务设置"
                     android:textColor="@color/white"
                     android:textSize="13sp"/>
 
@@ -182,7 +183,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/wipe_data"
+
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -190,6 +191,7 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/wipe_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/goods_scan_selector"/>
@@ -230,7 +232,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/wifi_settings"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -238,6 +239,7 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/wifi_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/goods_scan_selector"/>

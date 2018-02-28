@@ -328,4 +328,6 @@
                                           4.回到快捷宝应用，重新打开当前页面即可。 </string>
 	<string name="scan_init_failure_info">扫描初始化失败，请重试!</string>
 
+	<string name="filter_vcode">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+	<string name="filter_vcode_number">0123456789</string>
 </resources>

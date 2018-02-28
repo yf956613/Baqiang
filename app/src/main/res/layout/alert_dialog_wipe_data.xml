@@ -10,28 +10,24 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="设置巴枪编号"/>
+        android:text="巴枪清空"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:weightSum="6"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:gravity="center"
             android:textSize="15sp"
-            android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="巴枪编号："/>
+            android:text="该操作将清空本巴枪数据\n请输入密码："/>
 
         <EditText
             android:id="@+id/et_content"
-            android:layout_width="0dp"
-            android:layout_weight="4"
-            android:singleLine="true"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 

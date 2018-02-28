@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.service.DownLoadApkFileService;
 import com.jiebao.baqiang.util.LogUtil;
@@ -28,6 +30,8 @@ import com.jiebao.baqiang.util.SharedUtil;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
+
+import java.io.File;
 
 /**
  * Created by yaya on 2018/2/26.
@@ -39,10 +43,13 @@ public class AdministratorSettingActivity extends Activity implements View
             .getSimpleName();
 
     private LinearLayout mLlServer;
-    private Button mServerID;
-    private Button mDeviceID;
+    private Button mBtnServerID;
+    private Button mBtnDeviceID;
     private Button mBtnAppUpdate;
-    private Button mServerConfig;
+    private Button mBtnServerConfig;
+    private Button mBtnWifiSetting;
+    private Button mBtnSwipeData;
+    private Button mBtnBussinessSettings;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,22 +62,37 @@ public class AdministratorSettingActivity extends Activity implements View
 
     private void initData() {
         // 服务器设置
-        mServerConfig = findViewById(R.id.server_config);
-        mServerConfig.setOnClickListener(this);
+        mBtnServerConfig = findViewById(R.id.server_config);
+        mBtnServerConfig.setOnClickListener(this);
 
         // 网点编号
-        mServerID = findViewById(R.id.server_id);
-        mServerID.setOnClickListener(this);
+        mBtnServerID = findViewById(R.id.server_id);
+        mBtnServerID.setOnClickListener(this);
 
         // 巴枪编号
-        mDeviceID = findViewById(R.id.device_id);
-        mDeviceID.setOnClickListener(this);
+        mBtnDeviceID = findViewById(R.id.device_id);
+        mBtnDeviceID.setOnClickListener(this);
+
+        // 业务设置
+        mBtnBussinessSettings = findViewById(R.id.bussiness);
+        mBtnBussinessSettings.setOnClickListener(this);
+
+        // 巴枪清空
+        mBtnSwipeData = findViewById(R.id.wipe_data);
+        mBtnSwipeData.setOnClickListener(this);
+
+        // WIFI 设置
+        mBtnWifiSetting = findViewById(R.id.wifi_settings);
+        mBtnWifiSetting.setOnClickListener(this);
 
         // 软件更新
         mBtnAppUpdate = findViewById(R.id.app_update);
         mBtnAppUpdate.setOnClickListener(this);
     }
 
+    /**
+     * 网点编号设置，限制：只能输入数字和英文字母
+     */
     private void showAlertDialogForServerID() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setView(LayoutInflater.from(this).inflate(R.layout
@@ -82,7 +104,7 @@ public class AdministratorSettingActivity extends Activity implements View
         final EditText etContent = (EditText) dialog.findViewById(R.id
                 .et_content);
         etContent.setText(SharedUtil.getString(AdministratorSettingActivity
-                .this, "server_id"));
+                .this, Constant.PREFERENCE_KEY_SALE_SERVICE));
 
         btnPositive.setOnClickListener(new View.OnClickListener() {
 
@@ -94,9 +116,9 @@ public class AdministratorSettingActivity extends Activity implements View
                 } else {
                     dialog.dismiss();
 
-                    // 保存网点编号
                     SharedUtil.putString(AdministratorSettingActivity.this,
-                            "server_id", etContent.getText().toString());
+                            Constant.PREFERENCE_KEY_SALE_SERVICE, etContent
+                                    .getText().toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString
                             (AdministratorSettingActivity.this, "server_id"));*/
                     Toast.makeText(AdministratorSettingActivity.this,
@@ -261,10 +283,80 @@ public class AdministratorSettingActivity extends Activity implements View
         return Integer.parseInt(versionCode.replace(".apk", ""));
     }
 
+    private void showDialogForWipeData() {
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setView(LayoutInflater.from(this).inflate(R.layout
+                .alert_dialog_wipe_data, null));
+        dialog.show();
+        dialog.getWindow().setContentView(R.layout.alert_dialog_wipe_data);
+        Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
+        Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
+        final EditText etContent = (EditText) dialog.findViewById(R.id
+                .et_content);
+
+        btnPositive.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                String str = etContent.getText().toString();
+                if (isNullEmptyBlank(str)) {
+                    etContent.setError("密码不能为空");
+                } else {
+                    if ("888888".equals(str)) {
+                        // 清空数据密码为：888888，执行清空数据操作
+                        wipeAppData();
+                    } else {
+                        // 密码错误
+                        Toast.makeText(AdministratorSettingActivity.this,
+                                "密码错误", Toast.LENGTH_SHORT).show();
+                    }
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        btnNegative.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * 删除sdcard存储的文件，包括：bqDB目录、BaQiang目录、bqapk目录
+     */
+    private void wipeAppData() {
+        File rootFile = new File(Environment.getExternalStorageDirectory()
+                .getPath());
+        LogUtil.trace("path:" + rootFile.getAbsolutePath());
+
+        // 删除目录
+        deleteFile(new File(rootFile.getPath() + "/bqapk"));
+        deleteFile(new File(rootFile.getPath() + "/BaQiang"));
+        deleteFile(new File(rootFile.getPath() + "/bqDB"));
+    }
+
+    private void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File f = files[i];
+                deleteFile(f);
+            }
+            // 注释这行：保留文件夹，只删除文件
+            file.delete();
+        } else if (file.exists()) {
+            file.delete();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
+            // TODO 服务器设置
             case R.id.server_config: {
                 LogUtil.trace();
 
@@ -277,6 +369,7 @@ public class AdministratorSettingActivity extends Activity implements View
 
             case R.id.server_id: {
                 LogUtil.trace("goto server id");
+                // TODO 网点编号
                 showAlertDialogForServerID();
 
                 break;
@@ -284,12 +377,43 @@ public class AdministratorSettingActivity extends Activity implements View
 
             case R.id.device_id: {
                 LogUtil.trace("goto device id");
+                // TODO 巴枪编号
                 showAlertDialogForDeviceID();
 
                 break;
             }
 
+            case R.id.bussiness: {
+                LogUtil.trace("goto business settings");
+
+                Intent intent = new Intent(AdministratorSettingActivity.this,
+                        BusinessSettingsActivity.class);
+                AdministratorSettingActivity.this.startActivity(intent);
+
+                break;
+            }
+
+            case R.id.wipe_data: {
+                // 巴枪清空
+                LogUtil.trace("goto wipe data");
+                showDialogForWipeData();
+
+                break;
+            }
+
+            case R.id.wifi_settings: {
+                LogUtil.trace("goto wifi settings");
+
+                // TODO WIFI设置
+                Intent intent = new Intent();
+                intent.setAction("android.net.wifi.PICK_WIFI_NETWORK");
+                startActivity(intent);
+
+                break;
+            }
+
             case R.id.app_update: {
+                // 软件更新
                 LogUtil.trace("goto app update");
                 showAlertDialogForAppUpdate();
 
