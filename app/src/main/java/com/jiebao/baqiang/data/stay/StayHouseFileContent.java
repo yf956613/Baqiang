@@ -192,6 +192,7 @@ public class StayHouseFileContent {
 
         // 快件类型
         stringBuffer.append(this.mShipmentType);
+        stringBuffer.append(countBlankAndAppend(this.mShipmentType, SHIPMENT_TYPE));
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
@@ -250,5 +251,20 @@ public class StayHouseFileContent {
         }
 
         return sb;
+    }
+
+    @Override
+    public String toString() {
+        return "StayHouseFileContent{" +
+                "mScannerType='" + mScannerType + '\'' +
+                ", mSerialNumber='" + mSerialNumber + '\'' +
+                ", mScanDate='" + mScanDate + '\'' +
+                ", mStayReason='" + mStayReason + '\'' +
+                ", mShipmentType='" + mShipmentType + '\'' +
+                ", mShipmentNumber='" + mShipmentNumber + '\'' +
+                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
+                ", mOperateDate='" + mOperateDate + '\'' +
+                ", mStatus='" + mStatus + '\'' +
+                '}';
     }
 }

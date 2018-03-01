@@ -239,6 +239,7 @@ public class DaojianActivity extends BaseActivity implements View
             case R.id.btn_back: {
                 LogUtil.trace();
                 mUploadServerFile.uploadFile();
+                DaojianActivity.this.finish();
 
                 break;
             }

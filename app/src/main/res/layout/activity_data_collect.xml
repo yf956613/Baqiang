@@ -28,9 +28,9 @@
                 android:layout_marginTop="5dip"
                 android:orientation="horizontal">
 
-                <!--1.录单-->
+                <!--1.装车发件-->
                 <LinearLayout
-                    android:id="@+id/ll_type_in"
+                    android:id="@+id/ll_load_send"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -47,15 +47,15 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="1.录单"
+                        android:text="1.装车发件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 
                 </LinearLayout>
 
-                <!--2.收件-->
+                <!--2.卸车到件-->
                 <LinearLayout
-                    android:id="@+id/ll_receive_package"
+                    android:id="@+id/ll_unload_receive_package"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="2.收件"
+                        android:text="2.卸车到件"
                         android:textColor="@color/white"
                         android:textSize="13sp"/>
 

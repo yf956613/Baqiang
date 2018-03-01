@@ -344,6 +344,7 @@ public class FajianActivity extends BaseActivity implements View
             case R.id.btn_back: {
                 LogUtil.trace();
                 mShipmentUploadFile.uploadFile();
+                FajianActivity.this.finish();
 
                 break;
             }

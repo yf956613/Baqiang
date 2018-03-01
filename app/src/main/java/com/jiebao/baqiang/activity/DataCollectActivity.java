@@ -42,16 +42,16 @@ public class DataCollectActivity extends BaseActivity implements View
 
     private BroadcastReceiver mLanguageSetReceiver;
     private String mLoginUrl = "";
-    private LinearLayout mLlReceivePackage;
     private LinearLayout mLlSendPackage;
     private LinearLayout mLlArrivePackage;
     private LinearLayout mLlLeavePackage;
+    private LinearLayout mLlUnloadReceivePackage;
+    private LinearLayout mLlLoadSend;
 
     public void initView() {
         initLanguageSetBroadCast();
 
         setHeaderCenterViewText("采集功能项");
-
         LogUtil.d("DataCollectActivity", "onCreate");
 
         if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication
@@ -68,19 +68,24 @@ public class DataCollectActivity extends BaseActivity implements View
 
     @Override
     public void initData() {
-        // 收件
-        mLlReceivePackage = DataCollectActivity.this.findViewById(R.id
-                .ll_receive_package);
+        // 装车发件
+        mLlLoadSend = DataCollectActivity.this.findViewById(R.id.ll_load_send);
+        mLlLoadSend.setOnClickListener(this);
 
-        // 发件
-        mLlSendPackage = DataCollectActivity.this.findViewById(R.id
-                .ll_send_package);
-        mLlSendPackage.setOnClickListener(this);
+        // 卸车到件
+        mLlUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
+                .ll_unload_receive_package);
+        mLlUnloadReceivePackage.setOnClickListener(this);
 
         // 到件
         mLlArrivePackage = DataCollectActivity.this.findViewById(R.id
                 .ll_arrive_package);
         mLlArrivePackage.setOnClickListener(this);
+
+        // 发件
+        mLlSendPackage = DataCollectActivity.this.findViewById(R.id
+                .ll_send_package);
+        mLlSendPackage.setOnClickListener(this);
 
         // 留仓
         mLlLeavePackage = DataCollectActivity.this.findViewById(R.id
@@ -110,6 +115,18 @@ public class DataCollectActivity extends BaseActivity implements View
     public void onClick(View view) {
 
         switch (view.getId()) {
+            // 装车发件
+            case R.id.ll_load_send:{
+
+                break;
+            }
+
+            // 卸车到件
+            case R.id.ll_unload_receive_package:{
+
+                break;
+            }
+            
             // 发件
             case R.id.ll_send_package: {
                 fajian();
@@ -295,7 +312,7 @@ public class DataCollectActivity extends BaseActivity implements View
     }
 
     /**
-     * 装车
+     * 装车发件
      */
     public void gotoZhuangche() {
         Intent intent = new Intent(this, ZhuangcheActivity.class);

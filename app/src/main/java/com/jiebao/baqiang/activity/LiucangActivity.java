@@ -109,7 +109,7 @@ public class LiucangActivity extends BaseActivity implements View
 
         mStayHouseFileName = new StayHouseFileName();
         boolean isAllSuccess = mStayHouseFileName.linkToTXTFile();
-        LogUtil.e(TAG, "isAllSuccess:" + isAllSuccess);
+        LogUtil.e(TAG, "isAllSccess:" + isAllSuccess);
 
         mStayHouseFileContent = getStayHouseFileContent();
         LogUtil.trace("mStayHouseFileContent:" + mStayHouseFileContent.toString
@@ -197,12 +197,16 @@ public class LiucangActivity extends BaseActivity implements View
                 } catch (DbException e) {
                     e.printStackTrace();
                 }
+
+                LiucangActivity.this.finish();
+
                 break;
             }
 
             case R.id.btn_back: {
                 LogUtil.trace();
                 mUploadServerFile.uploadFile();
+                LiucangActivity.this.finish();
 
                 break;
             }
