@@ -14,6 +14,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -29,9 +30,20 @@ import java.util.List;
 public class UpdateShipmentType extends UpdateInterface{
     private static final String TAG = UpdateShipmentType.class
             .getSimpleName();
+    private static final String DB_NAME = "shipmenttype";
 
     private static String mUpdateShipmentTpyeUrl = "";
     private volatile static UpdateShipmentType mInstance;
+
+    private DataDownloadFinish mDataDownloadFinish;
+
+    public interface DataDownloadFinish {
+        void downloadShipmentTypeFinish();
+    }
+
+    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
+        this.mDataDownloadFinish = dataDownloadFinish;
+    }
 
     private UpdateShipmentType() {
     }
@@ -63,17 +75,9 @@ public class UpdateShipmentType extends UpdateInterface{
 
             @Override
             public void onSuccess(String saleServices) {
-                LogUtil.trace();
-
                 Gson gson = new Gson();
                 ShipmentTypeList list = gson.fromJson(saleServices,
                         ShipmentTypeList.class);
-                /*LogUtil.trace("size:" + list.getGoodTypesCnt());
-                for (int index = 0; index < list.getGoodTypesCnt(); index++) {
-                    LogUtil.d(TAG, "-->" + list.getGoodTypeInfo().get(index)
-                            .get类型名称());
-                }*/
-
                 storageData(list);
             }
 
@@ -100,33 +104,31 @@ public class UpdateShipmentType extends UpdateInterface{
     private boolean storageData(final ShipmentTypeList shipmentTypeList) {
         LogUtil.trace();
 
-        if (tableIsExist("shipmenttype")) {
-            LogUtil.trace("not to update shipment type....");
-            // 如果已建立了表，则不会保存更新数据
-            return false;
+        DbManager db = BQDataBaseHelper.getDb();
+
+        if (tableIsExist(DB_NAME)) {
+            // 删除已有Table文件
+            try {
+                db.delete(ShipmentType.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         }
 
-        new Thread(new Runnable() {
+        List<ShipmentType> shipmentTypes;
+        shipmentTypes = shipmentTypeList.getGoodTypeInfo();
 
-            @Override
-            public void run() {
-                List<ShipmentType> shipmentTypes;
-                shipmentTypes = shipmentTypeList.getGoodTypeInfo();
-
-                DbManager db = BQDataBaseHelper.getDb();
-                for (int index = 0; index < shipmentTypes.size(); index++) {
-                    try {
-                        db.save(new ShipmentType(shipmentTypes.get(index)
-                                .get类型编号(), shipmentTypes.get(index).get类型名称
-                                ()));
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                }
-
-                LogUtil.trace("Update Shipment Type is over....");
+        for (int index = 0; index < shipmentTypes.size(); index++) {
+            try {
+                db.save(new ShipmentType(shipmentTypes.get(index)
+                        .get类型编号(), shipmentTypes.get(index).get类型名称
+                        ()));
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
-        }).start();
+        }
+        LogUtil.trace("Update Shipment Type is over....");
+        mDataDownloadFinish.downloadShipmentTypeFinish();
 
         return true;
     }

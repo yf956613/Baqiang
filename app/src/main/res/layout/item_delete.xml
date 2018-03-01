@@ -11,11 +11,10 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="15dp"
-        android:background="@drawable/logo"
+
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:singleLine="true"
         android:text="删除"
-        android:textColor="#ffffff"
-        />
+        android:textColor="#ff0000"/>
 </LinearLayout>

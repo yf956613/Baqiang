@@ -124,33 +124,34 @@ public class CouldDeleteListView extends ListView {
         // 如果是从右到左的滑动才响应
         if (isSliding) {
             switch (action) {
-                case MotionEvent.ACTION_MOVE:
+                case MotionEvent.ACTION_MOVE: {
 
                     int[] location = new int[2];
-                    // 获得当前item的位置x与y
-                    mCurrentView.getLocationOnScreen(location);
-                    /*// 设置popupWindow的动画
-                    mPopupWindow.setAnimationStyle(R.style
-                            .popwindow_delete_btn_anim_style);*/
-                    mPopupWindow.update();
-                    mPopupWindow.showAtLocation(mCurrentView, Gravity.LEFT |
-                                    Gravity.TOP,
-                            location[0] + mCurrentView.getWidth(),
-                            location[1] + mCurrentView.getHeight() / 2
-                                    - mPopupWindowHeight / 2);
-                    // 设置删除按钮的回调
-                    mDelBtn.setOnClickListener(new OnClickListener() {
+                    if (mCurrentView != null) {
+                        // 获得当前item的位置x与y
+                        mCurrentView.getLocationOnScreen(location);
+                        mPopupWindow.update();
+                        mPopupWindow.showAtLocation(mCurrentView, Gravity.LEFT |
+                                        Gravity.TOP,
+                                location[0] + mCurrentView.getWidth(),
+                                location[1] + mCurrentView.getHeight() / 2
+                                        - mPopupWindowHeight / 2);
+                        // 设置删除按钮的回调
+                        mDelBtn.setOnClickListener(new OnClickListener() {
 
-                        @Override
-                        public void onClick(View v) {
-                            if (mListener != null) {
-                                mListener.clickHappend(mCurrentViewPos);
-                                mPopupWindow.dismiss();
+                            @Override
+                            public void onClick(View v) {
+                                if (mListener != null) {
+                                    mListener.clickHappend(mCurrentViewPos);
+                                    mPopupWindow.dismiss();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
 
                     break;
+                }
+
                 case MotionEvent.ACTION_UP:
                     isSliding = false;
 
@@ -172,7 +173,7 @@ public class CouldDeleteListView extends ListView {
         mListener = listener;
     }
 
-    interface DelButtonClickListener {
+    public interface DelButtonClickListener {
         void clickHappend(int position);
     }
 }

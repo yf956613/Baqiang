@@ -1,5 +1,7 @@
 package com.jiebao.baqiang.activity;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FajianAdatper;
@@ -26,6 +29,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
+import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FajianActivity extends BaseActivity implements View
-        .OnClickListener {
+        .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "FajianActivity";
 
     private AutoCompleteTextView mTvShipmentType;
@@ -151,6 +155,7 @@ public class FajianActivity extends BaseActivity implements View
 
         mListView = FajianActivity.this.findViewById(R.id.list_view_scan_data);
         mListView.setAdapter(mFajianAdapter);
+        mListView.setDelButtonClickListener(FajianActivity.this);
 
         mEtShipmentNumber = FajianActivity.this.findViewById(R.id
                 .et_shipment_number);
@@ -303,32 +308,102 @@ public class FajianActivity extends BaseActivity implements View
     @Override
     protected void fillCode(String barcode) {
         super.fillCode(barcode);
-        // 执行一次扫描操作
-        LogUtil.trace("barcode:" + barcode);
 
-        // 填充运单号控件
-        mEtShipmentNumber.setText(barcode);
+        // 1. 查表：当前是名为fajian的表，判断是否有记录
+        if (isExistCurrentBarcode(barcode)) {
+            // 若有记录则提示重复；若没有，继续执行
+            Toast.makeText(FajianActivity.this, "运单号已存在", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
 
-        // 更新ListView的数据
-        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
-        mFajianListViewBean.setId(++mScanCount);
-        mFajianListViewBean.setScannerData(barcode);
-        mFajianListViewBean.setStatus("未上传");
-        // 刷新ListView数据
-        mListData.add(mFajianListViewBean);
-        mFajianAdapter.notifyDataSetChanged();
-
+        // 2. 插入到数据库中
         mShipmentFileContent.setScanDate(TextStringUtil
                 .getFormatTimeString());
         mShipmentFileContent.setShipmentNumber(barcode);
         mShipmentFileContent.setOperateDate(TextStringUtil.getFormatTime());
-
-        // 扫描数据插入数据库
         insertDataToDatabase(mShipmentFileContent);
 
-        // 创建写入文本的字符串，并写入文本
+        // 3. 填充EditText控件
+        mEtShipmentNumber.setText(barcode);
+
+        // 4. 更新ListView的数据
+        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
+        // TODO 一旦删除记录，则及时更新ID值
+        mFajianListViewBean.setId(++mScanCount);
+        mFajianListViewBean.setScannerData(barcode);
+        mFajianListViewBean.setStatus("未上传");
+
+        mListData.add(mFajianListViewBean);
+        mFajianAdapter.notifyDataSetChanged();
+
+        // TODO 保留，待以后使用
+        /*// 创建写入文本的字符串，并写入文本
         String content = mShipmentFileContent.getmCurrentValue() + "\r\n";
-        mShipmentUploadFile.writeContentToFile(content, true);
+        mShipmentUploadFile.writeContentToFile(content, true);*/
+    }
+
+    private static final String DB_NAME = "fajian";
+
+    private boolean isExistCurrentBarcode(String barcode) {
+        if (tableIsExist(DB_NAME)) {
+            // 存在保存发件数据的表，从该表中查询对应的单号
+
+            DbManager dbManager = BQDataBaseHelper.getDb();
+            try {
+                // 查询数据库，是否有记录
+                List<ShipmentFileContent> bean = dbManager.selector
+                        (ShipmentFileContent.class).where("运单编号",
+                        "like", barcode).limit(1).findAll();
+                LogUtil.trace("bean:" + bean.size());
+
+                if (bean != null && bean.size() != 0) {
+                    return true;
+                }
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 查询数据库文件中是否有车辆信息表
+     *
+     * @return false：没有该数据表；true：存在该数据表
+     */
+    public boolean tableIsExist(String tableName) {
+        LogUtil.trace("tableName:" + tableName);
+        boolean result = false;
+
+        if (tableName == null) {
+            return false;
+        }
+
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbManager.getDatabase();
+            // 查询内置sqlite_master表，判断是否创建了对应表
+            String sql = "select count(*) from sqlite_master where type " +
+                    "='table' and name ='" +
+                    tableName.trim() + "' ";
+            cursor = db.rawQuery(sql, null);
+            if (cursor.moveToNext()) {
+                int count = cursor.getInt(0);
+                if (count > 0) {
+                    result = true;
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.trace(e.getMessage());
+            // TODO: handle exception
+        }
+
+        return result;
     }
 
 
@@ -412,4 +487,62 @@ public class FajianActivity extends BaseActivity implements View
         return shipmentTypeID;
     }
 
+    @Override
+    public void clickHappend(int position) {
+        // 删除按键
+        LogUtil.trace("position:" + position);
+
+        // 1. 找到当前position的运单号
+        LogUtil.d(TAG, "待删除的内容:" + mListData.get(position).getScannerData());
+
+        // 2. 删除数据库中对应的记录
+        deleteFindedBean(mListData.get(position).getScannerData());
+
+        // 3. 重新从数据库中查出所有记录,更新ListView
+        reQueryDataForListView();
+    }
+
+    /**
+     * 点击删除按键后，删除对应的数据项
+     *
+     * @param barcode
+     */
+    private void deleteFindedBean(final String barcode) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            db.delete(ShipmentFileContent.class, WhereBuilder.b("运单编号",
+                    "like", barcode));
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void reQueryDataForListView() {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ShipmentFileContent> data = db.findAll(ShipmentFileContent
+                    .class);
+            // 清除数据
+            mListData.clear();
+
+            int count = 0;
+            for (int index = 0; index < data.size(); index++) {
+                FajianListViewBean fajianListViewBean = new
+                        FajianListViewBean();
+                // TODO 一旦删除记录，则及时更新ID值
+                fajianListViewBean.setId(++count);
+                fajianListViewBean.setScannerData(data.get(index)
+                        .getShipmentNumber());
+                fajianListViewBean.setStatus("未上传");
+                mListData.add(fajianListViewBean);
+            }
+
+            mFajianAdapter.notifyDataSetChanged();
+            // 更新全局ID
+            mScanCount = count;
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
 }

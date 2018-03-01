@@ -14,6 +14,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -26,9 +27,20 @@ import java.util.List;
 public class UpdateLiuCangType extends UpdateInterface {
     private static final String TAG = UpdateLiuCangType.class
             .getSimpleName();
+    private static final String DB_NAME = "liucang";
 
     private static String mUpdateLiuCangTypeUrl = "";
     private volatile static UpdateLiuCangType mInstance;
+
+    private DataDownloadFinish mDataDownloadFinish;
+
+    public interface DataDownloadFinish {
+        void downloadLiuCangTypeFinish();
+    }
+
+    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
+        this.mDataDownloadFinish = dataDownloadFinish;
+    }
 
     private UpdateLiuCangType() {
     }
@@ -60,8 +72,6 @@ public class UpdateLiuCangType extends UpdateInterface {
 
             @Override
             public void onSuccess(String liucang) {
-                LogUtil.trace();
-
                 Gson gson = new Gson();
                 LiucangListInfo list = gson.fromJson(liucang,
                         LiucangListInfo.class);
@@ -97,27 +107,22 @@ public class UpdateLiuCangType extends UpdateInterface {
     private boolean storageData(final LiucangListInfo liucangListInfo) {
         LogUtil.trace();
 
-        if (tableIsExist("liucang")) {
-            LogUtil.trace("not to update liucang reason....");
-            // 如果已建立了表，则不会保存更新数据
-            return false;
+        DbManager db = BQDataBaseHelper.getDb();
+        if (tableIsExist(DB_NAME)) {
+            // 删除已有Table文件
+            try {
+                db.delete(LiucangBean.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         }
 
-        new Thread(new Runnable() {
+        List<LiucangBean> liucangBean;
+        liucangBean = liucangListInfo.getLiuCangInfo();
+        BQDataBaseHelper.saveToDB(liucangBean);
 
-            @Override
-            public void run() {
-                List<LiucangBean> liucangBean;
-                liucangBean = liucangListInfo.getLiuCangInfo();
-                DbManager db = BQDataBaseHelper.getDb();
-
-                LogUtil.trace("saleInfo.size():" + liucangBean.size());
-                BQDataBaseHelper.saveToDB(liucangBean);
-
-                LogUtil.trace("Update Stay House Data is over....");
-            }
-        }).start();
-
+        LogUtil.trace("Update LiucangBean Type is over....");
+        mDataDownloadFinish.downloadLiuCangTypeFinish();
         return true;
     }
 

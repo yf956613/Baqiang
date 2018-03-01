@@ -17,6 +17,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -27,12 +28,19 @@ import java.util.List;
  * 请求服务器的营业网点数据，并保持数据库
  */
 
-public class UpdateSalesServiceData extends UpdateInterface{
+public class UpdateSalesServiceData extends UpdateInterface {
     private static final String TAG = UpdateSalesServiceData.class
             .getSimpleName();
+    private static final String DB_NAME = "salesservice";
 
     private static String mSalesServiceUrl = "";
     private volatile static UpdateSalesServiceData mInstance;
+
+    private DataDownloadFinish mDataDownloadFinish;
+
+    public interface DataDownloadFinish {
+        void downloadSalesServiceFinish();
+    }
 
     private UpdateSalesServiceData() {
     }
@@ -49,45 +57,37 @@ public class UpdateSalesServiceData extends UpdateInterface{
         return mInstance;
     }
 
-    /**
-     * 请求后台数据
-     *
-     * @return
-     */
+    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
+        this.mDataDownloadFinish = dataDownloadFinish;
+    }
+
     public boolean updateSalesService() {
         mSalesServiceUrl = SharedUtil.getServletAddresFromSP
                 (BaqiangApplication.getContext(), NetworkConstant
                         .NEXT_SALES_SERVICE_SERVLET);
-        LogUtil.e(TAG, "Server salesService url: " + mSalesServiceUrl);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
-        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
-        // params.addQueryStringParameter("exSaleId", "20029");
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 
             @Override
             public void onSuccess(String saleServices) {
-                // LogUtil.trace("saleServices: server return data: "+ saleServices);
-
-
                 // TODO 创建Gson对象时，指定时间格式
                 Gson gson = new GsonBuilder()
                         .setDateFormat("yyyy-MM-dd HH:mm:ss")
                         .create();
-
                 SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
-                LogUtil.trace("size:" + salesServiceList.getCount());
-
                 storageData(salesServiceList);
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage()+" "+throwable.getLocalizedMessage());
+                LogUtil.trace(throwable.getMessage() + " " + throwable
+                        .getLocalizedMessage());
             }
 
             @Override
@@ -101,8 +101,6 @@ public class UpdateSalesServiceData extends UpdateInterface{
             }
         });
 
-        // storageData(testResolveData(testServiceBackContent()));
-
         return false;
     }
 
@@ -113,46 +111,41 @@ public class UpdateSalesServiceData extends UpdateInterface{
      */
     private boolean storageData(final SalesServiceList salesServiceList) {
         LogUtil.trace();
+        DbManager db = BQDataBaseHelper.getDb();
 
-        if (tableIsExist("salesservice")) {
-            LogUtil.trace("not to update sales service....");
-            // 如果已建立了表，则不会保存更新数据
-            return false;
+        // 清空已有表数据
+        if (tableIsExist(DB_NAME)) {
+            // 删除已有Table文件
+            try {
+                db.delete(SalesService.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         }
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                List<SalesService> saleInfo;
-                saleInfo = salesServiceList.getSalesServiceList();
-
-                DbManager db = BQDataBaseHelper.getDb();
-                for (int index = 0; index < saleInfo.size(); index++) {
-                    try {
-                        SalesService salesService = new SalesService(saleInfo
-                                .get(index).get网点编号(), saleInfo.get(index)
-                                .get网点名称(), saleInfo.get(index).get所属网点(),
-                                saleInfo.get(index).get所属财务中心(), saleInfo.get
-                                (index).get启用标识(), saleInfo.get(index)
-                                .get允许到付(), saleInfo.get(index).get城市(),
-                                saleInfo.get(index).get省份(), saleInfo.get
-                                (index).get更新状态(), saleInfo.get(index)
-                                .get更新时间(), saleInfo.get(index).get类型(),
-                                saleInfo.get(index).get所属提交货中心(), saleInfo
-                                .get(index).get县());
-                        // LogUtil.trace(salesService.toString());
-
-                        db.save(salesService);
-                    } catch (Exception exception) {
-                        LogUtil.trace(exception.getMessage());
-                        exception.printStackTrace();
-                    }
-                }
-
-                LogUtil.trace("sava data is over...");
+        List<SalesService> saleInfo;
+        saleInfo = salesServiceList.getSalesServiceList();
+        for (int index = 0; index < saleInfo.size(); index++) {
+            try {
+                SalesService salesService = new SalesService(saleInfo
+                        .get(index).get网点编号(), saleInfo.get(index)
+                        .get网点名称(), saleInfo.get(index).get所属网点(),
+                        saleInfo.get(index).get所属财务中心(), saleInfo.get
+                        (index).get启用标识(), saleInfo.get(index)
+                        .get允许到付(), saleInfo.get(index).get城市(),
+                        saleInfo.get(index).get省份(), saleInfo.get
+                        (index).get更新状态(), saleInfo.get(index)
+                        .get更新时间(), saleInfo.get(index).get类型(),
+                        saleInfo.get(index).get所属提交货中心(), saleInfo
+                        .get(index).get县());
+                db.save(salesService);
+            } catch (Exception exception) {
+                LogUtil.trace(exception.getMessage());
+                exception.printStackTrace();
             }
-        }).start();
+        }
+        LogUtil.trace("sava data is over...");
+        mDataDownloadFinish.downloadSalesServiceFinish();
 
         return true;
     }

@@ -14,6 +14,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -30,9 +31,20 @@ import java.util.List;
 public class UpdateVehicleInfo extends UpdateInterface{
     private static final String TAG = UpdateVehicleInfo.class
             .getSimpleName();
+    private static final String DB_NAME = "vehicleinfo";
 
     private static String mUpdateVehicleInfoUrl = "";
     private volatile static UpdateVehicleInfo mInstance;
+
+    private DataDownloadFinish mDataDownloadFinish;
+
+    public interface DataDownloadFinish {
+        void downloadVehicleInfoFinish();
+    }
+
+    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
+        this.mDataDownloadFinish = dataDownloadFinish;
+    }
 
     private UpdateVehicleInfo() {
     }
@@ -45,7 +57,6 @@ public class UpdateVehicleInfo extends UpdateInterface{
                 }
             }
         }
-
         return mInstance;
     }
 
@@ -70,13 +81,6 @@ public class UpdateVehicleInfo extends UpdateInterface{
                 Gson gson = new Gson();
                 VehicleInfoList list = gson.fromJson(vehicleInfo,
                         VehicleInfoList.class);
-                LogUtil.trace("size:" + list.getVehicleInfoCnt());
-                /*// TODO 模拟阶段先打印下述5个内容
-                for (int index = 0; index < 5; index++) {
-                    LogUtil.d(TAG, "-->" + list.getVehicleInfo().get(index)
-                            .get车牌号());
-                }*/
-
                 storageData(list);
             }
 
@@ -107,36 +111,31 @@ public class UpdateVehicleInfo extends UpdateInterface{
      */
     private boolean storageData(final VehicleInfoList vehicleInfoList) {
         LogUtil.trace();
+        DbManager db = BQDataBaseHelper.getDb();
 
-        if(tableIsExist("vehicleinfo")){
-            LogUtil.trace("not to update vehicle info....");
+        if(tableIsExist(DB_NAME)){
             // 如果已建立了表，则不会保存更新数据
-            return false;
+            try {
+                db.delete(VehicleInfo.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
         }
 
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                List<VehicleInfo> vehicleInfos = null;
-                vehicleInfos = vehicleInfoList.getVehicleInfo();
-
-                DbManager db = BQDataBaseHelper.getDb();
-                LogUtil.trace("vehicleInfos.size():" + vehicleInfos.size());
-
-                for (int index = 0; index < vehicleInfos.size(); index++) {
-                    try {
-                        db.save(new VehicleInfo(vehicleInfos.get(index)
-                                .get车牌号(), vehicleInfos.get(index).get车辆识别号()));
-                    } catch (Exception exception) {
-                        LogUtil.trace(exception.getMessage());
-                        exception.printStackTrace();
-                    }
-                }
-
-                LogUtil.trace("Update VehicleInfo is over....");
+        List<VehicleInfo> vehicleInfos = null;
+        vehicleInfos = vehicleInfoList.getVehicleInfo();
+        for (int index = 0; index < vehicleInfos.size(); index++) {
+            try {
+                db.save(new VehicleInfo(vehicleInfos.get(index)
+                        .get车牌号(), vehicleInfos.get(index).get车辆识别号()));
+            } catch (Exception exception) {
+                LogUtil.trace(exception.getMessage());
+                exception.printStackTrace();
             }
-        }).start();
+        }
+
+        LogUtil.trace("Update VehicleInfo Type is over....");
+        mDataDownloadFinish.downloadVehicleInfoFinish();
 
         return true;
     }

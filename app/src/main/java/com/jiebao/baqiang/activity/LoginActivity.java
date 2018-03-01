@@ -1,14 +1,9 @@
 package com.jiebao.baqiang.activity;
 
 import android.app.Activity;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,10 +21,8 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
-import com.jiebao.baqiang.service.DataSyncService;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
-import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -37,7 +30,7 @@ import org.xutils.x;
 
 public class LoginActivity extends BaseActivity implements View
         .OnClickListener, CompoundButton
-        .OnCheckedChangeListener, DataSyncService.DataSyncNotifity {
+        .OnCheckedChangeListener {
     private static final String TAG = "LoginActivity";
 
     private EditText mEtUserName;
@@ -50,8 +43,6 @@ public class LoginActivity extends BaseActivity implements View
     private LinearLayout mLLRemember;
 
     private String mLoginUrl = "";
-
-    private DataSyncService dataSyncService;
 
     @Override
     public void initView() {
@@ -157,25 +148,17 @@ public class LoginActivity extends BaseActivity implements View
      * @return true 表示可供使用；false 表示不能使用
      */
     private boolean isCheckNetworkAddressAccess() {
-        SharedPreferences sp = BaqiangApplication
-                .getContext().getSharedPreferences("ServerInfo", Context
-                        .MODE_PRIVATE);
-        if (sp != null) {
-            String ip = sp.getString("Ip", "");
-            String port = sp.getString("Port", "");
-            LogUtil.trace("ip:" + ip + "; port:" + port);
+        String dataServerAddress = SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_DATA_SERVER_ADDRESS);
+        String dataServerPort = SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_DATA_SERVER_PORT);
 
-            if (TextUtils.isEmpty(ip) || TextUtils.isEmpty(port)) {
-                LogUtil.d(TAG, "set ip or port is null...");
-                return false;
-            } else if (!TextStringUtil.isIpAddressAvailable(ip) ||
-                    !TextStringUtil.isPortCheckAvailable(port)) {
-                return false;
-            }
-            return true;
-        } else {
+        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty
+                (dataServerPort)) {
             return false;
         }
+
+        return true;
     }
 
     @Override
@@ -188,7 +171,7 @@ public class LoginActivity extends BaseActivity implements View
                 SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
                         isChecked);
                 if (!isChecked) {
-                    // clearConfigurateLogin();
+
                 }
                 break;
         }
@@ -206,6 +189,15 @@ public class LoginActivity extends BaseActivity implements View
 
             closeLoadinDialog();
             return;
+        }
+
+        // 验证IP和端口
+        if(!isCheckNetworkAddressAccess()){
+            Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置",
+                    Toast.LENGTH_SHORT).show();
+
+            closeLoadinDialog();
+            return ;
         }
 
         mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
@@ -246,8 +238,6 @@ public class LoginActivity extends BaseActivity implements View
                                         .LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this,
                                 MainActivity.class));
-
-                        startDataSync();
                     } else {
                         Toast.makeText(BaqiangApplication.getContext(),
                                 "用户名或密码错误，请重新登录", Toast
@@ -275,52 +265,10 @@ public class LoginActivity extends BaseActivity implements View
             @Override
             public void onFinished() {
                 LogUtil.trace();
-
-//                    startActivity(new Intent(LoginActivity.this,
-//                            DataCollectActivity.class));
-                    /*startDataSync();*/
-
                 closeLoadinDialog();
             }
         });
 
-    }
-
-    private void startDataSync() {
-        startService(new Intent(getApplicationContext(), DataSyncService
-                .class));
-        bindService(new Intent(LoginActivity.this, DataSyncService.class),
-                mServiceConnection,
-                Service.BIND_AUTO_CREATE);
-    }
-
-    ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LogUtil.trace();
-
-            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder)
-                    service;
-            dataSyncService = myBinder.getService();
-            dataSyncService.setDataSyncNotifity(LoginActivity.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            LogUtil.trace();
-        }
-    };
-
-    public void onSyncFinished(Exception e) {
-        showMainActivity();
-    }
-
-    protected void showMainActivity() {
-        closeLoadinDialog();
-        startActivity(new Intent(LoginActivity.this, DataCollectActivity
-                .class));
-        finish();
     }
 
     public void closeSoftKeyBoard() {
@@ -353,15 +301,6 @@ public class LoginActivity extends BaseActivity implements View
                 .PREFERENCE_KEY_USERNAME, userName);
         SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
                 password);
-    }
-
-    private void clearConfigurateLogin() {
-        SharedUtil.putString(LoginActivity.this, Constant
-                .PREFERENCE_KEY_SALE_SERVICE, "");
-        SharedUtil.putString(LoginActivity.this, Constant
-                .PREFERENCE_KEY_USERNAME, "");
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
-                "");
     }
 
     // TODO 申请读写权限
