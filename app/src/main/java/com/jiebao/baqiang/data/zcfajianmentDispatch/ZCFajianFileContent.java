@@ -41,7 +41,7 @@ public class ZCFajianFileContent {
     private static final int WEIGHT = 7;
     // 空格
     private static final int BLANK_SPACE1 = 2;
-    //车辆识别码-
+    //车辆识别码
     private static final int IDENTFY_NUMBER = 15;
     // 其他空格
     private static final int OTHERS = 18;

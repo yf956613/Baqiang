@@ -231,7 +231,6 @@ public class LiucangActivity extends BaseActivity implements View
                 .getFormatTimeString());
         mStayHouseFileContent.setShipmentType("");
         mStayHouseFileContent.setShipmentNumber(barcode);
-        mStayHouseFileContent.setScanEmployeeNumber("8511801");
         mStayHouseFileContent.setOperateDate(TextStringUtil.getFormatTime());
 
         LogUtil.trace(mStayHouseFileContent.toString());

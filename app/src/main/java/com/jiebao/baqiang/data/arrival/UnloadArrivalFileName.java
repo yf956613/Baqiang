@@ -10,7 +10,7 @@ import java.io.File;
 /**
  * 封装卸车到件功能中 待上传文件名
  * <p>
- * 文件名参考：卸车说明文档，具体为：dc + yyyyMMddHHmmss + 序号保证文件名不重复 + .txt
+ * 文件名参考：卸车说明文档，具体为：xc + yyyyMMddHHmmss + 序号保证文件名不重复 + .txt
  */
 
 public class UnloadArrivalFileName {

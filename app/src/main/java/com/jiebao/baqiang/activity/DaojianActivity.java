@@ -44,7 +44,7 @@ public class DaojianActivity extends BaseActivity implements View
 
     // 上一站网点信息
     private List<String> mPreviousStationInfo;
-    // 下一站快速提示数据适配器
+    // 上一站快速提示数据适配器
     private ArrayAdapter<String> mPreviousStationAdapter;
 
     // 待上传文件名
@@ -120,7 +120,7 @@ public class DaojianActivity extends BaseActivity implements View
 
     private void prepareDataForView() {
         // 准备上一站网点数据
-        mPreviousStationInfo = resolveNextStationData();
+        mPreviousStationInfo = resolvePreviousStationData();
         mPreviousStationAdapter = new ArrayAdapter<>(DaojianActivity.this, R
                 .layout
                 .list_item, mPreviousStationInfo);
@@ -179,7 +179,7 @@ public class DaojianActivity extends BaseActivity implements View
     /**
      * 解析上一站网点信息
      */
-    private List<String> resolveNextStationData() {
+    private List<String> resolvePreviousStationData() {
         LogUtil.trace();
 
         Boolean isOpen = SharedUtil.getBoolean(DaojianActivity.this, Constant

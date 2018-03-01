@@ -117,16 +117,16 @@ public class DataCollectActivity extends BaseActivity implements View
         switch (view.getId()) {
             // 装车发件
             case R.id.ll_load_send:{
-
+                gotoZhuangche();
                 break;
             }
 
             // 卸车到件
             case R.id.ll_unload_receive_package:{
-
+                gotoUpload();
                 break;
             }
-            
+
             // 发件
             case R.id.ll_send_package: {
                 fajian();

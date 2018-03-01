@@ -65,10 +65,7 @@ public class ZCfajianUploadFile  implements IShipmentFileUpload {
 
         RequestParams params = new RequestParams(mUploadUrl);
 
-        params.addQueryStringParameter("saleId", "贵州毕节");
-        params.addQueryStringParameter("userName", "贵州毕节");
-        params.addQueryStringParameter("password", "123456789");
-        // params.setMultipart(true);
+
         // 传输文件
         params.addBodyParameter("file", mFile);
         LogUtil.d(TAG, "name:"+mFile.getName());
@@ -79,8 +76,6 @@ public class ZCfajianUploadFile  implements IShipmentFileUpload {
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");
-        // params.addQueryStringParameter(NetworkConstant.PKG_DATA, mFile,
-        // "multipart/form-data");
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 

@@ -20,7 +20,9 @@ import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.dispatch.ShipmentDispatchFileName;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
@@ -126,7 +128,8 @@ public class FajianActivity extends BaseActivity implements View
                 }
             }
         });
-        mTvShipmentType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvShipmentType.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int
@@ -219,10 +222,23 @@ public class FajianActivity extends BaseActivity implements View
     private List<String> resolveNextStationData() {
         LogUtil.trace();
 
+        Boolean isOpen = SharedUtil.getBoolean(FajianActivity.this, Constant
+                .PREFERENCE_KEY_SCAN_SWITCH);
+        LogUtil.trace("isOpen:" + isOpen);
+
         List<SalesService> mData = null;
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
             mData = dbManager.findAll(SalesService.class);
+
+            if (isOpen) {
+                // 过滤：只包含类型为网点的站点信息
+                for (int index = 0; index < mData.size(); index++) {
+                    if (!"网点".equals(mData.get(index).get类型())) {
+                        mData.remove(mData.get(index));
+                    }
+                }
+            }
         } catch (DbException e) {
             LogUtil.trace();
             e.printStackTrace();
@@ -316,7 +332,6 @@ public class FajianActivity extends BaseActivity implements View
     }
 
 
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -338,8 +353,6 @@ public class FajianActivity extends BaseActivity implements View
 
                 break;
             }
-
-
 
             case R.id.btn_back: {
                 LogUtil.trace();
