@@ -34,9 +34,7 @@ import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class FajianActivity extends BaseActivity implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
@@ -156,6 +154,8 @@ public class FajianActivity extends BaseActivity implements View
         mListView = FajianActivity.this.findViewById(R.id.list_view_scan_data);
         mListView.setAdapter(mFajianAdapter);
         mListView.setDelButtonClickListener(FajianActivity.this);
+        // 初次启动时刷新数据
+        reQueryUnUploadDataForListView();
 
         mEtShipmentNumber = FajianActivity.this.findViewById(R.id
                 .et_shipment_number);
@@ -309,6 +309,15 @@ public class FajianActivity extends BaseActivity implements View
     protected void fillCode(String barcode) {
         super.fillCode(barcode);
 
+        // TODO 判断前置条件是否符合
+        if (TextUtils.isEmpty(mTvNextStation.getText().toString()) ||
+                TextUtils.isEmpty(mTvShipmentType.getText().toString())) {
+            Toast.makeText(FajianActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+
+            return ;
+        }
+
+
         // 1. 查表：当前是名为fajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
@@ -336,11 +345,6 @@ public class FajianActivity extends BaseActivity implements View
 
         mListData.add(mFajianListViewBean);
         mFajianAdapter.notifyDataSetChanged();
-
-        // TODO 保留，待以后使用
-        /*// 创建写入文本的字符串，并写入文本
-        String content = mShipmentFileContent.getmCurrentValue() + "\r\n";
-        mShipmentUploadFile.writeContentToFile(content, true);*/
     }
 
     private static final String DB_NAME = "fajian";
@@ -348,7 +352,6 @@ public class FajianActivity extends BaseActivity implements View
     private boolean isExistCurrentBarcode(String barcode) {
         if (tableIsExist(DB_NAME)) {
             // 存在保存发件数据的表，从该表中查询对应的单号
-
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // 查询数据库，是否有记录
@@ -411,28 +414,69 @@ public class FajianActivity extends BaseActivity implements View
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_ensure: {
+                // 确定按键，上传文件
                 LogUtil.trace();
 
                 DbManager db = BQDataBaseHelper.getDb();
+                List<ShipmentFileContent> list = null;
                 try {
-                    List<ShipmentFileContent> list = db.findAll
-                            (ShipmentFileContent.class);
+                    // 1. 查询数据库中标识位“未上传”的记录
+                    list = db.selector(ShipmentFileContent.class).where("是否上传",
+                            "like", "未上传").findAll();
                     if (null != list) {
                         LogUtil.trace("list:" + list.size());
+                        for (int index = 0; index < list.size(); index++) {
+                            // 2. 创建写入文本的字符串，并写入文本
+                            ShipmentFileContent javaBean = list.get(index);
+                            String content = javaBean.getmCurrentValue() +
+                                    "\r\n";
+                            if (mShipmentUploadFile.writeContentToFile(content,
+                                    true)) {
+                                // 3. 写入成功，删除记录
+                                /*WhereBuilder whereBuilder = WhereBuilder.b();
+                                whereBuilder.and("运单编号", "=", javaBean
+                                        .getShipmentNumber());
+                                db.update(ShipmentFileContent.class,
+                                        whereBuilder, new KeyValue("是否上传",
+                                                "已上传"));*/
+                                WhereBuilder b = WhereBuilder.b();
+                                b.and("运单编号", "=", javaBean.getShipmentNumber
+                                        ());
+                                db.delete(ShipmentFileContent.class, b);
+                            } else {
+                                // 写入文件失败，跳过
+                            }
+                        }
                     }
                 } catch (DbException e) {
+                    LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
                     e.printStackTrace();
                 }
 
+                // 4. 文件上传服务器
+                mShipmentUploadFile.uploadFile();
                 FajianActivity.this.finish();
 
                 break;
             }
 
             case R.id.btn_back: {
+                // 返回按键，不上传文件
                 LogUtil.trace();
-                mShipmentUploadFile.uploadFile();
                 FajianActivity.this.finish();
+
+                // 测试阶段删除所有记录
+                DbManager db = BQDataBaseHelper.getDb();
+                try {
+                    List<ShipmentFileContent> list = db.findAll
+                            (ShipmentFileContent.class);
+                    if (list != null) {
+                        LogUtil.d(TAG, "当前记录：" + list.size());
+                        // db.delete(ShipmentFileContent.class);
+                    }
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
 
                 break;
             }
@@ -461,32 +505,6 @@ public class FajianActivity extends BaseActivity implements View
         }).start();
     }
 
-    /**
-     * 根据快件类型，查询对应的快件类型编号
-     *
-     * @param typeString
-     * @return
-     */
-    private String resolveShipmentType(String typeString) {
-        LogUtil.trace("typeString:" + typeString);
-
-        String shipmentTypeID = "";
-        Iterator iterator = mShipmentDataTmp.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-
-            if (!TextUtils.isEmpty(typeString)) {
-                if (value.equals(typeString)) {
-                    shipmentTypeID = key;
-                }
-            }
-        }
-
-        return shipmentTypeID;
-    }
-
     @Override
     public void clickHappend(int position) {
         // 删除按键
@@ -499,7 +517,7 @@ public class FajianActivity extends BaseActivity implements View
         deleteFindedBean(mListData.get(position).getScannerData());
 
         // 3. 重新从数据库中查出所有记录,更新ListView
-        reQueryDataForListView();
+        reQueryUnUploadDataForListView();
     }
 
     /**
@@ -518,11 +536,20 @@ public class FajianActivity extends BaseActivity implements View
         }
     }
 
-    private void reQueryDataForListView() {
+    /**
+     * 从数据库中找出所有未上传记录
+     */
+    private void reQueryUnUploadDataForListView() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> data = db.findAll(ShipmentFileContent
-                    .class);
+            /*List<ShipmentFileContent> data = db.findAll(ShipmentFileContent
+                    .class);*/
+            // 查询数据库中标识位“未上传”的记录
+            List<ShipmentFileContent> data = db.selector
+                    (ShipmentFileContent.class).where("是否上传",
+                    "like", "未上传").findAll();
+            LogUtil.d(TAG, "未上传记录：" + data.size());
+
             // 清除数据
             mListData.clear();
 
