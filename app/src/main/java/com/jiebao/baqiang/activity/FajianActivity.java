@@ -546,32 +546,32 @@ public class FajianActivity extends BaseActivity implements View
     private void reQueryUnUploadDataForListView() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            /*List<ShipmentFileContent> data = db.findAll(ShipmentFileContent
-                    .class);*/
             // 查询数据库中标识位“未上传”的记录
             List<ShipmentFileContent> data = db.selector
                     (ShipmentFileContent.class).where("是否上传",
                     "like", "未上传").findAll();
-            LogUtil.d(TAG, "未上传记录：" + data.size());
+            if(null != data){
+                LogUtil.d(TAG, "未上传记录：" + data.size());
 
-            // 清除数据
-            mListData.clear();
+                // 清除数据
+                mListData.clear();
 
-            int count = 0;
-            for (int index = 0; index < data.size(); index++) {
-                FajianListViewBean fajianListViewBean = new
-                        FajianListViewBean();
-                // TODO 一旦删除记录，则及时更新ID值
-                fajianListViewBean.setId(++count);
-                fajianListViewBean.setScannerData(data.get(index)
-                        .getShipmentNumber());
-                fajianListViewBean.setStatus("未上传");
-                mListData.add(fajianListViewBean);
+                int count = 0;
+                for (int index = 0; index < data.size(); index++) {
+                    FajianListViewBean fajianListViewBean = new
+                            FajianListViewBean();
+                    // TODO 一旦删除记录，则及时更新ID值
+                    fajianListViewBean.setId(++count);
+                    fajianListViewBean.setScannerData(data.get(index)
+                            .getShipmentNumber());
+                    fajianListViewBean.setStatus("未上传");
+                    mListData.add(fajianListViewBean);
+                }
+
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = count;
             }
-
-            mFajianAdapter.notifyDataSetChanged();
-            // 更新全局ID
-            mScanCount = count;
         } catch (DbException e) {
             e.printStackTrace();
         }

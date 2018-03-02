@@ -177,26 +177,28 @@ public class UnloadCargoArrivalActivity extends BaseActivity implements View
             List<UnloadArrivalFileContent> data = db.selector
                     (UnloadArrivalFileContent.class).where("是否上传",
                     "like", "未上传").findAll();
-            LogUtil.d(TAG, "未上传记录：" + data.size());
+            if (null != data) {
+                LogUtil.d(TAG, "未上传记录：" + data.size());
 
-            // 清除数据
-            mListData.clear();
+                // 清除数据
+                mListData.clear();
 
-            int count = 0;
-            for (int index = 0; index < data.size(); index++) {
-                FajianListViewBean fajianListViewBean = new
-                        FajianListViewBean();
-                // TODO 一旦删除记录，则及时更新ID值
-                fajianListViewBean.setId(++count);
-                fajianListViewBean.setScannerData(data.get(index)
-                        .getShipmentNumber());
-                fajianListViewBean.setStatus("未上传");
-                mListData.add(fajianListViewBean);
+                int count = 0;
+                for (int index = 0; index < data.size(); index++) {
+                    FajianListViewBean fajianListViewBean = new
+                            FajianListViewBean();
+                    // TODO 一旦删除记录，则及时更新ID值
+                    fajianListViewBean.setId(++count);
+                    fajianListViewBean.setScannerData(data.get(index)
+                            .getShipmentNumber());
+                    fajianListViewBean.setStatus("未上传");
+                    mListData.add(fajianListViewBean);
+                }
+
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = count;
             }
-
-            mFajianAdapter.notifyDataSetChanged();
-            // 更新全局ID
-            mScanCount = count;
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -326,7 +328,8 @@ public class UnloadCargoArrivalActivity extends BaseActivity implements View
                 List<UnloadArrivalFileContent> list = null;
                 try {
                     // 1. 查询数据库中标识位“未上传”的记录
-                    list = db.selector(UnloadArrivalFileContent.class).where("是否上传",
+                    list = db.selector(UnloadArrivalFileContent.class).where
+                            ("是否上传",
                             "like", "未上传").findAll();
                     if (null != list) {
                         LogUtil.trace("list:" + list.size());
@@ -542,6 +545,7 @@ public class UnloadCargoArrivalActivity extends BaseActivity implements View
         // 3. 重新从数据库中查出所有记录,更新ListView
         reQueryUnUploadDataForListView();
     }
+
     /**
      * 点击删除按键后，删除对应的数据项
      *

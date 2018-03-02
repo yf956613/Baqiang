@@ -125,19 +125,27 @@
 
         <Button
             android:id="@+id/btn_ensure"
+            style="@style/list_item_title_style"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="确定"
-            android:textSize="20sp"/>
+            android:background="@drawable/bg_yellow_selector"
+            android:text="@string/save"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/btn_back"
+            style="@style/list_item_title_style"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_min"
+            android:layout_marginStart="@dimen/margin_min"
             android:layout_weight="1"
-            android:text="返回"
-            android:textSize="20sp"/>
+            android:background="@drawable/bg_green_selector"
+            android:text="@string/tab_back"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <com.jiebao.baqiang.custView.CouldDeleteListView

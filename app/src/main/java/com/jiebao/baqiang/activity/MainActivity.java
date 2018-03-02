@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,7 +18,9 @@ import com.jiebao.baqiang.util.LogUtil;
  * 一级菜单界面，主要用户更新信息
  */
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, DataSyncService.DataSyncNotifity {
+public class MainActivity extends BaseActivity implements View
+        .OnClickListener, DataSyncService.DataSyncNotifity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     // 数据采集
     private Button mBtnDataCollect;
@@ -95,6 +98,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
             mDownloadProgressDialog.setMessage("正在下载资料列表...");
             mDownloadProgressDialog.setCanceledOnTouchOutside(false);
+            mDownloadProgressDialog.setCancelable(false);
         }
         mDownloadProgressDialog.show();
     }
@@ -103,5 +107,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if (mDownloadProgressDialog != null) {
             mDownloadProgressDialog.dismiss();
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK: {
+                LogUtil.d(TAG, "---->按下了Back按键");
+                // 消费Back事件
+                // return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }
