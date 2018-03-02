@@ -79,9 +79,15 @@ public class UpdateVehicleInfo extends UpdateInterface{
                 LogUtil.trace();
 
                 Gson gson = new Gson();
-                VehicleInfoList list = gson.fromJson(vehicleInfo,
+                final VehicleInfoList list = gson.fromJson(vehicleInfo,
                         VehicleInfoList.class);
-                storageData(list);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        storageData(list);
+                    }
+                }).start();
             }
 
             @Override

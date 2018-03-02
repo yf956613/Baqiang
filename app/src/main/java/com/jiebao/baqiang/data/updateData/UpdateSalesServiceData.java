@@ -79,9 +79,15 @@ public class UpdateSalesServiceData extends UpdateInterface {
                 Gson gson = new GsonBuilder()
                         .setDateFormat("yyyy-MM-dd HH:mm:ss")
                         .create();
-                SalesServiceList salesServiceList = gson.fromJson(saleServices,
+                final SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
-                storageData(salesServiceList);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        storageData(salesServiceList);
+                    }
+                }).start();
             }
 
             @Override
@@ -138,6 +144,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
                         .get更新时间(), saleInfo.get(index).get类型(),
                         saleInfo.get(index).get所属提交货中心(), saleInfo
                         .get(index).get县());
+                // TODO 考虑从子线程运行，然后状态反馈方法
                 db.save(salesService);
             } catch (Exception exception) {
                 LogUtil.trace(exception.getMessage());

@@ -73,10 +73,16 @@ public class UpdateLiuCangType extends UpdateInterface {
             @Override
             public void onSuccess(String liucang) {
                 Gson gson = new Gson();
-                LiucangListInfo list = gson.fromJson(liucang,
+                final LiucangListInfo list = gson.fromJson(liucang,
                         LiucangListInfo.class);
 
-                storageData(list);
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        storageData(list);
+                    }
+                }).start();
             }
 
             @Override

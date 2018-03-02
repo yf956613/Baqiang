@@ -155,7 +155,6 @@ public class CargoArrivalFileContent {
         this.mStatus = mStatus;
     }
 
-
     /**
      * 默认构造函数
      */

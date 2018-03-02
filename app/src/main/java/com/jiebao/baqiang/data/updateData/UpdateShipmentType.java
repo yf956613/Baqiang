@@ -76,9 +76,15 @@ public class UpdateShipmentType extends UpdateInterface{
             @Override
             public void onSuccess(String saleServices) {
                 Gson gson = new Gson();
-                ShipmentTypeList list = gson.fromJson(saleServices,
+                final ShipmentTypeList list = gson.fromJson(saleServices,
                         ShipmentTypeList.class);
-                storageData(list);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        storageData(list);
+                    }
+                }).start();
             }
 
             @Override

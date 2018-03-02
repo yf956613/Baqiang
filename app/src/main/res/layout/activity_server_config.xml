@@ -14,7 +14,8 @@
     <EditText
         android:id="@+id/edt_express_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:maxLines="1"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -25,7 +26,8 @@
     <EditText
         android:id="@+id/data_server_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -36,7 +38,8 @@
     <EditText
         android:id="@+id/data_server_port"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
 
 
     <TextView
@@ -48,8 +51,8 @@
     <EditText
         android:id="@+id/apk_update_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -60,6 +63,7 @@
     <EditText
         android:id="@+id/apk_update_port"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"/>
 
 </LinearLayout>

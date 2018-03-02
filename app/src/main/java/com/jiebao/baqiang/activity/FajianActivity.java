@@ -312,11 +312,11 @@ public class FajianActivity extends BaseActivity implements View
         // TODO 判断前置条件是否符合
         if (TextUtils.isEmpty(mTvNextStation.getText().toString()) ||
                 TextUtils.isEmpty(mTvShipmentType.getText().toString())) {
-            Toast.makeText(FajianActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FajianActivity.this, "前置信息为空", Toast.LENGTH_SHORT)
+                    .show();
 
-            return ;
+            return;
         }
-
 
         // 1. 查表：当前是名为fajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
@@ -349,6 +349,11 @@ public class FajianActivity extends BaseActivity implements View
 
     private static final String DB_NAME = "fajian";
 
+    /**
+     * 判断数据库中是否有当前运单记录
+     * @param barcode
+     * @return
+     */
     private boolean isExistCurrentBarcode(String barcode) {
         if (tableIsExist(DB_NAME)) {
             // 存在保存发件数据的表，从该表中查询对应的单号
@@ -408,7 +413,6 @@ public class FajianActivity extends BaseActivity implements View
 
         return result;
     }
-
 
     @Override
     public void onClick(View view) {
