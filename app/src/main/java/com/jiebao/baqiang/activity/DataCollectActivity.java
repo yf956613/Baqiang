@@ -331,6 +331,7 @@ public class DataCollectActivity extends BaseActivity implements View
      * 到件
      */
     public void daojian() {
+        // TODO 功能测试
         Intent intent = new Intent(this, DaojianActivity.class);
         startActivity(intent);
     }

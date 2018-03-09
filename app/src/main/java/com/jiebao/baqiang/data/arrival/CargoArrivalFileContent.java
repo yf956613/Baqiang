@@ -260,6 +260,23 @@ public class CargoArrivalFileContent {
         return sb;
     }
 
+    @Override
+    public String toString() {
+        return "CargoArrivalFileContent{" +
+                "id=" + id +
+                ", mScannerType='" + mScannerType + '\'' +
+                ", mPreviousStation='" + mPreviousStation + '\'' +
+                ", mScanDate='" + mScanDate + '\'' +
+                ", mGoodsType='" + mGoodsType + '\'' +
+                ", mShipmentType='" + mShipmentType + '\'' +
+                ", mShipmentNumber='" + mShipmentNumber + '\'' +
+                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
+                ", mOperateDate='" + mOperateDate + '\'' +
+                ", mWeight='" + mWeight + '\'' +
+                ", mStatus='" + mStatus + '\'' +
+                '}';
+    }
+
     /**
      * 返回指定数量的空格
      *

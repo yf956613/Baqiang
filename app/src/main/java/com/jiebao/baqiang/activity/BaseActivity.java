@@ -123,6 +123,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         initAttributes();
         initView();
 
@@ -216,9 +217,11 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
         mIsDestroyed = true;
         closeLoadinDialog();
-        super.onDestroy();
+
         unregisterStatusTnfo();
         AppManager.getAppManager().finishActivity(this);
 
@@ -458,6 +461,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     @Override
     protected void onResume() {
         super.onResume();
+
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
             LogUtil.trace("This Device is support Scanner function...");

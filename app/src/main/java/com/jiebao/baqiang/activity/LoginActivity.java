@@ -265,6 +265,11 @@ public class LoginActivity extends BaseActivity implements View
             @Override
             public void onFinished() {
                 LogUtil.trace();
+
+                // TODO 测试阶段
+                startActivity(new Intent(LoginActivity.this,
+                        MainActivity.class));
+
                 closeLoadinDialog();
             }
         });

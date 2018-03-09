@@ -3,6 +3,7 @@ package com.jiebao.baqiang.activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,8 +39,7 @@ import java.util.List;
  */
 public class DaojianActivity extends BaseActivity implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
-    private static final String TAG = UnloadCargoArrivalActivity.class
-            .getSimpleName();
+    private static final String TAG = DaojianActivity.class.getSimpleName();
 
     private AutoCompleteTextView mTvPreviousStation;
     private Button mBtnSure, mBtnCancel;
@@ -76,7 +76,7 @@ public class DaojianActivity extends BaseActivity implements View
         mTvPreviousStation = DaojianActivity.this.findViewById(R
                 .id.tv_before_station);
         mTvPreviousStation.setAdapter(mPreviousStationAdapter);
-        // 监听EditText是否获取焦点
+        // 监听AutoCompleteTextView是否获取焦点
         mTvPreviousStation.setOnFocusChangeListener(new View
                 .OnFocusChangeListener() {
 
@@ -106,6 +106,17 @@ public class DaojianActivity extends BaseActivity implements View
                 mCargoArrivalFileContent.setPreviousStation(arr[0]);
             }
         });
+        // AutoCompleteTextView获取到硬件按键事件
+        mTvPreviousStation.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                LogUtil.trace("setOnKeyListener:" + keyCode);
+
+                return false;
+            }
+
+        });
 
         mEtDeliveryNumber = DaojianActivity.this.findViewById(R.id
                 .et_shipment_number);
@@ -124,6 +135,20 @@ public class DaojianActivity extends BaseActivity implements View
 
         // 初次启动时刷新数据
         reQueryUnUploadDataForListView();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        LogUtil.d(TAG, "onKeyDown:" + keyCode);
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK: {
+                LogUtil.d(TAG, "---->按下了Back按键");
+                // Activity获取焦点后，消费Back事件
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -273,7 +298,7 @@ public class DaojianActivity extends BaseActivity implements View
                     // 1. 查询数据库中标识位“未上传”的记录
                     list = db.selector(CargoArrivalFileContent.class).where
                             ("是否上传",
-                            "like", "未上传").findAll();
+                                    "like", "未上传").findAll();
                     if (null != list) {
                         LogUtil.trace("list:" + list.size());
                         for (int index = 0; index < list.size(); index++) {
@@ -343,6 +368,15 @@ public class DaojianActivity extends BaseActivity implements View
             Toast.makeText(DaojianActivity.this, "前置信息为空", Toast.LENGTH_SHORT)
                     .show();
             return;
+        } else {
+            // 防止上一站信息输入错误
+            String previousName = mTvPreviousStation.getText().toString();
+            String[] arr = previousName.split("  ");
+            if (!queryPreviousStation(arr[0])) {
+                Toast.makeText(DaojianActivity.this, "前置信息错误", Toast
+                        .LENGTH_SHORT).show();
+                return;
+            }
         }
 
         // 1. 查表：当前是名为daojian的表，判断是否有记录
@@ -358,6 +392,7 @@ public class DaojianActivity extends BaseActivity implements View
                 .getFormatTimeString());
         mCargoArrivalFileContent.setShipmentNumber(barcode);
         mCargoArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime());
+        LogUtil.d(TAG, "扫描数据：" + mCargoArrivalFileContent.toString());
         insertDataToDatabase(mCargoArrivalFileContent);
 
         // 3. 填充运单号
@@ -497,5 +532,30 @@ public class DaojianActivity extends BaseActivity implements View
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 查询某条记录
+     *
+     * @param id
+     * @return
+     */
+    private boolean queryPreviousStation(String id) {
+        List<SalesService> mData = null;
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            mData = dbManager.selector(SalesService.class).where("网点编号",
+                    "=", id).findAll();
+
+            if (mData != null && mData.size() != 0) {
+                // 存在记录
+                return true;
+            }
+        } catch (DbException e) {
+            LogUtil.trace();
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

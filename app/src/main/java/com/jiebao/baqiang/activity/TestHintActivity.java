@@ -2,7 +2,6 @@ package com.jiebao.baqiang.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.Editable;
@@ -14,31 +13,148 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
-import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.bean.VehicleInfo;
-import com.jiebao.baqiang.data.bean.VehicleInfoList;
+import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
-import com.jiebao.baqiang.util.FileUtil;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
-import com.jiebao.baqiang.util.VersionUpdateUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2018/2/23 0023.
  */
 
-public class TestHintActivity extends Activity implements AdapterView.OnItemClickListener {
+public class TestHintActivity extends Activity implements AdapterView
+        .OnItemClickListener {
     private static final String TAG = TestHintActivity.class.getSimpleName();
 
-    EditText productName;
-    ListPopupWindow listPopupWindow;
-    List<VehicleInfo> mVehicleInfos = null;
+    private EditText mEdtProductName;
+    private ListPopupWindow mListPopupWindow;
+    private List<String> mPreviousStationInfo;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list_popup_window);
+        initData();
+
+        View.OnKeyListener onKeyListener = new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (mEdtProductName.isFocused()) {
+                    // 现在EditText获取了焦点
+                    LogUtil.trace("keyCode:" + keyCode + "; event:" + event
+                            .getAction());
+                    // keyCode 66 表示Enter确认键
+                    if (keyCode == 66) {
+                        mListPopupWindow.show();
+                    }
+                }
+                return false;
+            }
+        };
+
+        mEdtProductName = findViewById(R.id.product_name);
+        // mEdtProductName.addTextChangedListener(new EditChangedListener());
+        mEdtProductName.setOnKeyListener(onKeyListener);
+
+        // 监听EditText是否获取焦点
+        mEdtProductName.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // EditText焦点变化事件：进入界面后，显示第一个提示列表
+                switch (v.getId()) {
+                    case R.id.product_name: {
+                        if (hasFocus) {
+                            LogUtil.trace("hasFocus");
+
+                            mListPopupWindow.show();
+                        } else {
+                            LogUtil.trace("no hasFocus");
+                        }
+
+                        break;
+                    }
+                }
+            }
+        });
+        mEdtProductName.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mListPopupWindow.show();
+            }
+        });
+
+        mListPopupWindow = new ListPopupWindow(TestHintActivity.this);
+        mListPopupWindow.setAdapter(new ArrayAdapter(TestHintActivity.this, R
+                .layout.list_item,
+                mPreviousStationInfo));
+        mListPopupWindow.setAnchorView(mEdtProductName);
+        mListPopupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        mListPopupWindow.setHeight(400);
+        mListPopupWindow.setModal(true);
+        mListPopupWindow.setOnItemClickListener(TestHintActivity.this);
+    }
+
+    private void initData() {
+        // 准备上一站网点数据
+        mPreviousStationInfo = resolvePreviousStationData();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+                            long id) {
+        /*mEdtProductName.setText(mVehicleInfos.get(position).get车牌号());
+        mListPopupWindow.dismiss();*/
+    }
+
+    /**
+     * 解析上一站网点信息
+     */
+    private List<String> resolvePreviousStationData() {
+        LogUtil.trace();
+
+        Boolean isOpen = SharedUtil.getBoolean(TestHintActivity.this, Constant
+                .PREFERENCE_KEY_SCAN_SWITCH);
+        LogUtil.trace("isOpen:" + isOpen);
+
+        List<SalesService> mData = null;
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            mData = dbManager.findAll(SalesService.class);
+            if (isOpen) {
+                // 过滤：只包含类型为网点的站点信息
+                for (int index = 0; index < mData.size(); index++) {
+                    if (!"网点".equals(mData.get(index).get类型())) {
+                        mData.remove(mData.get(index));
+                    }
+                }
+            }
+        } catch (DbException e) {
+            LogUtil.trace();
+            e.printStackTrace();
+        }
+
+        // 拼接：网点编号和网点名称
+        List<String> mArrayInfo = new ArrayList<>();
+        for (int index = 0; index < mData.size(); index++) {
+            // 采用固定格式，便于解析网点编号
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
+                    (index).get网点名称());
+        }
+
+        return mArrayInfo;
+    }
 
     /**
      * EditText 对内容的监听
@@ -50,13 +166,15 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
         private final int charMaxNum = 10;
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
 
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            LogUtil.trace("content:"+s);
+        public void onTextChanged(CharSequence s, int start, int before, int
+                count) {
+            LogUtil.trace("content:" + s);
 
 
         }
@@ -65,156 +183,8 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
         public void afterTextChanged(Editable s) {
 
         }
-    };
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LogUtil.trace();
-
-        try {
-            int versionCode = VersionUpdateUtil.getVersionCode(BaqiangApplication.getContext());
-            LogUtil.trace("versionCode:"+versionCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        setContentView(R.layout.activity_list_popup_window);
-
-        testResolveData(testServiceBackContent());
-
-        View.OnKeyListener onKeyListener = new View.OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(productName.isFocused()){
-                    // 现在EditText获取了焦点
-                    LogUtil.trace("keyCode:"+keyCode+"; event:"+event.getAction());
-                    // keyCode 66 表示Enter确认键
-                    if(keyCode == 66){
-                        listPopupWindow.show();
-                    }
-                }
-
-                return false;
-            }
-        };
-
-
-        productName = (EditText) findViewById(R.id.product_name);
-        productName.addTextChangedListener(new EditChangedListener());
-        productName.setOnKeyListener(onKeyListener);
-
-        listPopupWindow = new ListPopupWindow(TestHintActivity.this);
-        listPopupWindow.setAdapter(new ArrayAdapter(TestHintActivity.this, R.layout.list_item,
-                mVehicleInfos));
-        listPopupWindow.setAnchorView(productName);
-        listPopupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        listPopupWindow.setHeight(400);
-
-        listPopupWindow.setModal(true);
-        listPopupWindow.setOnItemClickListener(TestHintActivity.this);
-        productName.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                listPopupWindow.show();
-            }
-        });
-
-        // 监听EditText是否获取焦点
-        productName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    LogUtil.trace("hasFocus");
-
-                    // listPopupWindow.show();
-
-                } else {
-                    LogUtil.trace("no hasFocus");
-                }
-            }
-        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    ;
 
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        productName.setText(mVehicleInfos.get(position).get车牌号());
-        listPopupWindow.dismiss();
-    }
-
-
-    /**
-     * 从文件中读取数据
-     *
-     * @return
-     */
-    private String testServiceBackContent() {
-        String value = "";
-        try {
-            LogUtil.trace("path:" + Environment.getExternalStorageDirectory() + "/Tmp/carInfo" +
-                    ".txt");
-            value = FileUtil.readSDFile(Environment.getExternalStorageDirectory() +
-                    "/Tmp/carInfo" + ".txt");
-        } catch (IOException e) {
-            LogUtil.trace("file is not exist...");
-            e.printStackTrace();
-        }
-
-        return value;
-    }
-
-    private VehicleInfoList testResolveData(String vehicleInfo) {
-        LogUtil.d(TAG, "vehicleInfo:" + vehicleInfo);
-
-        Gson gson = new Gson();
-        VehicleInfoList vehicleInfoList = gson.fromJson(vehicleInfo, VehicleInfoList.class);
-        LogUtil.d(TAG, "length:" + vehicleInfoList.getVehicleInfoCnt());
-
-        mVehicleInfos = vehicleInfoList.getVehicleInfo();
-
-        return vehicleInfoList;
-    }
-
-    /**
-     * 保存数据到数据库
-     *
-     * @return
-     */
-    private boolean storageData(final VehicleInfoList vehicleInfoList) {
-        LogUtil.trace();
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                List<VehicleInfo> vehicleInfos;
-                vehicleInfos = vehicleInfoList.getVehicleInfo();
-
-                DbManager db = BQDataBaseHelper.getDb();
-                for (int index = 0; index < vehicleInfos.size(); index++) {
-                    try {
-                        VehicleInfo vehicleInfo = new VehicleInfo(vehicleInfos.get(index).get车牌号
-                                (), vehicleInfos.get(index).get车辆识别号());
-                        LogUtil.trace(vehicleInfo.toString());
-
-                        db.save(vehicleInfo);
-                    } catch (Exception exception) {
-                        LogUtil.trace(exception.getMessage());
-                        exception.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-        return true;
-    }
 }
