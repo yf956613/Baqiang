@@ -57,7 +57,6 @@ public class MainActivity extends BaseActivity implements View
         mBtnDataCollect = findViewById(R.id.btn_data_collect);
         initListener();
 
-        // TODO 数据更新，测试阶段不需要更新数据
         // startDataSync();
     }
 

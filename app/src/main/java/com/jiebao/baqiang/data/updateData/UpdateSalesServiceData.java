@@ -157,7 +157,6 @@ public class UpdateSalesServiceData extends UpdateInterface {
         return true;
     }
 
-
     private String testServiceBackContent() {
         String value = "";
         try {

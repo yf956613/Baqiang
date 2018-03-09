@@ -130,6 +130,7 @@ public class TestHintActivity extends Activity implements AdapterView
 
         List<SalesService> mData = null;
         DbManager dbManager = BQDataBaseHelper.getDb();
+
         try {
             mData = dbManager.findAll(SalesService.class);
             if (isOpen) {
@@ -175,7 +176,6 @@ public class TestHintActivity extends Activity implements AdapterView
         public void onTextChanged(CharSequence s, int start, int before, int
                 count) {
             LogUtil.trace("content:" + s);
-
 
         }
 
