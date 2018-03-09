@@ -33,16 +33,22 @@ import java.util.List;
  * Created by Administrator on 2018/2/23 0023.
  */
 
-public class TestHintActivity extends Activity implements AdapterView.OnItemClickListener {
+public class TestHintActivity extends Activity {
     private static final String TAG = TestHintActivity.class.getSimpleName();
 
-    EditText productName;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_list_popup_window);
+    }
+
+
+
+    /*EditText productName;
     ListPopupWindow listPopupWindow;
     List<VehicleInfo> mVehicleInfos = null;
 
-    /**
-     * EditText 对内容的监听
-     */
     class EditChangedListener implements TextWatcher {
         private CharSequence temp;//监听前的文本
         private int editStart;//光标开始位置
@@ -151,12 +157,6 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
         listPopupWindow.dismiss();
     }
 
-
-    /**
-     * 从文件中读取数据
-     *
-     * @return
-     */
     private String testServiceBackContent() {
         String value = "";
         try {
@@ -184,11 +184,6 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
         return vehicleInfoList;
     }
 
-    /**
-     * 保存数据到数据库
-     *
-     * @return
-     */
     private boolean storageData(final VehicleInfoList vehicleInfoList) {
         LogUtil.trace();
 
@@ -216,5 +211,5 @@ public class TestHintActivity extends Activity implements AdapterView.OnItemClic
         }).start();
 
         return true;
-    }
+    }*/
 }

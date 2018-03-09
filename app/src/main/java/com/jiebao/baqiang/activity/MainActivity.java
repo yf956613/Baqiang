@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity implements View
         initListener();
 
         // TODO 数据更新
-        startDataSync();
+        // startDataSync();
     }
 
     private void initListener() {

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <!--<EditText
         android:id="@+id/product_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +21,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TEXT2"
-        android:textSize="20sp" />
+        android:textSize="20sp" />-->
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/ic_launcher"
+        android:text="1.采集" />
 
 </LinearLayout>

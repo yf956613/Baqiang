@@ -83,6 +83,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         mBtnConfigurate.setOnClickListener(this);
         mCbRememberPassword.setOnCheckedChangeListener(this);
         mLLRemember.setOnClickListener(this);
+
+        sendBroadcastForKey();
     }
 
     @Override
@@ -142,6 +144,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 break;
             }
         }
+    }
+
+    private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
+
+    /**
+     * 发送广播，屏蔽HOME按键
+     */
+    private void sendBroadcastForKey() {
+        LogUtil.trace("发送广播，屏蔽HOME按键");
+
+        Intent intent = new Intent();
+        intent.setAction(PERSIST_SETTINGS);
+        intent.putExtra("persistKey", "persist.sys.key_home");
+        intent.putExtra("persistValue", "true");
+
+        LoginActivity.this.sendBroadcast(intent);
     }
 
     /**
@@ -256,7 +274,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 closeLoadinDialog();
             }
         });
-
     }
 
     public void closeSoftKeyBoard() {
