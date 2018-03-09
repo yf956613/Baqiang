@@ -29,7 +29,8 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, CompoundButton
+public class LoginActivity extends BaseActivity implements View
+        .OnClickListener, CompoundButton
         .OnCheckedChangeListener {
     private static final String TAG = "LoginActivity";
 
@@ -63,6 +64,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         LogUtil.trace("keyCode--->" + keyCode);
 
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK: {
+                LogUtil.d(TAG, "---->按下了Back按键");
+                // 消费Back事件
+                return true;
+            }
+        }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -74,9 +83,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         mEtPassward = LoginActivity.this.findViewById(R.id.et_passward);
 
         mBtnLogin = findViewById(R.id.btn_login);
-        mBtnConfigurate = LoginActivity.this.findViewById(R.id.btn_wifi_setttings);
+        mBtnConfigurate = LoginActivity.this.findViewById(R.id
+                .btn_wifi_setttings);
 
-        mCbRememberPassword = LoginActivity.this.findViewById(R.id.cv_psw_remember);
+        mCbRememberPassword = LoginActivity.this.findViewById(R.id
+                .cv_psw_remember);
         mLLRemember = LoginActivity.this.findViewById(R.id.remember_layout);
 
         mBtnLogin.setOnClickListener(this);
@@ -91,14 +102,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
 
-        boolean isRememberPsw = SharedUtil.getBoolean(this, Constant.KEY_IS_REMEMBER_PSW);
-        LogUtil.e(TAG, "initData:" + isRememberPsw);
+        boolean isRememberPsw = SharedUtil.getBoolean(this, Constant
+                .KEY_IS_REMEMBER_PSW);
+        LogUtil.d(TAG, "initData:" + isRememberPsw);
         if (isRememberPsw) {
             // 之前用户选择保存数据，回显数据
             mCbRememberPassword.setChecked(isRememberPsw);
 
-            String userName = SharedUtil.getString(this, Constant.PREFERENCE_KEY_USERNAME);
-            String psw = SharedUtil.getString(this, Constant.PREFERENCE_KEY_PSW);
+            String userName = SharedUtil.getString(this, Constant
+                    .PREFERENCE_KEY_USERNAME);
+            String psw = SharedUtil.getString(this, Constant
+                    .PREFERENCE_KEY_PSW);
 
             // 显示数据
             mEtUserName.setText(userName);
@@ -122,7 +136,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 String userName = mEtUserName.getText().toString();
                 String psw = mEtPassward.getText().toString();
                 if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(psw)) {
-                    Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入",
+                            Toast.LENGTH_SHORT).show();
 
                     closeLoadinDialog();
                 } else {
@@ -133,7 +148,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             }
 
             case R.id.remember_layout:
-                mCbRememberPassword.setChecked(!mCbRememberPassword.isChecked());
+                mCbRememberPassword.setChecked(!mCbRememberPassword.isChecked
+                        ());
                 break;
 
             case R.id.btn_wifi_setttings: {
@@ -156,8 +172,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         Intent intent = new Intent();
         intent.setAction(PERSIST_SETTINGS);
+        // TODO 以后可能会屏蔽back按键
         intent.putExtra("persistKey", "persist.sys.key_home");
-        intent.putExtra("persistValue", "true");
+        intent.putExtra("persistValue", "false");
 
         LoginActivity.this.sendBroadcast(intent);
     }
@@ -168,12 +185,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @return true 表示可供使用；false 表示不能使用
      */
     private boolean isCheckNetworkAddressAccess() {
-        String dataServerAddress = SharedUtil.getString(LoginActivity.this, Constant
-                .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
-        String dataServerPort = SharedUtil.getString(LoginActivity.this, Constant
-                .PREFERENCE_KEY_DATA_SERVER_PORT);
+        String dataServerAddress = SharedUtil.getString(LoginActivity.this,
+                Constant
+                        .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
+        String dataServerPort = SharedUtil.getString(LoginActivity.this,
+                Constant
+                        .PREFERENCE_KEY_DATA_SERVER_PORT);
 
-        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty(dataServerPort)) {
+        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty
+                (dataServerPort)) {
             return false;
         }
 
@@ -187,7 +207,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         switch (buttonView.getId()) {
             case R.id.cv_psw_remember:
                 // 保存是否记住用户名和密码标识
-                SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, isChecked);
+                SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW,
+                        isChecked);
                 if (!isChecked) {
 
                 }
@@ -200,7 +221,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if ("000000".equals(account) && "123695".equals(pwd)) {
             LogUtil.trace("goto Administrator activity.");
 
-            Intent intent = new Intent(LoginActivity.this, AdministratorSettingActivity.class);
+            Intent intent = new Intent(LoginActivity.this,
+                    AdministratorSettingActivity.class);
             LoginActivity.this.startActivity(intent);
 
             closeLoadinDialog();
@@ -209,28 +231,36 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         // 验证IP和端口
         if (!isCheckNetworkAddressAccess()) {
-            Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置", Toast
+                    .LENGTH_SHORT).show();
 
             closeLoadinDialog();
             return;
         }
 
-        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                        .getContext(),
                 NetworkConstant.LOGIN_SERVLET);
         LogUtil.trace("path:" + mLoginUrl);
         if (TextUtils.isEmpty(mLoginUrl)) {
-            Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
         RequestParams params = new RequestParams(mLoginUrl);
-        params.addQueryStringParameter("saleId", SharedUtil.getString(LoginActivity.this,
-                Constant.PREFERENCE_KEY_SALE_SERVICE));
-        params.addQueryStringParameter("userName", SharedUtil.getString(LoginActivity.this,
-                Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil.getString(LoginActivity.this,
-                Constant.PREFERENCE_KEY_USERNAME));
-        params.addQueryStringParameter("password", SharedUtil.getString(LoginActivity.this,
-                Constant.PREFERENCE_KEY_PSW));
+        params.addQueryStringParameter("saleId", SharedUtil.getString
+                (LoginActivity.this,
+                        Constant.PREFERENCE_KEY_SALE_SERVICE));
+        params.addQueryStringParameter("userName", SharedUtil.getString
+                (LoginActivity.this,
+                        Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil
+                .getString
+                (LoginActivity.this,
+                        Constant.PREFERENCE_KEY_USERNAME));
+        params.addQueryStringParameter("password", SharedUtil.getString
+                (LoginActivity.this,
+                        Constant.PREFERENCE_KEY_PSW));
 
         // TODO 从日志看出，下述回调都是在MainThread运行的
         final Callback.Cancelable post = x.http().post(params, new Callback
@@ -241,26 +271,32 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 LogUtil.trace("return s:" + s);
 
                 Gson gson = new Gson();
-                LoginResponse loginResponse = gson.fromJson(s, LoginResponse.class);
+                LoginResponse loginResponse = gson.fromJson(s, LoginResponse
+                        .class);
                 if (loginResponse != null) {
                     if ("1".equals(loginResponse.getAuthRet())) {
-                        Toast.makeText(BaqiangApplication.getContext(), "登录成功", Toast
-                                .LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "登录成功", Toast
+                                        .LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this,
+                                MainActivity.class));
                     } else {
-                        Toast.makeText(BaqiangApplication.getContext(), "用户名或密码错误，请重新登录", Toast
-                                .LENGTH_SHORT).show();
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "用户名或密码错误，请重新登录", Toast
+                                        .LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(BaqiangApplication.getContext(), "服务器数据解析错误", Toast
-                            .LENGTH_SHORT).show();
+                    Toast.makeText(BaqiangApplication.getContext(),
+                            "服务器数据解析错误", Toast
+                                    .LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace("error exception: " + throwable.getMessage());
-                Toast.makeText(LoginActivity.this, "服务器响应失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "服务器响应失败", Toast
+                        .LENGTH_SHORT).show();
             }
 
             @Override
@@ -304,20 +340,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         } else {
             SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, false);
         }
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, userName);
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, password);
+        SharedUtil.putString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_USERNAME, userName);
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
+                password);
     }
 
-    // TODO 申请读写权限
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE",
+    private static String[] PERMISSIONS_STORAGE = {"android.permission" +
+            ".READ_EXTERNAL_STORAGE",
             "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     public static void verifyStoragePermissions(Activity activity) {
         try {
             //检测是否有写的权限
-            int permission = ActivityCompat.checkSelfPermission(activity, "android.permission" +
-                    ".WRITE_EXTERNAL_STORAGE");
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    "android.permission" +
+                            ".WRITE_EXTERNAL_STORAGE");
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
                 ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,

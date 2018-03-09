@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="3"
-    tools:context="com.jiebao.baqiang.activity.MainActivity">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:weightSum="3"
+              tools:context="com.jiebao.baqiang.activity.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -25,17 +25,20 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/ll_data_collect"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
+                <!--设置第一项默认被选中-->
                 <Button
                     android:id="@+id/btn_data_collect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector"/>
+                    android:background="@drawable/goods_scan_selector"
+                    android:focusedByDefault="true"/>
 
                 <TextView
                     android:id="@+id/tv_check"
@@ -50,6 +53,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_query"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -75,6 +79,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_upload"
                 android:layout_width="5dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -122,6 +127,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/ll_phone_msg"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -146,6 +152,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_shipment_query"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -159,7 +166,7 @@
                     android:background="@drawable/data_import_selector"/>
 
                 <TextView
-                    android:id="@+id/data_import"
+                    android:id="@+id/data_shipment_query"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -171,6 +178,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_area_query"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -213,10 +221,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginTop="20dip"
-            android:weightSum="3"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <LinearLayout
+                android:id="@+id/ll_settings"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

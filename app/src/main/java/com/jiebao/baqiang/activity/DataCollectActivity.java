@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -68,6 +69,10 @@ public class DataCollectActivity extends BaseActivity implements View
 
     @Override
     public void initData() {
+        ScrollView mScrollViewMain = DataCollectActivity.this.findViewById(R
+                .id.scrollView_main);
+
+
         // 装车发件
         mLlLoadSend = DataCollectActivity.this.findViewById(R.id.ll_load_send);
         mLlLoadSend.setOnClickListener(this);
@@ -116,13 +121,13 @@ public class DataCollectActivity extends BaseActivity implements View
 
         switch (view.getId()) {
             // 装车发件
-            case R.id.ll_load_send:{
+            case R.id.ll_load_send: {
                 gotoZhuangche();
                 break;
             }
 
             // 卸车到件
-            case R.id.ll_unload_receive_package:{
+            case R.id.ll_unload_receive_package: {
                 gotoUpload();
                 break;
             }

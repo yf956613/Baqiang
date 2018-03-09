@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.service.DataSyncService;
@@ -22,10 +23,8 @@ public class MainActivity extends BaseActivity implements View
         .OnClickListener, DataSyncService.DataSyncNotifity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    // 数据采集
     private Button mBtnDataCollect;
-    private DataSyncService dataSyncService;
-
+    private DataSyncService mDataSyncService;
     private ProgressDialog mDownloadProgressDialog;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -36,8 +35,8 @@ public class MainActivity extends BaseActivity implements View
 
             DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder)
                     service;
-            dataSyncService = myBinder.getService();
-            dataSyncService.setDataSyncNotifity(MainActivity.this);
+            mDataSyncService = myBinder.getService();
+            mDataSyncService.setDataSyncNotifity(MainActivity.this);
         }
 
         @Override
@@ -45,6 +44,19 @@ public class MainActivity extends BaseActivity implements View
             LogUtil.trace();
         }
     };
+    private LinearLayout mLlDataCollect;
+    private LinearLayout mLlQuery;
+    private LinearLayout mLlUpload;
+    private LinearLayout mLlPhoneMsg;
+    private LinearLayout mLlShipmentQuery;
+    private LinearLayout mLlAreaQuery;
+    private LinearLayout mLlSettings;
+    private Button mBtnQuery;
+    private Button mBtnUpload;
+    private Button mBtnPhoneMsg;
+    private Button mBtnShipmentQuery;
+    private Button mBtnAreaQuery;
+    private Button mBtnSettings;
 
     @Override
     public void initView() {
@@ -54,14 +66,108 @@ public class MainActivity extends BaseActivity implements View
 
     @Override
     public void initData() {
-        mBtnDataCollect = findViewById(R.id.btn_data_collect);
+        LogUtil.trace();
+
+        // TODO 需要设置第一项默认被选中
+        mBtnDataCollect = MainActivity.this.findViewById(R.id.btn_data_collect);
+        mLlDataCollect = MainActivity.this.findViewById(R.id.ll_data_collect);
+
+        mBtnQuery = MainActivity.this.findViewById(R.id.btn_query);
+        mLlQuery = MainActivity.this.findViewById(R.id.ll_query);
+
+        mBtnUpload = MainActivity.this.findViewById(R.id.btn_upload);
+        mLlUpload = MainActivity.this.findViewById(R.id.ll_upload);
+
+        mBtnPhoneMsg = MainActivity.this.findViewById(R.id.btn_phone_msg);
+        mLlPhoneMsg = MainActivity.this.findViewById(R.id
+                .ll_phone_msg);
+
+        mBtnShipmentQuery = MainActivity.this.findViewById(R.id
+                .btn_shipment_query);
+        mLlShipmentQuery = MainActivity.this.findViewById(R.id
+                .ll_shipment_query);
+
+        mBtnAreaQuery = MainActivity.this.findViewById(R.id.btn_area_query);
+        mLlAreaQuery = MainActivity.this.findViewById(R.id
+                .ll_area_query);
+
+        mBtnSettings = MainActivity.this.findViewById(R.id.btn_settings);
+        mLlSettings = MainActivity.this.findViewById(R.id
+                .ll_settings);
+
         initListener();
 
         // startDataSync();
     }
 
+    /**
+     * 根据Button的状态，改变LinearLayout的背景
+     *
+     * @param v
+     * @param hasFocus
+     */
+    private void setLinearLayoutBackground(View v, boolean hasFocus) {
+        if (hasFocus) {
+            v.setBackgroundResource(R.color.material_blue_500);
+        } else {
+            v.setBackgroundResource(R.color.bg_transparent);
+        }
+    }
+
+    private final View.OnFocusChangeListener mLlFocusChangeListener = new View
+            .OnFocusChangeListener() {
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            switch (v.getId()) {
+                case R.id.btn_data_collect: {
+                    setLinearLayoutBackground(mLlDataCollect, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_query: {
+                    setLinearLayoutBackground(mLlQuery, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_upload: {
+                    setLinearLayoutBackground(mLlUpload, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_phone_msg: {
+                    setLinearLayoutBackground(mLlPhoneMsg, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_shipment_query: {
+                    setLinearLayoutBackground(mLlShipmentQuery, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_area_query: {
+                    setLinearLayoutBackground(mLlAreaQuery, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_settings: {
+                    setLinearLayoutBackground(mLlSettings, hasFocus);
+                    break;
+                }
+            }
+        }
+    };
+
     private void initListener() {
         mBtnDataCollect.setOnClickListener(this);
+        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
     }
 
     private void startDataSync() {
