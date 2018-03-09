@@ -229,6 +229,19 @@ public class LoginActivity extends BaseActivity implements View
             return;
         }
 
+        // 退出app账户设置
+        if("888888".equals(account) && "159357".equals(pwd)){
+            LogUtil.trace("goto Launcher...");
+
+            // 应用中退回到Launcher界面
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            LoginActivity.this.startActivity(intent);
+
+            closeLoadinDialog();
+            return;
+        }
+
         // 验证IP和端口
         if (!isCheckNetworkAddressAccess()) {
             Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置", Toast

@@ -316,6 +316,18 @@ public class FajianActivity extends BaseActivity implements View
                     .show();
 
             return;
+        }else{
+            // 防止下一站信息输入错误
+            String nextStation = mTvNextStation.getText().toString();
+            String[] arr = nextStation.split("  ");
+            if (!queryNextStation(arr[0])) {
+                Toast.makeText(FajianActivity.this, "前置信息错误", Toast
+                        .LENGTH_SHORT).show();
+                return;
+            }
+
+            String shipmentType = mTvShipmentType.getText().toString();
+
         }
 
         // 1. 查表：当前是名为fajian的表，判断是否有记录
@@ -346,6 +358,32 @@ public class FajianActivity extends BaseActivity implements View
         mListData.add(mFajianListViewBean);
         mFajianAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * 查询下一站是否有记录记录
+     *
+     * @param id
+     * @return
+     */
+    private boolean queryNextStation(String id) {
+        List<SalesService> mData = null;
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            mData = dbManager.selector(SalesService.class).where("网点编号",
+                    "=", id).findAll();
+
+            if (mData != null && mData.size() != 0) {
+                // 存在记录
+                return true;
+            }
+        } catch (DbException e) {
+            LogUtil.trace();
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     private static final String DB_NAME = "fajian";
 
