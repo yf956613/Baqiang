@@ -6,6 +6,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
+import com.jiebao.baqiang.util.LogUtil;
+
 /**
  * Created by yaya on 2018/3/9.
  */
@@ -30,6 +32,10 @@ public class MyScrollView extends ScrollView {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
+        LogUtil.trace("keyCode:" + keyCode + "; event.action:" + event
+                .getAction());
+
+        return super.onKeyDown(keyCode, event);
     }
+
 }

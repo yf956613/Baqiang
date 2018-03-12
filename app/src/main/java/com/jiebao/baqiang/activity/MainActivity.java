@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements View
 
         initListener();
 
-        // startDataSync();
+        startDataSync();
     }
 
     /**
@@ -168,6 +168,12 @@ public class MainActivity extends BaseActivity implements View
         mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnDataCollect.setFocusable(true);
+        mBtnDataCollect.setFocusableInTouchMode(true);
+        mBtnDataCollect.requestFocus();
+        mBtnDataCollect.requestFocusFromTouch();
     }
 
     private void startDataSync() {

@@ -2,7 +2,6 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:focusableInTouchMode="true"
               android:orientation="vertical"
               tools:context="com.jiebao.baqiang.activity.DataCollectActivity">
 
@@ -10,12 +9,14 @@
         android:id="@+id/scrollView_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/scroll_child"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
+            android:focusedByDefault="true"
             android:orientation="vertical">
 
             <FrameLayout
@@ -45,7 +46,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
+                            android:id="@+id/btn_load_send"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_scan_selector"/>
@@ -70,7 +72,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
+                            android:id="@+id/btn_unload_receive_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_storage_selector"/>
@@ -95,7 +98,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
+                            android:id="@+id/btn_arrive_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_output_selector"/>
@@ -141,7 +145,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
+                            android:id="@+id/btn_send_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_query_selector"/>
@@ -166,7 +171,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/data_import_selector"/>
@@ -191,7 +196,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/system_set_selector"/>
@@ -237,7 +242,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_scan_selector"/>
@@ -262,7 +267,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_storage_selector"/>
@@ -287,7 +292,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_output_selector"/>
@@ -334,7 +339,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_query_selector"/>
@@ -359,7 +364,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/data_import_selector"/>
@@ -384,7 +389,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
+                            android:id="@+id/btn_leave_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/system_set_selector"/>
@@ -431,7 +437,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_scan_selector"/>
@@ -457,7 +463,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_storage_selector"/>
@@ -482,7 +488,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_output_selector"/>
@@ -530,7 +536,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <ImageView
+                        <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/goods_query_selector"/>

@@ -11,8 +11,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -44,10 +44,20 @@ public class DataCollectActivity extends BaseActivity implements View
     private BroadcastReceiver mLanguageSetReceiver;
     private String mLoginUrl = "";
     private LinearLayout mLlSendPackage;
-    private LinearLayout mLlArrivePackage;
+
     private LinearLayout mLlLeavePackage;
-    private LinearLayout mLlUnloadReceivePackage;
+
     private LinearLayout mLlLoadSend;
+    private Button mBtnLoadSend;
+
+    private LinearLayout mLlUnloadReceivePackage;
+    private Button mBtnUnloadReceivePackage;
+
+    private LinearLayout mLlArrivePackage;
+    private Button mBtnArrivePackage;
+    private Button mBtnSendPackage;
+    private Button mBtnLeavePackage;
+
 
     public void initView() {
         initLanguageSetBroadCast();
@@ -67,35 +77,101 @@ public class DataCollectActivity extends BaseActivity implements View
         setContent(R.layout.activity_data_collect);
     }
 
+    /**
+     * 根据Button的状态，改变LinearLayout的背景
+     *
+     * @param v
+     * @param hasFocus
+     */
+    private void setLinearLayoutBackground(View v, boolean hasFocus) {
+        if (hasFocus) {
+            v.setBackgroundResource(R.color.material_blue_500);
+        } else {
+            v.setBackgroundResource(R.color.bg_transparent);
+        }
+    }
+
+    private final View.OnFocusChangeListener mLlFocusChangeListener = new View
+            .OnFocusChangeListener() {
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            switch (v.getId()) {
+                case R.id.btn_load_send: {
+                    setLinearLayoutBackground(mLlLoadSend, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_unload_receive_package: {
+                    setLinearLayoutBackground(mLlUnloadReceivePackage,
+                            hasFocus);
+                    break;
+                }
+
+                case R.id.btn_arrive_package: {
+                    setLinearLayoutBackground(mLlArrivePackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_send_package: {
+                    setLinearLayoutBackground(mLlSendPackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_leave_package: {
+                    setLinearLayoutBackground(mLlLeavePackage, hasFocus);
+                    break;
+                }
+            }
+        }
+    };
+
     @Override
     public void initData() {
-        ScrollView mScrollViewMain = DataCollectActivity.this.findViewById(R
-                .id.scrollView_main);
-
-
         // 装车发件
         mLlLoadSend = DataCollectActivity.this.findViewById(R.id.ll_load_send);
-        mLlLoadSend.setOnClickListener(this);
+        mBtnLoadSend = DataCollectActivity.this.findViewById(R.id
+                .btn_load_send);
+        mBtnLoadSend.setOnClickListener(this);
+        mBtnLoadSend.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnLoadSend.setFocusable(true);
+        mBtnLoadSend.setFocusableInTouchMode(true);
+        mBtnLoadSend.requestFocus();
+        mBtnLoadSend.requestFocusFromTouch();
 
         // 卸车到件
         mLlUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
                 .ll_unload_receive_package);
-        mLlUnloadReceivePackage.setOnClickListener(this);
+        mBtnUnloadReceivePackage = DataCollectActivity.this
+                .findViewById(R.id.btn_unload_receive_package);
+        mBtnUnloadReceivePackage.setOnClickListener(this);
+        mBtnUnloadReceivePackage.setOnFocusChangeListener
+                (mLlFocusChangeListener);
 
         // 到件
         mLlArrivePackage = DataCollectActivity.this.findViewById(R.id
                 .ll_arrive_package);
-        mLlArrivePackage.setOnClickListener(this);
+        mBtnArrivePackage = DataCollectActivity.this.findViewById(R.id
+                .btn_arrive_package);
+        mBtnArrivePackage.setOnClickListener(this);
+        mBtnArrivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 发件
         mLlSendPackage = DataCollectActivity.this.findViewById(R.id
                 .ll_send_package);
-        mLlSendPackage.setOnClickListener(this);
+        mBtnSendPackage = DataCollectActivity.this.findViewById(R.id
+                .btn_send_package);
+        mBtnSendPackage.setOnClickListener(this);
+        mBtnSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 留仓
         mLlLeavePackage = DataCollectActivity.this.findViewById(R.id
                 .ll_leave_package);
-        mLlLeavePackage.setOnClickListener(this);
+        mBtnLeavePackage = DataCollectActivity.this.findViewById(R.id.btn_leave_package);
+        mBtnLeavePackage.setOnClickListener(this);
+        mBtnLeavePackage.setOnFocusChangeListener(mLlFocusChangeListener);
     }
 
     @Override
@@ -118,34 +194,33 @@ public class DataCollectActivity extends BaseActivity implements View
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()) {
             // 装车发件
-            case R.id.ll_load_send: {
+            case R.id.btn_load_send: {
                 gotoZhuangche();
                 break;
             }
 
             // 卸车到件
-            case R.id.ll_unload_receive_package: {
+            case R.id.btn_unload_receive_package: {
                 gotoUpload();
                 break;
             }
 
             // 发件
-            case R.id.ll_send_package: {
+            case R.id.btn_send_package: {
                 fajian();
                 break;
             }
 
             // 到件
-            case R.id.ll_arrive_package: {
+            case R.id.btn_arrive_package: {
                 daojian();
                 break;
             }
 
             // 留仓件
-            case R.id.ll_leave_package: {
+            case R.id.btn_leave_package: {
                 liucang();
 
                 break;

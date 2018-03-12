@@ -60,19 +60,44 @@ public class LoginActivity extends BaseActivity implements View
         verifyStoragePermissions(LoginActivity.this);
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtil.trace("keyCode--->" + keyCode);
+    private View.OnFocusChangeListener mFocusChangeListener = new View
+            .OnFocusChangeListener() {
 
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK: {
-                LogUtil.d(TAG, "---->按下了Back按键");
-                // 消费Back事件
-                return true;
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            setBtnBackground(v,hasFocus);
+        }
+    };
+
+    private void initListener() {
+        mBtnLogin.setOnFocusChangeListener(mFocusChangeListener);
+        mBtnConfigurate.setOnFocusChangeListener(mFocusChangeListener);
+    }
+
+    private void setBtnBackground(View v, boolean isFocus) {
+        switch (v.getId()) {
+            case R.id.btn_login: {
+                if (isFocus) {
+                    mBtnLogin.setBackgroundResource(R.drawable
+                            .btn_login_bg_pressed);
+                } else {
+                    mBtnLogin.setBackgroundResource(R.drawable
+                            .btn_login_bg_normal);
+                }
+                break;
+            }
+
+            case R.id.btn_wifi_setttings:{
+                if (isFocus) {
+                    mBtnConfigurate.setBackgroundResource(R.drawable
+                            .btn_login_bg_pressed);
+                } else {
+                    mBtnConfigurate.setBackgroundResource(R.drawable
+                            .btn_login_bg_normal);
+                }
+                break;
             }
         }
-
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -96,6 +121,8 @@ public class LoginActivity extends BaseActivity implements View
         mLLRemember.setOnClickListener(this);
 
         sendBroadcastForKey();
+
+        initListener();
     }
 
     @Override
@@ -216,6 +243,21 @@ public class LoginActivity extends BaseActivity implements View
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        LogUtil.trace("keyCode--->" + keyCode);
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK: {
+                LogUtil.d(TAG, "---->按下了Back按键");
+                // 消费Back事件
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void login(final String account, final String pwd) {
         // TODO 管理员账号：000000 123695
         if ("000000".equals(account) && "123695".equals(pwd)) {
@@ -230,7 +272,7 @@ public class LoginActivity extends BaseActivity implements View
         }
 
         // 退出app账户设置
-        if("888888".equals(account) && "159357".equals(pwd)){
+        if ("888888".equals(account) && "159357".equals(pwd)) {
             LogUtil.trace("goto Launcher...");
 
             // 应用中退回到Launcher界面
@@ -269,8 +311,8 @@ public class LoginActivity extends BaseActivity implements View
                 (LoginActivity.this,
                         Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil
                 .getString
-                (LoginActivity.this,
-                        Constant.PREFERENCE_KEY_USERNAME));
+                        (LoginActivity.this,
+                                Constant.PREFERENCE_KEY_USERNAME));
         params.addQueryStringParameter("password", SharedUtil.getString
                 (LoginActivity.this,
                         Constant.PREFERENCE_KEY_PSW));
