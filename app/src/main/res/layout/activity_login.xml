@@ -97,6 +97,7 @@
             android:layout_marginTop="@dimen/margin_mid"
             android:layout_weight="1"
             android:gravity="center"
+            android:background="@color/status_view"
             android:text="@string/login"
             android:textColor="@color/black"
             android:textSize="@dimen/text_mid_size" />
@@ -111,6 +112,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/set_wifi"
+            android:background="@color/status_view"
             android:textColor="@color/black"
             android:textSize="@dimen/text_mid_size" />
     </LinearLayout>

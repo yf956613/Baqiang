@@ -12,10 +12,9 @@ import com.jiebao.baqiang.data.updateData.UpdateShipmentType;
 import com.jiebao.baqiang.data.updateData.UpdateVehicleInfo;
 import com.jiebao.baqiang.util.LogUtil;
 
-public class DataSyncService extends Service implements
-        UpdateSalesServiceData.DataDownloadFinish, UpdateShipmentType
-        .DataDownloadFinish, UpdateLiuCangType.DataDownloadFinish,
-        UpdateVehicleInfo.DataDownloadFinish {
+public class DataSyncService extends Service implements UpdateSalesServiceData
+        .DataDownloadFinish, UpdateShipmentType.DataDownloadFinish, UpdateLiuCangType
+        .DataDownloadFinish, UpdateVehicleInfo.DataDownloadFinish {
 
     private DataSyncNotifity mDataSyncNotifity;
     private MyBinder myBinder = new MyBinder();
@@ -71,20 +70,16 @@ public class DataSyncService extends Service implements
             LogUtil.trace();
 
             // 更新网点数据
-            UpdateSalesServiceData.getInstance().setDataDownloadFinish
-                    (DataSyncService.this);
+            UpdateSalesServiceData.getInstance().setDataDownloadFinish(DataSyncService.this);
             UpdateSalesServiceData.getInstance().updateSalesService();
             // 更新快件类型正常
-            UpdateShipmentType.getInstance().setDataDownloadFinish
-                    (DataSyncService.this);
+            UpdateShipmentType.getInstance().setDataDownloadFinish(DataSyncService.this);
             UpdateShipmentType.getInstance().updateShipmentType();
             // 更新留仓原因正常
-            UpdateLiuCangType.getInstance().setDataDownloadFinish
-                    (DataSyncService.this);
+            UpdateLiuCangType.getInstance().setDataDownloadFinish(DataSyncService.this);
             UpdateLiuCangType.getInstance().updateLiuCangType();
             // 更新车辆信息正常
-            UpdateVehicleInfo.getInstance().setDataDownloadFinish
-                    (DataSyncService.this);
+            UpdateVehicleInfo.getInstance().setDataDownloadFinish(DataSyncService.this);
             UpdateVehicleInfo.getInstance().updateVehicleInfo();
 
             return null;
@@ -110,7 +105,7 @@ public class DataSyncService extends Service implements
     public void downloadSalesServiceFinish() {
         ++mUpdateID;
 
-        LogUtil.trace("mUpdateID:"+mUpdateID);
+        LogUtil.trace("mUpdateID:" + mUpdateID);
         if (mUpdateID == 4) {
             // onStartCommand --> onServiceConnected 空指针异常
             mDataSyncNotifity.onSyncFinished(null);
@@ -121,7 +116,7 @@ public class DataSyncService extends Service implements
     public void downloadShipmentTypeFinish() {
         ++mUpdateID;
 
-        LogUtil.trace("mUpdateID:"+mUpdateID);
+        LogUtil.trace("mUpdateID:" + mUpdateID);
         if (mUpdateID == 4) {
             // onStartCommand --> onServiceConnected 空指针异常
             mDataSyncNotifity.onSyncFinished(null);
@@ -132,7 +127,7 @@ public class DataSyncService extends Service implements
     public void downloadLiuCangTypeFinish() {
         ++mUpdateID;
 
-        LogUtil.trace("mUpdateID:"+mUpdateID);
+        LogUtil.trace("mUpdateID:" + mUpdateID);
         if (mUpdateID == 4) {
             // onStartCommand --> onServiceConnected 空指针异常
             mDataSyncNotifity.onSyncFinished(null);
@@ -143,7 +138,7 @@ public class DataSyncService extends Service implements
     public void downloadVehicleInfoFinish() {
         ++mUpdateID;
 
-        LogUtil.trace("mUpdateID:"+mUpdateID);
+        LogUtil.trace("mUpdateID:" + mUpdateID);
         if (mUpdateID == 4) {
             // onStartCommand --> onServiceConnected 空指针异常
             mDataSyncNotifity.onSyncFinished(null);

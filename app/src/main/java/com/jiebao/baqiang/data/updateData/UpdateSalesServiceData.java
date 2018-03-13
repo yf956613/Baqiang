@@ -82,7 +82,9 @@ public class UpdateSalesServiceData extends UpdateInterface {
                 final SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
 
+                // TODO 工作线程中执行数据存储
                 new Thread(new Runnable() {
+
                     @Override
                     public void run() {
                         storageData(salesServiceList);

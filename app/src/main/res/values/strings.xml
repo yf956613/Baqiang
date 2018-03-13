@@ -92,7 +92,7 @@
 	<string name="txt_file_path">文件路径：</string>
 	<string name="txt_import_log">导入日志：</string>
 	<string name="txt_import_field">导入字段:</string>
-	<string name="txt_operating_wait">请稍后...</string>
+	<string name="txt_operating_wait">请稍候...</string>
 	<string name="txt_copyright">广州捷宝科技股份有限公司</string>
 	<string name="title_system_admin_check">系统管理员验证</string>
 	<string name="title_select_mode">请选择模式</string>

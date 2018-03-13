@@ -376,10 +376,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    // TODO 屏蔽Back按键
+                    /*if (keyCode == KeyEvent.KEYCODE_BACK) {
                         closeLoadinDialog();
                         loadingBulider = null;
-                    }
+                    }*/
                     return false;
                 }
             });

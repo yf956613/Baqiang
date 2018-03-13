@@ -26,7 +26,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         DataSyncService.DataSyncNotifity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-
     private DataSyncService mDataSyncService;
     private ProgressDialog mDownloadProgressDialog;
 
@@ -82,35 +81,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     @ViewInject(R.id.ll_settings)
     private LinearLayout mLlSettings;
 
-    @Override
-    public void initView() {
-        setContent(R.layout.activity_main);
-        setHeaderLeftViewText("速尔手持终端软件");
-        x.view().inject(MainActivity.this);
-    }
-
-    @Override
-    public void initData() {
-        LogUtil.trace();
-
-        initListener();
-        // startDataSync();
-    }
-
-    /**
-     * 根据Button的状态，改变LinearLayout的背景
-     *
-     * @param v
-     * @param hasFocus
-     */
-    private void setLinearLayoutBackground(View v, boolean hasFocus) {
-        if (hasFocus) {
-            v.setBackgroundResource(R.color.back_transpant);
-        } else {
-            v.setBackgroundResource(R.color.bg_transparent);
-        }
-    }
-
     private final View.OnFocusChangeListener mLlFocusChangeListener = new View
             .OnFocusChangeListener() {
 
@@ -154,6 +124,35 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             }
         }
     };
+
+    @Override
+    public void initView() {
+        setContent(R.layout.activity_main);
+        setHeaderLeftViewText("速尔手持终端软件");
+        x.view().inject(MainActivity.this);
+    }
+
+    @Override
+    public void initData() {
+        LogUtil.trace();
+
+        initListener();
+        // startDataSync();
+    }
+
+    /**
+     * 根据Button的状态，改变LinearLayout的背景
+     *
+     * @param v
+     * @param hasFocus
+     */
+    private void setLinearLayoutBackground(View v, boolean hasFocus) {
+        if (hasFocus) {
+            v.setBackgroundResource(R.color.back_transpant);
+        } else {
+            v.setBackgroundResource(R.color.bg_transparent);
+        }
+    }
 
     private void initListener() {
         mBtnDataCollect.setOnClickListener(this);

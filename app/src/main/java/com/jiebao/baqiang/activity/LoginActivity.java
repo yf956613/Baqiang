@@ -25,26 +25,26 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
+import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
 
-    private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
-    private static final String PERSIST_SETTINGS_KEY = "persistKey";
-    private static final String PERSIST_SETTINGS_VALUE = "persistValue";
-    private static final String KEY_HOME = "persist.sys.key_home";
-    private static final String HIDE_STATUSBAR = "persist.sys.hide_statusbar";
-
+    // TODO android:singleLine="true" 设置Enter按键动作
+    @ViewInject(R.id.et_user_name)
     private EditText mEtUserName;
+    @ViewInject(R.id.et_passward)
     private EditText mEtPassward;
-
+    @ViewInject(R.id.btn_login)
     private Button mBtnLogin;
+    @ViewInject(R.id.btn_wifi_setttings)
     private Button mBtnConfigurate;
 
     private String mLoginUrl = "";
@@ -77,20 +77,14 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         setFootLayout(footerLayout);*/
 
         setContent(R.layout.activity_login);
-        verifyStoragePermissions(LoginActivity.this);
+        x.view().inject(LoginActivity.this);
     }
 
     @Override
     public void initData() {
         LogUtil.trace();
 
-        // TODO android:singleLine="true" 设置Enter按键动作
-        mEtUserName = LoginActivity.this.findViewById(R.id.et_user_name);
-        mEtPassward = LoginActivity.this.findViewById(R.id.et_passward);
-
-        mBtnLogin = findViewById(R.id.btn_login);
-        mBtnConfigurate = LoginActivity.this.findViewById(R.id.btn_wifi_setttings);
-
+        verifyStoragePermissions(LoginActivity.this);
         sendBroadcastForAction();
         initListener();
     }
@@ -99,8 +93,8 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         mBtnLogin.setOnClickListener(this);
         mBtnLogin.setOnFocusChangeListener(mFocusChangeListener);
 
-        mBtnConfigurate.setOnFocusChangeListener(mFocusChangeListener);
         mBtnConfigurate.setOnClickListener(this);
+        mBtnConfigurate.setOnFocusChangeListener(mFocusChangeListener);
     }
 
     @Override
@@ -113,14 +107,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         switch (v.getId()) {
             case R.id.btn_login: {
                 closeSoftKeyBoard();
-                showLoadinDialog();
 
                 String userName = mEtUserName.getText().toString();
                 String psw = mEtPassward.getText().toString();
                 if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(psw)) {
                     Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入", Toast.LENGTH_SHORT).show();
-
-                    closeLoadinDialog();
                 } else {
                     login(userName, psw);
                 }
@@ -153,7 +144,15 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         return super.onKeyDown(keyCode, event);
     }
 
-    public void login(final String account, final String pwd) {
+    private void login(final String account, final String pwd) {
+        if (!AppUtil.IsNetworkAvailable()) {
+            Toast.makeText(LoginActivity.this, "当前网络不可用", Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+
+        showLoadinDialog();
+
         // TODO 管理员账号：000000 123695
         if ("000000".equals(account) && "123695".equals(pwd)) {
             LogUtil.trace("goto Administrator activity.");
@@ -191,6 +190,8 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         LogUtil.trace("path:" + mLoginUrl);
         if (TextUtils.isEmpty(mLoginUrl)) {
             Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast.LENGTH_SHORT).show();
+            closeLoadinDialog();
+
             return;
         }
 
@@ -251,16 +252,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         });
     }
 
-    public void closeSoftKeyBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context
-                .INPUT_METHOD_SERVICE);
-        if (imm.isActive()) {
-            if (getCurrentFocus() != null)
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
-
     /**
      * 判断IP地址和端口是否设置
      *
@@ -278,6 +269,12 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
         return true;
     }
+
+    private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
+    private static final String PERSIST_SETTINGS_KEY = "persistKey";
+    private static final String PERSIST_SETTINGS_VALUE = "persistValue";
+    private static final String KEY_HOME = "persist.sys.key_home";
+    private static final String HIDE_STATUSBAR = "persist.sys.hide_statusbar";
 
     /**
      * 发送广播给Settings，做屏蔽HOME和下拉状态栏
@@ -300,6 +297,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
     private static String[] PERMISSIONS_STORAGE = {"android.permission" + "" + "" + "" + "" + ""
             + ".READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
+    /**
+     * App申请系统相关权限
+     *
+     * @param activity
+     */
     public static void verifyStoragePermissions(Activity activity) {
         try {
             //检测是否有写的权限
@@ -324,9 +326,22 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
     private void setBtnBackground(View v, boolean isFocus) {
         if (isFocus) {
             // v.setBackgroundResource(R.drawable.btn_login_bg_pressed);
-            v.setBackgroundColor(this.getResources().getColor(R.color.colorAccent));
+            v.setBackgroundColor(this.getResources().getColor(R.color.colorPrimaryDark));
         } else {
-            v.setBackgroundColor(this.getResources().getColor(R.color.transparent));
+            v.setBackgroundColor(this.getResources().getColor(R.color.status_view));
+        }
+    }
+
+    /**
+     * 关闭软键盘
+     */
+    private void closeSoftKeyBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        if (imm.isActive()) {
+            if (getCurrentFocus() != null)
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
