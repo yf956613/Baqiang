@@ -31,7 +31,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, CompoundButton
+public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener, CompoundButton
         .OnCheckedChangeListener {
     private static final String TAG = "LoginActivity";
 

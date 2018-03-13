@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,6 +17,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/ll_weigh_fore_payment"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -28,18 +28,15 @@
                     android:id="@+id/btn_weigh_fore_payment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector"/>
+                    android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1.称重预付款设置"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
+                    style="@style/ItemNameTextStyle"
+                    android:text="1.称重预付款设置" />
             </LinearLayout>
 
             <LinearLayout
-
+                android:id="@+id/ll_weigh_input_business"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -50,18 +47,15 @@
                     android:id="@+id/btn_weigh_input_business"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector"/>
+                    android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2.称重录单设置"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
+                    style="@style/ItemNameTextStyle"
+                    android:text="2.称重录单设置" />
             </LinearLayout>
 
             <LinearLayout
-
+                android:id="@+id/ll_arrival_fore_payment"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -72,14 +66,11 @@
                     android:id="@+id/btn_arrival_fore_payment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector"/>
+                    android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3.到件预付款设置"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
+                    style="@style/ItemNameTextStyle"
+                    android:text="3.到件预付款设置" />
             </LinearLayout>
 
         </LinearLayout>
@@ -93,6 +84,7 @@
             android:weightSum="3">
 
             <LinearLayout
+                android:id="@+id/ll_scan_switch"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -100,17 +92,14 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/scan_switch"
+                    android:id="@+id/btn_scan_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/goods_scan_selector"/>
+                    android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4.到/发件扫描判断开关"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
+                    style="@style/ItemNameTextStyle"
+                    android:text="4.到/发件扫描判断开关" />
             </LinearLayout>
 
         </LinearLayout>

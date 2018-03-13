@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FajianActivity extends BaseActivity implements View
+public class FajianActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "FajianActivity";
 
@@ -69,7 +69,7 @@ public class FajianActivity extends BaseActivity implements View
     @Override
     public void initView() {
         setContent(R.layout.fajian);
-        setHeaderCenterViewText(getString(R.string.main_output));
+        setHeaderLeftViewText(getString(R.string.main_output));
     }
 
     @Override

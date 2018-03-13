@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -39,8 +40,8 @@ import java.io.File;
  * Created by yaya on 2018/2/26.
  */
 
-@ContentView(R.layout.activity_admin_settings)
-public class AdministratorSettingActivity extends Activity implements View.OnClickListener {
+public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber implements View
+        .OnClickListener {
     private static final String TAG = AdministratorSettingActivity.class.getSimpleName();
 
     @ViewInject(R.id.btn_server_config)
@@ -122,48 +123,46 @@ public class AdministratorSettingActivity extends Activity implements View.OnCli
         }
     };
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void initView() {
+        setContent(R.layout.activity_admin_settings);
+        setHeaderLeftViewText("管理员账号设置");
         x.view().inject(AdministratorSettingActivity.this);
-
-        initData();
     }
 
-    private void initData() {
+    @Override
+    public void initData() {
         // 服务器设置
-        mBtnServerConfig = AdministratorSettingActivity.this.findViewById(R.id.btn_server_config);
         mBtnServerConfig.setOnClickListener(this);
         mBtnServerConfig.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        // TODO 默认选择第一个选项
+        mBtnServerConfig.setFocusable(true);
+        mBtnServerConfig.setFocusableInTouchMode(true);
+        mBtnServerConfig.requestFocus();
+        mBtnServerConfig.requestFocusFromTouch();
+
         // 网点编号
-        mBtnServerID = AdministratorSettingActivity.this.findViewById(R.id.btn_server_id);
         mBtnServerID.setOnClickListener(this);
         mBtnServerID.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 巴枪编号
-        mBtnDeviceID = AdministratorSettingActivity.this.findViewById(R.id.btn_device_id);
         mBtnDeviceID.setOnClickListener(this);
         mBtnDeviceID.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 业务设置
-        mBtnBussinessSettings = AdministratorSettingActivity.this.findViewById(R.id.btn_bussiness);
         mBtnBussinessSettings.setOnClickListener(this);
         mBtnBussinessSettings.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 巴枪清空
-        mBtnSwipeData = AdministratorSettingActivity.this.findViewById(R.id.btn_wipe_data);
         mBtnSwipeData.setOnClickListener(this);
         mBtnSwipeData.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // WIFI 设置
-        mBtnWifiSetting = AdministratorSettingActivity.this.findViewById(R.id.btn_wifi_settings);
         mBtnWifiSetting.setOnClickListener(this);
         mBtnWifiSetting.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 软件更新
-        mBtnAppUpdate = AdministratorSettingActivity.this.findViewById(R.id.btn_app_update);
         mBtnAppUpdate.setOnClickListener(this);
         mBtnAppUpdate.setOnFocusChangeListener(mLlFocusChangeListener);
     }
@@ -176,7 +175,7 @@ public class AdministratorSettingActivity extends Activity implements View.OnCli
      */
     private void setLinearLayoutBackground(View v, boolean hasFocus) {
         if (hasFocus) {
-            v.setBackgroundResource(R.color.material_blue_500);
+            v.setBackgroundResource(R.color.back_transpant);
         } else {
             v.setBackgroundResource(R.color.bg_transparent);
         }

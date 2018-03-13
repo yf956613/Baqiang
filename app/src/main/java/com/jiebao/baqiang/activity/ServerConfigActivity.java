@@ -17,7 +17,7 @@ import com.jiebao.baqiang.util.SharedUtil;
  * Created by yaya on 2018/2/26.
  */
 
-public class ServerConfigActivity extends BaseActivity implements View
+public class ServerConfigActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener {
     private static final String TAG = ServerConfigActivity.class
             .getSimpleName();
@@ -33,7 +33,7 @@ public class ServerConfigActivity extends BaseActivity implements View
     @Override
     public void initView() {
         // TODO Activity的头部视图名称
-        setHeaderCenterViewText("服务器设置");
+        setHeaderLeftViewText("服务器设置");
 
         // TODO Activity的底部视图，底部设置包含两个Button
         LinearLayout footerLayout = (LinearLayout) View.inflate(this, R

@@ -15,15 +15,18 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.service.DataSyncService;
 import com.jiebao.baqiang.util.LogUtil;
 
+import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
+
 /**
  * 一级菜单界面，主要用户更新信息
  */
 
-public class MainActivity extends BaseActivity implements View
-        .OnClickListener, DataSyncService.DataSyncNotifity {
+public class MainActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener,
+        DataSyncService.DataSyncNotifity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private Button mBtnDataCollect;
+
     private DataSyncService mDataSyncService;
     private ProgressDialog mDownloadProgressDialog;
 
@@ -33,8 +36,7 @@ public class MainActivity extends BaseActivity implements View
         public void onServiceConnected(ComponentName name, IBinder service) {
             LogUtil.trace();
 
-            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder)
-                    service;
+            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder) service;
             mDataSyncService = myBinder.getService();
             mDataSyncService.setDataSyncNotifity(MainActivity.this);
         }
@@ -44,60 +46,55 @@ public class MainActivity extends BaseActivity implements View
             LogUtil.trace();
         }
     };
+
+    @ViewInject(R.id.btn_data_collect)
+    private Button mBtnDataCollect;
+    @ViewInject(R.id.ll_data_collect)
     private LinearLayout mLlDataCollect;
-    private LinearLayout mLlQuery;
-    private LinearLayout mLlUpload;
-    private LinearLayout mLlPhoneMsg;
-    private LinearLayout mLlShipmentQuery;
-    private LinearLayout mLlAreaQuery;
-    private LinearLayout mLlSettings;
+
+    @ViewInject(R.id.btn_query)
     private Button mBtnQuery;
+    @ViewInject(R.id.ll_query)
+    private LinearLayout mLlQuery;
+
+    @ViewInject(R.id.btn_upload)
     private Button mBtnUpload;
+    @ViewInject(R.id.ll_upload)
+    private LinearLayout mLlUpload;
+
+    @ViewInject(R.id.btn_phone_msg)
     private Button mBtnPhoneMsg;
+    @ViewInject(R.id.ll_phone_msg)
+    private LinearLayout mLlPhoneMsg;
+
+    @ViewInject(R.id.btn_shipment_query)
     private Button mBtnShipmentQuery;
+    @ViewInject(R.id.ll_shipment_query)
+    private LinearLayout mLlShipmentQuery;
+
+    @ViewInject(R.id.btn_area_query)
     private Button mBtnAreaQuery;
+    @ViewInject(R.id.ll_area_query)
+    private LinearLayout mLlAreaQuery;
+
+    @ViewInject(R.id.btn_settings)
     private Button mBtnSettings;
+    @ViewInject(R.id.ll_settings)
+    private LinearLayout mLlSettings;
 
     @Override
     public void initView() {
-        setHeaderCenterViewText("速尔手持终端软件");
         setContent(R.layout.activity_main);
+        setHeaderLeftViewText("速尔手持终端软件");
+        x.view().inject(MainActivity.this);
     }
 
     @Override
     public void initData() {
         LogUtil.trace();
 
-        // TODO 需要设置第一项默认被选中
-        mBtnDataCollect = MainActivity.this.findViewById(R.id.btn_data_collect);
-        mLlDataCollect = MainActivity.this.findViewById(R.id.ll_data_collect);
-
-        mBtnQuery = MainActivity.this.findViewById(R.id.btn_query);
-        mLlQuery = MainActivity.this.findViewById(R.id.ll_query);
-
-        mBtnUpload = MainActivity.this.findViewById(R.id.btn_upload);
-        mLlUpload = MainActivity.this.findViewById(R.id.ll_upload);
-
-        mBtnPhoneMsg = MainActivity.this.findViewById(R.id.btn_phone_msg);
-        mLlPhoneMsg = MainActivity.this.findViewById(R.id
-                .ll_phone_msg);
-
-        mBtnShipmentQuery = MainActivity.this.findViewById(R.id
-                .btn_shipment_query);
-        mLlShipmentQuery = MainActivity.this.findViewById(R.id
-                .ll_shipment_query);
-
-        mBtnAreaQuery = MainActivity.this.findViewById(R.id.btn_area_query);
-        mLlAreaQuery = MainActivity.this.findViewById(R.id
-                .ll_area_query);
-
-        mBtnSettings = MainActivity.this.findViewById(R.id.btn_settings);
-        mLlSettings = MainActivity.this.findViewById(R.id
-                .ll_settings);
-
         initListener();
-
-        startDataSync();
+        // startDataSync();
     }
 
     /**
@@ -108,7 +105,7 @@ public class MainActivity extends BaseActivity implements View
      */
     private void setLinearLayoutBackground(View v, boolean hasFocus) {
         if (hasFocus) {
-            v.setBackgroundResource(R.color.material_blue_500);
+            v.setBackgroundResource(R.color.back_transpant);
         } else {
             v.setBackgroundResource(R.color.bg_transparent);
         }
@@ -160,8 +157,8 @@ public class MainActivity extends BaseActivity implements View
 
     private void initListener() {
         mBtnDataCollect.setOnClickListener(this);
-        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
@@ -177,10 +174,8 @@ public class MainActivity extends BaseActivity implements View
     }
 
     private void startDataSync() {
-        startService(new Intent(getApplicationContext(), DataSyncService
-                .class));
-        bindService(new Intent(MainActivity.this, DataSyncService.class),
-                mServiceConnection,
+        startService(new Intent(getApplicationContext(), DataSyncService.class));
+        bindService(new Intent(MainActivity.this, DataSyncService.class), mServiceConnection,
                 Service.BIND_AUTO_CREATE);
 
         showProgressDialog();
@@ -190,8 +185,7 @@ public class MainActivity extends BaseActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_data_collect: {
-                Intent intent = new Intent(MainActivity.this,
-                        DataCollectActivity.class);
+                Intent intent = new Intent(MainActivity.this, DataCollectActivity.class);
                 MainActivity.this.startActivity(intent);
 
                 break;

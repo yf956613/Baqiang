@@ -31,13 +31,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="1.服务器"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="1.服务器" />
 
             </LinearLayout>
 
@@ -56,13 +51,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="2.网点编号"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="2.网点编号" />
 
             </LinearLayout>
 
@@ -81,13 +71,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="3.巴枪编号"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="3.巴枪编号" />
 
             </LinearLayout>
 
@@ -115,13 +100,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="4.业务设置"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="4.业务设置" />
 
             </LinearLayout>
 
@@ -140,13 +120,9 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="5.出厂预设"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+
+                    style="@style/ItemNameTextStyle"
+                    android:text="5.出厂预设" />
 
             </LinearLayout>
 
@@ -165,13 +141,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="6.业务预设"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="6.业务预设" />
 
             </LinearLayout>
 
@@ -199,13 +170,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="7.巴枪清空"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="7.巴枪清空" />
 
             </LinearLayout>
 
@@ -224,13 +190,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="8.日志管理"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="8.日志管理" />
 
             </LinearLayout>
 
@@ -249,13 +210,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="9.WIFI设置"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="9.WIFI设置" />
 
             </LinearLayout>
 
@@ -284,13 +240,8 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="10.软件升级"
-                    android:textColor="@color/white"
-                    android:textSize="13sp" />
+                    style="@style/ItemNameTextStyle"
+                    android:text="10.软件升级" />
 
             </LinearLayout>
 

@@ -12,7 +12,7 @@ import com.jiebao.baqiang.util.SharedUtil;
  * Created by yaya on 2018/2/27.
  */
 
-public class BussinessSettingsInsideActivity extends BaseActivity {
+public class BussinessSettingsInsideActivity extends BaseActivityWithTitleAndNumber {
 
     private int mTitleId;
     private RadioButton mRbOpen;
@@ -26,7 +26,7 @@ public class BussinessSettingsInsideActivity extends BaseActivity {
                 .getStringExtra("title_number");
        mTitleId = Integer.valueOf(titleId);
 
-        setHeaderCenterViewText(title);
+        setHeaderLeftViewText(title);
         setContent(R.layout.activity_business_settings_inside);
     }
 

@@ -31,7 +31,7 @@ import org.xutils.ex.DbException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiucangActivity extends BaseActivity implements View
+public class LiucangActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "LiucangActivity";
 
@@ -61,7 +61,7 @@ public class LiucangActivity extends BaseActivity implements View
     @Override
     public void initView() {
         setContent(R.layout.liucang);
-        setHeaderCenterViewText(getString(R.string.main_import));
+        setHeaderLeftViewText(getString(R.string.main_import));
     }
 
     @Override

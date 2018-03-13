@@ -36,7 +36,7 @@ import java.util.List;
  * 卸车到件Activity
  */
 
-public class UnloadCargoArrivalActivity extends BaseActivity implements View
+public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = UnloadCargoArrivalActivity.class
             .getSimpleName();
@@ -74,7 +74,7 @@ public class UnloadCargoArrivalActivity extends BaseActivity implements View
     @Override
     public void initView() {
         setContent(R.layout.activity_unload_shipment_arrival);
-        setHeaderCenterViewText(getString(R.string.main_check));
+        setHeaderLeftViewText(getString(R.string.main_check));
     }
 
     @Override

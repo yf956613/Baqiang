@@ -37,7 +37,7 @@ import org.xutils.x;
 /**
  * 数据采集界面
  */
-public class DataCollectActivity extends BaseActivity implements View
+public class DataCollectActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener {
     private static final String TAG = "DataCollectActivity";
 
@@ -58,39 +58,6 @@ public class DataCollectActivity extends BaseActivity implements View
     private Button mBtnSendPackage;
     private Button mBtnLeavePackage;
 
-
-    public void initView() {
-        initLanguageSetBroadCast();
-
-        setHeaderCenterViewText("采集功能项");
-        LogUtil.d("DataCollectActivity", "onCreate");
-
-        if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication
-                .isSoftDecodeScan) {
-            MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE,
-                    Manifest.permission.CAMERA);
-        }
-
-        /*LinearLayout footerLayout = (LinearLayout) View.inflate(this,R
-        .layout.main_footer_layout,null);
-        setFootLayout(footerLayout);*/
-        setContent(R.layout.activity_data_collect);
-    }
-
-    /**
-     * 根据Button的状态，改变LinearLayout的背景
-     *
-     * @param v
-     * @param hasFocus
-     */
-    private void setLinearLayoutBackground(View v, boolean hasFocus) {
-        if (hasFocus) {
-            v.setBackgroundResource(R.color.material_blue_500);
-        } else {
-            v.setBackgroundResource(R.color.bg_transparent);
-        }
-    }
-
     private final View.OnFocusChangeListener mLlFocusChangeListener = new View
             .OnFocusChangeListener() {
 
@@ -103,8 +70,7 @@ public class DataCollectActivity extends BaseActivity implements View
                 }
 
                 case R.id.btn_unload_receive_package: {
-                    setLinearLayoutBackground(mLlUnloadReceivePackage,
-                            hasFocus);
+                    setLinearLayoutBackground(mLlUnloadReceivePackage, hasFocus);
                     break;
                 }
 
@@ -127,11 +93,27 @@ public class DataCollectActivity extends BaseActivity implements View
     };
 
     @Override
+    public void initView() {
+        initLanguageSetBroadCast();
+
+        setHeaderLeftViewText("采集功能项");
+        LogUtil.d(TAG, "onCreate");
+
+        if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication.isSoftDecodeScan) {
+            MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE, Manifest.permission.CAMERA);
+        }
+
+        /*LinearLayout footerLayout = (LinearLayout) View.inflate(this,R
+        .layout.main_footer_layout,null);
+        setFootLayout(footerLayout);*/
+        setContent(R.layout.activity_data_collect);
+    }
+
+    @Override
     public void initData() {
         // 装车发件
         mLlLoadSend = DataCollectActivity.this.findViewById(R.id.ll_load_send);
-        mBtnLoadSend = DataCollectActivity.this.findViewById(R.id
-                .btn_load_send);
+        mBtnLoadSend = DataCollectActivity.this.findViewById(R.id.btn_load_send);
         mBtnLoadSend.setOnClickListener(this);
         mBtnLoadSend.setOnFocusChangeListener(mLlFocusChangeListener);
 
@@ -144,34 +126,42 @@ public class DataCollectActivity extends BaseActivity implements View
         // 卸车到件
         mLlUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
                 .ll_unload_receive_package);
-        mBtnUnloadReceivePackage = DataCollectActivity.this
-                .findViewById(R.id.btn_unload_receive_package);
+        mBtnUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
+                .btn_unload_receive_package);
         mBtnUnloadReceivePackage.setOnClickListener(this);
-        mBtnUnloadReceivePackage.setOnFocusChangeListener
-                (mLlFocusChangeListener);
+        mBtnUnloadReceivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 到件
-        mLlArrivePackage = DataCollectActivity.this.findViewById(R.id
-                .ll_arrive_package);
-        mBtnArrivePackage = DataCollectActivity.this.findViewById(R.id
-                .btn_arrive_package);
+        mLlArrivePackage = DataCollectActivity.this.findViewById(R.id.ll_arrive_package);
+        mBtnArrivePackage = DataCollectActivity.this.findViewById(R.id.btn_arrive_package);
         mBtnArrivePackage.setOnClickListener(this);
         mBtnArrivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 发件
-        mLlSendPackage = DataCollectActivity.this.findViewById(R.id
-                .ll_send_package);
-        mBtnSendPackage = DataCollectActivity.this.findViewById(R.id
-                .btn_send_package);
+        mLlSendPackage = DataCollectActivity.this.findViewById(R.id.ll_send_package);
+        mBtnSendPackage = DataCollectActivity.this.findViewById(R.id.btn_send_package);
         mBtnSendPackage.setOnClickListener(this);
         mBtnSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 留仓
-        mLlLeavePackage = DataCollectActivity.this.findViewById(R.id
-                .ll_leave_package);
+        mLlLeavePackage = DataCollectActivity.this.findViewById(R.id.ll_leave_package);
         mBtnLeavePackage = DataCollectActivity.this.findViewById(R.id.btn_leave_package);
         mBtnLeavePackage.setOnClickListener(this);
         mBtnLeavePackage.setOnFocusChangeListener(mLlFocusChangeListener);
+    }
+
+    /**
+     * 根据Button的状态，改变LinearLayout的背景
+     *
+     * @param v
+     * @param hasFocus
+     */
+    private void setLinearLayoutBackground(View v, boolean hasFocus) {
+        if (hasFocus) {
+            v.setBackgroundResource(R.color.material_blue_500);
+        } else {
+            v.setBackgroundResource(R.color.bg_transparent);
+        }
     }
 
     @Override
@@ -226,75 +216,6 @@ public class DataCollectActivity extends BaseActivity implements View
                 break;
             }
         }
-    }
-
-    /**
-     * 设置预付款
-     *
-     * @param saleId
-     * @param account
-     * @param pwd
-     */
-    public void IfPrePay(final String saleId, final String account, final String
-            pwd) {
-        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
-                        .getContext(),
-                NetworkConstant.PREPAY_STATE);
-        LogUtil.trace("path:" + mLoginUrl);
-
-        RequestParams params = new RequestParams(mLoginUrl);
-        // TODO 测试阶段写死
-            /*params.addQueryStringParameter("saleId", saleId);
-            params.addQueryStringParameter("userName", account);
-            params.addQueryStringParameter("password", pwd);*/
-        params.addQueryStringParameter("saleId", saleId);
-        params.addQueryStringParameter("userName", account);
-        params.addQueryStringParameter("password", pwd);
-        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
-                "pwd:" + pwd);
-
-        // TODO 从日志看出，下述回调都是在MainThread运行的
-        final Callback.Cancelable post = x.http().post(params, new Callback
-                .CommonCallback<String>() {
-
-            @Override
-            public void onSuccess(String s) {
-                LogUtil.trace("return s:" + s);
-
-                Gson gson = new Gson();
-                LoginResponse loginResponse = gson.fromJson(s,
-                        LoginResponse.class);
-                if (loginResponse != null) {
-                    if ("1".equals(loginResponse.getAuthRet())) {
-                        gotoUpload();
-                    } else {
-                        Toast.makeText(BaqiangApplication.getContext(),
-                                "预付款不足", Toast
-                                        .LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(BaqiangApplication.getContext(),
-                            "预付款不足", Toast
-                                    .LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace("error exception: " + throwable.getMessage());
-            }
-
-            @Override
-            public void onCancelled(CancelledException e) {
-                LogUtil.trace();
-            }
-
-            @Override
-            public void onFinished() {
-                LogUtil.trace();
-                gotoUpload();
-            }
-        });
     }
 
     @Override
@@ -369,24 +290,21 @@ public class DataCollectActivity extends BaseActivity implements View
     public void requestCameraFail() {
         //DialogUtil.showAlertDialog(this,"fail:camera permission is not
         // granted");
-        PermissionSettingManager.showPermissionSetting(false, this, getString
-                        (R.string.tip_camare_permission),
-                getString(R.string.tip_permission_setting));
+        PermissionSettingManager.showPermissionSetting(false, this, getString(R.string
+                .tip_camare_permission), getString(R.string.tip_permission_setting));
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[]
-            permissions, @NonNull int[] grantResults) {
-        MPermissions.onRequestPermissionsResult(this, requestCode,
-                permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions,
-                grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
      * 卸车到件
      */
-    public void gotoUpload() {
+    private void gotoUpload() {
         Intent intent = new Intent(this, UnloadCargoArrivalActivity.class);
         startActivity(intent);
     }
@@ -394,7 +312,7 @@ public class DataCollectActivity extends BaseActivity implements View
     /**
      * 装车发件
      */
-    public void gotoZhuangche() {
+    private void gotoZhuangche() {
         Intent intent = new Intent(this, ZhuangcheActivity.class);
         startActivity(intent);
     }
@@ -402,7 +320,7 @@ public class DataCollectActivity extends BaseActivity implements View
     /**
      * 发件
      */
-    public void fajian() {
+    private void fajian() {
         Intent intent = new Intent(this, FajianActivity.class);
         startActivity(intent);
     }
@@ -410,7 +328,7 @@ public class DataCollectActivity extends BaseActivity implements View
     /**
      * 到件
      */
-    public void daojian() {
+    private void daojian() {
         // TODO 功能测试
         Intent intent = new Intent(this, DaojianActivity.class);
         startActivity(intent);
@@ -419,8 +337,71 @@ public class DataCollectActivity extends BaseActivity implements View
     /**
      * 留仓
      */
-    public void liucang() {
+    private void liucang() {
         Intent intent = new Intent(this, LiucangActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * 设置预付款
+     *
+     * @param saleId
+     * @param account
+     * @param pwd
+     */
+    private void IfPrePay(final String saleId, final String account, final String pwd) {
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+                NetworkConstant.PREPAY_STATE);
+        LogUtil.trace("path:" + mLoginUrl);
+
+        RequestParams params = new RequestParams(mLoginUrl);
+        // TODO 测试阶段写死
+            /*params.addQueryStringParameter("saleId", saleId);
+            params.addQueryStringParameter("userName", account);
+            params.addQueryStringParameter("password", pwd);*/
+        params.addQueryStringParameter("saleId", saleId);
+        params.addQueryStringParameter("userName", account);
+        params.addQueryStringParameter("password", pwd);
+        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " + "pwd:" + pwd);
+
+        // TODO 从日志看出，下述回调都是在MainThread运行的
+        final Callback.Cancelable post = x.http().post(params, new Callback
+                .CommonCallback<String>() {
+
+            @Override
+            public void onSuccess(String s) {
+                LogUtil.trace("return s:" + s);
+
+                Gson gson = new Gson();
+                LoginResponse loginResponse = gson.fromJson(s, LoginResponse.class);
+                if (loginResponse != null) {
+                    if ("1".equals(loginResponse.getAuthRet())) {
+                        gotoUpload();
+                    } else {
+                        Toast.makeText(BaqiangApplication.getContext(), "预付款不足", Toast
+                                .LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(BaqiangApplication.getContext(), "预付款不足", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable, boolean b) {
+                LogUtil.trace("error exception: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException e) {
+                LogUtil.trace();
+            }
+
+            @Override
+            public void onFinished() {
+                LogUtil.trace();
+                gotoUpload();
+            }
+        });
     }
 }

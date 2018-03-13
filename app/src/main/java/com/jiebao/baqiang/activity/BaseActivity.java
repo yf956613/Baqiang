@@ -42,8 +42,6 @@ import com.jiebao.baqiang.util.LogUtil;
 
 import java.util.List;
 
-//import com.jiebao.baqiang.zxing.CaptureActivity;
-
 public abstract class BaseActivity extends FragmentActivity implements Header, Footer, Content,
         View.OnTouchListener {
     public final int REQUEST_CAMARA_CODE = 100;
@@ -61,7 +59,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 
     private float mHeaderCenterViewTextSize = 20;
 
-    private int mHeaderCenterViewTextColor = Color.WHITE;
+    private int mHeaderCenterViewTextColor = Color.BLACK;
 
     protected LinearLayout mFooterLayout;
 
@@ -115,9 +113,12 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         mFooterLayout.setLayoutParams(mFooterLayoutParams);
         mHeaderLayout.setLayoutParams(mHeaderLayoutParams);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mFooterLayout.setVisibility(View.GONE);
+
+        // TODO 默认情况：显示状态栏，包括WIFI、电量、时间等
+        /*requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
-                .LayoutParams.FLAG_FULLSCREEN);
+                .LayoutParams.FLAG_FULLSCREEN);*/
     }
 
     @Override
@@ -188,6 +189,8 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
 
     private void initHandler() {
         BaqiangApplication.handler.setHandler(new IHandler() {
+
+            @Override
             public void handleMessage(Message msg) {
                 handler(msg);// 有消息就提交给子类实现的方法
             }
@@ -228,17 +231,17 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
     }
 
     @Override
-    public void setHeaderCenterViewText(String centerText) {
-        setHeaderCenterViewText(centerText, mHeaderCenterViewTextColor);
+    public void setHeaderLeftViewText(String centerText) {
+        setHeaderLeftViewText(centerText, mHeaderCenterViewTextColor);
     }
 
     @Override
-    public void setHeaderCenterViewText(String centerText, int color) {
-        setHeaderCenterViewText(centerText, color, mHeaderCenterViewTextSize);
+    public void setHeaderLeftViewText(String centerText, int color) {
+        setHeaderLeftViewText(centerText, color, mHeaderCenterViewTextSize);
     }
 
     @Override
-    public void setHeaderCenterViewText(String centerText, int color, float size) {
+    public void setHeaderLeftViewText(String centerText, int color, float size) {
         mHeaderCenterView.setText(centerText);
         mHeaderCenterViewTextColor = color;
         mHeaderCenterViewTextSize = size;

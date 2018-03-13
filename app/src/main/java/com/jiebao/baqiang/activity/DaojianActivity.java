@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * 到件需要注意的地方：若管理员设置中，到/发件扫描判断开关为开状态，上一站只显示类型为“网点”的项
  */
-public class DaojianActivity extends BaseActivity implements View
+public class DaojianActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = DaojianActivity.class.getSimpleName();
 
@@ -66,7 +66,7 @@ public class DaojianActivity extends BaseActivity implements View
     @Override
     public void initView() {
         setContent(R.layout.daojian);
-        setHeaderCenterViewText(getString(R.string.main_query));
+        setHeaderLeftViewText(getString(R.string.main_query));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class DaojianActivity extends BaseActivity implements View
             case KeyEvent.KEYCODE_BACK: {
                 LogUtil.d(TAG, "---->按下了Back按键");
                 // Activity获取焦点后，消费Back事件
-                return true;
+                // return true;
             }
         }
 

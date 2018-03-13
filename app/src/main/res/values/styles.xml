@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppBaseTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -12,6 +12,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+
     <style name="listItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -23,14 +24,14 @@
     </style>
 
     <style name="listItemControl">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:focusable">false</item>
-    <item name="android:focusableInTouchMode">false</item>
-    <item name="android:clickable">false</item>
-    <item name="android:minHeight">52dip</item>
-    <item name="android:gravity">center_vertical</item>
-    <item name="android:duplicateParentState">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:clickable">false</item>
+        <item name="android:minHeight">52dip</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:duplicateParentState">true</item>
     </style>
 
     <style name="itemChoice">
@@ -47,7 +48,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:spinnersShown" >true</item>
+        <item name="android:spinnersShown">true</item>
         <item name="android:calendarViewShown">false</item>
     </style>
 
@@ -74,6 +75,7 @@
         <item name="android:windowBackground">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
     <style name="Widget.GifMoviewView" parent="@android:style/Widget"></style>
 
     <style name="NumberProgressBar_Default">
@@ -135,6 +137,16 @@
     <style name="edittext_hint" parent="@style/TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/color_list_item_sub</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ItemNameTextStyle">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name=" android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

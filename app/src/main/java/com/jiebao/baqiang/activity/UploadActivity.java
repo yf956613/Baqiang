@@ -21,7 +21,7 @@ import java.util.List;
  * Created by open on 2018/1/22.
  */
 
-public class UploadActivity extends BaseActivity implements View.OnClickListener
+public class UploadActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener
 {
 
     private long lastClickTimer = 0;
@@ -42,7 +42,7 @@ public class UploadActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void initHeaderView() {
-        setHeaderCenterViewText(getString(R.string.main_check));
+        setHeaderLeftViewText(getString(R.string.main_check));
     }
 
     @Override
