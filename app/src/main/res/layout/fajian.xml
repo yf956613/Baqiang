@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/next_station"
@@ -17,16 +17,17 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/next_station"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <AutoCompleteTextView
             android:id="@+id/tv_next_station"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:dropDownHeight="300dp"
             android:completionThreshold="1"
-            android:singleLine="true"/>
+            android:dropDownHeight="300dp"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
@@ -42,7 +43,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="快件类型"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <!--设置最小的匹配输入次数-->
         <AutoCompleteTextView
@@ -51,7 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:completionThreshold="1"
-            android:singleLine="true"/>
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
@@ -67,7 +69,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/tracking_numb"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <!--设置最小的匹配输入次数-->
         <EditText
@@ -76,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:completionThreshold="1"
-            android:singleLine="true"/>
+            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
@@ -93,7 +95,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="序号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -101,7 +103,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="单号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -109,7 +111,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="状态"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -130,7 +132,7 @@
             android:background="@drawable/bg_yellow_selector"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btn_back"
@@ -143,7 +145,7 @@
             android:background="@drawable/bg_green_selector"
             android:text="@string/tab_back"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 
 

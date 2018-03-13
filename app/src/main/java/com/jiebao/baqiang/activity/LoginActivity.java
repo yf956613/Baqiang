@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -31,8 +32,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener, CompoundButton
-        .OnCheckedChangeListener {
+public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
 
     private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
@@ -46,9 +46,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
     private Button mBtnLogin;
     private Button mBtnConfigurate;
-
-    private CheckBox mCbRememberPassword;
-    private LinearLayout mLLRemember;
 
     private String mLoginUrl = "";
 
@@ -94,9 +91,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnConfigurate = LoginActivity.this.findViewById(R.id.btn_wifi_setttings);
 
-        mCbRememberPassword = LoginActivity.this.findViewById(R.id.cv_psw_remember);
-        mLLRemember = LoginActivity.this.findViewById(R.id.remember_layout);
-
         sendBroadcastForAction();
         initListener();
     }
@@ -107,34 +101,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
         mBtnConfigurate.setOnFocusChangeListener(mFocusChangeListener);
         mBtnConfigurate.setOnClickListener(this);
-
-        mCbRememberPassword.setOnCheckedChangeListener(this);
-        mLLRemember.setOnClickListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        boolean isRememberPsw = SharedUtil.getBoolean(this, Constant.KEY_IS_REMEMBER_PSW);
-        LogUtil.d(TAG, "initData:" + isRememberPsw);
-        if (isRememberPsw) {
-            // 之前用户选择保存数据，回显数据
-            mCbRememberPassword.setChecked(isRememberPsw);
-
-            String userName = SharedUtil.getString(this, Constant.PREFERENCE_KEY_USERNAME);
-            String psw = SharedUtil.getString(this, Constant.PREFERENCE_KEY_PSW);
-
-            // 显示数据
-            mEtUserName.setText(userName);
-            mEtPassward.setText(psw);
-
-            LogUtil.d(TAG, "userName:" + userName + "; psw:" + psw);
-        } else {
-            // 手动清除EditText内容
-            mEtUserName.setText("");
-            mEtPassward.setText("");
-        }
     }
 
     @Override
@@ -151,16 +122,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
                     closeLoadinDialog();
                 } else {
-                    saveConfigurateLogin(userName, psw);
                     login(userName, psw);
                 }
 
                 break;
             }
-
-            case R.id.remember_layout:
-                mCbRememberPassword.setChecked(!mCbRememberPassword.isChecked());
-                break;
 
             case R.id.btn_wifi_setttings: {
                 Intent intent = new Intent();
@@ -169,21 +135,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
                 break;
             }
-        }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        LogUtil.trace("isChecked:" + isChecked);
-
-        switch (buttonView.getId()) {
-            case R.id.cv_psw_remember:
-                // 保存是否记住用户名和密码标识
-                SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, isChecked);
-                if (!isChecked) {
-                    LogUtil.trace();
-                }
-                break;
         }
     }
 
@@ -345,23 +296,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         LoginActivity.this.sendBroadcast(intent);
     }
 
-    /**
-     * 保存用户名和密码
-     *
-     * @param userName
-     * @param password
-     */
-    private void saveConfigurateLogin(String userName, String password) {
-        // 保存是否记住用户名和密码标识
-        if (mCbRememberPassword.isChecked()) {
-            SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, true);
-        } else {
-            SharedUtil.putBoolean(this, Constant.KEY_IS_REMEMBER_PSW, false);
-        }
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, userName);
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, password);
-    }
-
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {"android.permission" + "" + "" + "" + "" + ""
             + ".READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
@@ -389,9 +323,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
      */
     private void setBtnBackground(View v, boolean isFocus) {
         if (isFocus) {
-            v.setBackgroundResource(R.drawable.btn_login_bg_pressed);
+            // v.setBackgroundResource(R.drawable.btn_login_bg_pressed);
+            v.setBackgroundColor(this.getResources().getColor(R.color.colorAccent));
         } else {
-            v.setBackgroundResource(R.drawable.btn_login_bg_normal);
+            v.setBackgroundColor(this.getResources().getColor(R.color.transparent));
         }
     }
 

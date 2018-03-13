@@ -32,6 +32,9 @@ import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -298,6 +301,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             mShipmentData.add(mShipmentTypeList.get(index).get类型编号() + "  " + mShipmentTypeList
                     .get(index).get类型名称());
         }
+
+        // TODO 将 汽运 排到最先
+        Collections.sort(mShipmentData);
 
         LogUtil.trace("size:" + mShipmentData.size());
         mShipmentType = new ArrayAdapter<String>(ZhuangcheActivity.this, R.layout.list_item,

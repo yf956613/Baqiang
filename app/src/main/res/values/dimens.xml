@@ -47,7 +47,7 @@
     <dimen name="padding_maxi">5dip</dimen>
 
     <dimen name="margin_min">5dip</dimen>
-    <dimen name="margin_mid">5dip</dimen>
+    <dimen name="margin_mid">25dip</dimen>
     <dimen name="margin_max">15dip</dimen>
 
     <dimen name="text_max_size">18sp</dimen>

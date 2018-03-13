@@ -29,6 +29,11 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_min">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_user_name" />
+
         <EditText
             android:id="@+id/et_user_name"
             android:layout_width="match_parent"
@@ -39,17 +44,10 @@
             android:hint="@string/hint_user_name"
             android:maxEms="30"
             android:maxLength="6"
-            android:singleLine="true"
             android:selectAllOnFocus="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_mid_size">
-        </EditText>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icon_user_name" />
-
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_mid_size"></EditText>
     </LinearLayout>
 
     <LinearLayout
@@ -79,60 +77,43 @@
             android:maxLength="6"
             android:maxLines="1"
             android:selectAllOnFocus="true"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_mid_size" />
     </LinearLayout>
 
+
     <LinearLayout
-        android:id="@+id/remember_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginLeft="@dimen/margin_mid"
-        android:layout_marginRight="@dimen/margin_mid"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:gravity="right"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_min">
+        android:weightSum="2">
 
-        <CheckBox
-            android:id="@+id/cv_psw_remember"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/pwd_remember_check_selector"
-            android:button="@null" />
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="0dp"
+            android:layout_height="54dip"
+            android:layout_marginLeft="@dimen/margin_max"
+            android:layout_marginRight="@dimen/margin_max"
+            android:layout_marginTop="@dimen/margin_mid"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/login"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_mid_size" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_min"
-            android:text="@string/txt_remember_psw"
-            android:textColor="@color/white" />
+        <Button
+            android:id="@+id/btn_wifi_setttings"
+            android:layout_width="0dp"
+            android:layout_height="54dip"
+            android:layout_marginLeft="@dimen/margin_max"
+            android:layout_marginRight="@dimen/margin_max"
+            android:layout_marginTop="@dimen/margin_mid"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/set_wifi"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_mid_size" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_max"
-        android:layout_marginRight="@dimen/margin_max"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:background="@drawable/btn_login_bg_selector"
-        android:gravity="center"
-        android:text="@string/login"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_min_size" />
 
-    <Button
-        android:id="@+id/btn_wifi_setttings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_max"
-        android:layout_marginRight="@dimen/margin_max"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:background="@drawable/btn_login_bg_selector"
-        android:gravity="center"
-        android:text="@string/set_wifi"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_min_size" />
 </LinearLayout>
