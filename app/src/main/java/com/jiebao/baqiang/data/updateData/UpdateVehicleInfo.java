@@ -8,6 +8,8 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.bean.VehicleInfoList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -28,22 +30,17 @@ import java.util.List;
  * 与之对应的JavaBean是：VehicleInfo和VehicleInfoList
  */
 
-public class UpdateVehicleInfo extends UpdateInterface{
-    private static final String TAG = UpdateVehicleInfo.class
-            .getSimpleName();
+public class UpdateVehicleInfo extends UpdateInterface {
+    private static final String TAG = UpdateVehicleInfo.class.getSimpleName();
     private static final String DB_NAME = "vehicleinfo";
 
     private static String mUpdateVehicleInfoUrl = "";
     private volatile static UpdateVehicleInfo mInstance;
 
-    private DataDownloadFinish mDataDownloadFinish;
+    private IDownloadStatus mDataDownloadStatus;
 
-    public interface DataDownloadFinish {
-        void downloadVehicleInfoFinish();
-    }
-
-    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
-        this.mDataDownloadFinish = dataDownloadFinish;
+    public void setDataDownloadStatus(IDownloadStatus dataDownloadStatus) {
+        this.mDataDownloadStatus = dataDownloadStatus;
     }
 
     private UpdateVehicleInfo() {
@@ -61,14 +58,12 @@ public class UpdateVehicleInfo extends UpdateInterface{
     }
 
     public boolean updateVehicleInfo() {
-        mUpdateVehicleInfoUrl = SharedUtil.getServletAddresFromSP
-                (BaqiangApplication.getContext(), NetworkConstant
-                        .VEHICLE_INFO_SERVLET);
+        mUpdateVehicleInfoUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext()
+                , NetworkConstant.VEHICLE_INFO_SERVLET);
 
         // 记住：要在请求数据是都要带上下述3个字段参数
         RequestParams params = new RequestParams(mUpdateVehicleInfoUrl);
-
-        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
 
@@ -76,11 +71,8 @@ public class UpdateVehicleInfo extends UpdateInterface{
 
             @Override
             public void onSuccess(String vehicleInfo) {
-                LogUtil.trace();
-
                 Gson gson = new Gson();
-                final VehicleInfoList list = gson.fromJson(vehicleInfo,
-                        VehicleInfoList.class);
+                final VehicleInfoList list = gson.fromJson(vehicleInfo, VehicleInfoList.class);
 
                 new Thread(new Runnable() {
                     @Override
@@ -92,8 +84,8 @@ public class UpdateVehicleInfo extends UpdateInterface{
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage());
-
+                // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
+                mDataDownloadStatus.downLoadError(throwable.getMessage());
             }
 
             @Override
@@ -103,6 +95,10 @@ public class UpdateVehicleInfo extends UpdateInterface{
 
             @Override
             public void onFinished() {
+                if (Constant.DEBUG) {
+                    // FIXME 是否都执行onFinished()？在哪些情况下执行onError()
+                    mDataDownloadStatus.downloadFinish();
+                }
                 LogUtil.trace();
             }
         });
@@ -116,32 +112,38 @@ public class UpdateVehicleInfo extends UpdateInterface{
      * @return
      */
     private boolean storageData(final VehicleInfoList vehicleInfoList) {
-        LogUtil.trace();
-        DbManager db = BQDataBaseHelper.getDb();
+        LogUtil.trace("+++ save SalesService data start +++");
 
-        if(tableIsExist(DB_NAME)){
-            // 如果已建立了表，则不会保存更新数据
-            try {
-                db.delete(VehicleInfo.class);
-            } catch (DbException e) {
-                e.printStackTrace();
+        List<VehicleInfo> vehicleInfos = vehicleInfoList.getVehicleInfo();
+        if (vehicleInfos == null || vehicleInfos.size() == 0) {
+            LogUtil.trace("--- save VehicleInfo data over ---");
+            return false;
+        } else {
+            DbManager db = BQDataBaseHelper.getDb();
+            if (tableIsExist(DB_NAME)) {
+                // FIXME 删除已有Table文件
+                try {
+                    db.delete(VehicleInfo.class);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        List<VehicleInfo> vehicleInfos = null;
-        vehicleInfos = vehicleInfoList.getVehicleInfo();
-        for (int index = 0; index < vehicleInfos.size(); index++) {
-            try {
-                db.save(new VehicleInfo(vehicleInfos.get(index)
-                        .get车牌号(), vehicleInfos.get(index).get车辆识别号()));
-            } catch (Exception exception) {
-                LogUtil.trace(exception.getMessage());
-                exception.printStackTrace();
+            for (int index = 0; index < vehicleInfos.size(); index++) {
+                try {
+                    db.save(new VehicleInfo(vehicleInfos.get(index).get车牌号(), vehicleInfos.get
+                            (index).get车辆识别号()));
+                } catch (Exception exception) {
+                    // 反馈出错信息
+                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    exception.printStackTrace();
+                }
             }
-        }
 
-        LogUtil.trace("Update VehicleInfo Type is over....");
-        mDataDownloadFinish.downloadVehicleInfoFinish();
+            // 数据更新正常，状态反馈
+            mDataDownloadStatus.downloadFinish();
+            LogUtil.trace("--- save VehicleInfo data over ---");
+        }
 
         return true;
     }
@@ -166,9 +168,8 @@ public class UpdateVehicleInfo extends UpdateInterface{
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);

@@ -8,6 +8,8 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.ShipmentType;
 import com.jiebao.baqiang.data.bean.ShipmentTypeList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -23,26 +25,18 @@ import java.util.List;
 /**
  * 更新快件类型的数据
  */
-/*
-快件类型
- */
 
-public class UpdateShipmentType extends UpdateInterface{
-    private static final String TAG = UpdateShipmentType.class
-            .getSimpleName();
+public class UpdateShipmentType extends UpdateInterface {
+    private static final String TAG = UpdateShipmentType.class.getSimpleName();
     private static final String DB_NAME = "shipmenttype";
 
     private static String mUpdateShipmentTpyeUrl = "";
     private volatile static UpdateShipmentType mInstance;
 
-    private DataDownloadFinish mDataDownloadFinish;
+    private IDownloadStatus mDataDownloadStatus;
 
-    public interface DataDownloadFinish {
-        void downloadShipmentTypeFinish();
-    }
-
-    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
-        this.mDataDownloadFinish = dataDownloadFinish;
+    public void setDataDownloadStatus(IDownloadStatus dataDownloadFinish) {
+        this.mDataDownloadStatus = dataDownloadFinish;
     }
 
     private UpdateShipmentType() {
@@ -61,13 +55,11 @@ public class UpdateShipmentType extends UpdateInterface{
     }
 
     public boolean updateShipmentType() {
-        mUpdateShipmentTpyeUrl = SharedUtil.getServletAddresFromSP
-                (BaqiangApplication
-                        .getContext(), NetworkConstant
-                        .GOOD_TYPE_SERVLET);
+        mUpdateShipmentTpyeUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext
+                (), NetworkConstant.GOOD_TYPE_SERVLET);
 
         RequestParams params = new RequestParams(mUpdateShipmentTpyeUrl);
-        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
 
@@ -76,8 +68,7 @@ public class UpdateShipmentType extends UpdateInterface{
             @Override
             public void onSuccess(String saleServices) {
                 Gson gson = new Gson();
-                final ShipmentTypeList list = gson.fromJson(saleServices,
-                        ShipmentTypeList.class);
+                final ShipmentTypeList list = gson.fromJson(saleServices, ShipmentTypeList.class);
 
                 new Thread(new Runnable() {
                     @Override
@@ -89,8 +80,8 @@ public class UpdateShipmentType extends UpdateInterface{
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage());
-
+                // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
+                mDataDownloadStatus.downLoadError(throwable.getMessage());
             }
 
             @Override
@@ -100,6 +91,10 @@ public class UpdateShipmentType extends UpdateInterface{
 
             @Override
             public void onFinished() {
+                if (Constant.DEBUG) {
+                    // FIXME 是否都执行onFinished()？在哪些情况下执行onError()
+                    mDataDownloadStatus.downloadFinish();
+                }
                 LogUtil.trace();
             }
         });
@@ -108,34 +103,38 @@ public class UpdateShipmentType extends UpdateInterface{
     }
 
     private boolean storageData(final ShipmentTypeList shipmentTypeList) {
-        LogUtil.trace();
-
-        DbManager db = BQDataBaseHelper.getDb();
-
-        if (tableIsExist(DB_NAME)) {
-            // 删除已有Table文件
-            try {
-                db.delete(ShipmentType.class);
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-        }
+        LogUtil.trace("+++ save ShipmentType data start +++");
 
         List<ShipmentType> shipmentTypes;
         shipmentTypes = shipmentTypeList.getGoodTypeInfo();
-
-        for (int index = 0; index < shipmentTypes.size(); index++) {
-            try {
-                db.save(new ShipmentType(shipmentTypes.get(index)
-                        .get类型编号(), shipmentTypes.get(index).get类型名称
-                        ()));
-            } catch (Exception exception) {
-                exception.printStackTrace();
+        if (shipmentTypes == null || shipmentTypes.size() == 0) {
+            LogUtil.trace("--- save ShipmentType data over ---");
+            return false;
+        } else {
+            DbManager db = BQDataBaseHelper.getDb();
+            if (tableIsExist(DB_NAME)) {
+                // FIXME 删除已有Table文件
+                try {
+                    db.delete(ShipmentType.class);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        LogUtil.trace("Update Shipment Type is over....");
-        mDataDownloadFinish.downloadShipmentTypeFinish();
 
+            for (int index = 0; index < shipmentTypes.size(); index++) {
+                try {
+                    db.save(new ShipmentType(shipmentTypes.get(index).get类型编号(), shipmentTypes
+                            .get(index).get类型名称()));
+                } catch (Exception exception) {
+                    // 反馈出错信息
+                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    exception.printStackTrace();
+                }
+            }
+            // 数据更新正常，状态反馈
+            mDataDownloadStatus.downloadFinish();
+            LogUtil.trace("--- save ShipmentType data over ---");
+        }
         return true;
     }
 
@@ -159,9 +158,8 @@ public class UpdateShipmentType extends UpdateInterface{
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);

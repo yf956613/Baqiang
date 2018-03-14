@@ -109,9 +109,6 @@
             android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
 
 
-
-        <service android:name=".service.DataSyncService" />
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

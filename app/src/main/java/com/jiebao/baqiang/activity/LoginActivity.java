@@ -84,8 +84,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
     public void initData() {
         LogUtil.trace();
 
+        // TODO 申请权限及屏蔽相关操作
         verifyStoragePermissions(LoginActivity.this);
         sendBroadcastForAction();
+
         initListener();
     }
 
@@ -95,11 +97,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
         mBtnConfigurate.setOnClickListener(this);
         mBtnConfigurate.setOnFocusChangeListener(mFocusChangeListener);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -145,8 +142,21 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
     }
 
     private void login(final String account, final String pwd) {
+        // 退出app账户设置
+        if ("888888".equals(account) && "159357".equals(pwd)) {
+            LogUtil.trace("goto Launcher...");
+
+            // 应用中退回到Launcher界面
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            LoginActivity.this.startActivity(intent);
+
+            return;
+        }
+
+        // TODO 网络不可用，执行所有登录前先连接网络
         if (!AppUtil.IsNetworkAvailable()) {
-            Toast.makeText(LoginActivity.this, "当前网络不可用", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "当前网络不可用，请先连接网络", Toast.LENGTH_SHORT).show();
 
             return;
         }
@@ -158,19 +168,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
             LogUtil.trace("goto Administrator activity.");
 
             Intent intent = new Intent(LoginActivity.this, AdministratorSettingActivity.class);
-            LoginActivity.this.startActivity(intent);
-
-            closeLoadinDialog();
-            return;
-        }
-
-        // 退出app账户设置
-        if ("888888".equals(account) && "159357".equals(pwd)) {
-            LogUtil.trace("goto Launcher...");
-
-            // 应用中退回到Launcher界面
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
             LoginActivity.this.startActivity(intent);
 
             closeLoadinDialog();
@@ -190,8 +187,8 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         LogUtil.trace("path:" + mLoginUrl);
         if (TextUtils.isEmpty(mLoginUrl)) {
             Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast.LENGTH_SHORT).show();
-            closeLoadinDialog();
 
+            closeLoadinDialog();
             return;
         }
 
@@ -242,10 +239,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
             @Override
             public void onFinished() {
-                LogUtil.trace();
-
-                // TODO 测试阶段
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                if(Constant.DEBUG){
+                    // TODO 测试阶段，正式环境删除
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                }
 
                 closeLoadinDialog();
             }

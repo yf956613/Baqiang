@@ -10,6 +10,8 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.SalesServiceList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -29,18 +31,13 @@ import java.util.List;
  */
 
 public class UpdateSalesServiceData extends UpdateInterface {
-    private static final String TAG = UpdateSalesServiceData.class
-            .getSimpleName();
+    private static final String TAG = UpdateSalesServiceData.class.getSimpleName();
     private static final String DB_NAME = "salesservice";
 
     private static String mSalesServiceUrl = "";
     private volatile static UpdateSalesServiceData mInstance;
 
-    private DataDownloadFinish mDataDownloadFinish;
-
-    public interface DataDownloadFinish {
-        void downloadSalesServiceFinish();
-    }
+    private IDownloadStatus mDataDownloadStatus;
 
     private UpdateSalesServiceData() {
     }
@@ -57,14 +54,13 @@ public class UpdateSalesServiceData extends UpdateInterface {
         return mInstance;
     }
 
-    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
-        this.mDataDownloadFinish = dataDownloadFinish;
+    public void setDataDownloadStatus(IDownloadStatus dataDownloadStatus) {
+        this.mDataDownloadStatus = dataDownloadStatus;
     }
 
-    public boolean updateSalesService() {
-        mSalesServiceUrl = SharedUtil.getServletAddresFromSP
-                (BaqiangApplication.getContext(), NetworkConstant
-                        .NEXT_SALES_SERVICE_SERVLET);
+    public void updateSalesService() {
+        mSalesServiceUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+                NetworkConstant.NEXT_SALES_SERVICE_SERVLET);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
         params.addQueryStringParameter("saleId", salesId);
@@ -75,14 +71,12 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onSuccess(String saleServices) {
-                // TODO 创建Gson对象时，指定时间格式
-                Gson gson = new GsonBuilder()
-                        .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                        .create();
+                // 创建Gson对象时，指定时间格式
+                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
                 final SalesServiceList salesServiceList = gson.fromJson(saleServices,
                         SalesServiceList.class);
 
-                // TODO 工作线程中执行数据存储
+                // 工作线程中执行数据存储
                 new Thread(new Runnable() {
 
                     @Override
@@ -94,8 +88,8 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage() + " " + throwable
-                        .getLocalizedMessage());
+                // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
+                mDataDownloadStatus.downLoadError(TAG + ": " + throwable.getMessage());
             }
 
             @Override
@@ -105,11 +99,14 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onFinished() {
+                if (Constant.DEBUG) {
+                    // FIXME 是否都执行onFinished()？在哪些情况下执行onError()
+                    mDataDownloadStatus.downloadFinish();
+                }
+
                 LogUtil.trace();
             }
         });
-
-        return false;
     }
 
     /**
@@ -118,43 +115,47 @@ public class UpdateSalesServiceData extends UpdateInterface {
      * @return
      */
     private boolean storageData(final SalesServiceList salesServiceList) {
-        LogUtil.trace();
-        DbManager db = BQDataBaseHelper.getDb();
-
-        // 清空已有表数据
-        if (tableIsExist(DB_NAME)) {
-            // 删除已有Table文件
-            try {
-                db.delete(SalesService.class);
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-        }
+        LogUtil.trace("+++ save SalesService data start +++");
 
         List<SalesService> saleInfo;
         saleInfo = salesServiceList.getSalesServiceList();
-        for (int index = 0; index < saleInfo.size(); index++) {
-            try {
-                SalesService salesService = new SalesService(saleInfo
-                        .get(index).get网点编号(), saleInfo.get(index)
-                        .get网点名称(), saleInfo.get(index).get所属网点(),
-                        saleInfo.get(index).get所属财务中心(), saleInfo.get
-                        (index).get启用标识(), saleInfo.get(index)
-                        .get允许到付(), saleInfo.get(index).get城市(),
-                        saleInfo.get(index).get省份(), saleInfo.get
-                        (index).get更新状态(), saleInfo.get(index)
-                        .get更新时间(), saleInfo.get(index).get类型(),
-                        saleInfo.get(index).get所属提交货中心(), saleInfo
-                        .get(index).get县());
-                // TODO 考虑从子线程运行，然后状态反馈方法
-                db.save(salesService);
-            } catch (Exception exception) {
-                LogUtil.trace(exception.getMessage());
-                exception.printStackTrace();
+        if (saleInfo == null || saleInfo.size() == 0) {
+            LogUtil.trace("--- save SalesService data over ---");
+            // 避免在无数据的情况下，删除数据库
+            return false;
+        } else {
+            DbManager db = BQDataBaseHelper.getDb();
+            // 网络请求成功，Json数据解析成功
+            if (tableIsExist(DB_NAME)) {
+                // FIXME 删除已有Table文件，是否有数据备份的方案？
+                try {
+                    db.delete(SalesService.class);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
+
+            for (int index = 0; index < saleInfo.size(); index++) {
+                try {
+                    SalesService salesService = new SalesService(saleInfo.get(index).get网点编号(),
+                            saleInfo.get(index).get网点名称(), saleInfo.get(index).get所属网点(),
+                            saleInfo.get(index).get所属财务中心(), saleInfo.get(index).get启用标识(),
+                            saleInfo.get(index).get允许到付(), saleInfo.get(index).get城市(), saleInfo
+                            .get(index).get省份(), saleInfo.get(index).get更新状态(), saleInfo.get
+                            (index).get更新时间(), saleInfo.get(index).get类型(), saleInfo.get(index)
+                            .get所属提交货中心(), saleInfo.get(index).get县());
+
+                    db.save(salesService);
+                } catch (Exception exception) {
+                    // 反馈出错信息
+                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    exception.printStackTrace();
+                }
+            }
+            // 数据更新正常，状态反馈
+            mDataDownloadStatus.downloadFinish();
+            LogUtil.trace("--- save SalesService data over ---");
         }
-        LogUtil.trace("sava data is over...");
-        mDataDownloadFinish.downloadSalesServiceFinish();
 
         return true;
     }
@@ -162,12 +163,9 @@ public class UpdateSalesServiceData extends UpdateInterface {
     private String testServiceBackContent() {
         String value = "";
         try {
-            LogUtil.trace("path:" + Environment.getExternalStorageDirectory()
-                    + "/tmp/tmp"
-                    + ".txt");
-            value = FileUtil.readSDFile(Environment
-                    .getExternalStorageDirectory() +
-                    "/tmp/tmp.txt");
+            LogUtil.trace("path:" + Environment.getExternalStorageDirectory() + "/tmp/tmp" + "" +
+                    ".txt");
+            value = FileUtil.readSDFile(Environment.getExternalStorageDirectory() + "/tmp/tmp.txt");
         } catch (IOException e) {
             LogUtil.trace("file is not exist...");
             e.printStackTrace();
@@ -177,10 +175,8 @@ public class UpdateSalesServiceData extends UpdateInterface {
     }
 
     private SalesServiceList testResolveData(String saleServices) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
-        SalesServiceList salesServiceList = gson.fromJson(saleServices,
-                SalesServiceList.class);
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        SalesServiceList salesServiceList = gson.fromJson(saleServices, SalesServiceList.class);
         return salesServiceList;
     }
 
@@ -204,9 +200,8 @@ public class UpdateSalesServiceData extends UpdateInterface {
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
@@ -216,7 +211,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
             }
         } catch (Exception e) {
             LogUtil.trace(e.getMessage());
-            // TODO: handle exception
+            // FIXME: handle exception
         }
 
         return result;

@@ -1,50 +1,37 @@
 package com.jiebao.baqiang.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.Service;
-import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.service.DataSyncService;
+import com.jiebao.baqiang.data.updateData.UpdateLiuCangType;
+import com.jiebao.baqiang.data.updateData.UpdateSalesServiceData;
+import com.jiebao.baqiang.data.updateData.UpdateShipmentType;
+import com.jiebao.baqiang.data.updateData.UpdateVehicleInfo;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+
 /**
  * 一级菜单界面，主要用户更新信息
  */
 
-public class MainActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener,
-        DataSyncService.DataSyncNotifity {
+public class MainActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private DataSyncService mDataSyncService;
-    private ProgressDialog mDownloadProgressDialog;
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LogUtil.trace();
-
-            DataSyncService.MyBinder myBinder = (DataSyncService.MyBinder) service;
-            mDataSyncService = myBinder.getService();
-            mDataSyncService.setDataSyncNotifity(MainActivity.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            LogUtil.trace();
-        }
-    };
 
     @ViewInject(R.id.btn_data_collect)
     private Button mBtnDataCollect;
@@ -80,6 +67,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     private Button mBtnSettings;
     @ViewInject(R.id.ll_settings)
     private LinearLayout mLlSettings;
+
+    private ProgressDialog mDownloadProgressDialog;
 
     private final View.OnFocusChangeListener mLlFocusChangeListener = new View
             .OnFocusChangeListener() {
@@ -137,7 +126,179 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         LogUtil.trace();
 
         initListener();
-        // startDataSync();
+
+        // FIXME 何时开始启动下载动作？
+        syncDataAction();
+    }
+
+    private void syncDataAction() {
+        DataSyncTask dataSyncTask = new DataSyncTask();
+        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+        dataSyncTask.execute("start_param");
+    }
+
+    private void initListener() {
+        mBtnDataCollect.setOnClickListener(this);
+
+        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnDataCollect.setFocusable(true);
+        mBtnDataCollect.setFocusableInTouchMode(true);
+        mBtnDataCollect.requestFocus();
+        mBtnDataCollect.requestFocusFromTouch();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_data_collect: {
+                Intent intent = new Intent(MainActivity.this, DataCollectActivity.class);
+                MainActivity.this.startActivity(intent);
+
+                break;
+            }
+        }
+    }
+
+    /**
+     * 显示ProgressDialog下载进度条
+     */
+    private void showProgressDialog() {
+        if (mDownloadProgressDialog == null) {
+            mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
+            mDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mDownloadProgressDialog.setCanceledOnTouchOutside(false);
+            mDownloadProgressDialog.setCancelable(false);
+            mDownloadProgressDialog.setTitle("提示信息：");
+            mDownloadProgressDialog.setMessage("正在下载资料列表...");
+            // 设置最大更新下载数据量
+            mDownloadProgressDialog.setMax(MAX_DOWNLOAD_COUNT);
+        }
+        mDownloadProgressDialog.show();
+    }
+
+    /**
+     * 隐藏ProgressDialog下载进度条
+     */
+    private void closeProgressDialog() {
+        if (mDownloadProgressDialog != null) {
+            mDownloadProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK: {
+                // 提示是否切换账号
+                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(MainActivity.this);
+                normalDialog.setTitle("提示");
+                normalDialog.setCancelable(false);
+                normalDialog.setMessage("是否退出当前账号？");
+                normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 回退到LoginActivity
+                        MainActivity.this.finish();
+                    }
+                });
+                normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                normalDialog.show();
+
+                break;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 异步下载任务
+     * <p>
+     * Params: 输入参数，对应excute()方法中传递的参数。如果不需要传递参数，则直接设为void即可
+     * Progress：后台任务执行的百分比
+     * Result：返回值类型，和doInBackground（）方法的返回值类型保持一致
+     */
+    class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
+        private int mUpdateID = 0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // 重置状态计数器
+            mUpdateID = 0;
+
+            // MainThread 强制更新后台数据
+            showProgressDialog();
+        }
+
+        @Override
+        protected Long doInBackground(String... strings) {
+            // WorkerThread
+            LogUtil.trace("doInBackground parameters:" + Arrays.toString(strings));
+
+            // 更新网点数据
+            UpdateSalesServiceData.getInstance().setDataDownloadStatus(this);
+            UpdateSalesServiceData.getInstance().updateSalesService();
+            // 更新快件类型正常
+            UpdateShipmentType.getInstance().setDataDownloadStatus(this);
+            UpdateShipmentType.getInstance().updateShipmentType();
+            // 更新留仓原因正常
+            UpdateLiuCangType.getInstance().setDataDownloadStatus(this);
+            UpdateLiuCangType.getInstance().updateLiuCangType();
+            // 更新车辆信息正常
+            UpdateVehicleInfo.getInstance().setDataDownloadStatus(this);
+            UpdateVehicleInfo.getInstance().updateVehicleInfo();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            // MainThread
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            // MainThread
+        }
+
+        @Override
+        public void downloadFinish() {
+            ++mUpdateID;
+            LogUtil.trace("mUpdateID:" + mUpdateID);
+
+            Message finishMsg = Message.obtain();
+            if (mUpdateID == 4) {
+                finishMsg.what = DOWNLOAD_DONE;
+            } else {
+                finishMsg.what = DOWNLOAD_SUCCESS;
+            }
+            finishMsg.arg1 = mUpdateID;
+
+            mHandler.sendMessage(finishMsg);
+        }
+
+        @Override
+        public void downLoadError(String errorMsg) {
+            LogUtil.trace("errorMsg: "+errorMsg);
+        }
     }
 
     /**
@@ -154,75 +315,47 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         }
     }
 
-    private void initListener() {
-        mBtnDataCollect.setOnClickListener(this);
+    private final DownloadStatusHandler mHandler = new DownloadStatusHandler(this);
+    private static final int DOWNLOAD_FAILED = 0;
+    private static final int DOWNLOAD_SUCCESS = 1;
+    private static final int DOWNLOAD_DONE = 2;
+    private static final int MAX_DOWNLOAD_COUNT = 4;
+    private static final int MAX_DOWNLOAD_STEP = 1;
 
-        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+    private static class DownloadStatusHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
 
-        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
-        mBtnDataCollect.setFocusable(true);
-        mBtnDataCollect.setFocusableInTouchMode(true);
-        mBtnDataCollect.requestFocus();
-        mBtnDataCollect.requestFocusFromTouch();
-    }
+        public DownloadStatusHandler(MainActivity activity) {
+            this.mActivity = new WeakReference<MainActivity>(activity);
+        }
 
-    private void startDataSync() {
-        startService(new Intent(getApplicationContext(), DataSyncService.class));
-        bindService(new Intent(MainActivity.this, DataSyncService.class), mServiceConnection,
-                Service.BIND_AUTO_CREATE);
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = mActivity.get();
+            if (activity == null) {
+                super.handleMessage(msg);
+                return;
+            }
 
-        showProgressDialog();
-    }
+            switch (msg.what) {
+                case DOWNLOAD_FAILED: {
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_data_collect: {
-                Intent intent = new Intent(MainActivity.this, DataCollectActivity.class);
-                MainActivity.this.startActivity(intent);
+                    break;
+                }
+                case DOWNLOAD_SUCCESS: {
+                    activity.mDownloadProgressDialog.incrementProgressBy(MAX_DOWNLOAD_STEP);
+                    break;
+                }
 
-                break;
+                case DOWNLOAD_DONE: {
+                    activity.mDownloadProgressDialog.dismiss();
+                    break;
+                }
+
+                default:
+                    super.handleMessage(msg);
+                    break;
             }
         }
-    }
-
-    @Override
-    public void onSyncFinished(Exception e) {
-        closeProgressDialog();
-    }
-
-    private void showProgressDialog() {
-        if (mDownloadProgressDialog == null) {
-            mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
-            mDownloadProgressDialog.setMessage("正在下载资料列表...");
-            mDownloadProgressDialog.setCanceledOnTouchOutside(false);
-            mDownloadProgressDialog.setCancelable(false);
-        }
-        mDownloadProgressDialog.show();
-    }
-
-    private void closeProgressDialog() {
-        if (mDownloadProgressDialog != null) {
-            mDownloadProgressDialog.dismiss();
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK: {
-                LogUtil.d(TAG, "---->按下了Back按键");
-                // 消费Back事件
-                // return true;
-            }
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 }

@@ -1,6 +1,8 @@
 package com.jiebao.baqiang.global;
 
 public class Constant {
+    // TODO 调试阶段开关
+    public final static boolean DEBUG = true;
 
     public final static String CLIENT_VERSION = "1";
 

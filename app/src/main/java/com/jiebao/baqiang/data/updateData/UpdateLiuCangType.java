@@ -8,6 +8,8 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LiucangBean;
 import com.jiebao.baqiang.data.bean.LiucangListInfo;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -25,21 +27,16 @@ import java.util.List;
  */
 
 public class UpdateLiuCangType extends UpdateInterface {
-    private static final String TAG = UpdateLiuCangType.class
-            .getSimpleName();
+    private static final String TAG = UpdateLiuCangType.class.getSimpleName();
     private static final String DB_NAME = "liucang";
 
     private static String mUpdateLiuCangTypeUrl = "";
     private volatile static UpdateLiuCangType mInstance;
 
-    private DataDownloadFinish mDataDownloadFinish;
+    private IDownloadStatus mDataDownloadStatus;
 
-    public interface DataDownloadFinish {
-        void downloadLiuCangTypeFinish();
-    }
-
-    public void setDataDownloadFinish(DataDownloadFinish dataDownloadFinish) {
-        this.mDataDownloadFinish = dataDownloadFinish;
+    public void setDataDownloadStatus(IDownloadStatus dataDownloadFinish) {
+        this.mDataDownloadStatus = dataDownloadFinish;
     }
 
     private UpdateLiuCangType() {
@@ -58,13 +55,11 @@ public class UpdateLiuCangType extends UpdateInterface {
     }
 
     public boolean updateLiuCangType() {
-        mUpdateLiuCangTypeUrl = SharedUtil.getServletAddresFromSP
-                (BaqiangApplication.getContext(), NetworkConstant
-                        .LiuCang_TYPE);
+        mUpdateLiuCangTypeUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext()
+                , NetworkConstant.LiuCang_TYPE);
 
         RequestParams params = new RequestParams(mUpdateLiuCangTypeUrl);
-
-        params.addQueryStringParameter("saleId",salesId);
+        params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
 
@@ -73,8 +68,7 @@ public class UpdateLiuCangType extends UpdateInterface {
             @Override
             public void onSuccess(String liucang) {
                 Gson gson = new Gson();
-                final LiucangListInfo list = gson.fromJson(liucang,
-                        LiucangListInfo.class);
+                final LiucangListInfo list = gson.fromJson(liucang, LiucangListInfo.class);
 
                 new Thread(new Runnable() {
 
@@ -87,8 +81,8 @@ public class UpdateLiuCangType extends UpdateInterface {
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace(throwable.getMessage());
-
+                // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
+                mDataDownloadStatus.downLoadError(throwable.getMessage());
             }
 
             @Override
@@ -98,6 +92,10 @@ public class UpdateLiuCangType extends UpdateInterface {
 
             @Override
             public void onFinished() {
+                if (Constant.DEBUG) {
+                    // FIXME 是否都执行onFinished()？在哪些情况下执行onError()
+                    mDataDownloadStatus.downloadFinish();
+                }
                 LogUtil.trace();
             }
         });
@@ -111,24 +109,38 @@ public class UpdateLiuCangType extends UpdateInterface {
      * @return
      */
     private boolean storageData(final LiucangListInfo liucangListInfo) {
-        LogUtil.trace();
+        LogUtil.trace("+++ save LiucangReason data start +++");
 
-        DbManager db = BQDataBaseHelper.getDb();
-        if (tableIsExist(DB_NAME)) {
-            // 删除已有Table文件
-            try {
-                db.delete(LiucangBean.class);
-            } catch (DbException e) {
-                e.printStackTrace();
+        List<LiucangBean> liucangBean = liucangListInfo.getLiuCangInfo();
+        if (liucangBean == null || liucangBean.size() == 0) {
+            LogUtil.trace("--- save LiucangBean data over ---");
+            return false;
+        } else {
+            DbManager db = BQDataBaseHelper.getDb();
+            if (tableIsExist(DB_NAME)) {
+                // FIXME 删除已有Table文件
+                try {
+                    db.delete(LiucangBean.class);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
+
+            for (int index = 0; index < liucangBean.size(); index++) {
+                try {
+                    LiucangBean reason = new LiucangBean(liucangBean.get(index).get编号(),
+                            liucangBean.get(index).get名称(), liucangBean.get(index).get备注());
+                    db.save(reason);
+                } catch (Exception exception) {
+                    // 反馈出错信息
+                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    exception.printStackTrace();
+                }
+            }
+            mDataDownloadStatus.downloadFinish();
+            LogUtil.trace("--- save LiucangBean data over ---");
         }
 
-        List<LiucangBean> liucangBean;
-        liucangBean = liucangListInfo.getLiuCangInfo();
-        BQDataBaseHelper.saveToDB(liucangBean);
-
-        LogUtil.trace("Update LiucangBean Type is over....");
-        mDataDownloadFinish.downloadLiuCangTypeFinish();
         return true;
     }
 
@@ -152,9 +164,8 @@ public class UpdateLiuCangType extends UpdateInterface {
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
