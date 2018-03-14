@@ -64,6 +64,19 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     private boolean mIsDestroyed = false;
     public AlertDialog loadingBulider;
 
+    private ScanListener mScanListener = new ScanListener() {
+
+        @Override
+        public void fillCode(String barcode) {
+            BaseActivityWithTitleAndNumber.this.fillCode(barcode);
+        }
+
+        @Override
+        public void dspStat(String content) {
+            BaseActivityWithTitleAndNumber.this.dspStat(content);
+        }
+    };
+
     private void initAttributes() {
         mHeaderLayout = (FrameLayout) View.inflate(this, R.layout.header_layout_un_upload, null);
         mHeaderLeftView = (TextView) mHeaderLayout.findViewById(R.id.headerLeftView);
@@ -161,7 +174,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
-            ScanHelper.getInstance().setScanListener(this.getClass().getName(), scanListener,
+            ScanHelper.getInstance().setScanListener(this.getClass().getName(), mScanListener,
                     isActivityNeedFocus);
         }
     }
@@ -309,19 +322,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         }
         return true;
     }
-
-    private ScanListener scanListener = new ScanListener() {
-
-        @Override
-        public void fillCode(String barcode) {
-            BaseActivityWithTitleAndNumber.this.fillCode(barcode);
-        }
-
-        @Override
-        public void dspStat(String content) {
-            BaseActivityWithTitleAndNumber.this.dspStat(content);
-        }
-    };
 
     protected void fillCode(String barcode) {
 

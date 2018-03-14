@@ -128,11 +128,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtil.trace("keyCode--->" + keyCode);
+        LogUtil.trace("keyCode:" + keyCode);
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK: {
-                LogUtil.d(TAG, "---->按下了Back按键");
                 // 消费Back事件
                 return true;
             }
@@ -181,6 +180,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
             closeLoadinDialog();
             return;
         }
+
+        // 保存账号和密码
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, account);
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, pwd);
 
         mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
                 NetworkConstant.LOGIN_SERVLET);
@@ -239,7 +242,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
             @Override
             public void onFinished() {
-                if(Constant.DEBUG){
+                if (Constant.DEBUG) {
                     // TODO 测试阶段，正式环境删除
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
@@ -277,16 +280,18 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
      * 发送广播给Settings，做屏蔽HOME和下拉状态栏
      */
     private void sendBroadcastForAction() {
+        LogUtil.trace();
+
         Intent intent = new Intent();
         intent.setAction(PERSIST_SETTINGS);
         // TODO 屏蔽HOME按键
         intent.putExtra(PERSIST_SETTINGS_KEY, KEY_HOME);
         intent.putExtra(PERSIST_SETTINGS_VALUE, "false");
+        LoginActivity.this.sendBroadcast(intent);
 
         // TODO 屏蔽状态栏下拉，值为true隐藏
         intent.putExtra(PERSIST_SETTINGS_KEY, HIDE_STATUSBAR);
         intent.putExtra(PERSIST_SETTINGS_VALUE, "true");
-
         LoginActivity.this.sendBroadcast(intent);
     }
 

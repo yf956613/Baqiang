@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         initListener();
 
-        // FIXME 何时开始启动下载动作？
+        // FIXME 何时开始启动下载动作？在onCreate()中不是在onResume中
         syncDataAction();
     }
 
@@ -221,6 +221,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
                 break;
             }
+
+
         }
 
         return super.onKeyDown(keyCode, event);
@@ -297,7 +299,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void downLoadError(String errorMsg) {
-            LogUtil.trace("errorMsg: "+errorMsg);
+            LogUtil.trace("errorMsg: " + errorMsg);
         }
     }
 

@@ -26,38 +26,48 @@ public class BQDataBaseHelper {
         if (mDaoConfig == null) {
             LogUtil.trace("mDaoConfig is null...");
 
-            mDaoConfig = new DaoConfig().setDbName("baqiang.db").setDbVersion(1)
+            mDaoConfig = new DaoConfig().setDbName("baqiang.db").setDbVersion(2)
                     .setAllowTransaction(true).setDbDir(new File("/sdcard/bqDB/"))
                     .setDbUpgradeListener(new DbUpgradeListener() {
 
-                        @Override
-                        public void onUpgrade(DbManager db, int oldVersion,
-                                              int newVersion) {
+                @Override
+                public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
+                    LogUtil.trace("oldVersion:" + oldVersion + "; newVersion:" + newVersion);
 
+                    // 使用for实现跨版本升级数据库
+                    for (int i = oldVersion; i < newVersion; i++) {
+                        switch (i) {
+                            case 1: {
+                                upgradeToVersion2(db);
+                            }
+                            break;
+                            default:
                         }
-                    }).setTableCreateListener(new DbManager
-                            .TableCreateListener() {
+                    }
 
-                        @Override
-                        public void onTableCreated(DbManager dbManager,
-                                                   TableEntity<?> tableEntity) {
-                            LogUtil.e(TAG, "start to create table...");
-                            String name = tableEntity.getName();
-                            LogUtil.e(TAG, "name:" + name);
-                        }
-                    }).setDbOpenListener(new DbManager.DbOpenListener() {
+                }
+            }).setTableCreateListener(new DbManager.TableCreateListener() {
 
-                        @Override
-                        public void onDbOpened(DbManager dbManager) {
-                            LogUtil.d(TAG, "start to open database...");
-                            // 开启多线程操作 开启WAL, 对写入加速提升巨大
-                            dbManager.getDatabase().enableWriteAheadLogging();
-                        }
-                    });
+                @Override
+                public void onTableCreated(DbManager dbManager, TableEntity<?> tableEntity) {
+                    LogUtil.e(TAG, "start to create table...");
+                    String name = tableEntity.getName();
+                    LogUtil.e(TAG, "name:" + name);
+                }
+            }).setDbOpenListener(new DbManager.DbOpenListener() {
+
+                @Override
+                public void onDbOpened(DbManager dbManager) {
+                    LogUtil.d(TAG, "start to open database...");
+                    // 开启多线程操作 开启WAL, 对写入加速提升巨大
+                    dbManager.getDatabase().enableWriteAheadLogging();
+                }
+            });
         }
 
         return mDaoConfig;
     }
+
 
     public static DbManager getDb() {
         return x.getDb(getDaoConfig());
@@ -71,8 +81,7 @@ public class BQDataBaseHelper {
         }
     }
 
-    public static List<?> queryData(Class<?> cls, String columnName, String
-            op, Object value)
+    public static List<?> queryData(Class<?> cls, String columnName, String op, Object value)
             throws DbException {
         return getDb().selector(cls).where(columnName, op, value).findAll();
     }
@@ -112,5 +121,16 @@ public class BQDataBaseHelper {
                 }
             }
         });
+    }
+
+    /**
+     * 数据库的初始版本升级到Version:2
+     *
+     * 修改部分：liucangjian表中增加字段：是否可用，其值可选为：可用和不可用
+     *
+     * @param db
+     */
+    private static void upgradeToVersion2(DbManager db) {
+
     }
 }

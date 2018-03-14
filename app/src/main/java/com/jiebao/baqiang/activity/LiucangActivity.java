@@ -1,8 +1,10 @@
 package com.jiebao.baqiang.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,10 +23,12 @@ import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.stay.StayHouseFileName;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
@@ -45,7 +49,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     // 用在View上的Adapter
     private ArrayAdapter<String> mReasonData;
 
-    // 待上传文件
+    // 待上传文件名
     private StayHouseFileName mStayHouseFileName;
     // 插入数据库中的一行数据
     private StayHouseFileContent mStayHouseFileContent;
@@ -68,12 +72,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public void initData() {
         prepareDataForView();
 
-        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id
-                .tv_stay_reason);
+        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id.tv_stay_reason);
         mTvStayHouseReason.setAdapter(mReasonData);
         // 监听EditText是否获取焦点
-        mTvStayHouseReason.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
+        mTvStayHouseReason.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -87,12 +89,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 }
             }
         });
-        mTvStayHouseReason.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
+        mTvStayHouseReason.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 一旦选定下一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverID = mTvStayHouseReason.getText().toString();
                 LogUtil.d(TAG, "serverID:" + serverID);
@@ -110,24 +110,24 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         mListView = LiucangActivity.this.findViewById(R.id.list_view_scan_data);
         mListView.setAdapter(mFajianAdapter);
         mListView.setDelButtonClickListener(LiucangActivity.this);
-        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id
-                .et_shipment_number);
+        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id.et_shipment_number);
 
         // 初次启动时刷新数据
         reQueryUnUploadDataForListView();
     }
 
     /**
-     * 从数据库中找出所有未上传记录
+     * 从数据库中找出所有 未上传，可用 的记录
      */
     private void reQueryUnUploadDataForListView() {
+        LogUtil.trace();
+
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            // 查询数据库中标识位“未上传”的记录
-            List<StayHouseFileContent> data = db.selector
-                    (StayHouseFileContent.class).where("是否上传",
-                    "like", "未上传").findAll();
-            if (null != data) {
+            // 查询数据库中标识位“未上传”，且数据可用的记录
+            List<StayHouseFileContent> data = db.selector(StayHouseFileContent.class).where
+                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
+            if (null != data && data.size() != 0) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
 
                 // 清除数据
@@ -135,12 +135,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index)
-                            .getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }
@@ -148,6 +146,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 mFajianAdapter.notifyDataSetChanged();
                 // 更新全局ID
                 mScanCount = count;
+            } else {
+                // 清除数据
+                mListData.clear();
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = 0;
+                LogUtil.trace("未上传 && 可用，过滤后无数据");
             }
         } catch (DbException e) {
             e.printStackTrace();
@@ -159,22 +164,15 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
         List<String> reasonData = new ArrayList<>();
         for (int index = 0; index < mStayHouseReason.size(); index++) {
-            reasonData.add(mStayHouseReason.get(index).get编号() + "  " +
-                    mStayHouseReason.get(index).get名称());
+            reasonData.add(mStayHouseReason.get(index).get编号() + "  " + mStayHouseReason.get
+                    (index).get名称());
         }
 
-        mReasonData = new ArrayAdapter<String>
-                (LiucangActivity.this, R.layout.list_item, reasonData);
-
-        mStayHouseFileName = new StayHouseFileName();
-        boolean isAllSuccess = mStayHouseFileName.linkToTXTFile();
-        LogUtil.d(TAG, "isAllSccess:" + isAllSuccess);
+        mReasonData = new ArrayAdapter<String>(LiucangActivity.this, R.layout.list_item,
+                reasonData);
 
         mStayHouseFileContent = getStayHouseFileContent();
-        LogUtil.trace("mStayHouseFileContent:" + mStayHouseFileContent.toString
-                ());
-        mUploadServerFile = new UploadServerFile
-                (mStayHouseFileName.getFileInstance());
+        LogUtil.trace("mStayHouseFileContent:" + mStayHouseFileContent.toString());
 
         mListData = new ArrayList<>();
         mFajianAdapter = new FajianAdatper(LiucangActivity.this, mListData);
@@ -220,83 +218,116 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         String operateDate = TextStringUtil.getFormatTime();
         // 是否上传状态
         String status = "未上传";
+        // 是否可用
+        String isUsed = "可用";
 
-        return new StayHouseFileContent(scanDate, stayHouseReason,
-                shipmentType, shipmentNumber, scanEmployeeNumber,
-                operateDate, status);
+        return new StayHouseFileContent(scanDate, stayHouseReason, shipmentType, shipmentNumber,
+                scanEmployeeNumber, operateDate, status, isUsed);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ensure: {
-                // 确定按键，上传文件
-                LogUtil.trace();
-
                 DbManager db = BQDataBaseHelper.getDb();
                 List<StayHouseFileContent> list = null;
                 try {
-                    // 1. 查询数据库中标识位“未上传”的记录
-                    list = db.selector(StayHouseFileContent.class).where("是否上传",
-                            "like", "未上传").findAll();
-                    if (null != list) {
-                        LogUtil.trace("list:" + list.size());
-                        for (int index = 0; index < list.size(); index++) {
-                            // 2. 创建写入文本的字符串，并写入文本
-                            StayHouseFileContent javaBean = list.get(index);
-                            String content = javaBean.getmCurrentValue() +
-                                    "\r\n";
-                            if (mUploadServerFile.writeContentToFile(content,
-                                    true)) {
-                                // 3. 写入成功，删除记录
-                                /*WhereBuilder whereBuilder = WhereBuilder.b();
-                                whereBuilder.and("运单编号", "=", javaBean
-                                        .getShipmentNumber());
-                                db.update(ShipmentFileContent.class,
-                                        whereBuilder, new KeyValue("是否上传",
-                                                "已上传"));*/
-                                WhereBuilder b = WhereBuilder.b();
-                                b.and("运单编号", "=", javaBean.getShipmentNumber
-                                        ());
-                                db.delete(StayHouseFileContent.class, b);
-                            } else {
-                                // 写入文件失败，跳过
+                    // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
+                    list = db.selector(StayHouseFileContent.class).where("是否上传", "like", "未上传")
+                            .and("是否可用", "=", "可用").findAll();
+                    if (null != list && list.size() != 0) {
+                        // 2. 获取随机文件名
+                        mStayHouseFileName = new StayHouseFileName();
+                        if (mStayHouseFileName.linkToTXTFile()) {
+                            // 3. 链接创建的文件和上传功能
+                            mUploadServerFile = new UploadServerFile(mStayHouseFileName
+                                    .getFileInstance());
+                            for (int index = 0; index < list.size(); index++) {
+                                // 4. 创建写入文本的字符串，并写入文本
+                                StayHouseFileContent javaBean = list.get(index);
+                                String content = javaBean.getmCurrentValue() + "\r\n";
+                                if (mUploadServerFile.writeContentToFile(content, true)) {
+                                    // 不能删除数据，应该是否上传标志位为：已上传
+                                    WhereBuilder whereBuilder = WhereBuilder.b();
+                                    whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                                    // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
+                                    db.update(StayHouseFileContent.class, whereBuilder, new
+                                            KeyValue("是否上传", "已上传"));
+                                } else {
+                                    // TODO 写入文件失败
+                                    LogUtil.trace("写入文件失败");
+                                }
                             }
+
+                            // 6. 文件上传服务器
+                            mUploadServerFile.uploadFile();
+                            LiucangActivity.this.finish();
+                        } else {
+                            // TODO 创建文件失败
+                            LogUtil.trace("创建文件失败");
                         }
+                    } else {
+                        LogUtil.trace("当前数据库没有需要上传数据");
                     }
                 } catch (DbException e) {
                     LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
                     e.printStackTrace();
                 }
 
-                // 4. 文件上传服务器
-                mUploadServerFile.uploadFile();
-                LiucangActivity.this.finish();
-
                 break;
             }
 
             case R.id.btn_back: {
                 // 返回按键，不上传文件
-                LogUtil.trace();
-                LiucangActivity.this.finish();
-
-                // 测试阶段删除所有记录
                 DbManager db = BQDataBaseHelper.getDb();
                 try {
-                    List<StayHouseFileContent> list = db.findAll
-                            (StayHouseFileContent.class);
+                    List<StayHouseFileContent> list = db.findAll(StayHouseFileContent.class);
                     if (list != null) {
-                        LogUtil.d(TAG, "当前记录：" + list.size());
-                        // db.delete(ShipmentFileContent.class);
+                        LogUtil.trace("当前记录：" + list.size());
                     }
                 } catch (DbException e) {
+                    LogUtil.trace(e.getMessage());
                     e.printStackTrace();
                 }
 
+                LiucangActivity.this.finish();
                 break;
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case Constant.SCAN_KEY_CODE: {
+                // FIXME 判断前置条件满足？
+                if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString()) || TextUtils
+                        .isEmpty(mTvStayHouseReason.getText().toString())) {
+                    Toast.makeText(LiucangActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+
+                    return true;
+                } else {
+                    // 数据库查询
+                    String stayHouseReason = mTvStayHouseReason.getText().toString().split("  ")[0];
+
+                    if (isExistCurrentReason(Integer.getInteger(stayHouseReason))) {
+                        // FIXME 判断前置条件？
+                        Intent intent = new Intent();
+                        intent.setAction("com.jb.action.F4key");
+                        intent.putExtra("F4key", "down");
+                        LiucangActivity.this.sendBroadcast(intent);
+                    }
+                }
+
+                return true;
+            }
+
+            default:
+                break;
+        }
+
+        // 需要调用super方法，让back起作用
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -304,26 +335,15 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         super.fillCode(barcode);
         LogUtil.trace("barcode:" + barcode);
 
-        // TODO 判断前置条件是否符合
-        if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString()) ||
-                TextUtils.isEmpty(mTvStayHouseReason.getText().toString())) {
-            Toast.makeText(LiucangActivity.this, "前置信息为空", Toast.LENGTH_SHORT)
-                    .show();
-
-            return;
-        }
-
-        // 1. 查表：当前是名为fajian的表，判断是否有记录
+        // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
-            Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // 2. 插入到数据库中
-        mStayHouseFileContent.setScanDate(TextStringUtil
-                .getFormatTimeString());
+        mStayHouseFileContent.setScanDate(TextStringUtil.getFormatTimeString());
         mStayHouseFileContent.setShipmentType("");
         mStayHouseFileContent.setShipmentNumber(barcode);
         mStayHouseFileContent.setOperateDate(TextStringUtil.getFormatTime());
@@ -340,17 +360,15 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
         mListData.add(mFajianListViewBean);
         mFajianAdapter.notifyDataSetChanged();
-
-        /*// 根据数据看数据，构造上传文件
-        String content = mStayHouseFileContent.getmCurrentValue() + "\r\n";
-        LogUtil.trace("content:" + content + ";");
-        mUploadServerFile.writeContentToFile(content, true);*/
     }
 
     private static final String DB_NAME = "liucangjian";
 
     /**
      * 判断数据库中是否有当前运单记录
+     * <p>
+     * 附加条件：
+     * 1. 数据必须是可用的；
      *
      * @param barcode
      * @return
@@ -360,13 +378,38 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             // 存在保存发件数据的表，从该表中查询对应的单号
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                // 查询数据库，是否有记录
-                List<StayHouseFileContent> bean = dbManager.selector
-                        (StayHouseFileContent.class).where("运单编号",
-                        "like", barcode).limit(1).findAll();
-                LogUtil.trace("bean:" + bean.size());
-
+                // FIXME 查询数据库，是否有记录；增加时间戳
+                List<StayHouseFileContent> bean = dbManager.selector(StayHouseFileContent.class)
+                        .where("运单编号", "like", barcode).and("是否可用", "like", "可用").limit(1)
+                        .findAll();
                 if (bean != null && bean.size() != 0) {
+                    LogUtil.trace("bean:" + bean.size());
+                    return true;
+                }
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断是否存在指定留仓原因
+     *
+     * @param reason
+     * @return
+     */
+    private boolean isExistCurrentReason(int reason) {
+        if (tableIsExist("liucang")) {
+            // 存在保存发件数据的表，从该表中查询对应的单号
+            DbManager dbManager = BQDataBaseHelper.getDb();
+            try {
+                // FIXME 查询数据库，是否有记录；增加时间戳
+                List<LiucangBean> bean = dbManager.selector(LiucangBean.class).where("编号",
+                        "like", reason).limit(1).findAll();
+                if (bean != null && bean.size() != 0) {
+                    LogUtil.trace("bean:" + bean.size());
                     return true;
                 }
             } catch (DbException e) {
@@ -397,9 +440,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
@@ -420,8 +462,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      * <p>
      * 与之相关的数据库Table为：fajian
      */
-    private void insertDataToDatabase(final StayHouseFileContent
-                                              stayHouseFileContent) {
+    private void insertDataToDatabase(final StayHouseFileContent stayHouseFileContent) {
         new Thread(new Runnable() {
 
             @Override
@@ -445,7 +486,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         // 1. 找到当前position的运单号
         LogUtil.d(TAG, "待删除的内容:" + mListData.get(position).getScannerData());
 
-        // 2. 删除数据库中对应的记录
+        // 2. 设置数据库对应记录的“是否可用”状态为：不可用
         deleteFindedBean(mListData.get(position).getScannerData());
 
         // 3. 重新从数据库中查出所有记录,更新ListView
@@ -458,10 +499,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      * @param barcode
      */
     private void deleteFindedBean(final String barcode) {
+        LogUtil.trace("barcode:" + barcode);
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            db.delete(StayHouseFileContent.class, WhereBuilder.b("运单编号",
-                    "like", barcode));
+            // 不能删除数据，应该设置“是否可用”状态为：不可用
+            WhereBuilder whereBuilder = WhereBuilder.b();
+            whereBuilder.and("运单编号", "=", barcode);
+            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue("是否可用", "不可用"));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();

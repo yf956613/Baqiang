@@ -1,8 +1,11 @@
 package com.jiebao.baqiang.global;
 
 public class Constant {
-    // TODO 调试阶段开关
+    // 调试阶段开关
     public final static boolean DEBUG = true;
+
+    // 扫描按键KeyCode值
+    public final static int SCAN_KEY_CODE = 139;
 
     public final static String CLIENT_VERSION = "1";
 

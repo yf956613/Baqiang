@@ -10,8 +10,7 @@ import org.xutils.db.annotation.Table;
  */
 @Table(name = "liucangjian")
 public class StayHouseFileContent {
-    private static final String TAG = StayHouseFileContent.class
-            .getSimpleName();
+    private static final String TAG = StayHouseFileContent.class.getSimpleName();
 
     private static final int LENGTH = 91;
     // 扫描类型编号长度
@@ -140,6 +139,16 @@ public class StayHouseFileContent {
         this.mStatus = mStatus;
     }
 
+    @Column(name = "是否可用")
+    private String mIsUsed;
+
+    public String getmIsUsed() {
+        return mIsUsed;
+    }
+
+    public void setmIsUsed(String mIsUsed) {
+        this.mIsUsed = mIsUsed;
+    }
 
     /**
      * 默认构造函数
@@ -148,11 +157,9 @@ public class StayHouseFileContent {
 
     }
 
-    public StayHouseFileContent(String mScanDate,
-                                String mStayReason, String mShipmentType, String
-                                        mShipmentNumber, String
-                                        mScanEmployeeNumber, String
-                                        mOperateDate, String mStatus) {
+    public StayHouseFileContent(String mScanDate, String mStayReason, String mShipmentType,
+                                String mShipmentNumber, String mScanEmployeeNumber, String
+                                        mOperateDate, String mStatus, String mIsUsed) {
         this.mScannerType = TYPE_SUFFIX;
         this.mSerialNumber = SERIAL_NUMBER_VALUE;
         this.mScanDate = mScanDate;
@@ -162,6 +169,7 @@ public class StayHouseFileContent {
         this.mScanEmployeeNumber = mScanEmployeeNumber;
         this.mOperateDate = mOperateDate;
         this.mStatus = mStatus;
+        this.mIsUsed = mIsUsed;
     }
 
     public String getmCurrentValue() {
@@ -179,8 +187,7 @@ public class StayHouseFileContent {
 
         // 添加上一站网点编号
         stringBuffer.append(this.mSerialNumber);
-        stringBuffer.append(countBlankAndAppend(this.mSerialNumber,
-                SERIAL_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mSerialNumber, SERIAL_NUMBER));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -196,13 +203,11 @@ public class StayHouseFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -255,16 +260,11 @@ public class StayHouseFileContent {
 
     @Override
     public String toString() {
-        return "StayHouseFileContent{" +
-                "mScannerType='" + mScannerType + '\'' +
-                ", mSerialNumber='" + mSerialNumber + '\'' +
-                ", mScanDate='" + mScanDate + '\'' +
-                ", mStayReason='" + mStayReason + '\'' +
-                ", mShipmentType='" + mShipmentType + '\'' +
-                ", mShipmentNumber='" + mShipmentNumber + '\'' +
-                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
-                ", mOperateDate='" + mOperateDate + '\'' +
-                ", mStatus='" + mStatus + '\'' +
-                '}';
+        return "StayHouseFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mSerialNumber='" + mSerialNumber + '\'' + ", mScanDate='" + mScanDate + '\'' +
+                ", mStayReason='" + mStayReason + '\'' + ", mShipmentType='" + mShipmentType +
+                '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", mScanEmployeeNumber='"
+                + mScanEmployeeNumber + '\'' + ", mOperateDate='" + mOperateDate + '\'' + ", " +
+                "mStatus='" + mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
     }
 }

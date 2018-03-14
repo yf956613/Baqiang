@@ -1,14 +1,10 @@
 package com.jiebao.baqiang.activity;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +18,6 @@ import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.global.PermissionSettingManager;
-import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -41,7 +36,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         .OnClickListener {
     private static final String TAG = "DataCollectActivity";
 
-    private BroadcastReceiver mLanguageSetReceiver;
     private String mLoginUrl = "";
     private LinearLayout mLlSendPackage;
 
@@ -94,8 +88,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @Override
     public void initView() {
-        initLanguageSetBroadCast();
-
         setHeaderLeftViewText("采集功能项");
         LogUtil.d(TAG, "onCreate");
 
@@ -103,9 +95,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
             MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE, Manifest.permission.CAMERA);
         }
 
-        /*LinearLayout footerLayout = (LinearLayout) View.inflate(this,R
-        .layout.main_footer_layout,null);
-        setFootLayout(footerLayout);*/
         setContent(R.layout.activity_data_collect);
     }
 
@@ -165,21 +154,11 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-
-        LogUtil.d("DataCollectActivity", "onRestart");
-    }
-
-    @Override
     protected void onDestroy() {
         AppUtil.setScreenBright(false);
         super.onDestroy();
-        if (mLanguageSetReceiver != null) {
-            unregisterReceiver(mLanguageSetReceiver);
-        }
-        // CacheManager.clear();
-        ScanHelper.getInstance().Close_Barcode();
+
+        // ScanHelper.getInstance().Close_Barcode();
     }
 
     @Override
@@ -220,31 +199,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        /*if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_1:
-                    gotoUpload();
-                    break;
-                case KeyEvent.KEYCODE_2:
-                    gotoZhuangche();
-                    break;
-                case KeyEvent.KEYCODE_3:
-                    fajian();
-                    break;
-                case KeyEvent.KEYCODE_4:
-                    daojian();
-                    break;
-                case KeyEvent.KEYCODE_5:
-                    liucang();
-                    break;
-                case KeyEvent.KEYCODE_6:
-                    //gotoSystemSet();
-                    break;
-                default:
-                    break;
-            }
-        }*/
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -258,29 +212,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         }
     }
 
-    private void initLanguageSetBroadCast() {
-        mLanguageSetReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //Intent it = new Intent(context, DataCollectActivity.class);
-//                Intent it = new Intent(context, SplashActivity.class);
-//                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                context.startActivity(it);
-                //  AppManager.getAppManager().finishAllActivity();
-                AppUtil.restartApp();
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("multiLanguageChanged");
-        registerReceiver(mLanguageSetReceiver, filter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e("DataCollectActivity", "onResume");
-    }
-
     @PermissionGrant(REQUEST_CAMARA_CODE)
     public void requestCameraSuccess() {
 
@@ -288,8 +219,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @PermissionDenied(REQUEST_CAMARA_CODE)
     public void requestCameraFail() {
-        //DialogUtil.showAlertDialog(this,"fail:camera permission is not
-        // granted");
         PermissionSettingManager.showPermissionSetting(false, this, getString(R.string
                 .tip_camare_permission), getString(R.string.tip_permission_setting));
     }
@@ -355,10 +284,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         LogUtil.trace("path:" + mLoginUrl);
 
         RequestParams params = new RequestParams(mLoginUrl);
-        // TODO 测试阶段写死
-            /*params.addQueryStringParameter("saleId", saleId);
-            params.addQueryStringParameter("userName", account);
-            params.addQueryStringParameter("password", pwd);*/
         params.addQueryStringParameter("saleId", saleId);
         params.addQueryStringParameter("userName", account);
         params.addQueryStringParameter("password", pwd);

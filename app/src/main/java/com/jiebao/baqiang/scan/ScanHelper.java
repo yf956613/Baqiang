@@ -17,7 +17,7 @@ import com.jiebao.baqiang.global.BeepManager;
  * 扫描包装类
  */
 
-public class ScanHelper{
+public class ScanHelper {
     //states
     private static final int STATE_IDLE = 0;
     private static final int STATE_DECODE = 1;
@@ -33,7 +33,7 @@ public class ScanHelper{
     private BeepManager beepManager;
     private final int Handler_SHOW_RESULT = 1999;
     private final int Handler_SHOW_STAT = 2000;
-    private boolean isInit =false;
+    private boolean isInit = false;
     private String currentActivityClazz;
     private ScanListener currentListener;
     private final String TAG = "ScanHelper";
@@ -77,7 +77,7 @@ public class ScanHelper{
 //                beepManager.notifySound();
 //                return;
 //            } else {
-                beepManager.play();
+        beepManager.play();
 //            }
 //        }
         currentListener.fillCode(barcode);
@@ -103,8 +103,8 @@ public class ScanHelper{
         try {
             if (!isInit) {
                 if (BaqiangApplication.isSoftDecodeScan) {
-                 //   softBarcodeDecoder = new SoftBarcodeDecoder();
-                 //   softBarcodeDecoder.openModule(activity);
+                    //   softBarcodeDecoder = new SoftBarcodeDecoder();
+                    //   softBarcodeDecoder.openModule(activity);
                 } else {
                     loadHardScanModule(activity);
                 }
@@ -141,11 +141,11 @@ public class ScanHelper{
             BaqiangApplication.getContext().unregisterReceiver(f4Receiver);
             currentListener = null;
             currentActivityClazz = null;
-           // if (BaqiangApplication.isSoftDecodeScan) {
-           //     closeSoftScanModule();
-           // } else {
-                closeHardScanModule();
-          //  }
+            // if (BaqiangApplication.isSoftDecodeScan) {
+            //     closeSoftScanModule();
+            // } else {
+            closeHardScanModule();
+            //  }
             isInit = false;
         } catch (Exception ignored) {
 
@@ -156,7 +156,8 @@ public class ScanHelper{
         setScanListener(activityName, scanListener, true);
     }
 
-    public void setScanListener(String activityName, ScanListener scanListener, boolean isActivityFocus) {
+    public void setScanListener(String activityName, ScanListener scanListener, boolean
+            isActivityFocus) {
         this.currentActivityClazz = activityName;
         this.currentListener = scanListener;
         this.isActivityFocus = isActivityFocus;
@@ -191,20 +192,20 @@ public class ScanHelper{
             if (intent.hasExtra("F4key")) {
                 if (intent.getStringExtra("F4key").equals("down")) {
                     Log.e(TAG, "key down");
-                  //  if (BaqiangApplication.isSoftDecodeScan) {
-                      //  softBarcodeDecoder.doDecode();
-                  //  } else {
-                        if (null != barcodeManager) {
-                            nowTime = System.currentTimeMillis();
-                            if (nowTime - lastTime > 300) {
-                                lastTime = nowTime;
-                                barcodeManager.Barcode_Stop();
-                                if (null != barcodeManager) {
-                                    barcodeManager.Barcode_Start();
-                                }
+                    //  if (BaqiangApplication.isSoftDecodeScan) {
+                    //  softBarcodeDecoder.doDecode();
+                    //  } else {
+                    if (null != barcodeManager) {
+                        nowTime = System.currentTimeMillis();
+                        if (nowTime - lastTime > 300) {
+                            lastTime = nowTime;
+                            barcodeManager.Barcode_Stop();
+                            if (null != barcodeManager) {
+                                barcodeManager.Barcode_Start();
                             }
                         }
-                  //  }
+                    }
+                    //  }
                 } else if (intent.getStringExtra("F4key").equals("up")) {
                     Log.e("ScanHelper", "key up");
                 }
@@ -214,18 +215,17 @@ public class ScanHelper{
 
     //当前的Activity
     private String getCurrentActivity() {
-      return BaqiangApplication.mTopActivity.getClass().getName();
+        return BaqiangApplication.mTopActivity.getClass().getName();
     }
 
     //是否可以处理
     private boolean checkCanParse() {
-        if (currentActivityClazz == null || currentListener == null)
-            return false;
+        if (currentActivityClazz == null || currentListener == null) return false;
 
         String topActivity = getCurrentActivity();
-        Log.e(TAG, "receive broadcast-- current activity---" + currentActivityClazz + "   top activity  " + topActivity);
-        if (!currentActivityClazz.equals(topActivity))
-            return false;
+        Log.e(TAG, "receive broadcast-- current activity---" + currentActivityClazz + "   top " +
+                "activity  " + topActivity);
+        if (!currentActivityClazz.equals(topActivity)) return false;
 
         return true;
     }
@@ -391,7 +391,8 @@ public class ScanHelper{
 //
 //        if (length > 0) {
 //            byte[] bs = new byte[length];
-//            if (softBarcodeDecoder.isHandsFree() == false && softBarcodeDecoder.isAutoAim() == false){
+//            if (softBarcodeDecoder.isHandsFree() == false && softBarcodeDecoder.isAutoAim() ==
+// false){
 //                softBarcodeDecoder.stopDecode();
 //            }
 //
@@ -417,9 +418,11 @@ public class ScanHelper{
 //                }
 //
 //                System.arraycopy(data, 0, bs, 0, length);
-//                decodeStatString = new String("[" + decodes + "] type: " + symbology + " len: " + length);
+//                decodeStatString = new String("[" + decodes + "] type: " + symbology + " len: "
+// + length);
 //                decodeDataString = new String(bs);
-//                //Log.v(TAG,"onDecodeComplete decodeDataString: "+decodeDataString+" length:"+length+" bs: "+bs.length);
+//                //Log.v(TAG,"onDecodeComplete decodeDataString: "+decodeDataString+"
+// length:"+length+" bs: "+bs.length);
 //                if (currentListener != null) {
 //                    Message msg1 = mHandler.obtainMessage();
 //                    msg1.what = Handler_SHOW_RESULT;
@@ -472,7 +475,8 @@ public class ScanHelper{
 //                ++modechgEvents;
 //                if (currentListener != null) {
 //                    try {
-//                        currentListener.dspStat("Scan Mode Changed Event (#" + modechgEvents + ")");
+//                        currentListener.dspStat("Scan Mode Changed Event (#" + modechgEvents +
+// ")");
 //                    } catch (Exception e) {
 //                        e.printStackTrace();
 //                    }

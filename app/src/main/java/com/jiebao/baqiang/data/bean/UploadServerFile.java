@@ -40,8 +40,7 @@ public class UploadServerFile implements IShipmentFileUpload {
      */
     public boolean writeContentToFile(String valueContent, boolean isAppend) {
         try {
-            FileIOUtils.writeFileFromBytesByStream(mFile, valueContent
-                            .getBytes("GB2312"),
+            FileIOUtils.writeFileFromBytesByStream(mFile, valueContent.getBytes("GB2312"),
                     isAppend);
             return true;
         } catch (UnsupportedEncodingException e) {
@@ -52,8 +51,8 @@ public class UploadServerFile implements IShipmentFileUpload {
     }
 
     public boolean uploadFile() {
-        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
-                .getContext(), NetworkConstant.UPLOAD_SERVLET);
+        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+                NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
 
         params.addQueryStringParameter("saleId", UpdateInterface.salesId);
@@ -61,10 +60,8 @@ public class UploadServerFile implements IShipmentFileUpload {
         params.addQueryStringParameter("password", UpdateInterface.psw);
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
-        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile
-                .getName());
-        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "" + this
-                .mFile.length());
+        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
+        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "" + this.mFile.length());
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");
@@ -88,6 +85,7 @@ public class UploadServerFile implements IShipmentFileUpload {
 
             @Override
             public void onFinished() {
+                // TODO 判断是否上传成功
                 LogUtil.trace();
             }
         });

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -429,8 +430,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " + "='table' and name " +
-                    "='" + tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
@@ -546,59 +547,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
-     * 创建静态内部类，继承AsyncTaskLoader,并重写三个方法
-     */
-    /*private  class MyAsyncTaskLoader extends AsyncTask<Void,String,Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            vehicleInfo =(List<String>) BQDataBaseHelper.queryData
-            (VehicleInfo.class,"number");
-            salesService =(List<String>) BQDataBaseHelper.queryData
-            (SalesService.class,"serviceName");
-            //shipmentTyoe =(List<String>) BQDataBaseHelper.queryData
-            (ShipmentType.class,"类型名称");
-            resolveShipmentTypeData();
-            liucang = (List<String>)BQDataBaseHelper.queryData(LiucangBean
-            .class,"名称");
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            showAdapter();
-            // 运行在主线程，更新UI
-        }
-
-        protected  void  showAdapter(){
-            AutoCompleteTextView autoCompleteTextView1 =
-            (AutoCompleteTextView) car_code.getRightText();
-            ArrayAdapter<String> adapter1 = new ArrayAdapter<String>
-            (ZhuangcheActivity.this, android.R.layout.simple_list_item_1,
-            vehicleInfo);
-            autoCompleteTextView1.setAdapter(adapter1);
-            AutoCompleteTextView autoCompleteTextView2 =
-            (AutoCompleteTextView) mTvNextStation.getRightText();
-            ArrayAdapter<String> adapter2 = new ArrayAdapter<>
-            (ZhuangcheActivity.this, android.R.layout.simple_list_item_1,
-            salesService);
-            autoCompleteTextView2.setAdapter(adapter2);
-            AutoCompleteTextView autoCompleteTextView3 =
-            (AutoCompleteTextView) mTvShipmentType.getRightText();
-         //   ArrayAdapter<String> adapter3 = new ArrayAdapter<>
-         (ZhuangcheActivity.this, android.R.layout.simple_list_item_1,
-         mShipmentData);
-            autoCompleteTextView3.setAdapter(mShipmentType);
-        }
-    }*/
-
-    /**
      * 从数据库中取出快件类型数据
      *
      * @return
@@ -644,6 +592,5 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             e.printStackTrace();
         }
     }
-
 
 }
