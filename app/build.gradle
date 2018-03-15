@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
+    /*versionCode和versionName对应App更新，需要联动递增*/
     defaultConfig {
         applicationId "com.jiebao.baqiang"
         minSdkVersion 19

@@ -122,6 +122,17 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnDataCollect.setFocusable(true);
+        mBtnDataCollect.setFocusableInTouchMode(true);
+        mBtnDataCollect.requestFocus();
+        mBtnDataCollect.requestFocusFromTouch();
+    }
+
+    @Override
     public void initData() {
         LogUtil.trace();
 

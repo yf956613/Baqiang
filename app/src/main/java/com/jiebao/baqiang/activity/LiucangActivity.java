@@ -3,6 +3,7 @@ package com.jiebao.baqiang.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -61,6 +62,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     private FajianAdatper mFajianAdapter;
     // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
+    private Vibrator mDeviceVibrator;
 
     @Override
     public void initView() {
@@ -71,6 +73,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     @Override
     public void initData() {
         prepareDataForView();
+
+        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
 
         mTvStayHouseReason = LiucangActivity.this.findViewById(R.id.tv_stay_reason);
         mTvStayHouseReason.setAdapter(mReasonData);
@@ -305,11 +309,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                         .isEmpty(mTvStayHouseReason.getText().toString())) {
                     Toast.makeText(LiucangActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
 
+                    mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
                     // 数据库查询
                     String stayHouseReason = mTvStayHouseReason.getText().toString().split("  ")[0];
-                    LogUtil.trace("stayHouseReason:"+stayHouseReason);
+                    LogUtil.trace("stayHouseReason:" + stayHouseReason);
 
                     if (isExistCurrentReason(Integer.parseInt(stayHouseReason))) {
                         // FIXME 判断前置条件？
@@ -340,6 +345,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
             Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
+
             return;
         }
 

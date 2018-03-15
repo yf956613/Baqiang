@@ -6,6 +6,8 @@ package com.jiebao.baqiang.data.bean;
 
 public class AppUpdateBean {
     private String serverVersion;
+
+    // apk名字，服务器存储apk版本
     private String baQiangApkVersion;
 
     public String getServerVersion() {

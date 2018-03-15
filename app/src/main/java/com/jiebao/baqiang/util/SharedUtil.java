@@ -75,4 +75,28 @@ public class SharedUtil {
 
         return null;
     }
+
+    /**
+     * 从SharedPreferences中获取到存储的IP地址和端口号
+     *
+     * @param appContext
+     * @param servlet
+     * @return
+     */
+    public static String getJiebaoServletAddresFromSP(Context appContext,
+                                                String servlet) {
+        String dataServerAddress = getString(appContext, Constant.PREFERENCE_KEY_JB_SERVER);
+        String dataServerPort = getString(appContext, Constant.PREFERENCE_KEY_JB_SERVER_PORT);
+
+        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty
+                (dataServerPort)) {
+            /*Toast.makeText(appContext, "数据服务器地址或端口出错", Toast.LENGTH_SHORT)
+                    .show();*/
+        } else {
+            return NetworkConstant.HTTP_DOMAIN + dataServerAddress + ":" + dataServerPort +
+                    servlet;
+        }
+
+        return null;
+    }
 }

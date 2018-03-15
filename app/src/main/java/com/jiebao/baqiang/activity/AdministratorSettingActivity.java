@@ -284,7 +284,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 请求服务器获取最新apk信息 APP_UPDATE_INFO
-                mUpdateAPPUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext()
+                mUpdateAPPUrl = SharedUtil.getJiebaoServletAddresFromSP(BaqiangApplication.getContext()
                         , NetworkConstant.APP_UPDATE_INFO);
                 RequestParams params = new RequestParams(mUpdateAPPUrl);
 
@@ -304,7 +304,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
 
                         if (getCurrentVersionCode() < resolveServerAppVersionCode(appInfo)) {
                             LogUtil.trace("start to download");
-                            mApkFileDownloadUrl = SharedUtil.getServletAddresFromSP
+                            mApkFileDownloadUrl = SharedUtil.getJiebaoServletAddresFromSP
                                     (BaqiangApplication.getContext(), NetworkConstant
                                             .APK_DOWNLOAD_URL);
 

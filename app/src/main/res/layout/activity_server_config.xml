@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,61 +8,68 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="快件查询地址"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/edt_express_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"/>
+        android:selectAllOnFocus="true"
+        android:singleLine="true">
+
+        <requestFocus />
+    </EditText>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="数据服务器地址"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/data_server_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"/>
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="数据服务器端口"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/data_server_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"/>
-
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="apk升级地址"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/apk_update_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"/>
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="apk升级端口"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/apk_update_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"/>
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
 </LinearLayout>

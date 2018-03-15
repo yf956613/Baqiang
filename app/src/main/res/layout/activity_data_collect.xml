@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="com.jiebao.baqiang.activity.DataCollectActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.jiebao.baqiang.activity.DataCollectActivity">
 
     <com.jiebao.baqiang.view.MyScrollView
         android:id="@+id/scrollView_main"
@@ -28,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                             android:id="@+id/btn_load_send"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_scan_selector"/>
+                            android:background="@drawable/goods_scan_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                             android:singleLine="true"
                             android:text="1.装车发件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -76,7 +76,7 @@
                             android:id="@+id/btn_unload_receive_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_storage_selector"/>
+                            android:background="@drawable/goods_storage_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
                             android:singleLine="true"
                             android:text="2.卸车到件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -102,7 +102,7 @@
                             android:id="@+id/btn_arrive_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_output_selector"/>
+                            android:background="@drawable/goods_output_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
                             android:singleLine="true"
                             android:text="3.到件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -127,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -149,7 +149,7 @@
                             android:id="@+id/btn_send_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_query_selector"/>
+                            android:background="@drawable/goods_query_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -158,7 +158,7 @@
                             android:singleLine="true"
                             android:text="4.发件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -172,9 +172,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_weigh_send_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/data_import_selector"/>
+                            android:background="@drawable/data_import_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -183,7 +184,7 @@
                             android:singleLine="true"
                             android:text="5.称重发件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -197,9 +198,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_delivery_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/system_set_selector"/>
+                            android:background="@drawable/system_set_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -208,7 +210,7 @@
                             android:singleLine="true"
                             android:text="6.派件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -224,7 +226,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -243,9 +245,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_sign_for"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_scan_selector"/>
+                            android:background="@drawable/goods_scan_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -254,7 +257,7 @@
                             android:singleLine="true"
                             android:text="7.签收"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -268,9 +271,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_un_sign_for"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_storage_selector"/>
+                            android:background="@drawable/goods_storage_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -279,7 +283,7 @@
                             android:singleLine="true"
                             android:text="8.未签收"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -293,9 +297,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_fast_sign_for"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_output_selector"/>
+                            android:background="@drawable/goods_output_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -304,7 +309,7 @@
                             android:singleLine="true"
                             android:text="9.快速签收"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -321,7 +326,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -340,9 +345,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_replay_for_arrive_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_query_selector"/>
+                            android:background="@drawable/goods_query_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -351,7 +357,7 @@
                             android:singleLine="true"
                             android:text="10.回单到件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -365,9 +371,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_replay_for_send_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/data_import_selector"/>
+                            android:background="@drawable/data_import_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -376,7 +383,7 @@
                             android:singleLine="true"
                             android:text="11.回单发件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -393,7 +400,7 @@
                             android:id="@+id/btn_leave_package"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/system_set_selector"/>
+                            android:background="@drawable/system_set_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -402,7 +409,7 @@
                             android:singleLine="true"
                             android:text="12.留仓件"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -419,7 +426,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -438,9 +445,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_bagging"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_scan_selector"/>
+                            android:background="@drawable/goods_scan_selector" />
 
                         <TextView
                             android:id="@+id/tv_check"
@@ -450,7 +458,7 @@
                             android:singleLine="true"
                             android:text="13.装袋"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -464,9 +472,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_un_bagging"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_storage_selector"/>
+                            android:background="@drawable/goods_storage_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -475,7 +484,7 @@
                             android:singleLine="true"
                             android:text="14.拆袋"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -489,9 +498,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_tray_binding"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_output_selector"/>
+                            android:background="@drawable/goods_output_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -500,7 +510,7 @@
                             android:singleLine="true"
                             android:text="15.托盘绑定"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
@@ -517,7 +527,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand"/>
+                    android:background="@drawable/display_stand" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -537,9 +547,10 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btn_tray_un_bagging"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/goods_query_selector"/>
+                            android:background="@drawable/goods_query_selector" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -548,7 +559,7 @@
                             android:singleLine="true"
                             android:text="16.托盘拆分"
                             android:textColor="@color/white"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
