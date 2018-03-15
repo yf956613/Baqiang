@@ -79,8 +79,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         mTvNextStation = FajianActivity.this.findViewById(R.id.tv_next_station);
         mTvNextStation.setAdapter(mNextStation);
         // 监听EditText是否获取焦点
-        mTvNextStation.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
+        mTvNextStation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -94,12 +93,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
                 }
             }
         });
-        mTvNextStation.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
+        mTvNextStation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 一旦选定下一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverID = mTvNextStation.getText().toString();
                 LogUtil.d(TAG, "serverID:" + serverID);
@@ -112,11 +109,9 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         });
 
         // 快件类型
-        mTvShipmentType = FajianActivity.this.findViewById(R.id
-                .tv_shipment_type);
+        mTvShipmentType = FajianActivity.this.findViewById(R.id.tv_shipment_type);
         mTvShipmentType.setAdapter(mShipmentType);
-        mTvShipmentType.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
+        mTvShipmentType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -130,12 +125,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
                 }
             }
         });
-        mTvShipmentType.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
+        mTvShipmentType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 一旦选定下一站，则解析快件类型编号，更新ShipmentFileContent实体内容
                 String shipmentType = mTvShipmentType.getText().toString();
                 LogUtil.d(TAG, "shipmentType:" + shipmentType);
@@ -157,8 +150,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         // 初次启动时刷新数据
         reQueryUnUploadDataForListView();
 
-        mEtShipmentNumber = FajianActivity.this.findViewById(R.id
-                .et_shipment_number);
+        mEtShipmentNumber = FajianActivity.this.findViewById(R.id.et_shipment_number);
     }
 
     /**
@@ -167,8 +159,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
     private void prepareDataForView() {
         // 解析下一站网点信息
         mNextStationInfo = resolveNextStationData();
-        mNextStation = new ArrayAdapter<>(FajianActivity.this, R.layout
-                .list_item, mNextStationInfo);
+        mNextStation = new ArrayAdapter<>(FajianActivity.this, R.layout.list_item,
+                mNextStationInfo);
 
         // 解析快件类型信息
         resolveShipmentTypeData();
@@ -180,12 +172,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
 
         // 创建写入文件的一行文本实体
         mShipmentFileContent = getShipmentFileContent();
-        LogUtil.trace("mShipmentFileContent:" + mShipmentFileContent.toString
-                ());
+        LogUtil.trace("mShipmentFileContent:" + mShipmentFileContent.toString());
 
         // 创建可上传文本的JavaBean实体
-        mShipmentUploadFile = new UploadServerFile
-                (mShipmentDispatchFileName.getFileInstance());
+        mShipmentUploadFile = new UploadServerFile(mShipmentDispatchFileName.getFileInstance());
 
         // 用于显示扫描列表的信息
         mListData = new ArrayList<>();
@@ -218,9 +208,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         // 是否上传状态
         String status = "未上传";
 
-        return new ShipmentFileContent(nextStation, scanDate, goodsType,
-                shipmentType, shipmentNumber, scanEmployeeNumber,
-                operateDate, weight, status);
+        return new ShipmentFileContent(nextStation, scanDate, goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight, status);
     }
 
     // 从数据库中提取下一站的网点信息
@@ -253,8 +242,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         List<String> mArrayInfo = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
             // 采用固定格式，便于解析网点编号
-            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
-                    (index).get网点名称());
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
         }
 
         return mArrayInfo;
@@ -270,15 +258,15 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         List<String> mShipmentData = new ArrayList<>();
         for (int index = 0; index < mShipmentTypeList.size(); index++) {
             // 采用固定格式便于解析快件类型
-            mShipmentData.add(mShipmentTypeList.get(index).get类型编号() + "  " +
-                    mShipmentTypeList.get(index).get类型名称());
-            mShipmentDataTmp.put(mShipmentTypeList.get(index).get类型编号(),
-                    mShipmentTypeList.get(index).get类型名称());
+            mShipmentData.add(mShipmentTypeList.get(index).get类型编号() + "  " + mShipmentTypeList
+                    .get(index).get类型名称());
+            mShipmentDataTmp.put(mShipmentTypeList.get(index).get类型编号(), mShipmentTypeList.get
+                    (index).get类型名称());
         }
 
         LogUtil.trace("size:" + mShipmentData.size());
-        mShipmentType = new ArrayAdapter<String>(FajianActivity.this, R
-                .layout.list_item, mShipmentData);
+        mShipmentType = new ArrayAdapter<String>(FajianActivity.this, R.layout.list_item,
+                mShipmentData);
     }
 
     /**
@@ -310,19 +298,17 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         super.fillCode(barcode);
 
         // TODO 判断前置条件是否符合
-        if (TextUtils.isEmpty(mTvNextStation.getText().toString()) ||
-                TextUtils.isEmpty(mTvShipmentType.getText().toString())) {
-            Toast.makeText(FajianActivity.this, "前置信息为空", Toast.LENGTH_SHORT)
-                    .show();
+        if (TextUtils.isEmpty(mTvNextStation.getText().toString()) || TextUtils.isEmpty
+                (mTvShipmentType.getText().toString())) {
+            Toast.makeText(FajianActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
 
             return;
-        }else{
+        } else {
             // 防止下一站信息输入错误
             String nextStation = mTvNextStation.getText().toString();
             String[] arr = nextStation.split("  ");
             if (!queryNextStation(arr[0])) {
-                Toast.makeText(FajianActivity.this, "前置信息错误", Toast
-                        .LENGTH_SHORT).show();
+                Toast.makeText(FajianActivity.this, "前置信息错误", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -333,14 +319,12 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         // 1. 查表：当前是名为fajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
-            Toast.makeText(FajianActivity.this, "运单号已存在", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(FajianActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // 2. 插入到数据库中
-        mShipmentFileContent.setScanDate(TextStringUtil
-                .getFormatTimeString());
+        mShipmentFileContent.setScanDate(TextStringUtil.getFormatTimeString());
         mShipmentFileContent.setShipmentNumber(barcode);
         mShipmentFileContent.setOperateDate(TextStringUtil.getFormatTime());
         insertDataToDatabase(mShipmentFileContent);
@@ -369,8 +353,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         List<SalesService> mData = null;
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
-            mData = dbManager.selector(SalesService.class).where("网点编号",
-                    "=", id).findAll();
+            mData = dbManager.selector(SalesService.class).where("网点编号", "=", id).findAll();
 
             if (mData != null && mData.size() != 0) {
                 // 存在记录
@@ -389,6 +372,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
 
     /**
      * 判断数据库中是否有当前运单记录
+     *
      * @param barcode
      * @return
      */
@@ -398,9 +382,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // 查询数据库，是否有记录
-                List<ShipmentFileContent> bean = dbManager.selector
-                        (ShipmentFileContent.class).where("运单编号",
-                        "like", barcode).limit(1).findAll();
+                List<ShipmentFileContent> bean = dbManager.selector(ShipmentFileContent.class)
+                        .where("运单编号", "like", barcode).limit(1).findAll();
                 LogUtil.trace("bean:" + bean.size());
 
                 if (bean != null && bean.size() != 0) {
@@ -434,9 +417,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name " +
+                    "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
@@ -463,17 +445,15 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
                 List<ShipmentFileContent> list = null;
                 try {
                     // 1. 查询数据库中标识位“未上传”的记录
-                    list = db.selector(ShipmentFileContent.class).where("是否上传",
-                            "like", "未上传").findAll();
+                    list = db.selector(ShipmentFileContent.class).where("是否上传", "like", "未上传")
+                            .findAll();
                     if (null != list) {
                         LogUtil.trace("list:" + list.size());
                         for (int index = 0; index < list.size(); index++) {
                             // 2. 创建写入文本的字符串，并写入文本
                             ShipmentFileContent javaBean = list.get(index);
-                            String content = javaBean.getmCurrentValue() +
-                                    "\r\n";
-                            if (mShipmentUploadFile.writeContentToFile(content,
-                                    true)) {
+                            String content = javaBean.getmCurrentValue() + "\r\n";
+                            if (mShipmentUploadFile.writeContentToFile(content, true)) {
                                 // 3. 写入成功，删除记录
                                 /*WhereBuilder whereBuilder = WhereBuilder.b();
                                 whereBuilder.and("运单编号", "=", javaBean
@@ -482,8 +462,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
                                         whereBuilder, new KeyValue("是否上传",
                                                 "已上传"));*/
                                 WhereBuilder b = WhereBuilder.b();
-                                b.and("运单编号", "=", javaBean.getShipmentNumber
-                                        ());
+                                b.and("运单编号", "=", javaBean.getShipmentNumber());
                                 db.delete(ShipmentFileContent.class, b);
                             } else {
                                 // 写入文件失败，跳过
@@ -510,8 +489,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
                 // 测试阶段删除所有记录
                 DbManager db = BQDataBaseHelper.getDb();
                 try {
-                    List<ShipmentFileContent> list = db.findAll
-                            (ShipmentFileContent.class);
+                    List<ShipmentFileContent> list = db.findAll(ShipmentFileContent.class);
                     if (list != null) {
                         LogUtil.d(TAG, "当前记录：" + list.size());
                         // db.delete(ShipmentFileContent.class);
@@ -530,8 +508,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
      * <p>
      * 与之相关的数据库Table为：fajian
      */
-    private void insertDataToDatabase(final ShipmentFileContent
-                                              shipmentFileContent) {
+    private void insertDataToDatabase(final ShipmentFileContent shipmentFileContent) {
         new Thread(new Runnable() {
 
             @Override
@@ -570,8 +547,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
     private void deleteFindedBean(final String barcode) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            db.delete(ShipmentFileContent.class, WhereBuilder.b("运单编号",
-                    "like", barcode));
+            db.delete(ShipmentFileContent.class, WhereBuilder.b("运单编号", "like", barcode));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
@@ -585,10 +561,9 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
         DbManager db = BQDataBaseHelper.getDb();
         try {
             // 查询数据库中标识位“未上传”的记录
-            List<ShipmentFileContent> data = db.selector
-                    (ShipmentFileContent.class).where("是否上传",
+            List<ShipmentFileContent> data = db.selector(ShipmentFileContent.class).where("是否上传",
                     "like", "未上传").findAll();
-            if(null != data){
+            if (null != data) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
 
                 // 清除数据
@@ -596,12 +571,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index)
-                            .getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }

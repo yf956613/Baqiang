@@ -27,6 +27,7 @@ import com.zhy.m.permission.PermissionGrant;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 /**
@@ -37,20 +38,103 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     private static final String TAG = "DataCollectActivity";
 
     private String mLoginUrl = "";
-    private LinearLayout mLlSendPackage;
 
-    private LinearLayout mLlLeavePackage;
 
+    // 装车发件
+    @ViewInject(R.id.ll_load_send)
     private LinearLayout mLlLoadSend;
+    @ViewInject(R.id.btn_load_send)
     private Button mBtnLoadSend;
 
+    // 卸车到件
+    @ViewInject(R.id.ll_unload_receive_package)
     private LinearLayout mLlUnloadReceivePackage;
+    @ViewInject(R.id.btn_unload_receive_package)
     private Button mBtnUnloadReceivePackage;
 
+    // 到件
+    @ViewInject(R.id.ll_arrive_package)
     private LinearLayout mLlArrivePackage;
+    @ViewInject(R.id.btn_arrive_package)
     private Button mBtnArrivePackage;
+
+    // 发件
+    @ViewInject(R.id.ll_send_package)
+    private LinearLayout mLlSendPackage;
+    @ViewInject(R.id.btn_send_package)
     private Button mBtnSendPackage;
+
+    // 称重发件
+    @ViewInject(R.id.ll_weigh_send_package)
+    private LinearLayout mLlWeighSendPackage;
+    @ViewInject(R.id.btn_weigh_send_package)
+    private Button mBtnWeighSendPackage;
+
+    // 派件
+    @ViewInject(R.id.ll_delivery_package)
+    private LinearLayout mLlDeliveryPackage;
+    @ViewInject(R.id.btn_delivery_package)
+    private Button mBtnDeliveryPackage;
+
+    // 签收
+    @ViewInject(R.id.ll_sign_for)
+    private LinearLayout mLlSignfor;
+    @ViewInject(R.id.btn_sign_for)
+    private Button mBtnSignfor;
+
+    // 未签收
+    @ViewInject(R.id.ll_un_sign_for)
+    private LinearLayout mLlUnSignfor;
+    @ViewInject(R.id.btn_un_sign_for)
+    private Button mBtnUnSignfor;
+
+    // 快速签收
+    @ViewInject(R.id.ll_fast_sign_for)
+    private LinearLayout mLlFastSignfor;
+    @ViewInject(R.id.btn_fast_sign_for)
+    private Button mBtnFastSignfor;
+
+    // 回单到件
+    @ViewInject(R.id.ll_replay_for_arrive_package)
+    private LinearLayout mLlReplayForArrivePackage;
+    @ViewInject(R.id.btn_replay_for_arrive_package)
+    private Button mBtnReplayForArrivePackage;
+
+    // 回单发件
+    @ViewInject(R.id.ll_replay_for_send_package)
+    private LinearLayout mLlReplayForSendPackage;
+    @ViewInject(R.id.btn_replay_for_send_package)
+    private Button mBtnReplayForSendPackage;
+
+    // 留仓件
+    @ViewInject(R.id.ll_leave_package)
+    private LinearLayout mLlLeavePackage;
+    @ViewInject(R.id.btn_leave_package)
     private Button mBtnLeavePackage;
+
+    // 装袋
+    @ViewInject(R.id.ll_bagging)
+    private LinearLayout mLlBagging;
+    @ViewInject(R.id.btn_bagging)
+    private Button mBtnBagging;
+
+    // 拆袋
+    @ViewInject(R.id.ll_un_bagging)
+    private LinearLayout mLlUnBagging;
+    @ViewInject(R.id.btn_un_bagging)
+    private Button mBtnUnBagging;
+
+    // 托盘绑定
+    @ViewInject(R.id.ll_tray_binding)
+    private LinearLayout mLlTrayBinding;
+    @ViewInject(R.id.btn_tray_binding)
+    private Button mBtnTrayBinding;
+
+    // 托盘拆分
+    @ViewInject(R.id.ll_tray_un_bagging)
+    private LinearLayout mLlTrayUnBinding;
+    @ViewInject(R.id.btn_tray_un_bagging)
+    private Button mBtnTrayUnBinding;
 
     private final View.OnFocusChangeListener mLlFocusChangeListener = new View
             .OnFocusChangeListener() {
@@ -78,8 +162,63 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
                     break;
                 }
 
+                case R.id.btn_weigh_send_package: {
+                    setLinearLayoutBackground(mLlWeighSendPackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_delivery_package: {
+                    setLinearLayoutBackground(mLlDeliveryPackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_sign_for: {
+                    setLinearLayoutBackground(mLlSignfor, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_un_sign_for: {
+                    setLinearLayoutBackground(mLlUnSignfor, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_fast_sign_for: {
+                    setLinearLayoutBackground(mLlFastSignfor, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_replay_for_arrive_package: {
+                    setLinearLayoutBackground(mLlReplayForArrivePackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_replay_for_send_package: {
+                    setLinearLayoutBackground(mLlReplayForSendPackage, hasFocus);
+                    break;
+                }
+
                 case R.id.btn_leave_package: {
                     setLinearLayoutBackground(mLlLeavePackage, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_bagging: {
+                    setLinearLayoutBackground(mLlBagging, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_un_bagging: {
+                    setLinearLayoutBackground(mLlUnBagging, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_tray_binding: {
+                    setLinearLayoutBackground(mLlTrayBinding, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_tray_un_bagging: {
+                    setLinearLayoutBackground(mLlTrayUnBinding, hasFocus);
                     break;
                 }
             }
@@ -88,24 +227,20 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @Override
     public void initView() {
+        setContent(R.layout.activity_data_collect);
         setHeaderLeftViewText("采集功能项");
-        LogUtil.d(TAG, "onCreate");
+        x.view().inject(DataCollectActivity.this);
 
         if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication.isSoftDecodeScan) {
             MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE, Manifest.permission.CAMERA);
         }
-
-        setContent(R.layout.activity_data_collect);
     }
 
     @Override
     public void initData() {
         // 装车发件
-        mLlLoadSend = DataCollectActivity.this.findViewById(R.id.ll_load_send);
-        mBtnLoadSend = DataCollectActivity.this.findViewById(R.id.btn_load_send);
         mBtnLoadSend.setOnClickListener(this);
         mBtnLoadSend.setOnFocusChangeListener(mLlFocusChangeListener);
-
         // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
         mBtnLoadSend.setFocusable(true);
         mBtnLoadSend.setFocusableInTouchMode(true);
@@ -113,30 +248,64 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         mBtnLoadSend.requestFocusFromTouch();
 
         // 卸车到件
-        mLlUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
-                .ll_unload_receive_package);
-        mBtnUnloadReceivePackage = DataCollectActivity.this.findViewById(R.id
-                .btn_unload_receive_package);
         mBtnUnloadReceivePackage.setOnClickListener(this);
         mBtnUnloadReceivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 到件
-        mLlArrivePackage = DataCollectActivity.this.findViewById(R.id.ll_arrive_package);
-        mBtnArrivePackage = DataCollectActivity.this.findViewById(R.id.btn_arrive_package);
         mBtnArrivePackage.setOnClickListener(this);
         mBtnArrivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 发件
-        mLlSendPackage = DataCollectActivity.this.findViewById(R.id.ll_send_package);
-        mBtnSendPackage = DataCollectActivity.this.findViewById(R.id.btn_send_package);
         mBtnSendPackage.setOnClickListener(this);
         mBtnSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        // 称重发件
+        mBtnWeighSendPackage.setOnClickListener(this);
+        mBtnWeighSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 派件
+        mBtnDeliveryPackage.setOnClickListener(this);
+        mBtnDeliveryPackage.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 签收
+        mBtnSignfor.setOnClickListener(this);
+        mBtnSignfor.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 未签收
+        mBtnUnSignfor.setOnClickListener(this);
+        mBtnUnSignfor.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 快速签收
+        mBtnFastSignfor.setOnClickListener(this);
+        mBtnFastSignfor.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 回单到件
+        mBtnReplayForArrivePackage.setOnClickListener(this);
+        mBtnReplayForArrivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 回单发件
+        mBtnReplayForSendPackage.setOnClickListener(this);
+        mBtnReplayForSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
+
         // 留仓
-        mLlLeavePackage = DataCollectActivity.this.findViewById(R.id.ll_leave_package);
-        mBtnLeavePackage = DataCollectActivity.this.findViewById(R.id.btn_leave_package);
         mBtnLeavePackage.setOnClickListener(this);
         mBtnLeavePackage.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 装袋
+        mBtnBagging.setOnClickListener(this);
+        mBtnBagging.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 拆袋
+        mBtnUnBagging.setOnClickListener(this);
+        mBtnUnBagging.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 托盘绑定
+        mBtnTrayBinding.setOnClickListener(this);
+        mBtnTrayBinding.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 托盘拆分
+        mBtnTrayUnBinding.setOnClickListener(this);
+        mBtnTrayUnBinding.setOnFocusChangeListener(mLlFocusChangeListener);
     }
 
     /**

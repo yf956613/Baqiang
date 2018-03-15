@@ -38,8 +38,7 @@ import java.util.List;
 
 public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
-    private static final String TAG = UnloadCargoArrivalActivity.class
-            .getSimpleName();
+    private static final String TAG = UnloadCargoArrivalActivity.class.getSimpleName();
 
     private AutoCompleteTextView mTvVehicleId, mTvPreviousStation;
     private Button mBtnSure, mBtnCancel;
@@ -81,12 +80,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     public void initData() {
         prepareDataForView();
 
-        mTvVehicleId = UnloadCargoArrivalActivity.this.findViewById(R.id
-                .tv_car_code);
+        mTvVehicleId = UnloadCargoArrivalActivity.this.findViewById(R.id.tv_car_code);
         mTvVehicleId.setAdapter(mVehicleInfoAdapter);
         // 监听EditText是否获取焦点
-        mTvVehicleId.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
+        mTvVehicleId.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -100,12 +97,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 }
             }
         });
-        mTvVehicleId.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
+        mTvVehicleId.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
@@ -114,12 +109,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         });
 
-        mTvPreviousStation = UnloadCargoArrivalActivity.this.findViewById(R
-                .id.tv_before_station);
+        mTvPreviousStation = UnloadCargoArrivalActivity.this.findViewById(R.id.tv_before_station);
         mTvPreviousStation.setAdapter(mPreviousStationAdapter);
         // 监听EditText是否获取焦点
-        mTvPreviousStation.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
+        mTvPreviousStation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -133,12 +126,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 }
             }
         });
-        mTvPreviousStation.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
+        mTvPreviousStation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverID = mTvPreviousStation.getText().toString();
                 LogUtil.d(TAG, "serverID:" + serverID);
@@ -148,20 +139,16 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         });
 
-        mBtnSure = UnloadCargoArrivalActivity.this.findViewById(R.id
-                .btn_ensure);
-        mBtnCancel = UnloadCargoArrivalActivity.this.findViewById(R.id
-                .btn_back);
+        mBtnSure = UnloadCargoArrivalActivity.this.findViewById(R.id.btn_ensure);
+        mBtnCancel = UnloadCargoArrivalActivity.this.findViewById(R.id.btn_back);
         mBtnSure.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);
 
-        mListView = UnloadCargoArrivalActivity.this.findViewById(R.id
-                .list_view_scan_data);
+        mListView = UnloadCargoArrivalActivity.this.findViewById(R.id.list_view_scan_data);
         mListView.setAdapter(mFajianAdapter);
         mListView.setDelButtonClickListener(UnloadCargoArrivalActivity.this);
 
-        mEtDeliveryNumber = UnloadCargoArrivalActivity.this.findViewById(R.id
-                .et_shipment_number);
+        mEtDeliveryNumber = UnloadCargoArrivalActivity.this.findViewById(R.id.et_shipment_number);
 
         // 初次启动时刷新数据
         reQueryUnUploadDataForListView();
@@ -174,9 +161,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         DbManager db = BQDataBaseHelper.getDb();
         try {
             // 查询数据库中标识位“未上传”的记录
-            List<UnloadArrivalFileContent> data = db.selector
-                    (UnloadArrivalFileContent.class).where("是否上传",
-                    "like", "未上传").findAll();
+            List<UnloadArrivalFileContent> data = db.selector(UnloadArrivalFileContent.class)
+                    .where("是否上传", "like", "未上传").findAll();
             if (null != data) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
 
@@ -185,12 +171,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index)
-                            .getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }
@@ -207,14 +191,12 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     private void prepareDataForView() {
         mVehicleInfo = resolveVehicleInfo();
         mVehicleInfoAdapter = new ArrayAdapter<>(UnloadCargoArrivalActivity
-                .this, R
-                .layout.list_item, mVehicleInfo);
+                .this, R.layout.list_item, mVehicleInfo);
 
         // 准备上一站网点数据
         mPreviousStationInfo = resolvePreviousStationData();
-        mPreviousStationAdapter = new ArrayAdapter<>
-                (UnloadCargoArrivalActivity.this, R.layout.list_item,
-                        mPreviousStationInfo);
+        mPreviousStationAdapter = new ArrayAdapter<>(UnloadCargoArrivalActivity.this, R.layout
+                .list_item, mPreviousStationInfo);
 
         // 创建待上传文件
         mUnloadArrivalFileName = new UnloadArrivalFileName();
@@ -223,17 +205,13 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
         // 组装写入文件数据
         mUnloadArrivalFileContent = getUnloadArrivalFileContent();
-        LogUtil.trace("mUnloadArrivalFileContent:" +
-                mUnloadArrivalFileContent.toString
-                        ());
+        LogUtil.trace("mUnloadArrivalFileContent:" + mUnloadArrivalFileContent.toString());
 
         // 上传文件实体
-        mUploadServerFile = new UploadServerFile(mUnloadArrivalFileName
-                .getFileInstance());
+        mUploadServerFile = new UploadServerFile(mUnloadArrivalFileName.getFileInstance());
 
         mListData = new ArrayList<>();
-        mFajianAdapter = new FajianAdatper(UnloadCargoArrivalActivity.this,
-                mListData);
+        mFajianAdapter = new FajianAdatper(UnloadCargoArrivalActivity.this, mListData);
     }
 
     private List<String> resolveVehicleInfo() {
@@ -277,8 +255,7 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         List<String> mArrayInfo = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
             // 采用固定格式，便于解析网点编号
-            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
-                    (index).get网点名称());
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
         }
 
         return mArrayInfo;
@@ -312,9 +289,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         // 是否上传状态
         String status = "未上传";
 
-        return new UnloadArrivalFileContent(previousStation, scanDate,
-                goodsType, shipmentType, shipmentNumber, scanEmployeeNumber,
-                operateDate, weight, vehicleID, status);
+        return new UnloadArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight, vehicleID, status);
     }
 
     @Override
@@ -328,18 +304,15 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 List<UnloadArrivalFileContent> list = null;
                 try {
                     // 1. 查询数据库中标识位“未上传”的记录
-                    list = db.selector(UnloadArrivalFileContent.class).where
-                            ("是否上传",
-                            "like", "未上传").findAll();
+                    list = db.selector(UnloadArrivalFileContent.class).where("是否上传", "like",
+                            "未上传").findAll();
                     if (null != list) {
                         LogUtil.trace("list:" + list.size());
                         for (int index = 0; index < list.size(); index++) {
                             // 2. 创建写入文本的字符串，并写入文本
                             UnloadArrivalFileContent javaBean = list.get(index);
-                            String content = javaBean.getmCurrentValue() +
-                                    "\r\n";
-                            if (mUploadServerFile.writeContentToFile(content,
-                                    true)) {
+                            String content = javaBean.getmCurrentValue() + "\r\n";
+                            if (mUploadServerFile.writeContentToFile(content, true)) {
                                 // 3. 写入成功，删除记录
                                 /*WhereBuilder whereBuilder = WhereBuilder.b();
                                 whereBuilder.and("运单编号", "=", javaBean
@@ -348,8 +321,7 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                                         whereBuilder, new KeyValue("是否上传",
                                                 "已上传"));*/
                                 WhereBuilder b = WhereBuilder.b();
-                                b.and("运单编号", "=", javaBean.getShipmentNumber
-                                        ());
+                                b.and("运单编号", "=", javaBean.getShipmentNumber());
                                 db.delete(UnloadArrivalFileContent.class, b);
                             } else {
                                 // 写入文件失败，跳过
@@ -375,8 +347,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 // 测试阶段删除所有记录
                 DbManager db = BQDataBaseHelper.getDb();
                 try {
-                    List<UnloadArrivalFileContent> list = db.findAll
-                            (UnloadArrivalFileContent.class);
+                    List<UnloadArrivalFileContent> list = db.findAll(UnloadArrivalFileContent
+                            .class);
                     if (list != null) {
                         LogUtil.d(TAG, "当前记录：" + list.size());
                         // db.delete(ShipmentFileContent.class);
@@ -395,11 +367,9 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         super.fillCode(barcode);
 
         // TODO 判断前置条件是否符合
-        if (TextUtils.isEmpty(mTvVehicleId.getText().toString()) ||
-                TextUtils.isEmpty(mTvPreviousStation.getText().toString())) {
-            Toast.makeText(UnloadCargoArrivalActivity.this, "前置信息为空", Toast
-                    .LENGTH_SHORT)
-                    .show();
+        if (TextUtils.isEmpty(mTvVehicleId.getText().toString()) || TextUtils.isEmpty
+                (mTvPreviousStation.getText().toString())) {
+            Toast.makeText(UnloadCargoArrivalActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
 
             return;
         }
@@ -407,18 +377,14 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         // 1. 查表：当前是名为fajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
-            Toast.makeText(UnloadCargoArrivalActivity.this, "运单号已存在", Toast
-                    .LENGTH_SHORT)
-                    .show();
+            Toast.makeText(UnloadCargoArrivalActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // 2. 插入到数据库中
-        mUnloadArrivalFileContent.setScanDate(TextStringUtil
-                .getFormatTimeString());
+        mUnloadArrivalFileContent.setScanDate(TextStringUtil.getFormatTimeString());
         mUnloadArrivalFileContent.setShipmentNumber(barcode);
-        mUnloadArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime
-                ());
+        mUnloadArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime());
         insertDataToDatabase(mUnloadArrivalFileContent);
 
         // 3. 填充EditText控件
@@ -455,9 +421,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // 查询数据库，是否有记录
-                List<UnloadArrivalFileContent> bean = dbManager.selector
-                        (UnloadArrivalFileContent.class).where("运单编号",
-                        "like", barcode).limit(1).findAll();
+                List<UnloadArrivalFileContent> bean = dbManager.selector(UnloadArrivalFileContent
+                        .class).where("运单编号", "like", barcode).limit(1).findAll();
                 LogUtil.trace("bean:" + bean.size());
 
                 if (bean != null && bean.size() != 0) {
@@ -491,9 +456,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " +
-                    "='table' and name ='" +
-                    tableName.trim() + "' ";
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name " +
+                    "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
                 int count = cursor.getInt(0);
@@ -514,8 +478,7 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
      * <p>
      * 与之相关的数据库Table为：xcdaojian
      */
-    private void insertDataToDatabase(final UnloadArrivalFileContent
-                                              unloadArrivalFileContent) {
+    private void insertDataToDatabase(final UnloadArrivalFileContent unloadArrivalFileContent) {
         new Thread(new Runnable() {
 
             @Override
@@ -554,8 +517,7 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     private void deleteFindedBean(final String barcode) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            db.delete(UnloadArrivalFileContent.class, WhereBuilder.b("运单编号",
-                    "like", barcode));
+            db.delete(UnloadArrivalFileContent.class, WhereBuilder.b("运单编号", "like", barcode));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
