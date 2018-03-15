@@ -309,8 +309,9 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 } else {
                     // 数据库查询
                     String stayHouseReason = mTvStayHouseReason.getText().toString().split("  ")[0];
+                    LogUtil.trace("stayHouseReason:"+stayHouseReason);
 
-                    if (isExistCurrentReason(Integer.getInteger(stayHouseReason))) {
+                    if (isExistCurrentReason(Integer.parseInt(stayHouseReason))) {
                         // FIXME 判断前置条件？
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
@@ -379,16 +380,50 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // FIXME 查询数据库，是否有记录；增加时间戳
+                // and("是否可用", "like", "可用")
                 List<StayHouseFileContent> bean = dbManager.selector(StayHouseFileContent.class)
-                        .where("运单编号", "like", barcode).and("是否可用", "like", "可用").limit(1)
-                        .findAll();
+                        .where("运单编号", "like", barcode).findAll();
+
                 if (bean != null && bean.size() != 0) {
-                    LogUtil.trace("bean:" + bean.size());
-                    return true;
-                }
+                    for (int index = 0; index < bean.size(); index++) {
+                        long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
+                                .getScanDate(), TextStringUtil.getFormatTimeString());
+                        if (isTimeOutOfRange(delta)) {
+                            // 超出指定时间，存入数据库 --> return false
+                            LogUtil.trace("超出指定时间，存入数据库");
+
+                            continue;
+                        } else {
+                            // 不需存入数据库 --> return true
+                            LogUtil.trace("不需存入数据库");
+                            return true;
+                        }
+                    }
+                }// go to return false
             } catch (DbException e) {
                 e.printStackTrace();
             }
+        }
+
+        return false;
+    }
+
+    // 差距时间：3小时
+    private static final long DELTA_TIME_DISTANCE = 10800;
+
+    /**
+     * 判断时间差距是否超出预期值
+     * <p>
+     * 预期时间：3小时
+     *
+     * @param delta: {天, 时, 分, 秒}
+     * @return
+     */
+    private boolean isTimeOutOfRange(long[] delta) {
+        // 将时间数字转化为数值，判断数值是否超出即可
+        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 + delta[2] * 60 + delta[3];
+        if (deltaValue > DELTA_TIME_DISTANCE) {
+            return true;
         }
 
         return false;
