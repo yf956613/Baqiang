@@ -121,48 +121,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     }
 
     /**
-     * 从数据库中找出所有 未上传，可用 的记录
+     * 为UI界面控件准备初始数据
      */
-    private void reQueryUnUploadDataForListView() {
-        LogUtil.trace();
-
-        DbManager db = BQDataBaseHelper.getDb();
-        try {
-            // 查询数据库中标识位“未上传”，且数据可用的记录
-            List<StayHouseFileContent> data = db.selector(StayHouseFileContent.class).where
-                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
-            if (null != data && data.size() != 0) {
-                LogUtil.d(TAG, "未上传记录：" + data.size());
-
-                // 清除数据
-                mListData.clear();
-
-                int count = 0;
-                for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
-                    // TODO 一旦删除记录，则及时更新ID值
-                    fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
-                    fajianListViewBean.setStatus("未上传");
-                    mListData.add(fajianListViewBean);
-                }
-
-                mFajianAdapter.notifyDataSetChanged();
-                // 更新全局ID
-                mScanCount = count;
-            } else {
-                // 清除数据
-                mListData.clear();
-                mFajianAdapter.notifyDataSetChanged();
-                // 更新全局ID
-                mScanCount = 0;
-                LogUtil.trace("未上传 && 可用，过滤后无数据");
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void prepareDataForView() {
         mStayHouseReason = queryStayHouseData();
 
@@ -227,6 +187,49 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
         return new StayHouseFileContent(scanDate, stayHouseReason, shipmentType, shipmentNumber,
                 scanEmployeeNumber, operateDate, status, isUsed);
+    }
+
+    /**
+     * 从数据库中找出所有 未上传，可用 的记录
+     */
+    private void reQueryUnUploadDataForListView() {
+        LogUtil.trace();
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            // 查询数据库中标识位“未上传”，且数据可用的记录
+            List<StayHouseFileContent> data = db.selector(StayHouseFileContent.class).where
+                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
+            if (null != data && data.size() != 0) {
+                LogUtil.d(TAG, "未上传记录：" + data.size());
+
+                // 清除数据
+                mListData.clear();
+
+                int count = 0;
+                for (int index = 0; index < data.size(); index++) {
+                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
+                    // TODO 一旦删除记录，则及时更新ID值
+                    fajianListViewBean.setId(++count);
+                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
+                    fajianListViewBean.setStatus("未上传");
+                    mListData.add(fajianListViewBean);
+                }
+
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = count;
+            } else {
+                // 清除数据
+                mListData.clear();
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = 0;
+                LogUtil.trace("未上传 && 可用，过滤后无数据");
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -304,9 +307,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                // FIXME 判断前置条件满足？
-                if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString()) || TextUtils
-                        .isEmpty(mTvStayHouseReason.getText().toString())) {
+                // FIXME 执行一次扫码操作，判断前置条件满足？
+                if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString())) {
                     Toast.makeText(LiucangActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
@@ -317,11 +319,14 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                     LogUtil.trace("stayHouseReason:" + stayHouseReason);
 
                     if (isExistCurrentReason(Integer.parseInt(stayHouseReason))) {
-                        // FIXME 判断前置条件？
+                        // FIXME 判断前置条件？开启一次扫描
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         LiucangActivity.this.sendBroadcast(intent);
+                    } else {
+                        Toast.makeText(LiucangActivity.this, "前置信息不符合", Toast.LENGTH_SHORT).show();
+                        mDeviceVibrator.vibrate(1000);
                     }
                 }
 
@@ -370,6 +375,21 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         mFajianAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void clickHappend(int position) {
+        // 删除按键
+        LogUtil.trace("position:" + position);
+
+        // 1. 找到当前position的运单号
+        LogUtil.d(TAG, "待删除的内容:" + mListData.get(position).getScannerData());
+
+        // 2. 设置数据库对应记录的“是否可用”状态为：不可用
+        deleteFindedBean(mListData.get(position).getScannerData());
+
+        // 3. 重新从数据库中查出所有记录,更新ListView
+        reQueryUnUploadDataForListView();
+    }
+
     private static final String DB_NAME = "liucangjian";
 
     /**
@@ -397,12 +417,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                                 .getScanDate(), TextStringUtil.getFormatTimeString());
                         if (isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
-                            LogUtil.trace("超出指定时间，存入数据库");
+                            LogUtil.trace("超出指定时间");
 
                             continue;
                         } else {
                             // 不需存入数据库 --> return true
-                            LogUtil.trace("不需存入数据库");
+                            LogUtil.trace("在指定时间之内");
                             return true;
                         }
                     }
@@ -520,20 +540,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         }).start();
     }
 
-    @Override
-    public void clickHappend(int position) {
-        // 删除按键
-        LogUtil.trace("position:" + position);
-
-        // 1. 找到当前position的运单号
-        LogUtil.d(TAG, "待删除的内容:" + mListData.get(position).getScannerData());
-
-        // 2. 设置数据库对应记录的“是否可用”状态为：不可用
-        deleteFindedBean(mListData.get(position).getScannerData());
-
-        // 3. 重新从数据库中查出所有记录,更新ListView
-        reQueryUnUploadDataForListView();
-    }
 
     /**
      * 点击删除按键后，删除对应的数据项
