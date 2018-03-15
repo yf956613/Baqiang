@@ -284,8 +284,8 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 请求服务器获取最新apk信息 APP_UPDATE_INFO
-                mUpdateAPPUrl = SharedUtil.getJiebaoServletAddresFromSP(BaqiangApplication.getContext()
-                        , NetworkConstant.APP_UPDATE_INFO);
+                mUpdateAPPUrl = SharedUtil.getJiebaoServletAddresFromSP(BaqiangApplication
+                        .getContext(), NetworkConstant.APP_UPDATE_INFO);
                 RequestParams params = new RequestParams(mUpdateAPPUrl);
 
                 params.addQueryStringParameter("saleId", UpdateInterface.salesId);
@@ -301,6 +301,12 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                         Gson gson = new Gson();
                         AppUpdateBean appInfo = gson.fromJson(serverInfo, AppUpdateBean.class);
                         LogUtil.trace("appInfo:" + appInfo.toString());
+
+                        if ("unknown".equals(appInfo.getBaQiangApkVersion())) {
+                            Toast.makeText(AdministratorSettingActivity.this, "服务器未放置Apk文件", Toast
+                                    .LENGTH_SHORT).show();
+                            return;
+                        }
 
                         if (getCurrentVersionCode() < resolveServerAppVersionCode(appInfo)) {
                             LogUtil.trace("start to download");
