@@ -1,5 +1,7 @@
 package com.jiebao.baqiang.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -328,6 +330,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        super.onKeyDown(keyCode, event);
+
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 // FIXME 执行一次扫码操作，判断前置条件满足？
@@ -369,6 +373,47 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                     }
                 }
 
+                return true;
+            }
+
+            case Constant.F2_KEY_CODE: {
+                // 1. 获取最后（最新）扫入的barcode
+                if (mListData != null && mListData.size() != 0) {
+                    LogUtil.trace("mListData.size:" + mListData.size() + "; " +
+                            "barcode:" + mListData.get(mListData.size() - 1)
+                            .getScannerData());
+
+                    // 提示是否切换账号
+                    final AlertDialog.Builder normalDialog = new AlertDialog
+                            .Builder(LiucangActivity.this);
+                    normalDialog.setTitle("提示");
+                    normalDialog.setCancelable(false);
+                    normalDialog.setMessage("是否删除最新记录？");
+                    normalDialog.setPositiveButton("确定", new DialogInterface
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 2. 设置数据库对应记录的“是否可用”状态为：不可用
+                            deleteFindedBean(mListData.get(mListData.size() - 1)
+                                    .getScannerData());
+
+                            // 3. 重新从数据库中查出所有记录,更新ListView
+                            reQueryUnUploadDataForListView();
+                        }
+                    });
+                    normalDialog.setNegativeButton("取消", new DialogInterface
+                            .OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    normalDialog.show();
+                }
+
+                // 消费F2按键事件
                 return true;
             }
 
@@ -699,5 +744,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void syncViewAfterUpload() {
+        super.syncViewAfterUpload();
+
+        reQueryUnUploadDataForListView();
     }
 }

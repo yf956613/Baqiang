@@ -230,7 +230,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 });
                 normalDialog.show();
 
-                break;
+                return true;
             }
 
 

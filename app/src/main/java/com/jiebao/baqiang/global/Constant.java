@@ -7,6 +7,11 @@ public class Constant {
     // 扫描按键KeyCode值
     public final static int SCAN_KEY_CODE = 139;
 
+    // F1按键键值
+    public final static int F1_KEY_CODE = 131;
+    // F2按键兼职
+    public final static int F2_KEY_CODE = 132;
+
     public final static String CLIENT_VERSION = "1";
 
     //public static final String UPDATE_URL_PREFIX =
@@ -196,4 +201,15 @@ public class Constant {
             "arrival_fore_payment";
     // 到/发件扫描判断开关
     public static final String PREFERENCE_KEY_SCAN_SWITCH = "scan_switch";
+
+    // 卸车到件表名
+    public static final String DB_TABLE_NAME_UNLOAD_ARRIVAL = "xcdaojian";
+    // 到件表名
+    public static final String DB_TABLE_NAME_CARGO_ARRIVAL = "daojian";
+    // 留仓件表名
+    public static final String DB_TABLE_NAME_STAY_HOUSE = "liucangjian";
+    // 装车发件表名
+    public static final String DB_TABLE_NAME_LOAD_SEND = "zcfajian";
+    // 发件表名
+    public static final String DB_TABLE_NAME_SHIPMENT = "fajian";
 }
