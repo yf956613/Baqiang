@@ -40,7 +40,8 @@ import java.util.List;
 /**
  * 到件需要注意的地方：若管理员设置中，到/发件扫描判断开关为开状态，上一站只显示类型为“网点”的项
  */
-public class DaojianActivity extends BaseActivityWithTitleAndNumber implements View
+public class DaojianActivity extends BaseActivityWithTitleAndNumber
+        implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = DaojianActivity.class.getSimpleName();
 
@@ -78,12 +79,15 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
     public void initData() {
         prepareDataForView();
 
-        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
+        mDeviceVibrator = (Vibrator) this.getSystemService(this
+                .VIBRATOR_SERVICE);
 
-        mTvPreviousStation = DaojianActivity.this.findViewById(R.id.tv_before_station);
+        mTvPreviousStation = DaojianActivity.this.findViewById(R.id
+                .tv_before_station);
         mTvPreviousStation.setAdapter(mPreviousStationAdapter);
         // 监听AutoCompleteTextView是否获取焦点
-        mTvPreviousStation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvPreviousStation.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -97,10 +101,12 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
                 }
             }
         });
-        mTvPreviousStation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvPreviousStation.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverID = mTvPreviousStation.getText().toString();
                 LogUtil.d(TAG, "serverID:" + serverID);
@@ -121,7 +127,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
 
         });
 
-        mEtDeliveryNumber = DaojianActivity.this.findViewById(R.id.et_shipment_number);
+        mEtDeliveryNumber = DaojianActivity.this.findViewById(R.id
+                .et_shipment_number);
 
         mBtnSure = DaojianActivity.this.findViewById(R.id.btn_ensure);
         mBtnCancel = DaojianActivity.this.findViewById(R.id.btn_back);
@@ -139,12 +146,14 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
     private void prepareDataForView() {
         // 准备上一站网点数据
         mPreviousStationInfo = resolvePreviousStationData();
-        mPreviousStationAdapter = new ArrayAdapter<>(DaojianActivity.this, R.layout.list_item,
+        mPreviousStationAdapter = new ArrayAdapter<>(DaojianActivity.this, R
+                .layout.list_item,
                 mPreviousStationInfo);
 
         // 组装写入文件数据
         mCargoArrivalFileContent = getCargoArrivalFileContent();
-        LogUtil.trace("mUnloadArrivalFileContent:" + mCargoArrivalFileContent.toString());
+        LogUtil.trace("mUnloadArrivalFileContent:" + mCargoArrivalFileContent
+                .toString());
 
         mListData = new ArrayList<>();
         mFajianAdapter = new FajianAdatper(DaojianActivity.this, mListData);
@@ -181,7 +190,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         List<String> mArrayInfo = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
             // 采用固定格式，便于解析网点编号
-            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
+                    (index).get网点名称());
         }
 
         return mArrayInfo;
@@ -215,8 +225,10 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         // 是否可用
         String isUsed = "可用";
 
-        return new CargoArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
+        return new CargoArrivalFileContent(previousStation, scanDate,
+                goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight,
+                status, isUsed);
     }
 
     /**
@@ -227,7 +239,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
 
         try {
             // 查询数据库中标识位“未上传”的记录
-            List<CargoArrivalFileContent> data = db.selector(CargoArrivalFileContent.class).where
+            List<CargoArrivalFileContent> data = db.selector
+                    (CargoArrivalFileContent.class).where
                     ("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
             if (null != data && data.size() != 0) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
@@ -238,10 +251,12 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
                     // TODO 共用发件的ListView javaBean
-                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
+                    FajianListViewBean fajianListViewBean = new
+                            FajianListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index)
+                            .getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }
@@ -267,24 +282,29 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 // FIXME 执行一次扫码操作，判断前置条件满足？
-                if (TextUtils.isEmpty(mTvPreviousStation.getText().toString())) {
-                    Toast.makeText(DaojianActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(mTvPreviousStation.getText().toString()
+                )) {
+                    Toast.makeText(DaojianActivity.this, "前置信息为空", Toast
+                            .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
                     // 数据库查询
-                    String previousStation = mTvPreviousStation.getText().toString().split("  ")[0];
+                    String previousStation = mTvPreviousStation.getText()
+                            .toString().split("  ")[0];
                     LogUtil.trace("previousStation:" + previousStation);
 
-                    if (isExistCurrentStation(Integer.parseInt(previousStation))) {
+                    if (isExistCurrentStation(Integer.parseInt
+                            (previousStation))) {
                         // FIXME 判断前置条件？开启一次扫描
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         DaojianActivity.this.sendBroadcast(intent);
                     } else {
-                        Toast.makeText(DaojianActivity.this, "前置信息不符合", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DaojianActivity.this, "前置信息不符合", Toast
+                                .LENGTH_SHORT).show();
                         mDeviceVibrator.vibrate(1000);
                     }
                 }
@@ -311,7 +331,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // FIXME 查询数据库，是否存在指定网点；有可能在选择提示时，做过滤操作
-                List<SalesService> bean = dbManager.selector(SalesService.class).where("网点编号",
+                List<SalesService> bean = dbManager.selector(SalesService
+                        .class).where("网点编号",
                         "like", reason).limit(1).findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("bean:" + bean.size());
@@ -337,26 +358,34 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
 
                 try {
                     // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-                    list = db.selector(CargoArrivalFileContent.class).where("是否上传", "like",
-                            "未上传").and("是否可用", "=", "可用").findAll();
+                    list = db.selector(CargoArrivalFileContent.class).where
+                            ("是否上传", "like",
+                                    "未上传").and("是否可用", "=", "可用").findAll();
                     if (null != list && list.size() != 0) {
                         // 2. 获取随机文件名
                         mCargoArrivalFileName = new CargoArrivalFileName();
                         if (mCargoArrivalFileName.linkToTXTFile()) {
                             // 3. 链接创建的文件和上传功能
-                            mUploadServerFile = new UploadServerFile(mCargoArrivalFileName
-                                    .getFileInstance());
+                            mUploadServerFile = new UploadServerFile
+                                    (mCargoArrivalFileName
+                                            .getFileInstance());
                             for (int index = 0; index < list.size(); index++) {
                                 // 4. 创建写入文本的字符串，并写入文本
-                                CargoArrivalFileContent javaBean = list.get(index);
-                                String content = javaBean.getmCurrentValue() + "\r\n";
-                                if (mUploadServerFile.writeContentToFile(content, true)) {
+                                CargoArrivalFileContent javaBean = list.get
+                                        (index);
+                                String content = javaBean.getmCurrentValue()
+                                        + "\r\n";
+                                if (mUploadServerFile.writeContentToFile
+                                        (content, true)) {
                                     // 不能删除数据，应该是否上传标志位为：已上传
-                                    WhereBuilder whereBuilder = WhereBuilder.b();
-                                    whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                                    WhereBuilder whereBuilder = WhereBuilder
+                                            .b();
+                                    whereBuilder.and("运单编号", "=", javaBean
+                                            .getShipmentNumber());
                                     // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                                    db.update(CargoArrivalFileContent.class, whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                                    db.update(CargoArrivalFileContent.class,
+                                            whereBuilder, new
+                                                    KeyValue("是否上传", "已上传"));
                                 } else {
                                     // TODO 写入文件失败
                                     LogUtil.trace("写入文件失败");
@@ -388,7 +417,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
                 // 测试阶段删除所有记录
                 DbManager db = BQDataBaseHelper.getDb();
                 try {
-                    List<CargoArrivalFileContent> list = db.findAll(CargoArrivalFileContent.class);
+                    List<CargoArrivalFileContent> list = db.findAll
+                            (CargoArrivalFileContent.class);
                     if (list != null) {
                         LogUtil.d(TAG, "当前记录：" + list.size());
                         // db.delete(CargoArrivalFileContent.class);
@@ -410,14 +440,16 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
-            Toast.makeText(DaojianActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
+                    .LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
             return;
         }
 
         // 2. 插入到数据库中
-        mCargoArrivalFileContent.setScanDate(TextStringUtil.getFormatTimeString());
+        mCargoArrivalFileContent.setScanDate(TextStringUtil
+                .getFormatTimeString());
         mCargoArrivalFileContent.setShipmentNumber(barcode);
         mCargoArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime());
         LogUtil.d(TAG, "扫描数据：" + mCargoArrivalFileContent.toString());
@@ -451,13 +483,18 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
             try {
                 // FIXME 查询数据库，是否有记录；增加时间戳
                 // and("是否可用", "like", "可用")
-                List<CargoArrivalFileContent> bean = dbManager.selector(CargoArrivalFileContent
-                        .class).where("运单编号", "like", barcode).and("是否可用", "like", "可用").findAll();
+                List<CargoArrivalFileContent> bean = dbManager.selector
+                        (CargoArrivalFileContent
+                                .class).where("运单编号", "like", barcode).and
+                        ("是否可用",
+                        "like", "可用").findAll();
 
                 if (bean != null && bean.size() != 0) {
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
-                                .getScanDate(), TextStringUtil.getFormatTimeString());
+                        long[] delta = TextStringUtil.getDistanceTimes(bean
+                                .get(index)
+                                .getScanDate(), TextStringUtil
+                                .getFormatTimeString());
                         if (isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
                             LogUtil.trace("超出指定时间");
@@ -491,7 +528,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
      */
     private boolean isTimeOutOfRange(long[] delta) {
         // 将时间数字转化为数值，判断数值是否超出即可
-        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 + delta[2] * 60 + delta[3];
+        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 +
+                delta[2] * 60 + delta[3];
         if (deltaValue > DELTA_TIME_DISTANCE) {
             return true;
         }
@@ -519,7 +557,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+            String sql = "select count(*) from sqlite_master where type " +
+                    "='table' and name "
                     + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
@@ -541,7 +580,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
      * <p>
      * 与之相关的数据库Table为：xcdaojian
      */
-    private void insertDataToDatabase(final CargoArrivalFileContent cargoArrivalFileContent) {
+    private void insertDataToDatabase(final CargoArrivalFileContent
+                                              cargoArrivalFileContent) {
         new Thread(new Runnable() {
 
             @Override
@@ -584,7 +624,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
             // 不能删除数据，应该设置“是否可用”状态为：不可用
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("运单编号", "=", barcode);
-            db.update(CargoArrivalFileContent.class, whereBuilder, new KeyValue("是否可用", "不可用"));
+            db.update(CargoArrivalFileContent.class, whereBuilder, new
+                    KeyValue("是否可用", "不可用"));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
@@ -601,7 +642,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         List<SalesService> mData = null;
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
-            mData = dbManager.selector(SalesService.class).where("网点编号", "=", id).findAll();
+            mData = dbManager.selector(SalesService.class).where("网点编号", "=",
+                    id).findAll();
 
             if (mData != null && mData.size() != 0) {
                 // 存在记录

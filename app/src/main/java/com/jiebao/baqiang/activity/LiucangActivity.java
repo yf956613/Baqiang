@@ -3,6 +3,10 @@ package com.jiebao.baqiang.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -25,6 +29,7 @@ import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.stay.StayHouseFileName;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
@@ -36,7 +41,8 @@ import org.xutils.ex.DbException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiucangActivity extends BaseActivityWithTitleAndNumber implements View
+public class LiucangActivity extends BaseActivityWithTitleAndNumber
+        implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "LiucangActivity";
 
@@ -64,6 +70,71 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     private int mScanCount;
     private Vibrator mDeviceVibrator;
 
+
+    // 总倒计时时间为3秒，每1秒回调一次onTick()
+    private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            LogUtil.trace();
+        }
+
+        @Override
+        public void onFinish() {
+            LogUtil.trace();
+
+            ScanHelper.getInstance().barcodeManager.Barcode_Stop();
+            // FIXME
+            mScanThread.mHandler.getLooper().quit();
+            mScanThread = null;
+        }
+    };
+
+    // 控制线程是否运行
+    private boolean mIsScanThreadRun = false;
+    private ScanThread mScanThread = /*new ScanThread()*/null;
+    private final int MSG_RETURE_RESULT = 1000;
+
+    class ScanThread extends Thread {
+        private Looper looper;
+        public Handler mHandler = null;
+
+        @Override
+        public void run() {
+            super.run();
+
+            // 创建子线程的Looper实例
+            Looper.prepare();
+
+            // 取出子线程的Looper实例
+            looper = Looper.myLooper();
+
+            // 子线程的Handler实例
+            mHandler = new Handler() {
+
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case MSG_RETURE_RESULT: {
+                            // 再次发一次扫码广播
+                            Intent intent = new Intent();
+                            intent.setAction("com.jb.action.F4key");
+                            intent.putExtra("F4key", "down");
+                            LiucangActivity.this.sendBroadcast(intent);
+
+                            mCountDownTimer.start();
+                            break;
+                        }
+                    }
+                }
+            };
+
+
+            // 不断循环取出线程
+            Looper.loop();
+        }
+    }
+
     @Override
     public void initView() {
         setContent(R.layout.liucang);
@@ -74,12 +145,15 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public void initData() {
         prepareDataForView();
 
-        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
+        mDeviceVibrator = (Vibrator) this.getSystemService(this
+                .VIBRATOR_SERVICE);
 
-        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id.tv_stay_reason);
+        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id
+                .tv_stay_reason);
         mTvStayHouseReason.setAdapter(mReasonData);
         // 监听EditText是否获取焦点
-        mTvStayHouseReason.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvStayHouseReason.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -93,10 +167,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 }
             }
         });
-        mTvStayHouseReason.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvStayHouseReason.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定下一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverID = mTvStayHouseReason.getText().toString();
                 LogUtil.d(TAG, "serverID:" + serverID);
@@ -106,7 +182,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             }
         });
 
-        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id.et_shipment_number);
+        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id
+                .et_shipment_number);
 
         mBtnSure = LiucangActivity.this.findViewById(R.id.btn_ensure);
         mBtnCancel = LiucangActivity.this.findViewById(R.id.btn_back);
@@ -126,11 +203,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      */
     private void prepareDataForView() {
         mStayHouseReason = queryStayHouseData();
-        mReasonData = new ArrayAdapter<String>(LiucangActivity.this, R.layout.list_item,
+        mReasonData = new ArrayAdapter<String>(LiucangActivity.this, R.layout
+                .list_item,
                 mStayHouseReason);
 
         mStayHouseFileContent = getStayHouseFileContent();
-        LogUtil.trace("mStayHouseFileContent:" + mStayHouseFileContent.toString());
+        LogUtil.trace("mStayHouseFileContent:" + mStayHouseFileContent
+                .toString());
 
         mListData = new ArrayList<>();
         mFajianAdapter = new FajianAdatper(LiucangActivity.this, mListData);
@@ -156,7 +235,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
         List<String> reasonData = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
-            reasonData.add(mData.get(index).get编号() + "  " + mData.get(index).get名称());
+            reasonData.add(mData.get(index).get编号() + "  " + mData.get(index)
+                    .get名称());
         }
 
         return reasonData;
@@ -185,7 +265,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         // 是否可用
         String isUsed = "可用";
 
-        return new StayHouseFileContent(scanDate, stayHouseReason, shipmentType, shipmentNumber,
+        return new StayHouseFileContent(scanDate, stayHouseReason,
+                shipmentType, shipmentNumber,
                 scanEmployeeNumber, operateDate, status, isUsed);
     }
 
@@ -196,7 +277,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         DbManager db = BQDataBaseHelper.getDb();
         try {
             // 查询数据库中标识位“未上传”，且数据可用的记录
-            List<StayHouseFileContent> data = db.selector(StayHouseFileContent.class).where
+            List<StayHouseFileContent> data = db.selector
+                    (StayHouseFileContent.class).where
                     ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
             if (null != data && data.size() != 0) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
@@ -206,10 +288,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new FajianListViewBean();
+                    FajianListViewBean fajianListViewBean = new
+                            FajianListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index)
+                            .getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }
@@ -230,29 +314,48 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         }
     }
 
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 // FIXME 执行一次扫码操作，判断前置条件满足？
-                if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString())) {
-                    Toast.makeText(LiucangActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(mTvStayHouseReason.getText().toString()
+                )) {
+                    Toast.makeText(LiucangActivity.this, "前置信息为空", Toast
+                            .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
                     // 数据库查询
-                    String stayHouseReason = mTvStayHouseReason.getText().toString().split("  ")[0];
+                    String stayHouseReason = mTvStayHouseReason.getText()
+                            .toString().split("  ")[0];
                     LogUtil.trace("stayHouseReason:" + stayHouseReason);
 
-                    if (isExistCurrentReason(Integer.parseInt(stayHouseReason))) {
+                    if (isExistCurrentReason(Integer.parseInt
+                            (stayHouseReason))) {
                         // FIXME 判断前置条件？开启一次扫描
+                        // FIXME 启动扫描线程，需要考虑多次按下的问题
+                        mIsScanThreadRun = true;
+                        if (mScanThread == null) {
+                            mScanThread = new ScanThread();
+                            // 线程先运行起来
+                            mScanThread.start();
+                        }
+
+                        // 发出一次扫码广播
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         LiucangActivity.this.sendBroadcast(intent);
+
+                        // 倒计时开始
+                        mCountDownTimer.start();
+
                     } else {
-                        Toast.makeText(LiucangActivity.this, "前置信息不符合", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LiucangActivity.this, "前置信息不符合", Toast
+                                .LENGTH_SHORT).show();
                         mDeviceVibrator.vibrate(1000);
                     }
                 }
@@ -268,20 +371,29 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         return super.onKeyDown(keyCode, event);
     }
 
-
     @Override
     protected void fillCode(String barcode) {
         super.fillCode(barcode);
         LogUtil.trace("barcode:" + barcode);
 
+        Message msg = mScanThread.mHandler.obtainMessage();
+        // 已接收到返回数据
+        msg.what = MSG_RETURE_RESULT;
+        mScanThread.mHandler.sendMessage(msg);
+        // 倒计时结束
+        mCountDownTimer.cancel();
+
         // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
-            Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
+                    .LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
             return;
         }
+
+        LogUtil.trace("11111");
 
         // 2. 插入到数据库中
         mStayHouseFileContent.setScanDate(TextStringUtil.getFormatTimeString());
@@ -290,8 +402,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         mStayHouseFileContent.setOperateDate(TextStringUtil.getFormatTime());
         insertDataToDatabase(mStayHouseFileContent);
 
+        LogUtil.trace("2222");
+
         // 3. 填充EditText控件
         mEtShipmentNumber.setText(barcode);
+
+        LogUtil.trace("333");
 
         // 4. 更新ListView的数据
         FajianListViewBean mFajianListViewBean = new FajianListViewBean();
@@ -311,26 +427,33 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 List<StayHouseFileContent> list = null;
                 try {
                     // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-                    list = db.selector(StayHouseFileContent.class).where("是否上传", "like", "未上传")
+                    list = db.selector(StayHouseFileContent.class).where
+                            ("是否上传", "like", "未上传")
                             .and("是否可用", "=", "可用").findAll();
                     if (null != list && list.size() != 0) {
                         // 2. 获取随机文件名
                         mStayHouseFileName = new StayHouseFileName();
                         if (mStayHouseFileName.linkToTXTFile()) {
                             // 3. 链接创建的文件和上传功能
-                            mUploadServerFile = new UploadServerFile(mStayHouseFileName
-                                    .getFileInstance());
+                            mUploadServerFile = new UploadServerFile
+                                    (mStayHouseFileName
+                                            .getFileInstance());
                             for (int index = 0; index < list.size(); index++) {
                                 // 4. 创建写入文本的字符串，并写入文本
                                 StayHouseFileContent javaBean = list.get(index);
-                                String content = javaBean.getmCurrentValue() + "\r\n";
-                                if (mUploadServerFile.writeContentToFile(content, true)) {
+                                String content = javaBean.getmCurrentValue()
+                                        + "\r\n";
+                                if (mUploadServerFile.writeContentToFile
+                                        (content, true)) {
                                     // 不能删除数据，应该是否上传标志位为：已上传
-                                    WhereBuilder whereBuilder = WhereBuilder.b();
-                                    whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                                    WhereBuilder whereBuilder = WhereBuilder
+                                            .b();
+                                    whereBuilder.and("运单编号", "=", javaBean
+                                            .getShipmentNumber());
                                     // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                                    db.update(StayHouseFileContent.class, whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                                    db.update(StayHouseFileContent.class,
+                                            whereBuilder, new
+                                                    KeyValue("是否上传", "已上传"));
                                 } else {
                                     // TODO 写入文件失败
                                     LogUtil.trace("写入文件失败");
@@ -359,7 +482,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 // 返回按键，不上传文件
                 DbManager db = BQDataBaseHelper.getDb();
                 try {
-                    List<StayHouseFileContent> list = db.findAll(StayHouseFileContent.class);
+                    List<StayHouseFileContent> list = db.findAll
+                            (StayHouseFileContent.class);
                     if (list != null) {
                         LogUtil.trace("当前记录：" + list.size());
                     }
@@ -407,13 +531,17 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             try {
                 // FIXME 查询数据库，是否有记录；增加时间戳
                 // and("是否可用", "like", "可用")
-                List<StayHouseFileContent> bean = dbManager.selector(StayHouseFileContent.class)
-                        .where("运单编号", "like", barcode).and("是否可用", "like", "可用").findAll();
+                List<StayHouseFileContent> bean = dbManager.selector
+                        (StayHouseFileContent.class)
+                        .where("运单编号", "like", barcode).and("是否可用", "like",
+                                "可用").findAll();
 
                 if (bean != null && bean.size() != 0) {
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
-                                .getScanDate(), TextStringUtil.getFormatTimeString());
+                        long[] delta = TextStringUtil.getDistanceTimes(bean
+                                .get(index)
+                                .getScanDate(), TextStringUtil
+                                .getFormatTimeString());
                         if (isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
                             LogUtil.trace("超出指定时间");
@@ -447,7 +575,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      */
     private boolean isTimeOutOfRange(long[] delta) {
         // 将时间数字转化为数值，判断数值是否超出即可
-        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 + delta[2] * 60 + delta[3];
+        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 +
+                delta[2] * 60 + delta[3];
         if (deltaValue > DELTA_TIME_DISTANCE) {
             return true;
         }
@@ -467,7 +596,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
                 // FIXME 查询数据库，是否包含指定留仓原因
-                List<LiucangBean> bean = dbManager.selector(LiucangBean.class).where("编号",
+                List<LiucangBean> bean = dbManager.selector(LiucangBean
+                        .class).where("编号",
                         "like", reason).limit(1).findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("bean:" + bean.size());
@@ -501,7 +631,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         try {
             db = dbManager.getDatabase();
             // 查询内置sqlite_master表，判断是否创建了对应表
-            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+            String sql = "select count(*) from sqlite_master where type " +
+                    "='table' and name "
                     + "='" + tableName.trim() + "' ";
             cursor = db.rawQuery(sql, null);
             if (cursor.moveToNext()) {
@@ -523,7 +654,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      * <p>
      * 与之相关的数据库Table为：fajian
      */
-    private void insertDataToDatabase(final StayHouseFileContent stayHouseFileContent) {
+    private void insertDataToDatabase(final StayHouseFileContent
+                                              stayHouseFileContent) {
         new Thread(new Runnable() {
 
             @Override
@@ -552,7 +684,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             // 不能删除数据，应该设置“是否可用”状态为：不可用
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("运单编号", "=", barcode);
-            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue("是否可用", "不可用"));
+            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue
+                    ("是否可用", "不可用"));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();

@@ -520,7 +520,7 @@ public class UnloadCargoArrivalActivity extends
                         (UnloadArrivalFileContent
                                 .class).where("运单编号", "like", barcode).and
                         ("是否可用",
-                        "like", "可用").findAll();
+                                "like", "可用").findAll();
 
                 if (bean != null && bean.size() != 0) {
                     for (int index = 0; index < bean.size(); index++) {

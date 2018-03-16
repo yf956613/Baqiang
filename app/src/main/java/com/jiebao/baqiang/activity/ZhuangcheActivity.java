@@ -331,7 +331,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
             // 采用固定格式便于解析快件类型
             mShipmentData.add(mShipmentTypeList.get(index).get类型编号() + "  " +
                     mShipmentTypeList
-                    .get(index).get类型名称());
+                            .get(index).get类型名称());
         }
 
         // TODO 将 汽运 排到最先
@@ -380,9 +380,10 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                 // FIXME 执行一次扫码操作，判断前置条件满足？
                 if (TextUtils.isEmpty(mTvVehicleId.getText().toString()) ||
                         TextUtils.isEmpty
-                        (mTvNextStation.getText().toString()) || TextUtils
+                                (mTvNextStation.getText().toString()) ||
+                        TextUtils
                         .isEmpty
-                        (mTvShipmentType.getText().toString())) {
+                                (mTvShipmentType.getText().toString())) {
                     Toast.makeText(ZhuangcheActivity.this, "前置信息为空", Toast
                             .LENGTH_SHORT).show();
 
@@ -593,7 +594,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                             // 3. 链接创建的文件和上传功能
                             mZcfajianUploadFile = new UploadServerFile
                                     (mZcFajianDispatchFileName
-                                    .getFileInstance());
+                                            .getFileInstance());
                             for (int index = 0; index < list.size(); index++) {
                                 // 4. 创建写入文本的字符串，并写入文本
                                 ZCFajianFileContent javaBean = list.get(index);
@@ -609,7 +610,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                                     // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
                                     db.update(ZCFajianFileContent.class,
                                             whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                                                    KeyValue("是否上传", "已上传"));
                                 } else {
                                     // TODO 写入文件失败
                                     LogUtil.trace("写入文件失败");

@@ -41,7 +41,7 @@ import java.util.List;
 
 public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         View
-        .OnClickListener, CouldDeleteListView.DelButtonClickListener {
+                .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "FajianActivity";
 
     private AutoCompleteTextView mTvShipmentType;
@@ -276,7 +276,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
             // 采用固定格式便于解析快件类型
             mShipmentData.add(mShipmentTypeList.get(index).get类型编号() + "  " +
                     mShipmentTypeList
-                    .get(index).get类型名称());
+                            .get(index).get类型名称());
         }
 
         // TODO 将 汽运 排到最先
@@ -415,7 +415,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                             // 3. 链接创建的文件和上传功能
                             mShipmentUploadFile = new UploadServerFile
                                     (mShipmentDispatchFileName
-                                    .getFileInstance());
+                                            .getFileInstance());
                             for (int index = 0; index < list.size(); index++) {
                                 // 4. 创建写入文本的字符串，并写入文本
                                 ShipmentFileContent javaBean = list.get(index);
@@ -431,7 +431,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                                     // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
                                     db.update(ShipmentFileContent.class,
                                             whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                                                    KeyValue("是否上传", "已上传"));
                                 } else {
                                     // TODO 写入文件失败
                                     LogUtil.trace("写入文件失败");

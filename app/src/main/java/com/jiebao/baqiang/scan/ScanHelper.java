@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.jb.barcode.BarcodeManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -26,7 +25,7 @@ public class ScanHelper {
     private static final int STATE_VIDEO = 5;
 
     public static ScanHelper instance = null;
-    private BarcodeManager barcodeManager;
+    public BarcodeManager barcodeManager;
     private long nowTime = 0;
     private long lastTime = 0;
 
