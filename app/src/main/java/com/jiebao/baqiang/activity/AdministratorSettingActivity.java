@@ -64,10 +64,25 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
     @ViewInject(R.id.ll_bussiness)
     private LinearLayout mLlBussinessSettings;
 
+    @ViewInject(R.id.btn_factory)
+    private Button mBtnFactory;
+    @ViewInject(R.id.ll_factory)
+    private LinearLayout mLlFactory;
+
+    @ViewInject(R.id.btn_bussiness_before)
+    private Button mBtnBussinessBefore;
+    @ViewInject(R.id.ll_bussiness_before)
+    private LinearLayout mLlBussinessBefore;
+
     @ViewInject(R.id.btn_wipe_data)
     private Button mBtnSwipeData;
     @ViewInject(R.id.ll_wipe_data)
     private LinearLayout mLlSwipeData;
+
+    @ViewInject(R.id.btn_logcat)
+    private Button mBtnLogcat;
+    @ViewInject(R.id.ll_logcat)
+    private LinearLayout mLlLogcat;
 
     @ViewInject(R.id.btn_wifi_settings)
     private Button mBtnWifiSetting;
@@ -105,8 +120,24 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                     break;
                 }
 
+                case R.id.btn_factory:{
+                    setLinearLayoutBackground(mLlFactory, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_bussiness_before:{
+                    setLinearLayoutBackground(mLlBussinessBefore, hasFocus);
+                    break;
+                }
+
+
                 case R.id.btn_wipe_data: {
                     setLinearLayoutBackground(mLlSwipeData, hasFocus);
+                    break;
+                }
+
+                case R.id.btn_logcat:{
+                    setLinearLayoutBackground(mLlLogcat, hasFocus);
                     break;
                 }
 
@@ -154,9 +185,21 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
         mBtnBussinessSettings.setOnClickListener(this);
         mBtnBussinessSettings.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        // 出厂预设
+        mBtnFactory.setOnClickListener(this);
+        mBtnFactory.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 业务预设
+        mBtnBussinessBefore.setOnClickListener(this);
+        mBtnBussinessBefore.setOnFocusChangeListener(mLlFocusChangeListener);
+
         // 巴枪清空
         mBtnSwipeData.setOnClickListener(this);
         mBtnSwipeData.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 日志管理
+        mBtnLogcat.setOnClickListener(this);
+        mBtnLogcat.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // WIFI 设置
         mBtnWifiSetting.setOnClickListener(this);
@@ -303,8 +346,8 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                         LogUtil.trace("appInfo:" + appInfo.toString());
 
                         if ("unknown".equals(appInfo.getBaQiangApkVersion())) {
-                            Toast.makeText(AdministratorSettingActivity.this, "服务器未放置Apk文件", Toast
-                                    .LENGTH_SHORT).show();
+                            Toast.makeText(AdministratorSettingActivity.this, "服务器未放置Apk文件",
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 

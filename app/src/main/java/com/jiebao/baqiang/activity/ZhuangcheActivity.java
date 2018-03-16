@@ -1,8 +1,9 @@
 package com.jiebao.baqiang.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,17 +26,17 @@ import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -79,6 +80,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     ZCFajianFileContent mZcFajianFileContent;
     UploadServerFile mZcfajianUploadFile;
 
+    private Vibrator mDeviceVibrator;
+
     @Override
     public void initView() {
         setContent(R.layout.zhuangchefajian);
@@ -88,6 +91,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     @Override
     public void initData() {
         prepareDataForView();
+
+        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
 
         mTvVehicleId = ZhuangcheActivity.this.findViewById(R.id.tv_vehicle_code);
         mTvVehicleId.setAdapter(mVehicleInfoAdapter);
@@ -199,8 +204,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         try {
             // 查询数据库中标识位“未上传”的记录
             List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent.class).where("是否上传",
-                    "like", "未上传").findAll();
-            if (null != data) {
+                    "like", "未上传").and("是否可用", "=", "可用").findAll();
+            if (null != data && data.size() != 0) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
 
                 // 清除数据
@@ -219,6 +224,13 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 mFajianAdapter.notifyDataSetChanged();
                 // 更新全局ID
                 mScanCount = count;
+            } else {
+                // 清除数据
+                mListData.clear();
+                mFajianAdapter.notifyDataSetChanged();
+                // 更新全局ID
+                mScanCount = 0;
+                LogUtil.trace("未上传 && 可用，过滤后无数据");
             }
         } catch (DbException e) {
             e.printStackTrace();
@@ -226,11 +238,12 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     private void prepareDataForView() {
+        // 准备车辆码信息
         mVehicleInfo = resolveVehicleInfo();
         mVehicleInfoAdapter = new ArrayAdapter<>(ZhuangcheActivity.this, R.layout.list_item,
                 mVehicleInfo);
 
-        // 准备上一站网点数据
+        // 准备下一站网点数据
         mNextStationInfo = resolveNextStationData();
         mNextStationAdapter = new ArrayAdapter<>(ZhuangcheActivity.this, R.layout.list_item,
                 mNextStationInfo);
@@ -239,10 +252,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         resolveShipmentTypeData();
 
         mZcFajianFileContent = getZCFajianFileContent();
-        mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
-        boolean isAllSuccess = mZcFajianDispatchFileName.linkToTXTFile();
-        LogUtil.e(TAG, "isAllSuccess:" + isAllSuccess);
-        mZcfajianUploadFile = new UploadServerFile(mZcFajianDispatchFileName.getFileInstance());
 
 
         mListData = new ArrayList<>();
@@ -337,22 +346,47 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 shipmentNumber, scanEmployeeNumber, operateDate, weight, identify, status);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case Constant.SCAN_KEY_CODE: {
+                // FIXME 执行一次扫码操作，判断前置条件满足？
+                if (TextUtils.isEmpty(mTvVehicleId.getText().toString()) || TextUtils.isEmpty
+                        (mTvNextStation.getText().toString()) || TextUtils.isEmpty
+                        (mTvShipmentType.getText().toString())) {
+                    Toast.makeText(ZhuangcheActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
+
+                    mDeviceVibrator.vibrate(1000);
+                    return true;
+                } else {
+                    // FIXME 判断前置条件？开启一次扫描
+                    Intent intent = new Intent();
+                    intent.setAction("com.jb.action.F4key");
+                    intent.putExtra("F4key", "down");
+                    ZhuangcheActivity.this.sendBroadcast(intent);
+                }
+
+                return true;
+            }
+
+            default:
+                break;
+        }
+
+        // 需要调用super方法，让back起作用
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
-
-        // TODO 判断前置条件是否符合
-        if (TextUtils.isEmpty(mTvNextStation.getText().toString()) || TextUtils.isEmpty
-                (mTvShipmentType.getText().toString()) || TextUtils.isEmpty(mTvVehicleId.getText
-                ().toString())) {
-            Toast.makeText(ZhuangcheActivity.this, "前置信息为空", Toast.LENGTH_SHORT).show();
-
-            return;
-        }
 
         // 1. 查表：当前是名为zcfajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
             Toast.makeText(ZhuangcheActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
             return;
         }
 
@@ -374,11 +408,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
         mListData.add(mFajianListViewBean);
         mFajianAdapter.notifyDataSetChanged();
-
-        /*// 根据数据看数据，构造上传文件
-        String content = mZcFajianFileContent.getmCurrentValue() + "\r\n";
-        LogUtil.trace("content:" + content + ";");
-        mZcfajianUploadFile.writeContentToFile(content, true);*/
     }
 
     private static final String DB_NAME = "zcfajian";
@@ -391,20 +420,56 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
      */
     private boolean isExistCurrentBarcode(String barcode) {
         if (tableIsExist(DB_NAME)) {
+            LogUtil.trace("---->");
             // 存在保存发件数据的表，从该表中查询对应的单号
             DbManager dbManager = BQDataBaseHelper.getDb();
+
             try {
-                // 查询数据库，是否有记录
+                // FIXME 查询数据库，是否有记录；增加时间戳
+                // and("是否可用", "like", "可用")
                 List<ZCFajianFileContent> bean = dbManager.selector(ZCFajianFileContent.class)
-                        .where("运单编号", "like", barcode).limit(1).findAll();
-                LogUtil.trace("bean:" + bean.size());
+                        .where("运单编号", "like", barcode).and("是否可用", "like", "可用").findAll();
 
                 if (bean != null && bean.size() != 0) {
-                    return true;
-                }
+                    for (int index = 0; index < bean.size(); index++) {
+                        long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
+                                .getScanDate(), TextStringUtil.getFormatTimeString());
+                        if (isTimeOutOfRange(delta)) {
+                            // 超出指定时间，存入数据库 --> return false
+                            LogUtil.trace("超出指定时间");
+
+                            continue;
+                        } else {
+                            // 不需存入数据库 --> return true
+                            LogUtil.trace("在指定时间之内");
+                            return true;
+                        }
+                    }
+                }// go to return false
             } catch (DbException e) {
                 e.printStackTrace();
             }
+        }
+
+        return false;
+    }
+
+    // 差距时间：3小时
+    private static final long DELTA_TIME_DISTANCE = 10800;
+
+    /**
+     * 判断时间差距是否超出预期值
+     * <p>
+     * 预期时间：3小时
+     *
+     * @param delta: {天, 时, 分, 秒}
+     * @return
+     */
+    private boolean isTimeOutOfRange(long[] delta) {
+        // 将时间数字转化为数值，判断数值是否超出即可
+        long deltaValue = delta[0] * 24 * 60 * 60 + delta[1] * 60 * 60 + delta[2] * 60 + delta[3];
+        if (deltaValue > DELTA_TIME_DISTANCE) {
+            return true;
         }
 
         return false;
@@ -447,15 +512,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         return result;
     }
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    protected void onResume() {
-        super.onResume();
-        // new MyAsyncTaskLoader().execute();
-    }
-
     /**
      * 每次扫描后，先将数据存入数据库，需要的数据可根据ShipmentFileContent对应
      * <p>
@@ -486,40 +542,47 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 DbManager db = BQDataBaseHelper.getDb();
                 List<ZCFajianFileContent> list = null;
                 try {
-                    // 1. 查询数据库中标识位“未上传”的记录
+                    // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
                     list = db.selector(ZCFajianFileContent.class).where("是否上传", "like", "未上传")
-                            .findAll();
-                    if (null != list) {
-                        LogUtil.trace("list:" + list.size());
-                        for (int index = 0; index < list.size(); index++) {
-                            // 2. 创建写入文本的字符串，并写入文本
-                            ZCFajianFileContent javaBean = list.get(index);
-                            String content = javaBean.getmCurrentValue() + "\r\n";
-                            if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                                // 3. 写入成功，删除记录
-                                /*WhereBuilder whereBuilder = WhereBuilder.b();
-                                whereBuilder.and("运单编号", "=", javaBean
-                                        .getShipmentNumber());
-                                db.update(ShipmentFileContent.class,
-                                        whereBuilder, new KeyValue("是否上传",
-                                                "已上传"));*/
-                                WhereBuilder b = WhereBuilder.b();
-                                b.and("运单编号", "=", javaBean.getShipmentNumber());
-                                db.delete(ZCFajianFileContent.class, b);
-                            } else {
-                                // 写入文件失败，跳过
+                            .and("是否可用", "=", "可用").findAll();
+                    if (null != list && list.size() != 0) {
+                        // 2. 获取随机文件名
+                        mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
+                        if (mZcFajianDispatchFileName.linkToTXTFile()) {
+                            // 3. 链接创建的文件和上传功能
+                            mZcfajianUploadFile = new UploadServerFile(mZcFajianDispatchFileName
+                                    .getFileInstance());
+                            for (int index = 0; index < list.size(); index++) {
+                                // 4. 创建写入文本的字符串，并写入文本
+                                ZCFajianFileContent javaBean = list.get(index);
+                                String content = javaBean.getmCurrentValue() + "\r\n";
+                                if (mZcfajianUploadFile.writeContentToFile(content, true)) {
+                                    // 不能删除数据，应该是否上传标志位为：已上传
+                                    WhereBuilder whereBuilder = WhereBuilder.b();
+                                    whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                                    // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
+                                    db.update(ZCFajianFileContent.class, whereBuilder, new
+                                            KeyValue("是否上传", "已上传"));
+                                } else {
+                                    // TODO 写入文件失败
+                                    LogUtil.trace("写入文件失败");
+                                }
                             }
+
+                            // 6. 文件上传服务器
+                            mZcfajianUploadFile.uploadFile();
+                            ZhuangcheActivity.this.finish();
+                        } else {
+                            // TODO 创建文件失败
+                            LogUtil.trace("创建文件失败");
                         }
+                    } else {
+                        LogUtil.trace("当前数据库没有需要上传数据");
                     }
                 } catch (DbException e) {
                     LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
                     e.printStackTrace();
                 }
-
-                // 4. 文件上传服务器
-                mZcfajianUploadFile.uploadFile();
-                ZhuangcheActivity.this.finish();
-
                 break;
             }
 

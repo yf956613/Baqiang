@@ -11,8 +11,7 @@ import org.xutils.db.annotation.Table;
 
 @Table(name = "daojian")
 public class CargoArrivalFileContent {
-    private static final String TAG = CargoArrivalFileContent.class
-            .getSimpleName();
+    private static final String TAG = CargoArrivalFileContent.class.getSimpleName();
 
     private static final int LENGTH = 91;
     // 扫描类型编号长度
@@ -155,6 +154,17 @@ public class CargoArrivalFileContent {
         this.mStatus = mStatus;
     }
 
+    @Column(name = "是否可用")
+    private String mIsUsed;
+
+    public String getmIsUsed() {
+        return mIsUsed;
+    }
+
+    public void setmIsUsed(String mIsUsed) {
+        this.mIsUsed = mIsUsed;
+    }
+
     /**
      * 默认构造函数
      */
@@ -162,12 +172,10 @@ public class CargoArrivalFileContent {
 
     }
 
-    public CargoArrivalFileContent(String mPreviousStation, String mScanDate,
-                                   String mGoodsType, String mShipmentType,
-                                   String mShipmentNumber, String
-                                           mScanEmployeeNumber, String
-                                           mOperateDate, String mWeight,
-                                   String mStatus) {
+    public CargoArrivalFileContent(String mPreviousStation, String mScanDate, String mGoodsType,
+                                   String mShipmentType, String mShipmentNumber, String
+                                           mScanEmployeeNumber, String mOperateDate, String
+                                           mWeight, String mStatus) {
         this.mScannerType = TYPE_SUFFIX;
         this.mPreviousStation = mPreviousStation;
         this.mScanDate = mScanDate;
@@ -195,8 +203,7 @@ public class CargoArrivalFileContent {
 
         // 添加上一站网点编号
         stringBuffer.append(this.mPreviousStation);
-        stringBuffer.append(countBlankAndAppend(this.mPreviousStation,
-                PREVIOUS_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mPreviousStation, PREVIOUS_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -211,13 +218,11 @@ public class CargoArrivalFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -227,8 +232,7 @@ public class CargoArrivalFileContent {
 
         // 重量
         stringBuffer.append(this.mWeight);
-        stringBuffer.append(countBlankAndAppend(this.mWeight,
-                WEIGHT));
+        stringBuffer.append(countBlankAndAppend(this.mWeight, WEIGHT));
 
         // 其他空格
         stringBuffer.append(appendBlankSpace(OTHERS));
@@ -260,23 +264,6 @@ public class CargoArrivalFileContent {
         return sb;
     }
 
-    @Override
-    public String toString() {
-        return "CargoArrivalFileContent{" +
-                "id=" + id +
-                ", mScannerType='" + mScannerType + '\'' +
-                ", mPreviousStation='" + mPreviousStation + '\'' +
-                ", mScanDate='" + mScanDate + '\'' +
-                ", mGoodsType='" + mGoodsType + '\'' +
-                ", mShipmentType='" + mShipmentType + '\'' +
-                ", mShipmentNumber='" + mShipmentNumber + '\'' +
-                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
-                ", mOperateDate='" + mOperateDate + '\'' +
-                ", mWeight='" + mWeight + '\'' +
-                ", mStatus='" + mStatus + '\'' +
-                '}';
-    }
-
     /**
      * 返回指定数量的空格
      *
@@ -293,4 +280,14 @@ public class CargoArrivalFileContent {
         return sb;
     }
 
+    @Override
+    public String toString() {
+        return "CargoArrivalFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mPreviousStation='" + mPreviousStation + '\'' + ", mScanDate='" + mScanDate +
+                '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", mShipmentType='" + mShipmentType
+                + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", mOperateDate='" +
+                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", mStatus='" + mStatus +
+                '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
+    }
 }

@@ -120,7 +120,6 @@
                     android:background="@drawable/goods_scan_selector" />
 
                 <TextView
-
                     style="@style/ItemNameTextStyle"
                     android:text="5.出厂预设" />
 

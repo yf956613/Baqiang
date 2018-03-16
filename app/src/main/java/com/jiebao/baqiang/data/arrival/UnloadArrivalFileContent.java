@@ -11,8 +11,7 @@ import org.xutils.db.annotation.Table;
 
 @Table(name = "xcdaojian")
 public class UnloadArrivalFileContent {
-    private static final String TAG = UnloadArrivalFileContent.class
-            .getSimpleName();
+    private static final String TAG = UnloadArrivalFileContent.class.getSimpleName();
 
     // 22C             20170221235220  45067672999      A800     20170221 0
     //      Z000024
@@ -172,6 +171,17 @@ public class UnloadArrivalFileContent {
         this.mStatus = mStatus;
     }
 
+    @Column(name = "是否可用")
+    private String mIsUsed;
+
+    public String getmIsUsed() {
+        return mIsUsed;
+    }
+
+    public void setmIsUsed(String mIsUsed) {
+        this.mIsUsed = mIsUsed;
+    }
+
 
     /**
      * 默认构造函数
@@ -180,13 +190,10 @@ public class UnloadArrivalFileContent {
 
     }
 
-    public UnloadArrivalFileContent(String mPreviousStation, String mScanDate,
-                                    String mGoodsType, String mShipmentType,
-                                    String mShipmentNumber, String
-                                            mScanEmployeeNumber, String
-                                            mOperateDate, String mWeight,
-                                    String mVehicleId,
-                                    String mStatus) {
+    public UnloadArrivalFileContent(String mPreviousStation, String mScanDate, String mGoodsType,
+                                    String mShipmentType, String mShipmentNumber, String
+                                            mScanEmployeeNumber, String mOperateDate, String
+                                            mWeight, String mVehicleId, String mStatus) {
         this.mScannerType = TYPE_SUFFIX;
         this.mPreviousStation = mPreviousStation;
         this.mScanDate = mScanDate;
@@ -215,8 +222,7 @@ public class UnloadArrivalFileContent {
 
         // 添加上一站网点编号
         stringBuffer.append(this.mPreviousStation);
-        stringBuffer.append(countBlankAndAppend(this.mPreviousStation,
-                PREVIOUS_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mPreviousStation, PREVIOUS_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -231,13 +237,11 @@ public class UnloadArrivalFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -247,8 +251,7 @@ public class UnloadArrivalFileContent {
 
         // 重量
         stringBuffer.append(this.mWeight);
-        stringBuffer.append(countBlankAndAppend(this.mWeight,
-                WEIGHT));
+        stringBuffer.append(countBlankAndAppend(this.mWeight, WEIGHT));
 
         stringBuffer.append(appendBlankSpace(BLANK_SPACE_2));
 
@@ -304,18 +307,13 @@ public class UnloadArrivalFileContent {
 
     @Override
     public String toString() {
-        return "UnloadArrivalFileContent{" +
-                "mScannerType='" + mScannerType + '\'' +
-                ", mPreviousStation='" + mPreviousStation + '\'' +
-                ", mScanDate='" + mScanDate + '\'' +
-                ", mGoodsType='" + mGoodsType + '\'' +
-                ", mShipmentType='" + mShipmentType + '\'' +
-                ", mShipmentNumber='" + mShipmentNumber + '\'' +
-                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
-                ", mOperateDate='" + mOperateDate + '\'' +
-                ", mWeight='" + mWeight + '\'' +
-                ", mVehicleId='" + mVehicleId + '\'' +
-                ", mStatus='" + mStatus + '\'' +
-                '}';
+        return "UnloadArrivalFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mPreviousStation='" + mPreviousStation + '\'' + ", mScanDate='" + mScanDate +
+                '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", mShipmentType='" + mShipmentType
+                + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", mOperateDate='" +
+                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", mVehicleId='" +
+                mVehicleId + '\'' + ", mStatus='" + mStatus + '\'' + ", mIsUsed='" + mIsUsed +
+                '\'' + '}';
     }
 }

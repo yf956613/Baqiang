@@ -3,6 +3,7 @@ package com.jiebao.baqiang.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +35,8 @@ import org.xutils.http.RequestParams;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.lang.reflect.Method;
+
 public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
 
@@ -46,6 +49,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
     private Button mBtnLogin;
     @ViewInject(R.id.btn_wifi_setttings)
     private Button mBtnConfigurate;
+    @ViewInject(R.id.tv_app_version)
+    private TextView mTvAppVersion;
+    @ViewInject(R.id.tv_system_version)
+    private TextView mTvSystemVersion;
 
     private String mLoginUrl = "";
 
@@ -89,6 +96,9 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         sendBroadcastForAction();
 
         initListener();
+
+        mTvAppVersion.setText(getCurrentVersionName());
+        mTvSystemVersion.setText(getSystemProperty(LoginActivity.this, "ro.jiebao.version"));
     }
 
     private void initListener() {
@@ -347,4 +357,38 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         }
     }
 
+    private String getSystemProperty(Context context, String key) throws IllegalArgumentException {
+        String ret = "";
+        try {
+            ClassLoader cl = context.getClassLoader();
+            Class SystemProperties = cl.loadClass("android.os" + ".SystemProperties");
+            Class[] paramTypes = new Class[1];
+            paramTypes[0] = String.class;
+            Method get = SystemProperties.getMethod("get", paramTypes);
+            Object[] params = new Object[1];
+            params[0] = new String(key);
+            ret = (String) get.invoke(SystemProperties, params);
+        } catch (IllegalArgumentException iAE) {
+            throw iAE;
+        } catch (Exception e) {
+            ret = "";
+            //TODO } return ret;
+        }
+
+        return ret;
+    }
+
+    private String getCurrentVersionName() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            //getPackageName()是你当前类的包名，0代表是获取版本信息
+            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionName);
+            return packInfo.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

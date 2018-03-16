@@ -149,7 +149,8 @@ public class ZCFajianFileContent {
     public void setWeight(String weight) {
         this.mWeight = weight;
     }
-    @Column(name="车辆识别号")
+
+    @Column(name = "车辆识别号")
     private String identify;
 
     public String getIdentify() {
@@ -172,6 +173,17 @@ public class ZCFajianFileContent {
         this.mStatus = mStatus;
     }
 
+    @Column(name = "是否可用")
+    private String mIsUsed;
+
+    public String getmIsUsed() {
+        return mIsUsed;
+    }
+
+    public void setmIsUsed(String mIsUsed) {
+        this.mIsUsed = mIsUsed;
+    }
+
 
     /**
      * 默认构造函数
@@ -180,10 +192,9 @@ public class ZCFajianFileContent {
 
     }
 
-    public ZCFajianFileContent(String mNextStation, String mScanDate, String
-            mGoodsType, String mShipmentType, String mShipmentNumber, String
-                                       mScanEmployeeNumber, String
-                                       mOperateDate, String mWeight, String identify,String mStatus){
+    public ZCFajianFileContent(String mNextStation, String mScanDate, String mGoodsType, String
+            mShipmentType, String mShipmentNumber, String mScanEmployeeNumber, String
+            mOperateDate, String mWeight, String identify, String mStatus) {
         this.mNextStation = mNextStation;
         this.mScanDate = mScanDate;
         this.mGoodsType = mGoodsType;
@@ -192,7 +203,7 @@ public class ZCFajianFileContent {
         this.mScanEmployeeNumber = mScanEmployeeNumber;
         this.mOperateDate = mOperateDate;
         this.mWeight = mWeight;
-        this.identify =identify;
+        this.identify = identify;
         this.mStatus = mStatus;
     }
 
@@ -211,8 +222,7 @@ public class ZCFajianFileContent {
 
         // 添加网点编号
         stringBuffer.append(this.mNextStation);
-        stringBuffer.append(countBlankAndAppend(this.mNextStation,
-                NEXT_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -227,13 +237,11 @@ public class ZCFajianFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -244,7 +252,7 @@ public class ZCFajianFileContent {
         // 重量
         stringBuffer.append(this.mWeight);
         stringBuffer.append(countBlankAndAppend(this.mWeight, WEIGHT));
-       // 空格
+        // 空格
         stringBuffer.append(appendBlankSpace(BLANK_SPACE1));
         //车辆识别码
         stringBuffer.append(this.identify);
@@ -298,18 +306,13 @@ public class ZCFajianFileContent {
 
     @Override
     public String toString() {
-        return "ZCFajianFileContent{" +
-                "mScannerType='" + mScannerType + '\'' +
-                ", mNextStation='" + mNextStation + '\'' +
-                ", mScanDate='" + mScanDate + '\'' +
-                ", mGoodsType='" + mGoodsType + '\'' +
-                ", mShipmentType='" + mShipmentType + '\'' +
-                ", mShipmentNumber='" + mShipmentNumber + '\'' +
-                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
-                ", mOperateDate='" + mOperateDate + '\'' +
-                ", mWeight='" + mWeight + '\'' +
-                ", identify='" + identify + '\'' +
-                ", mStatus='" + mStatus + '\'' +
-                '}';
+        return "ZCFajianFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
+                "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", mShipmentType='" +
+                mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", mOperateDate='" +
+                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' + ", identify='" +
+                identify + '\'' + ", mStatus='" + mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\''
+                + '}';
     }
 }

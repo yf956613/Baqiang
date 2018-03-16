@@ -158,6 +158,17 @@ public class ShipmentFileContent {
         this.mStatus = mStatus;
     }
 
+    @Column(name = "是否可用")
+    private String mIsUsed;
+
+    public String getmIsUsed() {
+        return mIsUsed;
+    }
+
+    public void setmIsUsed(String mIsUsed) {
+        this.mIsUsed = mIsUsed;
+    }
+
 
     /**
      * 默认构造函数
@@ -166,11 +177,9 @@ public class ShipmentFileContent {
 
     }
 
-    public ShipmentFileContent(String mNextStation, String mScanDate, String
-            mGoodsType, String mShipmentType, String mShipmentNumber, String
-                                       mScanEmployeeNumber, String
-                                       mOperateDate, String mWeight, String
-                                       mStatus) {
+    public ShipmentFileContent(String mNextStation, String mScanDate, String mGoodsType, String
+            mShipmentType, String mShipmentNumber, String mScanEmployeeNumber, String
+            mOperateDate, String mWeight, String mStatus) {
         this.mScannerType = TYPE_SUFFIX;
         this.mNextStation = mNextStation;
         this.mScanDate = mScanDate;
@@ -198,8 +207,7 @@ public class ShipmentFileContent {
 
         // 添加网点编号
         stringBuffer.append(this.mNextStation);
-        stringBuffer.append(countBlankAndAppend(this.mNextStation,
-                NEXT_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -214,13 +222,11 @@ public class ShipmentFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -280,17 +286,12 @@ public class ShipmentFileContent {
 
     @Override
     public String toString() {
-        return "ShipmentFileContent{" +
-                "mScannerType='" + mScannerType + '\'' +
-                ", mNextStation='" + mNextStation + '\'' +
-                ", mScanDate='" + mScanDate + '\'' +
-                ", mGoodsType='" + mGoodsType + '\'' +
-                ", mShipmentType='" + mShipmentType + '\'' +
-                ", mShipmentNumber='" + mShipmentNumber + '\'' +
-                ", mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' +
-                ", mOperateDate='" + mOperateDate + '\'' +
-                ", mWeight='" + mWeight + '\'' +
-                ", mStatus='" + mStatus + '\'' +
-                '}';
+        return "ShipmentFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
+                "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", mShipmentType='" +
+                mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", mOperateDate='" +
+                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' + ", mStatus='" +
+                mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
     }
 }
