@@ -3,6 +3,10 @@ package com.jiebao.baqiang.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -27,6 +31,7 @@ import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
+import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
@@ -82,6 +87,82 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
     UploadServerFile mZcfajianUploadFile;
 
     private Vibrator mDeviceVibrator;
+
+    // 总倒计时时间为3秒，每1秒回调一次onTick()
+    private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            LogUtil.trace();
+        }
+
+        @Override
+        public void onFinish() {
+            LogUtil.trace();
+
+            ScanHelper.getInstance().barcodeManager.Barcode_Stop();
+            // FIXME
+            if (mScanThread != null) {
+                mScanThread.mHandler.getLooper().quit();
+                mScanThread = null;
+            }
+        }
+    };
+
+    private ScanThread mScanThread = /*new ScanThread()*/null;
+    private final int MSG_RETURE_RESULT = 1000;
+
+    class ScanThread extends Thread {
+        private Looper looper;
+        public Handler mHandler = null;
+
+        @Override
+        public void run() {
+            super.run();
+
+            // 创建子线程的Looper实例
+            Looper.prepare();
+
+            // 取出子线程的Looper实例
+            looper = Looper.myLooper();
+
+            // 子线程的Handler实例
+            mHandler = new Handler() {
+
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case MSG_RETURE_RESULT: {
+                            // 再次发一次扫码广播
+                            Intent intent = new Intent();
+                            intent.setAction("com.jb.action.F4key");
+                            intent.putExtra("F4key", "down");
+                            ZhuangcheActivity.this.sendBroadcast(intent);
+
+                            mCountDownTimer.start();
+                            break;
+                        }
+                    }
+                }
+            };
+
+            // 不断循环取出线程
+            Looper.loop();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mScanThread != null) {
+            // FIXME
+            mScanThread.mHandler.getLooper().quit();
+            mScanThread = null;
+        }
+
+        ScanHelper.getInstance().barcodeManager.Barcode_Stop();
+    }
 
     @Override
     public void initView() {
@@ -382,8 +463,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                         TextUtils.isEmpty
                                 (mTvNextStation.getText().toString()) ||
                         TextUtils
-                        .isEmpty
-                                (mTvShipmentType.getText().toString())) {
+                                .isEmpty
+                                        (mTvShipmentType.getText().toString()
+                                        )) {
                     Toast.makeText(ZhuangcheActivity.this, "前置信息为空", Toast
                             .LENGTH_SHORT).show();
 
@@ -391,10 +473,21 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     return true;
                 } else {
                     // FIXME 判断前置条件？开启一次扫描
+                    // FIXME 启动扫描线程，需要考虑多次按下的问题
+                    if (mScanThread == null) {
+                        mScanThread = new ScanThread();
+                        // 线程先运行起来
+                        mScanThread.start();
+                    }
+
+                    // 发出一次扫码广播
                     Intent intent = new Intent();
                     intent.setAction("com.jb.action.F4key");
                     intent.putExtra("F4key", "down");
                     ZhuangcheActivity.this.sendBroadcast(intent);
+
+                    // 倒计时开始
+                    mCountDownTimer.start();
                 }
 
                 return true;
@@ -413,6 +506,13 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
 
+        Message msg = mScanThread.mHandler.obtainMessage();
+        // 已接收到返回数据
+        msg.what = MSG_RETURE_RESULT;
+        mScanThread.mHandler.sendMessage(msg);
+        // 倒计时结束
+        mCountDownTimer.cancel();
+
         // 1. 查表：当前是名为zcfajian的表，判断是否有记录
         if (isExistCurrentBarcode(barcode)) {
             // 若有记录则提示重复；若没有，继续执行
@@ -429,6 +529,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
         mZcFajianFileContent.setOperateDate(TextStringUtil.getFormatTime());
         insertDataToDatabase(mZcFajianFileContent);
 
+
+        LogUtil.trace(">------------<");
         // 3. 填充EditText控件
         mEtDeliveryNumber.setText(barcode);
 

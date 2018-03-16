@@ -70,7 +70,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     private int mScanCount;
     private Vibrator mDeviceVibrator;
 
-
     // 总倒计时时间为3秒，每1秒回调一次onTick()
     private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
 
@@ -90,8 +89,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         }
     };
 
-    // 控制线程是否运行
-    private boolean mIsScanThreadRun = false;
     private ScanThread mScanThread = /*new ScanThread()*/null;
     private final int MSG_RETURE_RESULT = 1000;
 
@@ -128,7 +125,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                     }
                 }
             };
-
 
             // 不断循环取出线程
             Looper.loop();
@@ -337,7 +333,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                             (stayHouseReason))) {
                         // FIXME 判断前置条件？开启一次扫描
                         // FIXME 启动扫描线程，需要考虑多次按下的问题
-                        mIsScanThreadRun = true;
                         if (mScanThread == null) {
                             mScanThread = new ScanThread();
                             // 线程先运行起来
@@ -352,7 +347,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
 
                         // 倒计时开始
                         mCountDownTimer.start();
-
                     } else {
                         Toast.makeText(LiucangActivity.this, "前置信息不符合", Toast
                                 .LENGTH_SHORT).show();
