@@ -237,6 +237,16 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnLoadSend.setFocusable(true);
+        mBtnLoadSend.setFocusableInTouchMode(true);
+        mBtnLoadSend.requestFocus();
+        mBtnLoadSend.requestFocusFromTouch();
+    }
+
+    @Override
     public void initData() {
         // 装车发件
         mBtnLoadSend.setOnClickListener(this);

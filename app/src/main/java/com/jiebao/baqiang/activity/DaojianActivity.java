@@ -210,12 +210,13 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
         String operateDate = TextStringUtil.getFormatTime();
         // 重量
         String weight = "0.0";
-
         // 是否上传状态
         String status = "未上传";
+        // 是否可用
+        String isUsed = "可用";
 
         return new CargoArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, status);
+                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
     }
 
     /**

@@ -2,7 +2,7 @@ package com.jiebao.baqiang.global;
 
 public class Constant {
     // 调试阶段开关
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 
     // 扫描按键KeyCode值
     public final static int SCAN_KEY_CODE = 139;
