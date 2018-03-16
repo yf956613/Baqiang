@@ -97,8 +97,10 @@ public class UnloadCargoArrivalActivity extends
 
             ScanHelper.getInstance().barcodeManager.Barcode_Stop();
             // FIXME
-            mScanThread.mHandler.getLooper().quit();
-            mScanThread = null;
+            if (mScanThread != null) {
+                mScanThread.mHandler.getLooper().quit();
+                mScanThread = null;
+            }
         }
     };
 
@@ -130,7 +132,8 @@ public class UnloadCargoArrivalActivity extends
                             Intent intent = new Intent();
                             intent.setAction("com.jb.action.F4key");
                             intent.putExtra("F4key", "down");
-                            UnloadCargoArrivalActivity.this.sendBroadcast(intent);
+                            UnloadCargoArrivalActivity.this.sendBroadcast
+                                    (intent);
 
                             mCountDownTimer.start();
                             break;
@@ -142,6 +145,19 @@ public class UnloadCargoArrivalActivity extends
             // 不断循环取出线程
             Looper.loop();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mScanThread != null) {
+            // FIXME
+            mScanThread.mHandler.getLooper().quit();
+            mScanThread = null;
+        }
+
+        ScanHelper.getInstance().barcodeManager.Barcode_Stop();
     }
 
     @Override

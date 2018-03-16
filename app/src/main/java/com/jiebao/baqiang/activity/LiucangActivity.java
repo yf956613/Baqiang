@@ -84,8 +84,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
 
             ScanHelper.getInstance().barcodeManager.Barcode_Stop();
             // FIXME
-            mScanThread.mHandler.getLooper().quit();
-            mScanThread = null;
+            if (mScanThread != null) {
+                mScanThread.mHandler.getLooper().quit();
+                mScanThread = null;
+            }
         }
     };
 
@@ -129,6 +131,19 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
             // 不断循环取出线程
             Looper.loop();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mScanThread != null) {
+            // FIXME
+            mScanThread.mHandler.getLooper().quit();
+            mScanThread = null;
+        }
+
+        ScanHelper.getInstance().barcodeManager.Barcode_Stop();
     }
 
     @Override
