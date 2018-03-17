@@ -86,7 +86,7 @@ public class UnloadCargoArrivalActivity extends
     private Vibrator mDeviceVibrator;
 
     // 总倒计时时间为3秒，每1秒回调一次onTick()
-    private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
+    private CountDownTimer mCountDownTimer = new CountDownTimer(Constant.TIME_SCAN_DELAY, 1000) {
 
         @Override
         public void onTick(long millisUntilFinished) {
@@ -502,12 +502,14 @@ public class UnloadCargoArrivalActivity extends
     protected void fillCode(String barcode) {
         super.fillCode(barcode);
 
-        Message msg = mScanThread.mHandler.obtainMessage();
-        // 已接收到返回数据
-        msg.what = MSG_RETURE_RESULT;
-        mScanThread.mHandler.sendMessage(msg);
-        // 倒计时结束
-        mCountDownTimer.cancel();
+        if (mScanThread != null) {
+            Message msg = mScanThread.mHandler.obtainMessage();
+            // 已接收到返回数据
+            msg.what = MSG_RETURE_RESULT;
+            mScanThread.mHandler.sendMessage(msg);
+            // 倒计时结束
+            mCountDownTimer.cancel();
+        }
 
         // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {

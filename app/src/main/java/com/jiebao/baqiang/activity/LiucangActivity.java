@@ -73,7 +73,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     private Vibrator mDeviceVibrator;
 
     // 总倒计时时间为3秒，每1秒回调一次onTick()
-    private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
+    private CountDownTimer mCountDownTimer = new CountDownTimer(Constant.TIME_SCAN_DELAY, 1000) {
 
         @Override
         public void onTick(long millisUntilFinished) {
@@ -332,6 +332,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         super.onKeyDown(keyCode, event);
 
+        LogUtil.trace("keyCode:" + keyCode);
+
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 // FIXME 执行一次扫码操作，判断前置条件满足？
@@ -430,12 +432,14 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         super.fillCode(barcode);
         LogUtil.trace("barcode:" + barcode);
 
-        Message msg = mScanThread.mHandler.obtainMessage();
-        // 已接收到返回数据
-        msg.what = MSG_RETURE_RESULT;
-        mScanThread.mHandler.sendMessage(msg);
-        // 倒计时结束
-        mCountDownTimer.cancel();
+        if (mScanThread != null) {
+            Message msg = mScanThread.mHandler.obtainMessage();
+            // 已接收到返回数据
+            msg.what = MSG_RETURE_RESULT;
+            mScanThread.mHandler.sendMessage(msg);
+            // 倒计时结束
+            mCountDownTimer.cancel();
+        }
 
         // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {

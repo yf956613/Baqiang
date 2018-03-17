@@ -77,7 +77,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     private Vibrator mDeviceVibrator;
 
     // 总倒计时时间为3秒，每1秒回调一次onTick()
-    private CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
+    private CountDownTimer mCountDownTimer = new CountDownTimer(Constant.TIME_SCAN_DELAY, 1000) {
 
         @Override
         public void onTick(long millisUntilFinished) {
@@ -378,8 +378,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                             .toString().split("  ")[0];
                     LogUtil.trace("previousStation:" + previousStation);
 
-                    if (isExistCurrentStation(Integer.parseInt
-                            (previousStation))) {
+                    // BUG: 不能转化为Integer值，比如0020 --> 20
+                    if (isExistCurrentStation(previousStation)) {
                         // FIXME 判断前置条件？开启一次扫描
                         // FIXME 启动扫描线程，需要考虑多次按下的问题
                         if (mScanThread == null) {
@@ -455,12 +455,12 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     }
 
     /**
-     * 判断是否存在指定留仓原因
+     * 判断是否存在指定上一站网点
      *
-     * @param reason
+     * @param stationID
      * @return
      */
-    private boolean isExistCurrentStation(int reason) {
+    private boolean isExistCurrentStation(String stationID) {
         if (tableIsExist("salesservice")) {
             // 存在保存发件数据的表，从该表中查询对应的单号
             DbManager dbManager = BQDataBaseHelper.getDb();
@@ -468,14 +468,19 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 // FIXME 查询数据库，是否存在指定网点；有可能在选择提示时，做过滤操作
                 List<SalesService> bean = dbManager.selector(SalesService
                         .class).where("网点编号",
-                        "like", reason).limit(1).findAll();
+                        "like", stationID).limit(1).findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("bean:" + bean.size());
                     return true;
+                } else {
+                    LogUtil.trace("bean is null");
                 }
             } catch (DbException e) {
+                LogUtil.trace("Exception");
                 e.printStackTrace();
             }
+        } else {
+            LogUtil.trace("salesservice 不存在");
         }
 
         return false;
@@ -571,12 +576,14 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         super.fillCode(barcode);
         LogUtil.trace("barcode:" + barcode);
 
-        Message msg = mScanThread.mHandler.obtainMessage();
-        // 已接收到返回数据
-        msg.what = MSG_RETURE_RESULT;
-        mScanThread.mHandler.sendMessage(msg);
-        // 倒计时结束
-        mCountDownTimer.cancel();
+        if (mScanThread != null) {
+            Message msg = mScanThread.mHandler.obtainMessage();
+            // 已接收到返回数据
+            msg.what = MSG_RETURE_RESULT;
+            mScanThread.mHandler.sendMessage(msg);
+            // 倒计时结束
+            mCountDownTimer.cancel();
+        }
 
         // 1. 查表：判断是否有记录
         if (isExistCurrentBarcode(barcode)) {

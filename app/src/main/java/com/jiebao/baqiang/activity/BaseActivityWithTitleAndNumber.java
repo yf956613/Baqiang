@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
@@ -183,6 +184,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
                     uploadShipmentData(db);
                     // N. 更新UI
                     syncViewAfterUpload();
+
+                    Toast.makeText(this, "数据上传成功", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -513,7 +516,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        setHeaderRightViewText(""+searchUnloadData());
+        setHeaderRightViewText("" + searchUnloadData());
 
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
