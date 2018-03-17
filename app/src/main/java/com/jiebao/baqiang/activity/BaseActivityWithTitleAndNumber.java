@@ -513,6 +513,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
+        setHeaderRightViewText(""+searchUnloadData());
+
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
             LogUtil.trace("This Device is support Scanner function...");
@@ -596,7 +598,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     @Override
     public void setHeaderRightViewText(String rightText, int color, float
             size) {
-        mHeaderRightView.setText(rightText);
+        mHeaderRightView.setText(mHeaderRightView.getText().toString() +
+                rightText);
         mHeaderRightViewTextColor = color;
         mHeaderRightViewTextSize = size;
     }
@@ -682,6 +685,62 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
 
     protected void dspStat(String barcode) {
 
+    }
+
+    /**
+     * BaseActivity中查询所有表的未上传数据
+     */
+    public int searchUnloadData() {
+        int unloadDataRecords = 0;
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            // 留仓件：查询数据库中标识位“未上传”，且数据可用的记录
+            List<StayHouseFileContent> stayHouseData = db.selector
+                    (StayHouseFileContent.class).where
+                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
+            if (stayHouseData != null && stayHouseData.size() != 0) {
+                unloadDataRecords += stayHouseData.size();
+            }
+
+            // 装车发件：查询数据库中标识位“未上传”的记录
+            List<ZCFajianFileContent> zCFajianData = db.selector
+                    (ZCFajianFileContent
+                            .class).where("是否上传",
+                    "like", "未上传").and("是否可用", "=", "可用").findAll();
+            if (zCFajianData != null && zCFajianData.size() != 0) {
+                unloadDataRecords += zCFajianData.size();
+            }
+
+            // 卸车到件：查询数据库中标识位“未上传”的记录
+            List<UnloadArrivalFileContent> unloadArrivalData = db.selector
+                    (UnloadArrivalFileContent.class)
+                    .where("是否上传", "like", "未上传").and("是否可用", "=", "可用")
+                    .findAll();
+            if (unloadArrivalData != null && unloadArrivalData.size() != 0) {
+                unloadDataRecords += unloadArrivalData.size();
+            }
+
+            // 到件：查询数据库中标识位“未上传”的记录
+            List<CargoArrivalFileContent> cargoArrivalData = db.selector
+                    (CargoArrivalFileContent.class).where
+                    ("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
+            if (cargoArrivalData != null && cargoArrivalData.size() != 0) {
+                unloadDataRecords += cargoArrivalData.size();
+            }
+
+            // 发件：查询数据库中标识位“未上传”的记录
+            List<ShipmentFileContent> shipmentData = db.selector
+                    (ShipmentFileContent.class).where("是否上传", "=", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
+            if (shipmentData != null && shipmentData.size() != 0) {
+                unloadDataRecords += shipmentData.size();
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return unloadDataRecords;
     }
 
     @Override
