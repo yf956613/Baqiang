@@ -17,6 +17,7 @@ import com.jiebao.baqiang.data.updateData.UpdateLiuCangType;
 import com.jiebao.baqiang.data.updateData.UpdateSalesServiceData;
 import com.jiebao.baqiang.data.updateData.UpdateShipmentType;
 import com.jiebao.baqiang.data.updateData.UpdateVehicleInfo;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.util.LogUtil;
 
@@ -145,7 +146,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     private void syncDataAction() {
         DataSyncTask dataSyncTask = new DataSyncTask();
         // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
-        dataSyncTask.execute("start_param");
+        if(!Constant.DEBUG){
+            dataSyncTask.execute("start_param");
+        }
     }
 
     private void initListener() {

@@ -43,9 +43,6 @@ public interface NetworkConstant {
     // TODO 公司员工表
     String EMPLOYEE = "/JBBaQiang";
 
-    // TODO 留仓原因
-    String KEEP_WAREHOUSE_SERVLET = "/JBBaQiang";
-
     // TODO 目的地
     String DESTINATION = "/JBBaQiang";
 

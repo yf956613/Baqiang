@@ -100,6 +100,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         public void dspStat(String content) {
             BaseActivityWithTitleAndNumber.this.dspStat(content);
         }
+
+        @Override
+        public void timeout(long timeout) {
+            BaseActivityWithTitleAndNumber.this.timeout(timeout);
+        }
     };
 
     private void initAttributes() {
@@ -163,7 +168,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtil.trace("BaseActivity onKeyDown");
+        LogUtil.trace("BaseActivity onKeyDown: " + keyCode);
 
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
@@ -527,6 +532,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
             ScanHelper.getInstance().setScanListener(this.getClass().getName
                             (), mScanListener,
                     isActivityNeedFocus);
+
+            LogUtil.trace();
         }
     }
 
@@ -687,6 +694,10 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     }
 
     protected void dspStat(String barcode) {
+
+    }
+
+    protected void timeout(long timeout) {
 
     }
 

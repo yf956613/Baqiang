@@ -8,7 +8,6 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.bean.VehicleInfoList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
-import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -95,10 +94,6 @@ public class UpdateVehicleInfo extends UpdateInterface {
 
             @Override
             public void onFinished() {
-                if (Constant.DEBUG) {
-                    // FIXME 是否都执行onFinished()？在哪些情况下执行onError()
-                    mDataDownloadStatus.downloadFinish();
-                }
                 LogUtil.trace();
             }
         });

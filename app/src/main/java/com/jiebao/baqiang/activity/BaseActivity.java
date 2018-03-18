@@ -17,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -476,7 +474,7 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         }
     }
 
-    private ScanListener scanListener = new ScanListener() {
+    private ScanListener scanListener = new ScanListener(){
 
         @Override
         public void fillCode(String barcode) {
@@ -486,6 +484,11 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         @Override
         public void dspStat(String content) {
             BaseActivity.this.dspStat(content);
+        }
+
+        @Override
+        public void timeout(long timeout) {
+
         }
     };
 
