@@ -314,6 +314,18 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         public void downLoadError(String errorMsg) {
             LogUtil.trace("errorMsg: " + errorMsg);
+            // 防止异常
+            ++mUpdateID;
+
+            Message finishMsg = Message.obtain();
+            if (mUpdateID == 4) {
+                finishMsg.what = DOWNLOAD_DONE;
+            } else {
+                finishMsg.what = DOWNLOAD_SUCCESS;
+            }
+            finishMsg.arg1 = mUpdateID;
+
+            mHandler.sendMessage(finishMsg);
         }
     }
 

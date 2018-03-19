@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/ll_vehicle_code"
@@ -10,23 +10,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="车辆码"
-            android:textSize="18sp"/>
+            style="@style/PreviousInfoTextView"
+            android:text="车辆码" />
 
-        <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <!--设置最小的匹配输入次数，抽取成自定义的sytle-->
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_vehicle_code"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:selectAllOnFocus="true"
-            android:completionThreshold="1"
-            android:dropDownHeight="300dp"
-            android:singleLine="true"/>
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,23 +27,14 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="下一站"
-            android:textSize="18sp"/>
+
+            style="@style/PreviousInfoTextView"
+            android:text="下一站" />
 
         <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_next_station"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:selectAllOnFocus="true"
-            android:completionThreshold="1"
-            android:dropDownHeight="300dp"
-            android:singleLine="true"/>
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,23 +45,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="快件类型"
-            android:textSize="18sp"/>
+            style="@style/PreviousInfoTextView"
+            android:text="快件类型" />
 
         <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_shipment_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:selectAllOnFocus="true"
-            android:completionThreshold="1"
-            android:dropDownHeight="200dp"
-            android:singleLine="true"/>
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -91,22 +62,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="运单号"
-            android:textSize="18sp"/>
+            style="@style/PreviousInfoTextView"
+            android:text="运单号" />
 
         <!--设置最小的匹配输入次数-->
         <EditText
             android:id="@+id/et_shipment_number"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:selectAllOnFocus="true"
-            android:layout_weight="3"
-            android:singleLine="true"
-            android:completionThreshold="1"/>
+            style="@style/ShipmentNumberStyle" />
     </LinearLayout>
 
     <!--   <include layout="@layout/include_expand_button" />-->
@@ -124,7 +86,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="序号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -132,7 +94,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="单号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -140,7 +102,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="状态"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -161,7 +123,7 @@
             android:background="@drawable/bg_yellow_selector"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btn_back"
@@ -174,7 +136,7 @@
             android:background="@drawable/bg_green_selector"
             android:text="@string/tab_back"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <com.jiebao.baqiang.custView.CouldDeleteListView
@@ -183,7 +145,6 @@
         android:layout_height="200dip"
         android:layout_above="@id/ll_btn_function"
         android:layout_below="@id/listview_title"
-        android:transcriptMode="alwaysScroll">
-    </com.jiebao.baqiang.custView.CouldDeleteListView>
+        android:transcriptMode="alwaysScroll"></com.jiebao.baqiang.custView.CouldDeleteListView>
 
 </RelativeLayout>

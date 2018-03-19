@@ -2,7 +2,7 @@ package com.jiebao.baqiang.global;
 
 public class Constant {
     // 调试阶段开关
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
 
     // 连续扫描延时，单位：ms
     public final static int TIME_SCAN_DELAY = 3000;
@@ -12,17 +12,15 @@ public class Constant {
 
     // F1按键键值
     public final static int F1_KEY_CODE = 131;
-    // F2按键兼职
+    // F2按键键值
     public final static int F2_KEY_CODE = 132;
 
     public final static String CLIENT_VERSION = "1";
 
     //public static final String UPDATE_URL_PREFIX =
     // "http://120.76.79.124:8090/upgrade/";
-    public static final String UPDATE_URL_PREFIX = "http://www" +
-            ".kjb1688.com:8090/upgrade/";
-    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX +
-            "external/checkupdate.htm";
+    public static final String UPDATE_URL_PREFIX = "http://www" + ".kjb1688.com:8090/upgrade/";
+    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX + "external/checkupdate.htm";
 
 
     public final static String APP_CODE = "stockbao_android";
@@ -104,28 +102,12 @@ public class Constant {
     public static final int REQUEST_FOR_SCAN = 1000;
 
     public enum LogAction {
-        ACTION_OPEN_BILL,
-        ACTION_DELETE_BILL,
-        ACTION_DELETE_ALL_BILL,
-        ACTION_EXPORT_BILL,
-        ACTION_EXPORT_ALL_BILL,
-        ACTION_EXPORT_ADD_LOACTION,
-        ACTION_DELETE_LOACTION,
-        ACTION_MODIFY_NUM,
-        ACTION_UPLOAD_BILL,
-        ACTION_UPLOAD_ALL_BILL,
-        ACTION_DOWNLOAD_PARAM,
-        ACTION_DOWNLOAD_MATERIAL,
-        ACTION_DOWNLOAD_WAREHOUSE,
-        ACTION_DOWNLOAD_USER,
-        ACTION_CLEAR_DATA,
-        ACTION_IMPORT_DATA,
-        ACTION_GOODS_QUERY,
-        ACTION_PARAM_SET,
-        ACTION_IMPORT_SET,
-        ACTION_EXPORT_SET,
-        ACTION_DISPLAY_SET,
-        ACTION_TIME_SET,
+        ACTION_OPEN_BILL, ACTION_DELETE_BILL, ACTION_DELETE_ALL_BILL, ACTION_EXPORT_BILL,
+        ACTION_EXPORT_ALL_BILL, ACTION_EXPORT_ADD_LOACTION, ACTION_DELETE_LOACTION,
+        ACTION_MODIFY_NUM, ACTION_UPLOAD_BILL, ACTION_UPLOAD_ALL_BILL, ACTION_DOWNLOAD_PARAM,
+        ACTION_DOWNLOAD_MATERIAL, ACTION_DOWNLOAD_WAREHOUSE, ACTION_DOWNLOAD_USER,
+        ACTION_CLEAR_DATA, ACTION_IMPORT_DATA, ACTION_GOODS_QUERY, ACTION_PARAM_SET,
+        ACTION_IMPORT_SET, ACTION_EXPORT_SET, ACTION_DISPLAY_SET, ACTION_TIME_SET,
     }
 
 
@@ -164,8 +146,7 @@ public class Constant {
     }
 
     // TODO 用户保存在SharedPreference中的数据key名称
-    public static final String PRERENCE_LANGUAGE_CHOICE =
-            "multiLanguageChoiced";
+    public static final String PRERENCE_LANGUAGE_CHOICE = "multiLanguageChoiced";
     public static final String PREFERENCE_KEY_LANGUAGE = "defaultLanguage";
     public static final String PREFERENCE_KEY_SYSTEM_ARG = "system_arg";
     public static final String PREFERENCE_KEY_DEVICE_ID = "device_id";
@@ -179,29 +160,21 @@ public class Constant {
     // 用户名 需要注意：此处用户名不包含网点编号
     public static final String PREFERENCE_KEY_USERNAME = "username";
     // 数据库服务器地址
-    public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS =
-            "data_server_address";
+    public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS = "data_server_address";
     // 数据库服务器端口
-    public static final String PREFERENCE_KEY_DATA_SERVER_PORT =
-            "data_server_port";
+    public static final String PREFERENCE_KEY_DATA_SERVER_PORT = "data_server_port";
     // 快件查询地址
-    public static final String PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS =
-            "express_address";
+    public static final String PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS = "express_address";
     // 捷宝数据服务器地址
-    public static final String PREFERENCE_KEY_JB_SERVER =
-            "jiebao_server_address";
+    public static final String PREFERENCE_KEY_JB_SERVER = "jiebao_server_address";
     // 捷宝数据服务器端口
-    public static final String PREFERENCE_KEY_JB_SERVER_PORT =
-            "jiebao_server_port";
+    public static final String PREFERENCE_KEY_JB_SERVER_PORT = "jiebao_server_port";
     // 称重预付款设置
-    public static final String PREFERENCE_KEY_WEIGH_FORE_PAYMENT =
-            "weigh_fore_payment";
+    public static final String PREFERENCE_KEY_WEIGH_FORE_PAYMENT = "weigh_fore_payment";
     // 称重录单设置
-    public static final String PREFERENCE_KEY_WEIGH_INPUT_BUSINESS =
-            "weigh_input_business";
+    public static final String PREFERENCE_KEY_WEIGH_INPUT_BUSINESS = "weigh_input_business";
     // 到件预付款设置
-    public static final String PREFERENCE_KEY_ARRIVAL_FORE_PAYMENT =
-            "arrival_fore_payment";
+    public static final String PREFERENCE_KEY_ARRIVAL_FORE_PAYMENT = "arrival_fore_payment";
     // 到/发件扫描判断开关
     public static final String PREFERENCE_KEY_SCAN_SWITCH = "scan_switch";
 

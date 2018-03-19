@@ -65,6 +65,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
         params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
+        params.setConnectTimeout(30*1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 
@@ -84,7 +85,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
             @Override
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
-                mDataDownloadStatus.downLoadError(throwable.getMessage());
+                mDataDownloadStatus.downLoadError(throwable.getMessage()+throwable.getLocalizedMessage());
             }
 
             @Override
@@ -107,7 +108,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
      * @return
      */
     private boolean storageData(final VehicleInfoList vehicleInfoList) {
-        LogUtil.trace("+++ save SalesService data start +++");
+        LogUtil.trace("+++ save VehicleInfo data start +++");
 
         List<VehicleInfo> vehicleInfos = vehicleInfoList.getVehicleInfo();
         if (vehicleInfos == null || vehicleInfos.size() == 0) {

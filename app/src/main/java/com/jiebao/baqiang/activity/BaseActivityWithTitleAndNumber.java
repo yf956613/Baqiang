@@ -521,7 +521,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        setHeaderRightViewText("" + searchUnloadData());
+        /*setHeaderRightViewText("" + searchUnloadData());*/
 
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {

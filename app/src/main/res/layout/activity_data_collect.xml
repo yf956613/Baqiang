@@ -24,11 +24,11 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="1.装车发件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -84,7 +84,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="2.卸车到件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -110,7 +110,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="3.到件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -123,11 +123,11 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -157,7 +157,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="4.发件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -183,7 +183,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="5.称重发件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -209,7 +209,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="6.派件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -222,11 +222,11 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -256,7 +256,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="7.签收"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -282,7 +282,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="8.未签收"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -308,7 +308,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="9.快速签收"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -322,11 +322,11 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -356,7 +356,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="10.回单到件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -382,7 +382,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="11.回单发件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -408,7 +408,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="12.留仓件"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -421,12 +421,12 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/display_stand"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -457,7 +457,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="13.装袋"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -483,7 +483,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="14.拆袋"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -509,7 +509,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="15.托盘绑定"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>
@@ -523,11 +523,11 @@
                 android:layout_height="0dip"
                 android:layout_weight="1">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/display_stand" />
+                    android:background="@drawable/display_stand" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -558,7 +558,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="16.托盘拆分"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="15sp" />
 
                     </LinearLayout>

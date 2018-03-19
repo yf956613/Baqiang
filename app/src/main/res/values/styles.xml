@@ -139,6 +139,7 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <!--一级、二级菜单 各个选项样式-->
     <style name="ItemNameTextStyle">
         <item name="android:textColor">@color/primary_dark</item>
         <item name="android:textSize">15sp</item>
@@ -148,5 +149,38 @@
         <item name="android:singleLine">true</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <!--提示框，自定义View：TestAutoView样式-->
+    <style name="InfoEditText">
+        <item name="android:background">@drawable/shape_tips_bg</item>
+        <item name="android:completionThreshold">1</item>
+        <item name="android:dropDownHeight">300dp</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:layout_weight">4</item>
+    </style>
+
+    <!--各个功能项中，前置信息样式-->
+    <style name="PreviousInfoTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!--运单号样式-->
+    <style name="ShipmentNumberStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">4</item>
+        <item name="android:completionThreshold">1</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
 
 </resources>
