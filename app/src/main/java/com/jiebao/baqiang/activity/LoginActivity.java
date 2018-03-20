@@ -73,21 +73,12 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void initView() {
-        LogUtil.trace();
-
-        // TODO 登录界面底部 View
-        /*LinearLayout footerLayout = (LinearLayout) View.inflate(this, R.layout
-                .main_footer_layout, null);
-        setFootLayout(footerLayout);*/
-
         setContent(R.layout.activity_login);
         x.view().inject(LoginActivity.this);
     }
 
     @Override
     public void initData() {
-        LogUtil.trace();
-
         // TODO 申请权限及屏蔽相关操作
         verifyStoragePermissions(LoginActivity.this);
         sendBroadcastForAction();
@@ -272,7 +263,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onFinished() {
                 if (Constant.DEBUG) {
-                    // TODO 测试阶段，正式环境删除
                     startActivity(new Intent(LoginActivity.this, MainActivity
                             .class));
                 }

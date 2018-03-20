@@ -73,7 +73,6 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onSuccess(String saleServices) {
-
                 mDataDownloadStatus.downloadFinish(infoId);
 
                 // 创建Gson对象时，指定时间格式

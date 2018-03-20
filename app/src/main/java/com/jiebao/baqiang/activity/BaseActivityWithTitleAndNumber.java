@@ -55,11 +55,9 @@ import java.util.List;
  * Created by Administrator on 2018/3/13 0013.
  */
 
-public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
-        implements Header,
+public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity implements Header,
         Footer, Content, View.OnTouchListener {
-    private static final String TAG = BaseActivityWithTitleAndNumber.class
-            .getSimpleName();
+    private static final String TAG = BaseActivityWithTitleAndNumber.class.getSimpleName();
 
     public final int REQUEST_CAMARA_CODE = 100;
     private int FOOTER_BUTTONS_NUM = 4;
@@ -108,36 +106,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     };
 
     private void initAttributes() {
-        mHeaderLayout = (FrameLayout) View.inflate(this, R.layout
-                .header_layout_un_upload, null);
-        mHeaderLeftView = (TextView) mHeaderLayout.findViewById(R.id
-                .headerLeftView);
-        mHeaderRightView = (TextView) mHeaderLayout.findViewById(R.id
-                .headerRithtView);
+        mHeaderLayout = (FrameLayout) View.inflate(this, R.layout.header_layout_un_upload, null);
+        mHeaderLeftView = (TextView) mHeaderLayout.findViewById(R.id.headerLeftView);
+        mHeaderRightView = (TextView) mHeaderLayout.findViewById(R.id.headerRithtView);
         mHeaderLayout.setId(R.id.HEADER_LAYOUT_ID);
 
         mContentLayout = new RelativeLayout(this);
         mContent = new View(this);
-        mContentViewParams = new RelativeLayout.LayoutParams(RelativeLayout
-                .LayoutParams
+        mContentViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        contentLayout = (ViewGroup) View.inflate(this, R.layout
-                .activity_base_content, null);
-        mGlobalLayout = (RelativeLayout) contentLayout.findViewById(R.id
-                .global_layout);
+        contentLayout = (ViewGroup) View.inflate(this, R.layout.activity_base_content, null);
+        mGlobalLayout = (RelativeLayout) contentLayout.findViewById(R.id.global_layout);
 
-        mFooterLayout = (LinearLayout) View.inflate(this, R.layout
-                .footer_layout, null);
+        mFooterLayout = (LinearLayout) View.inflate(this, R.layout.footer_layout, null);
         mFooterLayout.setId(R.id.FOOTER_LAYOUT_ID);
 
-        mHeaderLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
-                .LayoutParams
+        mHeaderLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mFooterLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
-                .LayoutParams
+        mFooterLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
-                .LayoutParams
+        mContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
         mFooterLayout.setLayoutParams(mFooterLayoutParams);
@@ -210,37 +198,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         List<StayHouseFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(StayHouseFileContent.class).where
-                    ("是否上传", "like", "未上传")
-                    .and("是否可用", "=", "可用").findAll();
+            list = db.selector(StayHouseFileContent.class).where("是否上传", "like", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
                 // 2. 获取随机文件名
-                StayHouseFileName mStayHouseFileName = new
-                        StayHouseFileName();
+                StayHouseFileName mStayHouseFileName = new StayHouseFileName();
                 if (mStayHouseFileName.linkToTXTFile()) {
                     // 3. 链接创建的文件和上传功能
-                    UploadServerFile mUploadServerFile = new
-                            UploadServerFile(mStayHouseFileName
+                    UploadServerFile mUploadServerFile = new UploadServerFile(mStayHouseFileName
                             .getFileInstance());
-                    for (int index = 0; index < list.size();
-                         index++) {
+                    for (int index = 0; index < list.size(); index++) {
                         // 4. 创建写入文本的字符串，并写入文本
-                        StayHouseFileContent javaBean = list.get
-                                (index);
-                        String content = javaBean.getmCurrentValue()
-                                + "\r\n";
-                        if (mUploadServerFile.writeContentToFile
-                                (content, true)) {
+                        StayHouseFileContent javaBean = list.get(index);
+                        String content = javaBean.getmCurrentValue() + "\r\n";
+                        if (mUploadServerFile.writeContentToFile(content, true)) {
                             // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder =
-                                    WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                             // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(StayHouseFileContent.class,
-                                    whereBuilder, new
-                                            KeyValue("是否上传",
-                                            "已上传"));
+                            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue
+                                    ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
                             LogUtil.trace("写入文件失败");
@@ -266,34 +243,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         List<ZCFajianFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(ZCFajianFileContent.class).where
-                    ("是否上传", "like", "未上传")
-                    .and("是否可用", "=", "可用").findAll();
+            list = db.selector(ZCFajianFileContent.class).where("是否上传", "like", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
                 // 2. 获取随机文件名
-                ZCFajianDispatchFileName mZcFajianDispatchFileName = new
-                        ZCFajianDispatchFileName();
+                ZCFajianDispatchFileName mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
                 if (mZcFajianDispatchFileName.linkToTXTFile()) {
                     // 3. 链接创建的文件和上传功能
                     UploadServerFile mZcfajianUploadFile = new UploadServerFile
-                            (mZcFajianDispatchFileName
-                                    .getFileInstance());
+                            (mZcFajianDispatchFileName.getFileInstance());
                     for (int index = 0; index < list.size(); index++) {
                         // 4. 创建写入文本的字符串，并写入文本
                         ZCFajianFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue()
-                                + "\r\n";
-                        if (mZcfajianUploadFile.writeContentToFile
-                                (content, true)) {
+                        String content = javaBean.getmCurrentValue() + "\r\n";
+                        if (mZcfajianUploadFile.writeContentToFile(content, true)) {
                             // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder
-                                    .b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                             // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(ZCFajianFileContent.class,
-                                    whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
+                                    ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
                             LogUtil.trace("写入文件失败");
@@ -319,35 +288,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         List<UnloadArrivalFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(UnloadArrivalFileContent.class).where
-                    ("是否上传", "like",
-                            "未上传").and("是否可用", "=", "可用").findAll();
+            list = db.selector(UnloadArrivalFileContent.class).where("是否上传", "like", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
                 // 2. 获取随机文件名
-                UnloadArrivalFileName mUnloadArrivalFileName = new
-                        UnloadArrivalFileName();
+                UnloadArrivalFileName mUnloadArrivalFileName = new UnloadArrivalFileName();
                 if (mUnloadArrivalFileName.linkToTXTFile()) {
                     // 3. 链接创建的文件和上传功能
                     UploadServerFile mUploadServerFile = new UploadServerFile
-                            (mUnloadArrivalFileName
-                                    .getFileInstance());
+                            (mUnloadArrivalFileName.getFileInstance());
                     for (int index = 0; index < list.size(); index++) {
                         // 4. 创建写入文本的字符串，并写入文本
-                        UnloadArrivalFileContent javaBean = list.get
-                                (index);
-                        String content = javaBean.getmCurrentValue()
-                                + "\r\n";
-                        if (mUploadServerFile.writeContentToFile
-                                (content, true)) {
+                        UnloadArrivalFileContent javaBean = list.get(index);
+                        String content = javaBean.getmCurrentValue() + "\r\n";
+                        if (mUploadServerFile.writeContentToFile(content, true)) {
                             // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder
-                                    .b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                             // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(UnloadArrivalFileContent.class,
-                                    whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                            db.update(UnloadArrivalFileContent.class, whereBuilder, new KeyValue
+                                    ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
                             LogUtil.trace("写入文件失败");
@@ -373,35 +333,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         List<CargoArrivalFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(CargoArrivalFileContent.class).where
-                    ("是否上传", "like",
-                            "未上传").and("是否可用", "=", "可用").findAll();
+            list = db.selector(CargoArrivalFileContent.class).where("是否上传", "like", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
                 // 2. 获取随机文件名
-                CargoArrivalFileName mCargoArrivalFileName = new
-                        CargoArrivalFileName();
+                CargoArrivalFileName mCargoArrivalFileName = new CargoArrivalFileName();
                 if (mCargoArrivalFileName.linkToTXTFile()) {
                     // 3. 链接创建的文件和上传功能
                     UploadServerFile mUploadServerFile = new UploadServerFile
-                            (mCargoArrivalFileName
-                                    .getFileInstance());
+                            (mCargoArrivalFileName.getFileInstance());
                     for (int index = 0; index < list.size(); index++) {
                         // 4. 创建写入文本的字符串，并写入文本
-                        CargoArrivalFileContent javaBean = list.get
-                                (index);
-                        String content = javaBean.getmCurrentValue()
-                                + "\r\n";
-                        if (mUploadServerFile.writeContentToFile
-                                (content, true)) {
+                        CargoArrivalFileContent javaBean = list.get(index);
+                        String content = javaBean.getmCurrentValue() + "\r\n";
+                        if (mUploadServerFile.writeContentToFile(content, true)) {
                             // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder
-                                    .b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                             // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(CargoArrivalFileContent.class,
-                                    whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                            db.update(CargoArrivalFileContent.class, whereBuilder, new KeyValue
+                                    ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
                             LogUtil.trace("写入文件失败");
@@ -427,34 +378,26 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         List<ShipmentFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(ShipmentFileContent.class).where
-                    ("是否上传", "like", "未上传")
-                    .and("是否可用", "=", "可用").findAll();
+            list = db.selector(ShipmentFileContent.class).where("是否上传", "like", "未上传").and
+                    ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
                 // 2. 获取随机文件名
-                ShipmentDispatchFileName mShipmentDispatchFileName = new
-                        ShipmentDispatchFileName();
+                ShipmentDispatchFileName mShipmentDispatchFileName = new ShipmentDispatchFileName();
                 if (mShipmentDispatchFileName.linkToTXTFile()) {
                     // 3. 链接创建的文件和上传功能
                     UploadServerFile mShipmentUploadFile = new UploadServerFile
-                            (mShipmentDispatchFileName
-                                    .getFileInstance());
+                            (mShipmentDispatchFileName.getFileInstance());
                     for (int index = 0; index < list.size(); index++) {
                         // 4. 创建写入文本的字符串，并写入文本
                         ShipmentFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue()
-                                + "\r\n";
-                        if (mShipmentUploadFile.writeContentToFile
-                                (content, true)) {
+                        String content = javaBean.getmCurrentValue() + "\r\n";
+                        if (mShipmentUploadFile.writeContentToFile(content, true)) {
                             // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder
-                                    .b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                             // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(ShipmentFileContent.class,
-                                    whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
+                            db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
+                                    ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
                             LogUtil.trace("写入文件失败");
@@ -498,14 +441,12 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
                 TextView footTxt = (TextView) mFooterLayout.getChildAt(index);
                 String[] suffStrs = getFootTxtPrefix();
                 if (index < footTxtNum) {
-                    if (BaqiangApplication.getOperateType() == 1 && suffStrs
-                            != null)
+                    if (BaqiangApplication.getOperateType() == 1 && suffStrs != null)
                         footTxt.setText(suffStrs[index] + footTxtStr[index]);
                     else footTxt.setText(footTxtStr[index]);
 
                     if (index == footTxtNum - 1) {
-                        footTxt.setGravity(Gravity.RIGHT | Gravity
-                                .CENTER_VERTICAL);
+                        footTxt.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
                     }
                 } else {
                     footTxt.setVisibility(View.GONE);
@@ -521,7 +462,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        /*setHeaderRightViewText("" + searchUnloadData());*/
+        setHeaderRightViewText("未上传：" + searchUnloadData());
 
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
@@ -529,8 +470,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
 
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
-            ScanHelper.getInstance().setScanListener(this.getClass().getName
-                            (), mScanListener,
+            ScanHelper.getInstance().setScanListener(this.getClass().getName(), mScanListener,
                     isActivityNeedFocus);
 
             LogUtil.trace();
@@ -606,10 +546,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
     }
 
     @Override
-    public void setHeaderRightViewText(String rightText, int color, float
-            size) {
-        mHeaderRightView.setText(mHeaderRightView.getText().toString() +
-                rightText);
+    public void setHeaderRightViewText(String rightText, int color, float size) {
+        mHeaderRightView.setText(rightText);
         mHeaderRightViewTextColor = color;
         mHeaderRightViewTextSize = size;
     }
@@ -626,10 +564,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         mFooterLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         mGlobalLayout.addView(mFooterLayout, mFooterLayoutParams);
 
-        mContentLayoutParams.addRule(RelativeLayout.BELOW, R.id
-                .HEADER_LAYOUT_ID);
-        mContentLayoutParams.addRule(RelativeLayout.ABOVE, R.id
-                .FOOTER_LAYOUT_ID);
+        mContentLayoutParams.addRule(RelativeLayout.BELOW, R.id.HEADER_LAYOUT_ID);
+        mContentLayoutParams.addRule(RelativeLayout.ABOVE, R.id.FOOTER_LAYOUT_ID);
         mGlobalLayout.addView(mContentLayout, mContentLayoutParams);
 
         setContentView(contentLayout);
@@ -650,8 +586,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
             case MotionEvent.ACTION_MOVE: {
                 int dx = (int) event.getRawX() - mLastX;
                 int dy = (int) event.getRawY() - mLastY;
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v
-                        .getLayoutParams();
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v.getLayoutParams();
                 int lastLeftMargin = lp.leftMargin;
                 int lastTopMargin = lp.topMargin;
 
@@ -661,17 +596,14 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
                 if (rawLeftMargin < 0) {
                     rawLeftMargin = 0;
                 }
-                if (rawLeftMargin + v.getWidth() > AppUtil.getWindowWidthSize
-                        ()) {
+                if (rawLeftMargin + v.getWidth() > AppUtil.getWindowWidthSize()) {
                     rawLeftMargin = AppUtil.getWindowWidthSize() - v.getWidth();
                 }
                 if (rawTopMargin < 0) {
                     rawTopMargin = 0;
                 }
-                if (rawTopMargin + v.getHeight() > AppUtil
-                        .getWindowHeightSize()) {
-                    rawTopMargin = AppUtil.getWindowHeightSize() - v
-                            .getHeight();
+                if (rawTopMargin + v.getHeight() > AppUtil.getWindowHeightSize()) {
+                    rawTopMargin = AppUtil.getWindowHeightSize() - v.getHeight();
                 }
                 lp.setMargins(rawLeftMargin, rawTopMargin, 0, 0);
                 v.setLayoutParams(lp);
@@ -710,43 +642,37 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         DbManager db = BQDataBaseHelper.getDb();
         try {
             // 留仓件：查询数据库中标识位“未上传”，且数据可用的记录
-            List<StayHouseFileContent> stayHouseData = db.selector
-                    (StayHouseFileContent.class).where
-                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
+            List<StayHouseFileContent> stayHouseData = db.selector(StayHouseFileContent.class)
+                    .where("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
             if (stayHouseData != null && stayHouseData.size() != 0) {
                 unloadDataRecords += stayHouseData.size();
             }
 
             // 装车发件：查询数据库中标识位“未上传”的记录
-            List<ZCFajianFileContent> zCFajianData = db.selector
-                    (ZCFajianFileContent
-                            .class).where("是否上传",
-                    "like", "未上传").and("是否可用", "=", "可用").findAll();
+            List<ZCFajianFileContent> zCFajianData = db.selector(ZCFajianFileContent.class).where
+                    ("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
             if (zCFajianData != null && zCFajianData.size() != 0) {
                 unloadDataRecords += zCFajianData.size();
             }
 
             // 卸车到件：查询数据库中标识位“未上传”的记录
             List<UnloadArrivalFileContent> unloadArrivalData = db.selector
-                    (UnloadArrivalFileContent.class)
-                    .where("是否上传", "like", "未上传").and("是否可用", "=", "可用")
-                    .findAll();
+                    (UnloadArrivalFileContent.class).where("是否上传", "like", "未上传").and("是否可用",
+                    "=", "可用").findAll();
             if (unloadArrivalData != null && unloadArrivalData.size() != 0) {
                 unloadDataRecords += unloadArrivalData.size();
             }
 
             // 到件：查询数据库中标识位“未上传”的记录
-            List<CargoArrivalFileContent> cargoArrivalData = db.selector
-                    (CargoArrivalFileContent.class).where
-                    ("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
+            List<CargoArrivalFileContent> cargoArrivalData = db.selector(CargoArrivalFileContent
+                    .class).where("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
             if (cargoArrivalData != null && cargoArrivalData.size() != 0) {
                 unloadDataRecords += cargoArrivalData.size();
             }
 
             // 发件：查询数据库中标识位“未上传”的记录
-            List<ShipmentFileContent> shipmentData = db.selector
-                    (ShipmentFileContent.class).where("是否上传", "=", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
+            List<ShipmentFileContent> shipmentData = db.selector(ShipmentFileContent.class).where
+                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
             if (shipmentData != null && shipmentData.size() != 0) {
                 unloadDataRecords += shipmentData.size();
             }
@@ -792,20 +718,16 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
         }
 
         if (null == loadingBulider) {
-            View view = LayoutInflater.from(this).inflate(R.layout
-                    .layout_widget_loading, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(new
-                    ContextThemeWrapper(this, R
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
                     .style.myLoadingTheme));
             loadingBulider = builder.create();
             loadingBulider.setCancelable(false);
             loadingBulider.setView(view, 0, 0, 0, 0);
-            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener
-                    () {
+            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
                 @Override
-                public boolean onKey(DialogInterface dialog, int keyCode,
-                                     KeyEvent event) {
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     // TODO 屏蔽Back按键
                     /*if (keyCode == KeyEvent.KEYCODE_BACK) {
                         closeLoadinDialog();

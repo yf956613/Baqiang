@@ -192,12 +192,11 @@ public class ZCFajianFileContent {
 
     }
 
-    public ZCFajianFileContent(String mNextStation, String mScanDate, String
-            mGoodsType, String
-            mShipmentType, String mShipmentNumber, String
-            mScanEmployeeNumber, String
-                                       mOperateDate, String mWeight, String
-            identify, String mStatus, String mIsUsed) {
+    public ZCFajianFileContent(String mScannerType, String mNextStation, String mScanDate, String
+            mGoodsType, String mShipmentType, String mShipmentNumber, String mScanEmployeeNumber,
+                               String mOperateDate, String mWeight, String identify, String
+                                       mStatus, String mIsUsed) {
+        this.mScannerType = mScannerType;
         this.mNextStation = mNextStation;
         this.mScanDate = mScanDate;
         this.mGoodsType = mGoodsType;
@@ -226,8 +225,7 @@ public class ZCFajianFileContent {
 
         // 添加网点编号
         stringBuffer.append(this.mNextStation);
-        stringBuffer.append(countBlankAndAppend(this.mNextStation,
-                NEXT_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
 
         // 添加扫描时间
         stringBuffer.append(this.mScanDate);
@@ -242,13 +240,11 @@ public class ZCFajianFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -313,20 +309,13 @@ public class ZCFajianFileContent {
 
     @Override
     public String toString() {
-        return "ZCFajianFileContent{" + "mScannerType='" + mScannerType +
-                '\'' + ", " +
-                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" +
-                mScanDate + '\'' + ", " +
-                "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", " +
-                "mShipmentType='" +
-                mShipmentType + '\'' + ", mShipmentNumber='" +
-                mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " +
-                "mOperateDate='" +
-                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' +
-                ", identify='" +
-                identify + '\'' + ", mStatus='" + mStatus + '\'' + ", " +
-                "mIsUsed='" + mIsUsed + '\''
-                + '}';
+        return "ZCFajianFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
+                "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", " + "mShipmentType='"
+                + mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " + "mOperateDate='" +
+                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' + ", identify='" +
+                identify + '\'' + ", mStatus='" + mStatus + '\'' + ", " + "mIsUsed='" + mIsUsed +
+                '\'' + '}';
     }
 }

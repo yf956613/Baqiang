@@ -16,6 +16,7 @@ public class FileContentHelper {
      * @return
      */
     public static ZCFajianFileContent getZCFajianFileContent() {
+        String scanType = "23";
         // 下一站网点编码
         String nextStation = "";
         // 扫描日期
@@ -39,7 +40,7 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "可用";
 
-        return new ZCFajianFileContent(nextStation, scanDate, goodsType, shipmentType,
+        return new ZCFajianFileContent(scanType, nextStation, scanDate, goodsType, shipmentType,
                 shipmentNumber, scanEmployeeNumber, operateDate, weight, identify, status, isUsed);
     }
 }

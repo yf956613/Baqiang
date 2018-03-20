@@ -70,7 +70,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     // 快件类型相关数据适配器
     private TestTipsAdatper mShipmentTypeAdapter;
 
-    // 用于更新ListView界面数据
+    // 保存当前功能项录入的记录
     private List<ScannerListViewBean> mListData;
     private ScannerBaseAdatper mScannerBaseAdatper;
 
@@ -255,23 +255,19 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     return true;
                 } else if (!ShipmentTypeDBHelper.checkShipmentType(mTvShipmentType.getText()
                         .toString())) {
-                    // FIXME
                     Toast.makeText(ZhuangcheActivity.this, "快件类型信息异常", Toast.LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
                     LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
-                    // FIXME 启动扫描线程，需要考虑多次按下的问题
                     if (!mIsScanRunning) {
                         // 没有扫码，发出一次扫码广播
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         ZhuangcheActivity.this.sendBroadcast(intent);
-
                         LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
-
                         mIsScanRunning = true;
                     }
                 }
@@ -280,36 +276,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
 
             case Constant.F2_KEY_CODE: {
-                // 1. 获取最后（最新）扫入的barcode
-                if (mListData != null && mListData.size() != 0) {
-                    LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" +
-                            mListData.get(mListData.size() - 1).getScannerData());
-
-                    // 提示是否切换账号
-                    final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                            (ZhuangcheActivity.this);
-                    normalDialog.setTitle("提示");
-                    normalDialog.setCancelable(false);
-                    normalDialog.setMessage("是否删除最新记录？");
-                    normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // 2. 设置数据库对应记录的“是否可用”状态为：不可用
-                            ZcFajianDBHelper.deleteFindedBean(mListData.get(mListData.size() - 1)
-                                    .getScannerData());
-                        }
-                    });
-                    normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    normalDialog.show();
-                }
-
+                deleteLastestRecord();
                 // 消费F2按键事件
                 return true;
             }
@@ -326,7 +293,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
 
-        if (isExistCurrentBarcode(barcode)) {
+        if (ZcFajianDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(ZhuangcheActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
@@ -356,6 +323,11 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         mListData.add(0, mFajianListViewBean);
         mScannerBaseAdatper.notifyDataSetChanged();
 
+        if (!mListView.isStackFromBottom()) {
+            mListView.setStackFromBottom(true);
+        }
+        mListView.setStackFromBottom(false);
+
         Intent intent = new Intent();
         intent.setAction("com.jb.action.F4key");
         intent.putExtra("F4key", "down");
@@ -369,7 +341,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     @Override
     protected void timeout(long timeout) {
         super.timeout(timeout);
-
         LogUtil.trace("timeout:" + timeout);
         mIsScanRunning = false;
     }
@@ -386,21 +357,17 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     list = db.selector(ZCFajianFileContent.class).where("是否上传", "like", "未上传")
                             .and("是否可用", "=", "可用").findAll();
                     if (null != list && list.size() != 0) {
-                        // 2. 获取随机文件名
                         mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
                         if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                            // 3. 链接创建的文件和上传功能
                             mZcfajianUploadFile = new UploadServerFile(mZcFajianDispatchFileName
                                     .getFileInstance());
                             for (int index = 0; index < list.size(); index++) {
-                                // 4. 创建写入文本的字符串，并写入文本
                                 ZCFajianFileContent javaBean = list.get(index);
                                 String content = javaBean.getmCurrentValue() + "\r\n";
                                 if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                                    // 不能删除数据，应该是否上传标志位为：已上传
                                     WhereBuilder whereBuilder = WhereBuilder.b();
                                     whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                                    // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
+                                    whereBuilder.and("是否可用", "=", "可用");
                                     db.update(ZCFajianFileContent.class, whereBuilder, new
                                             KeyValue("是否上传", "已上传"));
                                 } else {
@@ -425,22 +392,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
 
             case R.id.btn_back: {
-                // 返回按键，不上传文件
-                LogUtil.trace();
                 ZhuangcheActivity.this.finish();
 
-                // 测试阶段删除所有记录
-                DbManager db = BQDataBaseHelper.getDb();
-                try {
-                    List<ZCFajianFileContent> list = db.findAll(ZCFajianFileContent.class);
-                    if (list != null) {
-                        LogUtil.d(TAG, "当前记录：" + list.size());
-                        // db.delete(ShipmentFileContent.class);
-                    }
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-
+                LogUtil.trace("All size:" + ZcFajianDBHelper.findAllBean());
                 break;
             }
         }
@@ -448,14 +402,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void clickHappend(int position) {
-        // 删除按键
-        LogUtil.trace("position:" + position);
-
-        // 1. 找到当前position的运单号
-        LogUtil.d(TAG, "待删除的内容:" + mListData.get(position).getScannerData());
-
-        // 2. 删除数据库中对应的记录
-        ZcFajianDBHelper.deleteFindedBean(mListData.get(position).getScannerData());
+        deleteChooseRecord(position);
     }
 
     @Override
@@ -557,43 +504,117 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
-     * 判断数据库中是否有当前运单记录
-     *
-     * @param barcode
-     * @return
+     * F2按键触发删除最新扫码记录，ListView最上一条记录
      */
-    private boolean isExistCurrentBarcode(String barcode) {
-        if (BQDataBaseHelper.tableIsExist(Constant.DB_TABLE_NAME_LOAD_SEND)) {
-            DbManager dbManager = BQDataBaseHelper.getDb();
-            try {
-                List<ZCFajianFileContent> bean = dbManager.selector(ZCFajianFileContent.class)
-                        .where("运单编号", "like", barcode).and("是否可用", "like", "可用").findAll();
+    private void deleteLastestRecord() {
+        if (mListData != null && mListData.size() != 0) {
+            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + mListData
+                    .get(0).getScannerData());
 
-                if (bean != null && bean.size() != 0) {
-                    LogUtil.trace("size:" + bean.size());
-                    for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
-                                .getScanDate(), TextStringUtil.getFormatTimeString());
-                        if (TimeUtil.isTimeOutOfRange(delta)) {
-                            // 超出指定时间，存入数据库 --> return false
-                            LogUtil.trace("超出指定时间");
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
+                    .this);
+            normalDialog.setTitle("提示");
+            normalDialog.setCancelable(false);
+            normalDialog.setMessage("是否删除最新记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
-                            continue;
-                        } else {
-                            // 不需存入数据库 --> return true
-                            LogUtil.trace("在指定时间之内");
-                            return true;
-                        }
-                    }
-                } else {
-                    // do nothing
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ZcFajianDBHelper.deleteFindedBean(mListData.get(0).getScannerData());
+                    updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
+                            .getScannerData());
                 }
-            } catch (DbException e) {
-                LogUtil.trace("Error: " + e.getMessage());
-                e.printStackTrace();
+            });
+            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            normalDialog.show();
+        } else {
+            // do nothing
+        }
+    }
+
+    /**
+     * 通过滑动删除指定记录
+     *
+     * @param position
+     */
+    private void deleteChooseRecord(final int position) {
+        if (mListData != null && mListData.size() != 0) {
+            LogUtil.trace("position:" + position + "; " + "barcode:" + mListData.get(position)
+                    .getScannerData());
+
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
+                    .this);
+            normalDialog.setTitle("提示");
+            normalDialog.setCancelable(false);
+            normalDialog.setMessage("是否记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ZcFajianDBHelper.deleteFindedBean(mListData.get(position).getScannerData());
+                    updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, mListData.get
+                            (position).getScannerData());
+                }
+            });
+            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            normalDialog.show();
+        } else {
+            // do nothing
+        }
+
+    }
+
+    /**
+     * 删除操作执行后，触发刷新显示当前Activity的ListView
+     */
+    private void updateListViewForDelete(DeleteAction action, String barcode) {
+        switch (action) {
+            case DELETE_ACTION_F2: {
+                // 现象：删除后，新增扫码ID跳数
+
+                break;
+            }
+            case DELETE_ACTION_CHOOSE: {
+                // 现象：删除中间记录后，ID不会更新
+                break;
             }
         }
 
-        return false;
+        if (mListData != null) {
+            for (int index = 0; index < mListData.size(); index++) {
+                if (!TextUtils.isEmpty(barcode) && barcode.equals(mListData.get(index)
+                        .getScannerData())) {
+                    mListData.remove(mListData.get(index));
+                    mScannerBaseAdatper.notifyDataSetChanged();
+
+                    break;
+                } else {
+                    // do nothing
+                }
+            }
+        }
+
+
+        if (!mListView.isStackFromBottom()) {
+            mListView.setStackFromBottom(true);
+        }
+        mListView.setStackFromBottom(false);
     }
+
+    public enum DeleteAction {
+        DELETE_ACTION_F2, DELETE_ACTION_CHOOSE
+    }
+
 }

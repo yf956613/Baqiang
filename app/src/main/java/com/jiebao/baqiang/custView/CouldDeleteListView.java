@@ -60,9 +60,8 @@ public class CouldDeleteListView extends ListView {
 
         View view = mInflater.inflate(R.layout.item_delete, null);
         mDelBtn = view.findViewById(R.id.id_item_btn);
-        mPopupWindow = new PopupWindow(view, LinearLayout.LayoutParams
-                .WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        mPopupWindow = new PopupWindow(view, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout
+                .LayoutParams.WRAP_CONTENT);
         // 先调用下measure,否则拿不到宽和高
         mPopupWindow.getContentView().measure(0, 0);
         mPopupWindowHeight = mPopupWindow.getContentView().getMeasuredHeight();
@@ -89,8 +88,7 @@ public class CouldDeleteListView extends ListView {
                 // 获得当前手指按下时的item的位置
                 mCurrentViewPos = pointToPosition(xDown, yDown);
                 // 获得当前手指按下时的item
-                View view = getChildAt(mCurrentViewPos -
-                        getFirstVisiblePosition());
+                View view = getChildAt(mCurrentViewPos - getFirstVisiblePosition());
                 mCurrentView = view;
                 break;
             }
@@ -103,11 +101,7 @@ public class CouldDeleteListView extends ListView {
                 /**
                  * 判断是否是从右到左的滑动
                  */
-                if (xMove < xDown && Math.abs(dx) > touchSlop && Math.abs(dy)
-                        < touchSlop) {
-                    // Log.e(TAG, "touchslop = " + touchSlop + " , dx = " +
-                    // dx +
-                    // " , dy = " + dy);
+                if (xMove < xDown && Math.abs(dx) > touchSlop && Math.abs(dy) < touchSlop) {
                     isSliding = true;
                 }
                 break;
@@ -131,11 +125,9 @@ public class CouldDeleteListView extends ListView {
                         // 获得当前item的位置x与y
                         mCurrentView.getLocationOnScreen(location);
                         mPopupWindow.update();
-                        mPopupWindow.showAtLocation(mCurrentView, Gravity.LEFT |
-                                        Gravity.TOP,
-                                location[0] + mCurrentView.getWidth(),
-                                location[1] + mCurrentView.getHeight() / 2
-                                        - mPopupWindowHeight / 2);
+                        mPopupWindow.showAtLocation(mCurrentView, Gravity.LEFT | Gravity.TOP,
+                                location[0] + mCurrentView.getWidth(), location[1] + mCurrentView
+                                        .getHeight() / 2 - mPopupWindowHeight / 2);
                         // 设置删除按钮的回调
                         mDelBtn.setOnClickListener(new OnClickListener() {
 

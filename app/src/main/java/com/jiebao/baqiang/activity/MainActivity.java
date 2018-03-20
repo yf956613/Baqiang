@@ -140,14 +140,12 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         initListener();
 
-        // FIXME 何时开始启动下载动作？在onCreate()中不是在onResume中
         syncDataAction();
     }
 
     private void syncDataAction() {
         DataSyncTask dataSyncTask = new DataSyncTask();
-        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
-        if(!Constant.DEBUG){
+        if (!Constant.DEBUG) {
             dataSyncTask.execute("start_param");
         }
     }
@@ -250,7 +248,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
      * Progress：后台任务执行的百分比
      * Result：返回值类型，和doInBackground（）方法的返回值类型保持一致
      */
-   class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
+    class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
 
         private int updataCnt = 0;
         private int sucessCnt = 0;
@@ -300,8 +298,12 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             // MainThread
         }
 
-        public  void startDownload(int infoId) {
+        public void startDownload(int infoId) {
             LogUtil.trace("startDownload " + infoId);
+
+            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
+                    + sucessCnt);
+
             Message startMsg = Message.obtain();
             startMsg.what = Constant.STARTDOWNLOAD_INFO + infoId;
             startMsg.arg1 = infoId;
@@ -311,6 +313,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         public void downloadFinish(int infoId) {
             updataCnt++;
+            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
+                    + sucessCnt);
             LogUtil.trace("downloadFinish " + infoId);
             Message dlInfoMsg = Message.obtain();
             dlInfoMsg.what = Constant.DOWNLOAD_INFO_SUCCESS + infoId;
@@ -324,25 +328,29 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void updateDataFinish(int infoId) {
-                sucessCnt++;
-                LogUtil.trace("updateDataFinish" + + infoId);
-                Message updateMsg = Message.obtain();
-                updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
-                updateMsg.arg1 = infoId;
-                mHandler.sendMessage(updateMsg);
+            sucessCnt++;
+            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
+                    + sucessCnt);
+            LogUtil.trace("updateDataFinish" + +infoId);
+            Message updateMsg = Message.obtain();
+            updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
+            updateMsg.arg1 = infoId;
+            mHandler.sendMessage(updateMsg);
 
-                if(updataCnt == Constant.MAX_DOWNLOAD_COUNT) {
-                    Message alldone = Message.obtain();
-                    alldone.what = Constant.DO_ALL_FINISH;
-                    mHandler.sendMessage(alldone);
-                }
-
+            if (updataCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                Message alldone = Message.obtain();
+                alldone.what = Constant.DO_ALL_FINISH;
+                mHandler.sendMessage(alldone);
             }
+
+        }
 
         @Override
         public void downLoadError(int infoId, String errorMsg) {
             updataCnt++;
             failedCnt++;
+            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
+                    + sucessCnt);
             LogUtil.trace("infoId " + infoId + " errorMsg: " + errorMsg);
             Message errMsg = Message.obtain();
             errMsg.what = Constant.UPDATE_DATA_FAILED + infoId;
@@ -355,7 +363,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             mHandler.sendMessage(dlFaildMsg);
 
         }
-
     }
 
     /**
@@ -383,22 +390,23 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void handleMessage(Message msg) {
-
             MainActivity activity = mActivity.get();
+
             if (activity == null) {
                 super.handleMessage(msg);
                 return;
             }
 
             switch (msg.what) {
-
                 case Constant.DOWNLOAD_FAILED: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
+                            .MAX_DOWNLOAD_STEP);
                     break;
                 }
 
                 case Constant.DOWNLOAD_SUCCESS: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
+                            .MAX_DOWNLOAD_STEP);
                     break;
                 }
 
@@ -414,7 +422,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SALESINFO SUCCESS  UpDate db info .....");
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SALESINFO SUCCESS  " +
+                            "UpDate db info .....");
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_DONE: {
@@ -430,7 +439,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SHIPMENTTYPEINFO SUCCESS  UpDate db info .....");
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SHIPMENTTYPEINFO " +
+                            "SUCCESS  UpDate db info .....");
                     break;
                 }
                 case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
@@ -445,7 +455,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD LIUCANGTYPEINFO SUCCESS  UpDate db info .....");
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD LIUCANGTYPEINFO " +
+                            "SUCCESS" + "  UpDate db info .....");
                     break;
                 }
                 case Constant.UPDATE_LIUCANGTYPEINFO_DONE: {
@@ -460,7 +471,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD VEHICEINFO SUCCESS  UpDate db info .....");
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD VEHICEINFO SUCCESS  " +
+                            "UpDate db info .....");
                     break;
                 }
                 case Constant.UPDATE_VEHICEINFO_DONE: {
