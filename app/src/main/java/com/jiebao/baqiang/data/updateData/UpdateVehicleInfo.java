@@ -8,6 +8,7 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.bean.VehicleInfoList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -43,6 +44,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
     }
 
     private UpdateVehicleInfo() {
+        infoId = Constant.VEHICEINFO_ID;
     }
 
     public static UpdateVehicleInfo getInstance() {
@@ -71,6 +73,9 @@ public class UpdateVehicleInfo extends UpdateInterface {
 
             @Override
             public void onSuccess(String vehicleInfo) {
+
+                mDataDownloadStatus.downloadFinish(infoId);
+
                 Gson gson = new Gson();
                 final VehicleInfoList list = gson.fromJson(vehicleInfo, VehicleInfoList.class);
 
@@ -85,7 +90,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
             @Override
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
-                mDataDownloadStatus.downLoadError(throwable.getMessage()+throwable.getLocalizedMessage());
+                mDataDownloadStatus.downLoadError(infoId, throwable.getMessage());
             }
 
             @Override
@@ -99,6 +104,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
             }
         });
 
+        mDataDownloadStatus.startDownload(infoId);
         return false;
     }
 
@@ -131,13 +137,13 @@ public class UpdateVehicleInfo extends UpdateInterface {
                             (index).get车辆识别号()));
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    mDataDownloadStatus.downLoadError(infoId, exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }
 
             // 数据更新正常，状态反馈
-            mDataDownloadStatus.downloadFinish();
+            mDataDownloadStatus.updateDataFinish(infoId);
             LogUtil.trace("--- save VehicleInfo data over ---");
         }
 

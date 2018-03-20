@@ -8,6 +8,7 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LiucangBean;
 import com.jiebao.baqiang.data.bean.LiucangListInfo;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -39,6 +40,7 @@ public class UpdateLiuCangType extends UpdateInterface {
     }
 
     private UpdateLiuCangType() {
+        infoId = Constant.LIUCANGTYPEINFO_ID;
     }
 
     public static UpdateLiuCangType getInstance() {
@@ -67,6 +69,9 @@ public class UpdateLiuCangType extends UpdateInterface {
 
             @Override
             public void onSuccess(String liucang) {
+
+                mDataDownloadStatus.downloadFinish(infoId);
+
                 Gson gson = new Gson();
                 final LiucangListInfo list = gson.fromJson(liucang, LiucangListInfo.class);
 
@@ -82,7 +87,7 @@ public class UpdateLiuCangType extends UpdateInterface {
             @Override
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
-                mDataDownloadStatus.downLoadError(throwable.getMessage());
+                mDataDownloadStatus.downLoadError(infoId,throwable.getMessage());
             }
 
             @Override
@@ -96,6 +101,7 @@ public class UpdateLiuCangType extends UpdateInterface {
             }
         });
 
+        mDataDownloadStatus.startDownload(infoId);
         return false;
     }
 
@@ -129,11 +135,11 @@ public class UpdateLiuCangType extends UpdateInterface {
                     db.save(reason);
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    mDataDownloadStatus.downLoadError(infoId,exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }
-            mDataDownloadStatus.downloadFinish();
+            mDataDownloadStatus.updateDataFinish(infoId);
             LogUtil.trace("--- save LiucangBean data over ---");
         }
 

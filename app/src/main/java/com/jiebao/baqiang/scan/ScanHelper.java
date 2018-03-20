@@ -161,7 +161,6 @@ public class ScanHelper {
             //  }
             isInit = false;
         } catch (Exception ignored) {
-
         }
     }
 
@@ -229,13 +228,13 @@ public class ScanHelper {
                     //  } else {
                     if (null != barcodeManager) {
                         nowTime = System.currentTimeMillis();
-                        if (nowTime - lastTime > 300) {
+ //                       if (nowTime - lastTime > 300) {
                             lastTime = nowTime;
                             barcodeManager.Barcode_Stop();
                             if (null != barcodeManager) {
                                 barcodeManager.Barcode_Start();
                             }
-                        }
+ //                       }
                     }
                     //  }
                 } else if (intent.getStringExtra("F4key").equals("up")) {

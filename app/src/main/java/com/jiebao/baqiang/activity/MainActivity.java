@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -193,7 +194,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             mDownloadProgressDialog.setTitle("提示信息：");
             mDownloadProgressDialog.setMessage("正在下载资料列表...");
             // 设置最大更新下载数据量
-            mDownloadProgressDialog.setMax(MAX_DOWNLOAD_COUNT);
+            mDownloadProgressDialog.setMax(Constant.MAX_DOWNLOAD_COUNT);
         }
         mDownloadProgressDialog.show();
     }
@@ -249,14 +250,18 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
      * Progress：后台任务执行的百分比
      * Result：返回值类型，和doInBackground（）方法的返回值类型保持一致
      */
-    class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
-        private int mUpdateID = 0;
+   class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
+
+        private int updataCnt = 0;
+        private int sucessCnt = 0;
+        private int failedCnt = 0;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // 重置状态计数器
-            mUpdateID = 0;
+            updataCnt = 0;
+            sucessCnt = 0;
+            failedCnt = 0;
 
             // MainThread 强制更新后台数据
             showProgressDialog();
@@ -295,38 +300,62 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             // MainThread
         }
 
-        @Override
-        public void downloadFinish() {
-            ++mUpdateID;
-            LogUtil.trace("mUpdateID:" + mUpdateID);
-
-            Message finishMsg = Message.obtain();
-            if (mUpdateID == 4) {
-                finishMsg.what = DOWNLOAD_DONE;
-            } else {
-                finishMsg.what = DOWNLOAD_SUCCESS;
-            }
-            finishMsg.arg1 = mUpdateID;
-
-            mHandler.sendMessage(finishMsg);
+        public  void startDownload(int infoId) {
+            LogUtil.trace("startDownload " + infoId);
+            Message startMsg = Message.obtain();
+            startMsg.what = Constant.STARTDOWNLOAD_INFO + infoId;
+            startMsg.arg1 = infoId;
+            mHandler.sendMessage(startMsg);
         }
 
         @Override
-        public void downLoadError(String errorMsg) {
-            LogUtil.trace("errorMsg: " + errorMsg);
-            // 防止异常
-            ++mUpdateID;
+        public void downloadFinish(int infoId) {
+            updataCnt++;
+            LogUtil.trace("downloadFinish " + infoId);
+            Message dlInfoMsg = Message.obtain();
+            dlInfoMsg.what = Constant.DOWNLOAD_INFO_SUCCESS + infoId;
+            mHandler.sendMessage(dlInfoMsg);
 
-            Message finishMsg = Message.obtain();
-            if (mUpdateID == 4) {
-                finishMsg.what = DOWNLOAD_DONE;
-            } else {
-                finishMsg.what = DOWNLOAD_SUCCESS;
-            }
-            finishMsg.arg1 = mUpdateID;
-
-            mHandler.sendMessage(finishMsg);
+            Message dlSuccessMsg = Message.obtain();
+            dlSuccessMsg.what = Constant.DOWNLOAD_SUCCESS;
+            dlSuccessMsg.arg1 = infoId;
+            mHandler.sendMessage(dlSuccessMsg);
         }
+
+        @Override
+        public void updateDataFinish(int infoId) {
+                sucessCnt++;
+                LogUtil.trace("updateDataFinish" + + infoId);
+                Message updateMsg = Message.obtain();
+                updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
+                updateMsg.arg1 = infoId;
+                mHandler.sendMessage(updateMsg);
+
+                if(updataCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                    Message alldone = Message.obtain();
+                    alldone.what = Constant.DO_ALL_FINISH;
+                    mHandler.sendMessage(alldone);
+                }
+
+            }
+
+        @Override
+        public void downLoadError(int infoId, String errorMsg) {
+            updataCnt++;
+            failedCnt++;
+            LogUtil.trace("infoId " + infoId + " errorMsg: " + errorMsg);
+            Message errMsg = Message.obtain();
+            errMsg.what = Constant.UPDATE_DATA_FAILED + infoId;
+            errMsg.arg1 = infoId;
+            mHandler.sendMessage(errMsg);
+
+            Message dlFaildMsg = Message.obtain();
+            dlFaildMsg.what = Constant.DOWNLOAD_FAILED;
+            dlFaildMsg.arg1 = infoId;
+            mHandler.sendMessage(dlFaildMsg);
+
+        }
+
     }
 
     /**
@@ -344,11 +373,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     }
 
     private final DownloadStatusHandler mHandler = new DownloadStatusHandler(this);
-    private static final int DOWNLOAD_FAILED = 0;
-    private static final int DOWNLOAD_SUCCESS = 1;
-    private static final int DOWNLOAD_DONE = 2;
-    private static final int MAX_DOWNLOAD_COUNT = 4;
-    private static final int MAX_DOWNLOAD_STEP = 1;
 
     private static class DownloadStatusHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
@@ -359,6 +383,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void handleMessage(Message msg) {
+
             MainActivity activity = mActivity.get();
             if (activity == null) {
                 super.handleMessage(msg);
@@ -366,18 +391,87 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             }
 
             switch (msg.what) {
-                case DOWNLOAD_FAILED: {
 
-                    break;
-                }
-                case DOWNLOAD_SUCCESS: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(MAX_DOWNLOAD_STEP);
+                case Constant.DOWNLOAD_FAILED: {
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
                     break;
                 }
 
-                case DOWNLOAD_DONE: {
+                case Constant.DOWNLOAD_SUCCESS: {
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    break;
+                }
+
+                case Constant.UPDATE_SUCCESS: {
+                    break;
+                }
+
+                case Constant.DOWNLOAD_UPDATE_DONE: {
+                    break;
+                }
+
+                case Constant.STARTDOWNLOAD_SALESINFO: {
+                    break;
+                }
+                case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SALESINFO SUCCESS  UpDate db info .....");
+                    break;
+                }
+                case Constant.UPDATE_SALESINFO_DONE: {
+
+                    break;
+                }
+                case Constant.UPDATE_SALESINFO_FAILED: {
+                    break;
+                }
+
+
+                case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
+                    break;
+                }
+                case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD SHIPMENTTYPEINFO SUCCESS  UpDate db info .....");
+                    break;
+                }
+                case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
+                    break;
+                }
+                case Constant.UPDATE_SHIPMENTTYPEINFO_FAILED: {
+                    break;
+                }
+
+
+                case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
+                    break;
+                }
+                case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD LIUCANGTYPEINFO SUCCESS  UpDate db info .....");
+                    break;
+                }
+                case Constant.UPDATE_LIUCANGTYPEINFO_DONE: {
+                    break;
+                }
+                case Constant.UPDATE_LIUCANGTYPEINFO_FAILED: {
+                    break;
+                }
+
+
+                case Constant.STARTDOWNLOAD_VEHICEINFO: {
+                    break;
+                }
+                case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage("DOWNLOAD VEHICEINFO SUCCESS  UpDate db info .....");
+                    break;
+                }
+                case Constant.UPDATE_VEHICEINFO_DONE: {
+                    break;
+                }
+                case Constant.UPDATE_VEHICEINFO_FAILED: {
+                    break;
+                }
+
+                case Constant.DO_ALL_FINISH: {
                     activity.mDownloadProgressDialog.dismiss();
-                    break;
                 }
 
                 default:

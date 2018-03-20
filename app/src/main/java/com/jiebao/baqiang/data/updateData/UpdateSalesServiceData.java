@@ -10,6 +10,7 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.SalesServiceList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileUtil;
@@ -39,6 +40,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
     private IDownloadStatus mDataDownloadStatus;
 
     private UpdateSalesServiceData() {
+        infoId = Constant.SALESINFO_ID;
     }
 
     public static UpdateSalesServiceData getInstance() {
@@ -71,6 +73,9 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onSuccess(String saleServices) {
+
+                mDataDownloadStatus.downloadFinish(infoId);
+
                 // 创建Gson对象时，指定时间格式
                 Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
                 final SalesServiceList salesServiceList = gson.fromJson(saleServices,
@@ -89,7 +94,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
             @Override
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
-                mDataDownloadStatus.downLoadError(TAG + ": " + throwable.getMessage());
+                mDataDownloadStatus.downLoadError(infoId, TAG + ": " + throwable.getMessage());
             }
 
             @Override
@@ -102,6 +107,8 @@ public class UpdateSalesServiceData extends UpdateInterface {
                 LogUtil.trace();
             }
         });
+
+        mDataDownloadStatus.startDownload(infoId);
     }
 
     /**
@@ -143,12 +150,12 @@ public class UpdateSalesServiceData extends UpdateInterface {
                     db.save(salesService);
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(exception.getLocalizedMessage());
+                    mDataDownloadStatus.downLoadError(infoId,exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }
             // 数据更新正常，状态反馈
-            mDataDownloadStatus.downloadFinish();
+            mDataDownloadStatus.updateDataFinish(infoId);
             LogUtil.trace("--- save SalesService data over ---");
         }
 

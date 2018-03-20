@@ -10,6 +10,11 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 public class UpdateInterface {
 
+    public int infoId = 0;
+
+    public int getInfoID() {
+        return infoId;
+    }
     public static String salesId = SharedUtil.getString(BaqiangApplication
             .getContext(), Constant.PREFERENCE_KEY_SALE_SERVICE);
     public static String userName = salesId + SharedUtil.getString

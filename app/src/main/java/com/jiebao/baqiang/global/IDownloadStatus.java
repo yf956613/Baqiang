@@ -5,8 +5,8 @@ package com.jiebao.baqiang.global;
  */
 
 public interface IDownloadStatus {
-
-    void downloadFinish();
-
-    void downLoadError(String errorMsg);
+    void startDownload(int id);
+    void downloadFinish(int id);
+    void updateDataFinish(int id);
+    void downLoadError(int id, String errorMsg);
 }
