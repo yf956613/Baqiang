@@ -17,9 +17,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.FajianAdatper;
+import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 import com.jiebao.baqiang.data.bean.LiucangBean;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
@@ -62,8 +62,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     private UploadServerFile mUploadServerFile;
 
     // 用于更新ListView界面数据
-    private List<FajianListViewBean> mListData;
-    private FajianAdatper mFajianAdapter;
+    private List<ScannerListViewBean> mListData;
+    private ScannerBaseAdatper mFajianAdapter;
     // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
     private Vibrator mDeviceVibrator;
@@ -155,7 +155,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                 .toString());
 
         mListData = new ArrayList<>();
-        mFajianAdapter = new FajianAdatper(LiucangActivity.this, mListData);
+        mFajianAdapter = new ScannerBaseAdatper(LiucangActivity.this, mListData);
     }
 
     /**
@@ -231,8 +231,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    ScannerListViewBean fajianListViewBean = new ScannerListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
                     fajianListViewBean.setScannerData(data.get(index)
@@ -403,7 +402,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         LogUtil.trace("333");
 
         // 4. 更新ListView的数据
-        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
+        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
         mFajianListViewBean.setId(++mScanCount);
         mFajianListViewBean.setScannerData(barcode);
         mFajianListViewBean.setStatus("未上传");

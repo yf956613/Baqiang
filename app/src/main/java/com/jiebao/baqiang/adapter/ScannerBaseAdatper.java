@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ import java.util.List;
  * 发件对应的Adapter
  */
 
-public class FajianAdatper extends BaseAdapter {
+public class ScannerBaseAdatper extends BaseAdapter {
     private LayoutInflater mInflater;
-    private List<FajianListViewBean> mData;
+    private List<ScannerListViewBean> mData;
 
-    public FajianAdatper(Context cxt, List<FajianListViewBean> mData) {
+    public ScannerBaseAdatper(Context cxt, List<ScannerListViewBean> mData) {
         mInflater = LayoutInflater.from(cxt);
         this.mData = mData;
     }
@@ -60,7 +60,7 @@ public class FajianAdatper extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FajianListViewBean bean = mData.get(position);
+        ScannerListViewBean bean = mData.get(position);
         // TODO 此处序号为int类型数值，填充时需要转为String
         holder.mTvID.setText("" + bean.getId());
         holder.mTvScannerData.setText(bean.getScannerData());

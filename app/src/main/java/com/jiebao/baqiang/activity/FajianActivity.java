@@ -17,9 +17,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.FajianAdatper;
+import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.ShipmentType;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
@@ -60,8 +60,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     private UploadServerFile mShipmentUploadFile;
 
     // 用于更新ListView界面数据
-    private List<FajianListViewBean> mListData;
-    private FajianAdatper mFajianAdapter;
+    private List<ScannerListViewBean> mListData;
+    private ScannerBaseAdatper mFajianAdapter;
     // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
 
@@ -204,7 +204,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
 
         // 用于显示扫描列表的信息
         mListData = new ArrayList<>();
-        mFajianAdapter = new FajianAdatper(FajianActivity.this, mListData);
+        mFajianAdapter = new ScannerBaseAdatper(FajianActivity.this, mListData);
     }
 
     /**
@@ -449,7 +449,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         mEtShipmentNumber.setText(barcode);
 
         // 4. 更新ListView的数据
-        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
+        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
         // TODO 一旦删除记录，则及时更新ID值
         mFajianListViewBean.setId(++mScanCount);
         mFajianListViewBean.setScannerData(barcode);
@@ -785,8 +785,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    ScannerListViewBean fajianListViewBean = new ScannerListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
                     fajianListViewBean.setScannerData(data.get(index)

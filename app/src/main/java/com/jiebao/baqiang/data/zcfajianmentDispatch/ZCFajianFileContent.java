@@ -7,7 +7,7 @@ import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
 /**
- * 封装发件功能中，待存储文件中每一个内容，文件内容编码为：gb2312
+ * 封装 装车发件 功能中，待存储文件中每一个内容，文件内容编码为：gb2312
  * <p>
  * 同时，作为SQLite数据表存储的JavaBean
  */

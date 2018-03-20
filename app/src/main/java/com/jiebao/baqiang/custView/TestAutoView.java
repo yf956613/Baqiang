@@ -31,9 +31,10 @@ public class TestAutoView extends android.support.v7.widget.AppCompatAutoComplet
 
     @Override
     protected void replaceText(CharSequence text) {
+        LogUtil.trace("text:" + text);
+
         clearComposingText();
 
-        LogUtil.trace("text:" + text);
         String[] arr = text.toString().split("  ");
         if (arr != null && arr.length >= 2) {
             setText(arr[1]);

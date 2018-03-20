@@ -1,6 +1,6 @@
 package com.jiebao.baqiang.data.bean;
 
-public class FajianListViewBean {
+public class ScannerListViewBean {
     // 序号
     private int id;
     // 单号
@@ -8,9 +8,9 @@ public class FajianListViewBean {
     // 数据是否上传的状态标识（value：已上传；未上传）
     private String status;
 
-    public FajianListViewBean(){}
+    public ScannerListViewBean(){}
 
-    public FajianListViewBean(int id, String scannerData, String status) {
+    public ScannerListViewBean(int id, String scannerData, String status) {
         this.id = id;
         this.scannerData = scannerData;
         this.status = status;

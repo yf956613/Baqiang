@@ -1,8 +1,11 @@
 package com.jiebao.baqiang.data.db;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.AsyThreadFactory;
 import com.jiebao.baqiang.util.LogUtil;
 
@@ -50,9 +53,9 @@ public class BQDataBaseHelper {
 
                 @Override
                 public void onTableCreated(DbManager dbManager, TableEntity<?> tableEntity) {
-                    LogUtil.e(TAG, "start to create table...");
+                    LogUtil.d(TAG, "start to create table...");
                     String name = tableEntity.getName();
-                    LogUtil.e(TAG, "name:" + name);
+                    LogUtil.d(TAG, "name:" + name);
                 }
             }).setDbOpenListener(new DbManager.DbOpenListener() {
 
@@ -125,12 +128,79 @@ public class BQDataBaseHelper {
 
     /**
      * 数据库的初始版本升级到Version:2
-     *
+     * <p>
      * 修改部分：liucangjian表中增加字段：是否可用，其值可选为：可用和不可用
      *
      * @param db
      */
     private static void upgradeToVersion2(DbManager db) {
 
+    }
+
+    /**
+     * 查询数据库文件中是否有对应表
+     *
+     * @return false：没有该数据表；true：存在该数据表
+     */
+    public static boolean tableIsExist(String tableName) {
+        boolean result = false;
+
+        if (tableName == null) {
+            return false;
+        }
+
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = dbManager.getDatabase();
+            // 查询内置sqlite_master表，判断是否创建了对应表
+            String sql = "select count(*) from sqlite_master where type " + "='table' and name "
+                    + "='" + tableName.trim() + "' ";
+            cursor = db.rawQuery(sql, null);
+            if (cursor.moveToNext()) {
+                int count = cursor.getInt(0);
+                if (count > 0) {
+                    result = true;
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.trace(e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
+     * 检查基础数据库数据是否正常，与之对应的是，下载网点、快件类型、车辆码信息是否正常
+     *
+     * @return true：基础数据库正常；false：异常
+     */
+    public static boolean checkBaseDB() {
+        boolean isTableExist = false;
+        isTableExist = tableIsExist(Constant.DB_TABLE_NAME_VEHICLE_INFO);
+        if (!isTableExist) {
+            return false;
+        }
+
+        isTableExist = tableIsExist(Constant.DB_TABLE_NAME_LIU_CANG);
+        if (!isTableExist) {
+            return false;
+        }
+
+        isTableExist = tableIsExist(Constant.DB_TABLE_NAME_SALE_SERVICE);
+        if (!isTableExist) {
+            return false;
+        }
+
+        isTableExist = tableIsExist(Constant.DB_TABLE_NAME_SHIPMENT_TYPE);
+        if (!isTableExist) {
+            return false;
+        }
+
+        // FIXME 增加其他基础数据信息校验
+
+        LogUtil.trace("database is ok...");
+        return true;
     }
 }

@@ -17,11 +17,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.FajianAdatper;
+import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileName;
-import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
@@ -65,8 +65,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     private UploadServerFile mUploadServerFile;
 
     // 用于更新ListView界面数据，复用发件功能
-    private List<FajianListViewBean> mListData;
-    private FajianAdatper mFajianAdapter;
+    private List<ScannerListViewBean> mListData;
+    private ScannerBaseAdatper mFajianAdapter;
     // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
 
@@ -168,7 +168,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 .toString());
 
         mListData = new ArrayList<>();
-        mFajianAdapter = new FajianAdatper(DaojianActivity.this, mListData);
+        mFajianAdapter = new ScannerBaseAdatper(DaojianActivity.this, mListData);
     }
 
     /**
@@ -263,8 +263,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
                     // TODO 共用发件的ListView javaBean
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    ScannerListViewBean fajianListViewBean = new ScannerListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
                     fajianListViewBean.setScannerData(data.get(index)
@@ -539,7 +538,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         mEtDeliveryNumber.setText(barcode);
 
         // 4. 更新ListView的数据
-        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
+        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
         mFajianListViewBean.setId(++mScanCount);
         mFajianListViewBean.setScannerData(barcode);
         mFajianListViewBean.setStatus("未上传");

@@ -188,4 +188,13 @@ public class Constant {
     public static final String DB_TABLE_NAME_LOAD_SEND = "zcfajian";
     // 发件表名
     public static final String DB_TABLE_NAME_SHIPMENT = "fajian";
+
+    // 基础数据：车辆信息
+    public static final String DB_TABLE_NAME_VEHICLE_INFO = "vehicleinfo";
+    // 基础数据：留仓信息
+    public static final String DB_TABLE_NAME_LIU_CANG = "liucang";
+    // 基础数据：网点信息
+    public static final String DB_TABLE_NAME_SALE_SERVICE = "salesservice";
+    // 基础数据：快件类型
+    public static final String DB_TABLE_NAME_SHIPMENT_TYPE = "shipmenttype";
 }

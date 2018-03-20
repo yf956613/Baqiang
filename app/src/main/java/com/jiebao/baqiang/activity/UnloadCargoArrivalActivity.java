@@ -17,11 +17,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.FajianAdatper;
+import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileName;
-import com.jiebao.baqiang.data.bean.FajianListViewBean;
+import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.bean.VehicleInfo;
@@ -63,8 +63,8 @@ public class UnloadCargoArrivalActivity extends
     private UploadServerFile mUploadServerFile;
 
     // 用于更新ListView界面数据，复用发件功能
-    private List<FajianListViewBean> mListData;
-    private FajianAdatper mFajianAdapter;
+    private List<ScannerListViewBean> mListData;
+    private ScannerBaseAdatper mFajianAdapter;
 
     // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
@@ -207,7 +207,7 @@ public class UnloadCargoArrivalActivity extends
                 mUnloadArrivalFileContent.toString());
 
         mListData = new ArrayList<>();
-        mFajianAdapter = new FajianAdatper(UnloadCargoArrivalActivity.this,
+        mFajianAdapter = new ScannerBaseAdatper(UnloadCargoArrivalActivity.this,
                 mListData);
     }
 
@@ -314,8 +314,7 @@ public class UnloadCargoArrivalActivity extends
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    FajianListViewBean fajianListViewBean = new
-                            FajianListViewBean();
+                    ScannerListViewBean fajianListViewBean = new ScannerListViewBean();
                     // TODO 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
                     fajianListViewBean.setScannerData(data.get(index)
@@ -463,7 +462,7 @@ public class UnloadCargoArrivalActivity extends
         mEtDeliveryNumber.setText(barcode);
 
         // 4. 更新ListView的数据
-        FajianListViewBean mFajianListViewBean = new FajianListViewBean();
+        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
         mFajianListViewBean.setId(++mScanCount);
         mFajianListViewBean.setScannerData(barcode);
         mFajianListViewBean.setStatus("未上传");

@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
+import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.global.PermissionSettingManager;
@@ -38,6 +39,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     private static final String TAG = "DataCollectActivity";
 
     private String mLoginUrl = "";
+
+    private boolean isDBBaseExist = false;
 
 
     // 装车发件
@@ -239,7 +242,7 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     @Override
     protected void onResume() {
         super.onResume();
-        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
+
         mBtnLoadSend.setFocusable(true);
         mBtnLoadSend.setFocusableInTouchMode(true);
         mBtnLoadSend.requestFocus();
@@ -251,7 +254,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         // 装车发件
         mBtnLoadSend.setOnClickListener(this);
         mBtnLoadSend.setOnFocusChangeListener(mLlFocusChangeListener);
-        // TODO 让容器默认获得焦点，渲染背景，选择第一个项目
         mBtnLoadSend.setFocusable(true);
         mBtnLoadSend.setFocusableInTouchMode(true);
         mBtnLoadSend.requestFocus();
@@ -316,6 +318,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         // 托盘拆分
         mBtnTrayUnBinding.setOnClickListener(this);
         mBtnTrayUnBinding.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        isDBBaseExist = BQDataBaseHelper.checkBaseDB();
     }
 
     /**
@@ -342,6 +346,12 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @Override
     public void onClick(View view) {
+        if (!isDBBaseExist) {
+            Toast.makeText(DataCollectActivity.this, "资料信息数据库异常，请重新下载数据资料", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
         switch (view.getId()) {
             // 装车发件
             case R.id.btn_load_send: {
@@ -385,8 +395,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     protected void handler(Message msg) {
         switch (msg.what) {
             case Constant.QUERY_DEVICE_ID:
-//                deviceIdTv.setText(getString(R.string.device_id)
-//                        + new String((byte[]) msg.obj));
                 break;
         }
     }
@@ -437,7 +445,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
      * 到件
      */
     private void daojian() {
-        // TODO 功能测试
         Intent intent = new Intent(this, DaojianActivity.class);
         startActivity(intent);
     }
@@ -468,7 +475,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         params.addQueryStringParameter("password", pwd);
         LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " + "pwd:" + pwd);
 
-        // TODO 从日志看出，下述回调都是在MainThread运行的
         final Callback.Cancelable post = x.http().post(params, new Callback
                 .CommonCallback<String>() {
 
