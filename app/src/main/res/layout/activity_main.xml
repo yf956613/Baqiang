@@ -60,7 +60,6 @@
                     android:background="@drawable/goods_storage_selector" />
 
                 <TextView
-                    android:id="@+id/tv_purin"
                     style="@style/ItemNameTextStyle"
                     android:text="2.查询" />
 

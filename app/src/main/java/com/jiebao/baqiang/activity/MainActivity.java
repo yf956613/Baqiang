@@ -173,7 +173,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         mBtnDataCollect.setOnClickListener(this);
         mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        mBtnQuery.setOnClickListener(this);
         mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+
         mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
@@ -199,12 +201,21 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 break;
             }
 
+            case R.id.btn_query:{
+                Intent intent = new Intent(MainActivity.this, BussinessQueryActivity.class);
+                MainActivity.this.startActivity(intent);
+
+                break;
+            }
+
             case R.id.btn_settings: {
                 Intent intent = new Intent(MainActivity.this, DetailMainSettingsActivity.class);
                 MainActivity.this.startActivity(intent);
 
                 break;
             }
+
+
         }
     }
 
@@ -315,7 +326,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         }
 
     }
-
 
     /**
      * 异步下载任务
@@ -493,7 +503,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             }
 
             switch (msg.what) {
-
                 case Constant.DOWNLOAD_SERVERINFO_SUCCESS: {
                     //update system time
                     String time = ServerInfo.getInstance().getServerTime();
@@ -574,7 +583,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 case Constant.UPDATE_SALESINFO_FAILED: {
                     break;
                 }
-
 
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
                     break;

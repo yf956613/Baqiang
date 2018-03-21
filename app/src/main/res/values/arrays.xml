@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bussiness_types">
+        <item>装车发件</item>
+        <item>卸车到件</item>
+        <item>到件</item>
+        <item>发件</item>
+        <item>留仓件</item>
+    </string-array>
+</resources>

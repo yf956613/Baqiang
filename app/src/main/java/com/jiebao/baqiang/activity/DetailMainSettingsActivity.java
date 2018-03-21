@@ -64,7 +64,7 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
                     break;
                 }
 
-                case R.id.btn_upload: {
+                case R.id.btn_redo_scan: {
                     setLinearLayoutBackground(mLlRedoScan, hasFocus);
                     break;
                 }
@@ -101,6 +101,9 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
     private void initListener() {
         mBtnAutoUploadTime.setOnClickListener(this);
         mBtnAutoUploadTime.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        mBtnSignSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnRedoScan.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 让容器默认获得焦点，渲染背景，选择第一个项目
         mBtnAutoUploadTime.setFocusable(true);

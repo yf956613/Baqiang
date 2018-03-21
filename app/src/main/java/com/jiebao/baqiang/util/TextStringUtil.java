@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -133,6 +134,39 @@ public class TextStringUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取当前时间
+     *
+     * @param timeType 类型值：用于获取 年 月 日 时 分 秒
+     * @return
+     */
+    public static int getCurrentTimeArray(int timeType) {
+        Calendar currentTime = Calendar.getInstance();
+
+        switch (timeType) {
+            case Calendar.YEAR: {
+                return currentTime.get(Calendar.YEAR);
+            }
+            case Calendar.MONTH: {
+                return currentTime.get(Calendar.MONTH);
+            }
+            case Calendar.DAY_OF_MONTH: {
+                return currentTime.get(Calendar.DAY_OF_MONTH);
+            }
+            case Calendar.HOUR_OF_DAY: {
+                return currentTime.get(Calendar.HOUR_OF_DAY);
+            }
+            case Calendar.MINUTE: {
+                return currentTime.get(Calendar.MINUTE);
+            }
+            case Calendar.SECOND: {
+                return currentTime.get(Calendar.SECOND);
+            }
+        }
+
+        return 1;
     }
 
 
