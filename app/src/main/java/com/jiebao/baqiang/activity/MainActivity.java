@@ -171,13 +171,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
     private void initListener() {
         mBtnDataCollect.setOnClickListener(this);
-
         mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
+
         mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
         mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        mBtnSettings.setOnClickListener(this);
         mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
 
         // 让容器默认获得焦点，渲染背景，选择第一个项目
@@ -192,6 +194,13 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         switch (v.getId()) {
             case R.id.btn_data_collect: {
                 Intent intent = new Intent(MainActivity.this, DataCollectActivity.class);
+                MainActivity.this.startActivity(intent);
+
+                break;
+            }
+
+            case R.id.btn_settings: {
+                Intent intent = new Intent(MainActivity.this, DetailMainSettingsActivity.class);
                 MainActivity.this.startActivity(intent);
 
                 break;
@@ -445,7 +454,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             v.setBackgroundResource(R.color.bg_transparent);
         }
     }
-
 
     private int resolveServerAppVersionCode(String versionInfo) {
         String[] array = versionInfo.split("_");

@@ -2,7 +2,7 @@ package com.jiebao.baqiang.global;
 
 public class Constant {
     // 调试阶段开关
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
 
     // 连续扫描延时，单位：ms
     public final static int TIME_SCAN_DELAY = 5000;
@@ -270,4 +270,8 @@ public class Constant {
     public static final String PREFERENCE_NAME_FJ = "unload_number_records_fj";
     // SP存储未上传记录数：留仓件
     public static final String PREFERENCE_NAME_LCJ = "unload_number_records_lcj";
+
+    // 自动上传记录
+    public static final String AUTO_ACTION_UPLOAD_RECORDS = "android.intent.action.jiebao.upload" +
+            ".records";
 }

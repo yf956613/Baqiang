@@ -108,6 +108,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
 
+        <activity
+            android:name=".activity.DetailMainSettingsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -119,6 +124,12 @@
         </provider>
 
         <service android:name="com.jiebao.baqiang.service.DownLoadApkFileService" />
+
+        <receiver android:name=".receiver.AutoUploadRecords">
+            <intent-filter>
+                <action android:name="android.intent.action.jiebao.upload.records" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

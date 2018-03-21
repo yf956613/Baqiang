@@ -1,8 +1,12 @@
 package com.jiebao.baqiang.application;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -32,28 +36,14 @@ public class BaqiangApplication extends Application {
     private static String downloadFileDir = null;
 
     private static String adminDir = null;
-    public static String deviceId = "";
-    public static double longitude;
-    public static double latitude;
     public static String versionChars;
-    public static Activity mTopActivity;//看见的Activity
+    public static Activity mTopActivity;
     public static boolean isSoftDecodeScan = false;
 
     public static UIHandler handler = new UIHandler(Looper.getMainLooper());
 
     public static Context getContext() {
         return mContext;
-    }
-
-    public static String getDeviceId() {
-//        if(StringUtil.isEmpty(deviceId)) {
-//            SharedPreferences sharedPreferences = BaqiangApplication.getContext().getSharedPreferences(Constant.PREFERENCE_KEY_SYSTEM_ARG, Context.MODE_PRIVATE);
-//            String deviceId = sharedPreferences.getString(Constant.PREFERENCE_KEY_DEVICE_ID, "");
-//            if(!StringUtil.isEmpty(deviceId)) {
-//                return deviceId;
-//            }
-//        }
-        return deviceId.replace("\n", "").trim();
     }
 
     public static String getFormatStr(int strId, Object... args) {
@@ -65,35 +55,58 @@ public class BaqiangApplication extends Application {
         return mContext.getString(strId);
     }
 
-    /**
-     * 主线程Handler
-     */
     private static Handler mMainThreadHandler;
 
     public static Handler getmMainThreadHandler() {
         return mMainThreadHandler;
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+
         initPath();
         loadProperty(mContext);
+
         mMainThreadHandler = new Handler(getMainLooper());
 
         isSoftDecodeScan = FileUtil.exist("/dev/moto_sdl");
         //LogcatHelper.getInstance(this).start();
         versionChars = AppUtil.getAppVersionName(mContext);
 
-        // Xutils框架初始化
         x.Ext.init(this);
-        // 输出debug日志，开启会影响性能
         x.Ext.setDebug(false);
+
+        initAutoUploadRecords();
+    }
+
+    private void initAutoUploadRecords() {
+        AlarmManager mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
+
+        int tenMinutes = 1 * 60 * 1000;
+        long triggerAtMillis = System.currentTimeMillis() + tenMinutes;
+        long intervalMillis = 1 * 60 * 1000;
+        int requestCode = 0;
+
+        Intent intent = new Intent();
+        intent.setAction(Constant.AUTO_ACTION_UPLOAD_RECORDS);
+        PendingIntent mPendingIntent = PendingIntent.getBroadcast(this, requestCode, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /**
+         * int type：闹钟类型 AlarmManager.RTC_WAKEUP 使用绝对时间
+         * long triggerAtMillis：闹钟首次执行时间，如果设置为（绝对时间）System.currentTimeMillis()会默认在5秒后执行首次
+         *                          如果设置成System.currentTimeMillis() + 20 * 1000，首次执行在20秒后
+         * long intervalMillis：两次执行时间间隔
+         * PendingIntent operation：闹钟响应动作
+         */
+        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, intervalMillis,
+                mPendingIntent);
     }
 
     public static void initPath() {
         String baseRootPath = File.separator + Constant.APP_NAME + File.separator;
-        // 默认DB目录.
         String dbPath = baseRootPath + Constant.DB_DIR;
 
         String importDir = baseRootPath + Constant.IMPORT_DIR;
@@ -106,8 +119,7 @@ public class BaqiangApplication extends Application {
                 return;
             } else {
                 File root = FileUtil.getRootDirectory();
-                File baseDir = new File(root.getAbsolutePath()
-                        + baseRootPath);
+                File baseDir = new File(root.getAbsolutePath() + baseRootPath);
                 if (!baseDir.exists()) {
                     baseDir.mkdirs();
                 }
@@ -118,31 +130,27 @@ public class BaqiangApplication extends Application {
                 }
                 dbDir = dbDirFile.getPath() + File.separator;
 
-                File dir = new File(root.getAbsolutePath()
-                        + importDir);
+                File dir = new File(root.getAbsolutePath() + importDir);
 
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
                 importFileDir = dir.getPath() + File.separator;
 
-                File exDir = new File(root.getAbsolutePath()
-                        + exportDir);
+                File exDir = new File(root.getAbsolutePath() + exportDir);
 
                 if (!exDir.exists()) {
                     exDir.mkdirs();
                 }
                 exportFileDir = exDir.getPath() + File.separator;
 
-                File downloadDir = new File(root.getAbsolutePath()
-                        + downloadPath);
+                File downloadDir = new File(root.getAbsolutePath() + downloadPath);
                 if (!dbDirFile.exists()) {
                     dbDirFile.mkdirs();
                 }
                 downloadFileDir = downloadDir.getPath();// + File.separator;
 
-                File administratorDir = new File(root.getAbsolutePath()
-                        + adminPath);
+                File administratorDir = new File(root.getAbsolutePath() + adminPath);
                 if (!administratorDir.exists()) {
                     administratorDir.mkdirs();
                 }
@@ -192,7 +200,7 @@ public class BaqiangApplication extends Application {
         prop = new Properties();
         try {
             File config = new File(getAdminDir() + Constant.CONFIG);
-            if(!config.exists()){
+            if (!config.exists()) {
                 config.createNewFile();
                 String initConfig = Constant.getInitConfig();
                 FileOutputStream outputStream = new FileOutputStream(config);
@@ -205,31 +213,16 @@ public class BaqiangApplication extends Application {
         }
     }
 
-    public static boolean getUseCamera(){
-        String value =  prop.getProperty(Constant.ARG_USE_CAMERA,"0");
-//        if(StringUtil.isNumeric(value)){
-//            return Integer.valueOf(value) == 1;
-//        }
-        return false;
-    }
 
-    public static int getOperateType(){
-        String value =  prop.getProperty(Constant.ARG_OPERATE_TYPE,"1");
+    public static int getOperateType() {
+        String value = prop.getProperty(Constant.ARG_OPERATE_TYPE, "1");
 //        if(StringUtil.isNumeric(value)){
 //            return Integer.valueOf(value);
 //        }
         return 1;
     }
 
-    public static int getBillRows(){
-        String value =  prop.getProperty(Constant.ARG_BILL_ROWS,"50");
-//        if(StringUtil.isNumeric(value)){
-//            return Integer.valueOf(value);
-//        }
-        return 50;
-    }
-
-    public static boolean isDebug(){
+    public static boolean isDebug() {
         return true;
     }
 }
