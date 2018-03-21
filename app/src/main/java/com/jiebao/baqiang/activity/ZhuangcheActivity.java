@@ -33,6 +33,7 @@ import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
@@ -304,8 +305,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
         boolean isInsertSuccess = insertForScanner(barcode);
         updateUIForScanner(barcode);
+        LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
         if (isInsertSuccess) {
-            searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+            increaseOrDecreaseRecords(1);
         }
 
         triggerForScanner();
@@ -505,8 +507,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     ZcFajianDBHelper.deleteFindedBean(mListData.get(0).getScannerData());
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
                             .getScannerData(), 0);
-
-                    searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+                    increaseOrDecreaseRecords(0);
                 }
             });
             normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -544,8 +545,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     ZcFajianDBHelper.deleteFindedBean(mListData.get(position).getScannerData());
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, mListData.get
                             (position).getScannerData(), position);
-
-                    searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+                    increaseOrDecreaseRecords(0);
                 }
             });
             normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -645,8 +645,12 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                                         WhereBuilder whereBuilder = WhereBuilder.b();
                                         whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
                                         whereBuilder.and("是否可用", "=", "可用");
-                                        db.update(ZCFajianFileContent.class, whereBuilder, new
-                                                KeyValue("是否上传", "已上传"));
+                                        int record = db.update(ZCFajianFileContent.class,
+                                                whereBuilder, new KeyValue("是否上传", "已上传"));
+
+                                        if (1 == record) {
+                                            increaseOrDecreaseRecords(0);
+                                        }
                                     } else {
                                         LogUtil.trace("写入文件失败");
                                     }
@@ -672,6 +676,34 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         }
 
         ZhuangcheActivity.this.finish();
+    }
+
+    /**
+     * 增加或减少未上传记录数，记录数存储在SP中
+     *
+     * @param actionType 0：减少；1：增加
+     */
+    private void increaseOrDecreaseRecords(int actionType) {
+        int unloadRecords = SharedUtil.getInt(ZhuangcheActivity.this, Constant
+                .PREFERENCE_NAME_ZCFJ);
+        LogUtil.trace("unloadRecords:" + unloadRecords);
+
+        switch (actionType) {
+            case 0: {
+                --unloadRecords;
+
+                break;
+            }
+            case 1: {
+                ++unloadRecords;
+                break;
+            }
+        }
+
+        SharedUtil.putInt(ZhuangcheActivity.this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
     }
 
 }

@@ -43,6 +43,7 @@ import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.scan.ScanListener;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
@@ -179,6 +180,9 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                     syncViewAfterUpload();
 
                     Toast.makeText(this, "数据上传成功", Toast.LENGTH_SHORT).show();
+
+                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                            .SYNC_UNLOAD_DATA_TYPE_ALL));
                 }
             }
         }
@@ -463,18 +467,15 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         super.onResume();
 
         // FIXME
-        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL));
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                .SYNC_UNLOAD_DATA_TYPE_ALL));
 
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
-            LogUtil.trace("This Device is support Scanner function...");
-
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
             ScanHelper.getInstance().setScanListener(this.getClass().getName(), mScanListener,
                     isActivityNeedFocus);
-
-            LogUtil.trace();
         }
     }
 
@@ -635,10 +636,66 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     }
 
     /**
-     * BaseActivity中查询所有表的未上传数据
+     * 根据Type值，查询对应未上传数，更新TextView内容
+     *
+     * @param updateType
+     * @return
      */
-    public int searchUnloadDataForUpdate(int updateFile) {
-        int unloadDataRecords = 0;
+    public int searchUnloadDataForUpdate(int updateType) {
+        int unloadRecords = 0;
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_ZCFJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_XCDJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_DJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_FJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_LCJ);
+
+        /*DbManager db = BQDataBaseHelper.getDb();
+        switch (updateType) {
+            case Constant.SYNC_UNLOAD_DATA_TYPE_ALL: {
+                break;
+            }
+
+            case Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ: {
+                try {
+                    // 装车发件：查询数据库中标识位“未上传”的记录
+                    List<ZCFajianFileContent> zCFajianData = db.selector(ZCFajianFileContent
+                            .class).where("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
+                    if (zCFajianData != null && zCFajianData.size() != 0) {
+                        SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, zCFajianData.size());
+                    }
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            }
+
+            case Constant.SYNC_UNLOAD_DATA_TYPE_XCDJ: {
+                break;
+            }
+
+            case Constant.SYNC_UNLOAD_DATA_TYPE_DJ: {
+                break;
+            }
+
+            case Constant.SYNC_UNLOAD_DATA_TYPE_FJ: {
+                break;
+            }
+
+            case Constant.SYNC_UNLOAD_DATA_TYPE_LCJ: {
+                break;
+            }
+
+            default:
+                break;
+        }*/
+
+        /*int unloadDataRecords = 0;
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
@@ -679,9 +736,10 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             }
         } catch (DbException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        return unloadDataRecords;
+        LogUtil.trace("unloadRecords:" + unloadRecords);
+        return unloadRecords;
     }
 
     @Override

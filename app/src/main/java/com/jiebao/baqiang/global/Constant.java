@@ -130,15 +130,18 @@ public class Constant {
     public static final int STARTDOWNLOAD_INFO = 100;
     public static final int STARTDOWNLOAD_SERVERINFO = STARTDOWNLOAD_INFO + SERVER_INFO_ID;
     public static final int STARTDOWNLOAD_SALESINFO = STARTDOWNLOAD_INFO + SALESINFO_ID;
-    public static final int STARTDOWNLOAD_SHIPMENTTYPEINFO = STARTDOWNLOAD_INFO + SHIPMENTTYPEINFO_ID;
+    public static final int STARTDOWNLOAD_SHIPMENTTYPEINFO = STARTDOWNLOAD_INFO +
+            SHIPMENTTYPEINFO_ID;
     public static final int STARTDOWNLOAD_LIUCANGTYPEINFO = STARTDOWNLOAD_INFO + LIUCANGTYPEINFO_ID;
     public static final int STARTDOWNLOAD_VEHICEINFO = STARTDOWNLOAD_INFO + VEHICEINFO_ID;
 
     public static final int DOWNLOAD_INFO_SUCCESS = 1000;
     public static final int DOWNLOAD_SERVERINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + SERVER_INFO_ID;
     public static final int DOWNLOAD_SALESINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + SALESINFO_ID;
-    public static final int DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + SHIPMENTTYPEINFO_ID;
-    public static final int DOWNLOAD_LIUCANGTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + LIUCANGTYPEINFO_ID;
+    public static final int DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS +
+            SHIPMENTTYPEINFO_ID;
+    public static final int DOWNLOAD_LIUCANGTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS +
+            LIUCANGTYPEINFO_ID;
     public static final int DOWNLOAD_VEHICEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + VEHICEINFO_ID;
 
     public static final int UPDATE_DATA_DONE = 2000;
@@ -151,7 +154,8 @@ public class Constant {
     public static final int UPDATE_DATA_FAILED = 0;
     public static final int UPDATE_SEVERINFO_FAILED = UPDATE_DATA_FAILED - SERVER_INFO_ID;
     public static final int UPDATE_SALESINFO_FAILED = UPDATE_DATA_FAILED - SALESINFO_ID;
-    public static final int UPDATE_SHIPMENTTYPEINFO_FAILED = UPDATE_DATA_FAILED - SHIPMENTTYPEINFO_ID;
+    public static final int UPDATE_SHIPMENTTYPEINFO_FAILED = UPDATE_DATA_FAILED -
+            SHIPMENTTYPEINFO_ID;
     public static final int UPDATE_LIUCANGTYPEINFO_FAILED = UPDATE_DATA_FAILED - LIUCANGTYPEINFO_ID;
     public static final int UPDATE_VEHICEINFO_FAILED = UPDATE_DATA_FAILED - VEHICEINFO_ID;
 
@@ -245,7 +249,25 @@ public class Constant {
 
     // 更新所有记录
     public static final int SYNC_UNLOAD_DATA_TYPE_ALL = 0;
-    // 更新装车发件 未上传数据
+    // 更新装车发件 未上传记录数
     public static final int SYNC_UNLOAD_DATA_TYPE_ZCFJ = SYNC_UNLOAD_DATA_TYPE_ALL + 1;
-    // 更新
+    // 更新卸车到件 未上传记录数
+    public static final int SYNC_UNLOAD_DATA_TYPE_XCDJ = SYNC_UNLOAD_DATA_TYPE_ZCFJ + 1;
+    // 更新到件 未上传记录数
+    public static final int SYNC_UNLOAD_DATA_TYPE_DJ = SYNC_UNLOAD_DATA_TYPE_XCDJ + 1;
+    // 更新发件 未上传记录数
+    public static final int SYNC_UNLOAD_DATA_TYPE_FJ = SYNC_UNLOAD_DATA_TYPE_DJ + 1;
+    // 更新留仓件 未上传记录数
+    public static final int SYNC_UNLOAD_DATA_TYPE_LCJ = SYNC_UNLOAD_DATA_TYPE_FJ + 1;
+
+    // SP存储未上传记录数：装车发件
+    public static final String PREFERENCE_NAME_ZCFJ = "unload_number_records_zcfj";
+    // SP存储未上传记录数：卸车到件
+    public static final String PREFERENCE_NAME_XCDJ = "unload_number_records_xcdj";
+    // SP存储未上传记录数：到件
+    public static final String PREFERENCE_NAME_DJ = "unload_number_records_dj";
+    // SP存储未上传记录数：发件
+    public static final String PREFERENCE_NAME_FJ = "unload_number_records_fj";
+    // SP存储未上传记录数：留仓件
+    public static final String PREFERENCE_NAME_LCJ = "unload_number_records_lcj";
 }
