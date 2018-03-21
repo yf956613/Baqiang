@@ -51,6 +51,14 @@ public class ZCFajianFileContent {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Column(name = "扫描类型编号")
     private String mScannerType;
 

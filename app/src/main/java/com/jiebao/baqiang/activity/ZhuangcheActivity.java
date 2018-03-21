@@ -34,7 +34,6 @@ import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
-import com.jiebao.baqiang.util.TimeUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
@@ -298,43 +297,18 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             mDeviceVibrator.vibrate(1000);
 
             mIsScanRunning = true;
-            Intent intent = new Intent();
-            intent.setAction("com.jb.action.F4key");
-            intent.putExtra("F4key", "down");
-            ZhuangcheActivity.this.sendBroadcast(intent);
-            LogUtil.trace("1: mIsScanRunning=" + mIsScanRunning);
+            triggerForScanner();
 
             return;
         }
 
-        mZcFajianFileContent.setGoodsType("2");
-        mZcFajianFileContent.setScanDate(TextStringUtil.getFormatTimeString());
-        mZcFajianFileContent.setShipmentNumber(barcode);
-        mZcFajianFileContent.setOperateDate(TextStringUtil.getFormatTime());
-        ZcFajianDBHelper.insertDataToDatabase(mZcFajianFileContent);
-
-        mEtDeliveryNumber.setText(barcode);
-
-        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
-        mFajianListViewBean.setId(++mScanCount);
-        mFajianListViewBean.setScannerData(barcode);
-        mFajianListViewBean.setStatus("未上传");
-
-        mListData.add(0, mFajianListViewBean);
-        mScannerBaseAdatper.notifyDataSetChanged();
-
-        if (!mListView.isStackFromBottom()) {
-            mListView.setStackFromBottom(true);
+        boolean isInsertSuccess = insertForScanner(barcode);
+        updateUIForScanner(barcode);
+        if (isInsertSuccess) {
+            searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
         }
-        mListView.setStackFromBottom(false);
 
-        Intent intent = new Intent();
-        intent.setAction("com.jb.action.F4key");
-        intent.putExtra("F4key", "down");
-        ZhuangcheActivity.this.sendBroadcast(intent);
-
-        LogUtil.trace("2: mIsScanRunning=" + mIsScanRunning);
-
+        triggerForScanner();
         mIsScanRunning = true;
     }
 
@@ -349,45 +323,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_ensure: {
-                LogUtil.trace();
-
-                DbManager db = BQDataBaseHelper.getDb();
-                List<ZCFajianFileContent> list = null;
-                try {
-                    list = db.selector(ZCFajianFileContent.class).where("是否上传", "like", "未上传")
-                            .and("是否可用", "=", "可用").findAll();
-                    if (null != list && list.size() != 0) {
-                        mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
-                        if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                            mZcfajianUploadFile = new UploadServerFile(mZcFajianDispatchFileName
-                                    .getFileInstance());
-                            for (int index = 0; index < list.size(); index++) {
-                                ZCFajianFileContent javaBean = list.get(index);
-                                String content = javaBean.getmCurrentValue() + "\r\n";
-                                if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                                    WhereBuilder whereBuilder = WhereBuilder.b();
-                                    whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                                    whereBuilder.and("是否可用", "=", "可用");
-                                    db.update(ZCFajianFileContent.class, whereBuilder, new
-                                            KeyValue("是否上传", "已上传"));
-                                } else {
-                                    LogUtil.trace("写入文件失败");
-                                }
-                            }
-
-                            // 6. 文件上传服务器
-                            mZcfajianUploadFile.uploadFile();
-                            ZhuangcheActivity.this.finish();
-                        } else {
-                            LogUtil.trace("创建文件失败");
-                        }
-                    } else {
-                        LogUtil.trace("当前数据库没有需要上传数据");
-                    }
-                } catch (DbException e) {
-                    LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-                    e.printStackTrace();
-                }
+                uploadListViewDataToServer();
                 break;
             }
 
@@ -504,6 +440,52 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
+     * 触发扫码
+     */
+    private void triggerForScanner() {
+        Intent intent = new Intent();
+        intent.setAction("com.jb.action.F4key");
+        intent.putExtra("F4key", "down");
+        ZhuangcheActivity.this.sendBroadcast(intent);
+        LogUtil.trace("1: mIsScanRunning=" + mIsScanRunning);
+    }
+
+    /**
+     * 扫码，录入数据库
+     *
+     * @param barcode
+     */
+    private boolean insertForScanner(String barcode) {
+        mZcFajianFileContent.setGoodsType("2");
+        mZcFajianFileContent.setScanDate(TextStringUtil.getFormatTimeString());
+        mZcFajianFileContent.setShipmentNumber(barcode);
+        mZcFajianFileContent.setOperateDate(TextStringUtil.getFormatTime());
+        return ZcFajianDBHelper.insertDataToDatabase(mZcFajianFileContent);
+    }
+
+    /**
+     * 扫码，录入后更新UI
+     *
+     * @param barcode
+     */
+    private void updateUIForScanner(String barcode) {
+        mEtDeliveryNumber.setText(barcode);
+
+        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
+        mFajianListViewBean.setId(++mScanCount);
+        mFajianListViewBean.setScannerData(barcode);
+        mFajianListViewBean.setStatus("未上传");
+
+        mListData.add(0, mFajianListViewBean);
+        mScannerBaseAdatper.notifyDataSetChanged();
+
+        if (!mListView.isStackFromBottom()) {
+            mListView.setStackFromBottom(true);
+        }
+        mListView.setStackFromBottom(false);
+    }
+
+    /**
      * F2按键触发删除最新扫码记录，ListView最上一条记录
      */
     private void deleteLastestRecord() {
@@ -522,7 +504,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 public void onClick(DialogInterface dialog, int which) {
                     ZcFajianDBHelper.deleteFindedBean(mListData.get(0).getScannerData());
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
-                            .getScannerData());
+                            .getScannerData(), 0);
+
+                    searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
                 }
             });
             normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -559,7 +543,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 public void onClick(DialogInterface dialog, int which) {
                     ZcFajianDBHelper.deleteFindedBean(mListData.get(position).getScannerData());
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, mListData.get
-                            (position).getScannerData());
+                            (position).getScannerData(), position);
+
+                    searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
                 }
             });
             normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -579,33 +565,42 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     /**
      * 删除操作执行后，触发刷新显示当前Activity的ListView
      */
-    private void updateListViewForDelete(DeleteAction action, String barcode) {
+    private void updateListViewForDelete(DeleteAction action, String barcode, int position) {
         switch (action) {
             case DELETE_ACTION_F2: {
-                // 现象：删除后，新增扫码ID跳数
+                if (mListData != null) {
+                    --mScanCount;
 
-                break;
-            }
-            case DELETE_ACTION_CHOOSE: {
-                // 现象：删除中间记录后，ID不会更新
-                break;
-            }
-        }
-
-        if (mListData != null) {
-            for (int index = 0; index < mListData.size(); index++) {
-                if (!TextUtils.isEmpty(barcode) && barcode.equals(mListData.get(index)
-                        .getScannerData())) {
-                    mListData.remove(mListData.get(index));
+                    mListData.remove(mListData.get(position));
                     mScannerBaseAdatper.notifyDataSetChanged();
-
-                    break;
                 } else {
                     // do nothing
                 }
+                break;
+            }
+
+            case DELETE_ACTION_CHOOSE: {
+                if (mListData != null) {
+                    String tmp = mListData.get(position).getScannerData();
+                    if (!TextUtils.isEmpty(tmp) && tmp.equals(barcode)) {
+                        mListData.remove(mListData.get(position));
+
+                        for (int index = position - 1; index >= 0; index--) {
+                            int id = mListData.get(index).getId();
+                            mListData.get(index).setId(--id);
+                        }
+
+                        --mScanCount;
+                        mScannerBaseAdatper.notifyDataSetChanged();
+                    } else {
+                        // do nothing
+                    }
+                } else {
+                    // do nothing
+                }
+                break;
             }
         }
-
 
         if (!mListView.isStackFromBottom()) {
             mListView.setStackFromBottom(true);
@@ -615,6 +610,68 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     public enum DeleteAction {
         DELETE_ACTION_F2, DELETE_ACTION_CHOOSE
+    }
+
+    /**
+     * 将ListView当前录入记录上传服务器，以第一条扫码时间为界线，上传最新录入记录
+     */
+    private void uploadListViewDataToServer() {
+        DbManager db = BQDataBaseHelper.getDb();
+        List<ZCFajianFileContent> list = null;
+
+        if (mListData != null && mListData.size() != 0) {
+            String firstScanner = mListData.get(0).getScannerData();
+            try {
+                list = db.selector(ZCFajianFileContent.class).where("运单编号", "=", firstScanner)
+                        .and("是否可用", "=", "可用").and("是否上传", "=", "未上传").findAll();
+                if (list != null) {
+                    if (list.size() != 1) {
+                        LogUtil.trace("包含重复录入项，请检查录入条件");
+                    } else {
+                        int firstID = list.get(0).getId();
+                        LogUtil.trace("firstScanner:" + firstScanner + "; firstID:" + firstID);
+
+                        list = db.selector(ZCFajianFileContent.class).where("id", ">", firstID)
+                                .and("是否可用", "=", "可用").and("是否上传", "=", "未上传").findAll();
+                        if (null != list && list.size() != 0) {
+                            mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
+                            if (mZcFajianDispatchFileName.linkToTXTFile()) {
+                                mZcfajianUploadFile = new UploadServerFile
+                                        (mZcFajianDispatchFileName.getFileInstance());
+                                for (int index = 0; index < list.size(); index++) {
+                                    ZCFajianFileContent javaBean = list.get(index);
+                                    String content = javaBean.getmCurrentValue() + "\r\n";
+                                    if (mZcfajianUploadFile.writeContentToFile(content, true)) {
+                                        WhereBuilder whereBuilder = WhereBuilder.b();
+                                        whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                                        whereBuilder.and("是否可用", "=", "可用");
+                                        db.update(ZCFajianFileContent.class, whereBuilder, new
+                                                KeyValue("是否上传", "已上传"));
+                                    } else {
+                                        LogUtil.trace("写入文件失败");
+                                    }
+                                }
+                                // FIXME 文件是否上传成功
+                                mZcfajianUploadFile.uploadFile();
+                            } else {
+                                LogUtil.trace("创建文件失败");
+                            }
+                        } else {
+                            LogUtil.trace("当前数据库没有需要上传数据");
+                        }
+                    }
+                } else {
+                    LogUtil.trace("未找到当前列表第一条记录");
+                }
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            // do nothing
+        }
+
+        ZhuangcheActivity.this.finish();
     }
 
 }

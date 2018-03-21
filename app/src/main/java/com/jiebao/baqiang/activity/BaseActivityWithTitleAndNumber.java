@@ -462,7 +462,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     protected void onResume() {
         super.onResume();
 
-        setHeaderRightViewText("未上传：" + searchUnloadData());
+        // FIXME
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant.SYNC_UNLOAD_DATA_TYPE_ALL));
 
         // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
@@ -636,7 +637,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     /**
      * BaseActivity中查询所有表的未上传数据
      */
-    public int searchUnloadData() {
+    public int searchUnloadDataForUpdate(int updateFile) {
         int unloadDataRecords = 0;
 
         DbManager db = BQDataBaseHelper.getDb();

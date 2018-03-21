@@ -363,6 +363,9 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                             Toast.makeText(AdministratorSettingActivity.this, "正在下载中", Toast
                                     .LENGTH_SHORT).show();
                             startService(service);
+                        } else {
+                            Toast.makeText(AdministratorSettingActivity.this, "APK已经是最新版本!",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
 

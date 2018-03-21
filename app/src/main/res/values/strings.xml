@@ -332,4 +332,10 @@
 
 	<string name="filter_vcode">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	<string name="filter_vcode_number">0123456789</string>
+
+	<string name="download_salesinfo_success">成功下载网点信息,正在更新本地数据....</string> 
+	<string name="download_shipmenttypeinfo_success">成功下载快件方式,正在更新本地数据....</string> 
+	<string name="download_liucangtypeinfo_success">成功下载留仓原因,正在更新本地数据....</string> 
+	<string name="download_vehiceinfo_success">成功下载车辆信息,正在更新本地数据....</string>
+
 </resources>
