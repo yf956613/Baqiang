@@ -78,7 +78,26 @@ public class SearchTime {
     }
 
     public String getDayString() {
-        return year + "-" + month + "-" + day;
+        StringBuffer tmp = new StringBuffer();
+
+        tmp.append(year);
+        tmp.append("-");
+
+        if (month < 10) {
+            tmp.append(0).append(month);
+        } else {
+            tmp.append(month);
+        }
+
+        tmp.append("-");
+
+        if (day < 10) {
+            tmp.append(0).append(day);
+        } else {
+            tmp.append(day);
+        }
+
+        return tmp.toString();
     }
 
     public String getHourString() {

@@ -288,7 +288,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                     dialog.dismiss();
 
                     // 保存网点编号
-                    SharedUtil.putString(AdministratorSettingActivity.this, "device_id",
+                    SharedUtil.putString(AdministratorSettingActivity.this, Constant.PREFERENCE_KEY_DEVICE_ID,
                             etContent.getText().toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString
                             (AdministratorSettingActivity.this, "device_id"));*/

@@ -8,6 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.jiebao.baqiang.R;
+import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
+import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
+import com.jiebao.baqiang.data.stay.StayHouseFileContent;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
+import com.jiebao.baqiang.util.LogUtil;
 
 import java.util.List;
 
@@ -19,7 +25,7 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<T> mData;
 
-    public ScannerBaseAdatper(Context cxt, List<T> mData) {
+    public SearchRecordsAdapter(Context cxt, List<T> mData) {
         mInflater = LayoutInflater.from(cxt);
         this.mData = mData;
     }
@@ -47,27 +53,59 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.item_search_records, parent, false);
             holder = new ViewHolder();
 
-            holder.mTvID = convertView.findViewById(R.id.tv_id);
-            holder.mTvScannerData = convertView.findViewById(R.id.tv_scanner_data);
             holder.mTvStatus = convertView.findViewById(R.id.tv_status);
+            holder.mTvScannerData = convertView.findViewById(R.id.tv_scanner_data);
+            holder.mTvTime = convertView.findViewById(R.id.tv_day);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        T bean = mData.get(position);
-        // TODO 此处序号为int类型数值，填充时需要转为String
-        holder.mTvID.setText("" + bean.getId());
-        holder.mTvScannerData.setText(bean.getScannerData());
-        holder.mTvStatus.setText(bean.getStatus());
+        if (null != mData && mData.size() != 0) {
+            if (mData.get(0) instanceof ZCFajianFileContent) {
+                LogUtil.trace("装车");
+
+                // 装车发件
+                ZCFajianFileContent bean = (ZCFajianFileContent) mData.get(position);
+                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvScannerData.setText(bean.getShipmentNumber());
+                holder.mTvTime.setText("" + bean.getOperateDate());
+            } else if (mData.get(0) instanceof UnloadArrivalFileContent) {
+                // 卸车到件
+                UnloadArrivalFileContent bean = (UnloadArrivalFileContent) mData.get(position);
+                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvScannerData.setText(bean.getShipmentNumber());
+                holder.mTvTime.setText("" + bean.getOperateDate());
+            } else if (mData.get(0) instanceof CargoArrivalFileContent) {
+                // 到件
+                CargoArrivalFileContent bean = (CargoArrivalFileContent) mData.get(position);
+                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvScannerData.setText(bean.getShipmentNumber());
+                holder.mTvTime.setText("" + bean.getOperateDate());
+            } else if (mData.get(0) instanceof ShipmentFileContent) {
+                // 发件
+                ShipmentFileContent bean = (ShipmentFileContent) mData.get(position);
+                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvScannerData.setText(bean.getShipmentNumber());
+                holder.mTvTime.setText("" + bean.getOperateDate());
+            } else if (mData.get(0) instanceof StayHouseFileContent) {
+                // 留仓件
+                StayHouseFileContent bean = (StayHouseFileContent) mData.get(position);
+                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvScannerData.setText(bean.getShipmentNumber());
+                holder.mTvTime.setText("" + bean.getOperateDate());
+            } else {
+                // do nothing
+            }
+        }
 
         return convertView;
     }
 
     private class ViewHolder {
-        TextView mTvID;
-        TextView mTvScannerData;
         TextView mTvStatus;
+        TextView mTvScannerData;
+        TextView mTvTime;
     }
 }

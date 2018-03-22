@@ -1,6 +1,7 @@
 package com.jiebao.baqiang.data.zcfajianmentDispatch;
 
 
+import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.db.annotation.Column;
@@ -13,7 +14,7 @@ import org.xutils.db.annotation.Table;
  */
 
 @Table(name = "zcfajian")
-public class ZCFajianFileContent {
+public class ZCFajianFileContent implements IFileContentBean{
     private static final String TAG = ZCFajianFileContent.class.getSimpleName();
 
     // 0259200         20170221235917  2880273772877    5955513  20170221 0

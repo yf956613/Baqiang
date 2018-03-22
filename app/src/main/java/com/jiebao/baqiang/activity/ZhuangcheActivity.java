@@ -332,7 +332,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             case R.id.btn_back: {
                 ZhuangcheActivity.this.finish();
 
-                LogUtil.trace("All size:" + ZcFajianDBHelper.findAllBean());
+                LogUtil.trace("All size:" + ZcFajianDBHelper.findUsableRecords());
                 break;
             }
         }

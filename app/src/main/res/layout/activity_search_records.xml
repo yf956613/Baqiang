@@ -26,7 +26,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="" />
+            android:gravity="center_horizontal"
+            android:text="10"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -41,22 +43,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="" />
+            android:gravity="center_horizontal"
+            android:text="20"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/btn_upload_redo"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:text="重传"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="重传" />
 
     <LinearLayout
         android:id="@+id/listview_title"
-        android:layout_below="@id/ll_status"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:layout_below="@id/ll_status"
         android:layout_marginTop="10dp"
         android:background="@color/status_view"
         android:orientation="horizontal">
@@ -91,10 +95,11 @@
     </LinearLayout>
 
     <ListView
-        android:layout_below="@id/listview_title"
-        android:layout_above="@id/btn_upload_redo"
+        android:id="@+id/listview_data"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_upload_redo"
+        android:layout_below="@id/listview_title"></ListView>
 
 
 </RelativeLayout>

@@ -4,7 +4,7 @@ import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
-import com.jiebao.baqiang.util.TimeUtil;
+import com.jiebao.baqiang.util.BQTimeUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
@@ -19,10 +19,58 @@ import java.util.List;
 
 public class ZcFajianDBHelper {
 
-    public static int findAllBean() {
+    /**
+     * 获取所有装车发件记录数（可用类型的）
+     *
+     * @return
+     */
+    public static int findUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.findAll(ZCFajianFileContent.class);
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where("是否可用",
+                    "like", "可用").findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 获取所有可用记录
+     *
+     * @return
+     */
+    public static List<ZCFajianFileContent> getUsableRecords() {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            // 查询数据库中标识位“未上传”的记录
+            List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent.class).where("是否可用",
+                    "=", "可用").findAll();
+            if (null != data && data.size() != 0) {
+                return data;
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取装车发件未上传记录数
+     *
+     * @return
+     */
+    public static int findUnloadRecords() {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where("是否上传",
+                    "like", "未上传").findAll();
             if (list != null) {
                 return list.size();
             }
@@ -44,8 +92,7 @@ public class ZcFajianDBHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("运单编号", "=", barcode);
-            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
-                    ("是否可用", "不可用"));
+            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue("是否可用", "不可用"));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
             e.printStackTrace();
@@ -87,7 +134,7 @@ public class ZcFajianDBHelper {
                     for (int index = 0; index < bean.size(); index++) {
                         long[] delta = TextStringUtil.getDistanceTimes(bean.get(index)
                                 .getScanDate(), TextStringUtil.getFormatTimeString());
-                        if (TimeUtil.isTimeOutOfRange(delta)) {
+                        if (BQTimeUtil.isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
                             LogUtil.trace("超出指定时间");
 
