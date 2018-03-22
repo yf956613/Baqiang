@@ -15,6 +15,7 @@ import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
 
@@ -31,7 +32,7 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
         LogUtil.trace("intent.action:" + intent.getAction());
 
         // TODO 执行记录上传操作，抽取文件上传操作
-        ZcFajianDBHelper.uploadZcfjUnloadRecords();
+        ZCfajianUploadFile.uploadZcfjUnloadRecords();
         XcdjDBHelper.uploadXcdjUnloadRecords();
         DaojianDBHelper.uploadDaojianUnloadRecords();
         FajianDBHelper.uploadFajianUnloadRecords();

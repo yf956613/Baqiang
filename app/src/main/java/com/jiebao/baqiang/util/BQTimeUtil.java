@@ -80,17 +80,4 @@ public class BQTimeUtil {
         }
         return null;
     }
-
-    /**
-     * 根据时间字符串获取Date实例
-     *
-     * @param time
-     * @return
-     */
-    public static Date getDateInstanceFromTime(String time) {
-
-
-        return null;
-
-    }
 }

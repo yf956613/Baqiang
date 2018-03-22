@@ -1,5 +1,7 @@
 package com.jiebao.baqiang.data.db;
 
+import android.database.Cursor;
+
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
@@ -26,6 +28,8 @@ public class ZcFajianDBHelper {
 
     /**
      * 获取所有装车发件记录数（可用类型的）
+     * <p>
+     * 1. 数据必须是可用的
      *
      * @return
      */
@@ -53,7 +57,6 @@ public class ZcFajianDBHelper {
     public static List<ZCFajianFileContent> getUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            // 查询数据库中标识位“未上传”的记录
             List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent.class).where
                     ("IsUsed", "=", "Used").findAll();
             if (null != data && data.size() != 0) {
@@ -68,19 +71,22 @@ public class ZcFajianDBHelper {
 
     /**
      * 获取 指定时间范围内 可用 记录
+     * <p>
+     * 1. 可用数据；
+     * 2. 满足时间限制；
      *
      * @param beginTime
      * @param endTime
      * @return
      */
-    public static List<ZCFajianFileContent> getLimitedTimeRecords(Date beginTime, Date endTime) {
+    public static List<ZCFajianFileContent> getLimitedTimeRecords(long beginTime, long endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
             List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", beginTime)/*.and("ScanDate",
-                    "<=", endTime)*/.findAll();
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list;
             }
@@ -94,6 +100,9 @@ public class ZcFajianDBHelper {
 
     /**
      * 获取装车发件未上传记录数
+     * <p>
+     * 1. 可用的；
+     * 2. 未上传的；
      *
      * @return
      */
@@ -101,7 +110,7 @@ public class ZcFajianDBHelper {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUpload", "=", "Unload").findAll();
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").findAll();
             if (list != null) {
                 return list.size();
             }
@@ -114,7 +123,10 @@ public class ZcFajianDBHelper {
     }
 
     /**
-     * 根据运单编号，设置数据为不可用
+     * 根据运单编号，设置数据为不可用。
+     * <p>
+     * 1. 运单编号匹配；
+     * 2. 未上传 数据；
      *
      * @param barcode
      */
@@ -122,7 +134,9 @@ public class ZcFajianDBHelper {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
+            // FIXME 3小之外，没有上传，相同的barcode设置为Unused？
             whereBuilder.and("ShipmentID", "=", barcode);
+            whereBuilder.and("IsUpload", "=", "Unload");
             db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
         } catch (DbException e) {
             LogUtil.trace(e.getMessage());
@@ -187,52 +201,6 @@ public class ZcFajianDBHelper {
         }
 
         return false;
-    }
-
-    /**
-     * 上传数据库中所有 未上传的 装车发件 记录
-     * <p>
-     * 不更新SP中统计值
-     */
-    public static void uploadZcfjUnloadRecords() {
-        DbManager db = BQDataBaseHelper.getDb();
-        List<ZCFajianFileContent> list = null;
-        try {
-            list = db.selector(ZCFajianFileContent.class).where("IsUpload", "=", "Unload").and
-                    ("IsUsed", "=", "Used").findAll();
-            if (null != list && list.size() != 0) {
-                ZCFajianDispatchFileName mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
-                if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                    UploadServerFile mZcfajianUploadFile = new UploadServerFile
-                            (mZcFajianDispatchFileName.getFileInstance());
-
-                    for (int index = 0; index < list.size(); index++) {
-                        ZCFajianFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("ShipmentID", "=", javaBean.getShipmentNumber());
-                            whereBuilder.and("IsUsed", "=", "Used");
-                            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
-                                    ("IsUpload", "Load"));
-                        } else {
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-                    // FIXME 文件是否上传成功
-                    mZcfajianUploadFile.uploadFile();
-                } else {
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-
-
     }
 
     /*public void reQueryUnUploadDataForListView() {

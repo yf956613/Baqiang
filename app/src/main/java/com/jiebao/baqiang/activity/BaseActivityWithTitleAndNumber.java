@@ -26,6 +26,7 @@ import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
 import com.jiebao.baqiang.global.Footer;
@@ -147,7 +148,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case Constant.F1_KEY_CODE: {
-                    ZcFajianDBHelper.uploadZcfjUnloadRecords();
+                    ZCfajianUploadFile.uploadZcfjUnloadRecords();
                     XcdjDBHelper.uploadXcdjUnloadRecords();
                     DaojianDBHelper.uploadDaojianUnloadRecords();
                     FajianDBHelper.uploadFajianUnloadRecords();

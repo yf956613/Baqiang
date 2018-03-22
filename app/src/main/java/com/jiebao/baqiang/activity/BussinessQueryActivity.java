@@ -128,6 +128,7 @@ public class BussinessQueryActivity extends BaseActivityWithTitleAndNumber imple
 
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        LogUtil.trace("hourOfDay:" + hourOfDay + "; minute:" + minute);
                         mShowBeginTime.setHour(hourOfDay);
                         mShowBeginTime.setMinute(minute);
                         mBtnBeginHour.setText(mShowBeginTime.getHourString());
@@ -166,6 +167,8 @@ public class BussinessQueryActivity extends BaseActivityWithTitleAndNumber imple
 
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        LogUtil.trace("hourOfDay:" + hourOfDay + "; minute:" + minute);
+
                         mShowEndTime.setHour(hourOfDay);
                         mShowEndTime.setMinute(minute);
                         mBtnEndHour.setText(mShowEndTime.getHourString());
