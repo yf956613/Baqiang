@@ -32,8 +32,7 @@ import org.xutils.x;
 
 import java.lang.reflect.Method;
 
-public class LoginActivity extends BaseActivityWithTitleAndNumber implements
-        View.OnClickListener {
+public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
 
     // TODO android:singleLine="true" 设置Enter按键动作
@@ -52,8 +51,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
     private String mLoginUrl = "";
 
-    private View.OnFocusChangeListener mFocusChangeListener = new View
-            .OnFocusChangeListener() {
+    private View.OnFocusChangeListener mFocusChangeListener = new View.OnFocusChangeListener() {
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
@@ -79,15 +77,13 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void initData() {
-        // TODO 申请权限及屏蔽相关操作
         verifyStoragePermissions(LoginActivity.this);
         sendBroadcastForAction();
 
         initListener();
 
         mTvAppVersion.setText(getCurrentVersionName());
-        mTvSystemVersion.setText(getSystemProperty(LoginActivity.this, "ro" +
-                ".jiebao.version"));
+        mTvSystemVersion.setText(getSystemProperty(LoginActivity.this, "ro" + ".jiebao.version"));
     }
 
     private void initListener() {
@@ -107,8 +103,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
                 String userName = mEtUserName.getText().toString();
                 String psw = mEtPassward.getText().toString();
                 if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(psw)) {
-                    Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "用户名或密码为空，请重新输入", Toast.LENGTH_SHORT).show();
                 } else {
                     login(userName, psw);
                 }
@@ -155,8 +150,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
         // TODO 网络不可用，执行所有登录前先连接网络
         if (!AppUtil.IsNetworkAvailable()) {
-            Toast.makeText(LoginActivity.this, "当前网络不可用，请先连接网络", Toast
-                    .LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "当前网络不可用，请先连接网络", Toast.LENGTH_SHORT).show();
 
             return;
         }
@@ -167,8 +161,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
         if ("000000".equals(account) && "123695".equals(pwd)) {
             LogUtil.trace("goto Administrator activity.");
 
-            Intent intent = new Intent(LoginActivity.this,
-                    AdministratorSettingActivity.class);
+            Intent intent = new Intent(LoginActivity.this, AdministratorSettingActivity.class);
             LoginActivity.this.startActivity(intent);
 
             closeLoadinDialog();
@@ -177,44 +170,34 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
         // 验证IP和端口
         if (!isCheckNetworkAddressAccess()) {
-            Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置", Toast
-                    .LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "数据服务器地址和端口未设置", Toast.LENGTH_SHORT).show();
 
             closeLoadinDialog();
             return;
         }
 
         // 保存账号和密码
-        SharedUtil.putString(LoginActivity.this, Constant
-                .PREFERENCE_KEY_USERNAME, account);
-        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW,
-                pwd);
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_USERNAME, account);
+        SharedUtil.putString(LoginActivity.this, Constant.PREFERENCE_KEY_PSW, pwd);
 
-        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
-                        .getContext(),
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
                 NetworkConstant.LOGIN_SERVLET);
         LogUtil.trace("path:" + mLoginUrl);
         if (TextUtils.isEmpty(mLoginUrl)) {
-            Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast
-                    .LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "数据服务器地址或端口出错", Toast.LENGTH_SHORT).show();
 
             closeLoadinDialog();
             return;
         }
 
         RequestParams params = new RequestParams(mLoginUrl);
-        params.addQueryStringParameter("saleId", SharedUtil.getString
-                (LoginActivity.this,
-                        Constant.PREFERENCE_KEY_SALE_SERVICE));
-        params.addQueryStringParameter("userName", SharedUtil.getString
-                (LoginActivity.this,
-                        Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil
-                .getString
-                (LoginActivity.this,
-                        Constant.PREFERENCE_KEY_USERNAME));
-        params.addQueryStringParameter("password", SharedUtil.getString
-                (LoginActivity.this,
-                        Constant.PREFERENCE_KEY_PSW));
+        params.addQueryStringParameter("saleId", SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_SALE_SERVICE));
+        params.addQueryStringParameter("userName", SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_USERNAME));
+        params.addQueryStringParameter("password", SharedUtil.getString(LoginActivity.this,
+                Constant.PREFERENCE_KEY_PSW));
 
         // TODO 从日志看出，下述回调都是在MainThread运行的
         final Callback.Cancelable post = x.http().post(params, new Callback
@@ -226,24 +209,19 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
 
                 if (!Constant.DEBUG) {
                     Gson gson = new Gson();
-                    LoginResponse loginResponse = gson.fromJson(s,
-                            LoginResponse.class);
+                    LoginResponse loginResponse = gson.fromJson(s, LoginResponse.class);
                     if (loginResponse != null) {
                         if ("1".equals(loginResponse.getAuthRet())) {
-                            Toast.makeText(BaqiangApplication.getContext(),
-                                    "登录成功", Toast
-                                            .LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this,
-                                    MainActivity.class));
+                            Toast.makeText(BaqiangApplication.getContext(), "登录成功", Toast
+                                    .LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {
-                            Toast.makeText(BaqiangApplication.getContext(),
-                                    "用户名或密码错误，请重新登录", Toast
-                                            .LENGTH_SHORT).show();
+                            Toast.makeText(BaqiangApplication.getContext(), "用户名或密码错误，请重新登录",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(BaqiangApplication.getContext(),
-                                "服务器数据解析错误", Toast
-                                        .LENGTH_SHORT).show();
+                        Toast.makeText(BaqiangApplication.getContext(), "服务器数据解析错误", Toast
+                                .LENGTH_SHORT).show();
                     }
                 }
             }
@@ -251,8 +229,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace("error exception: " + throwable.getMessage());
-                Toast.makeText(LoginActivity.this, "服务器响应失败", Toast
-                        .LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "服务器响应失败", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -263,8 +240,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onFinished() {
                 if (Constant.DEBUG) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity
-                            .class));
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
 
                 closeLoadinDialog();
@@ -278,19 +254,40 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
      * @return true 表示可供使用；false 表示不能使用
      */
     private boolean isCheckNetworkAddressAccess() {
-        String dataServerAddress = SharedUtil.getString(LoginActivity.this,
-                Constant
-                        .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
-        String dataServerPort = SharedUtil.getString(LoginActivity.this,
-                Constant
-                        .PREFERENCE_KEY_DATA_SERVER_PORT);
+        String dataServerAddress = SharedUtil.getString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
+        String dataServerPort = SharedUtil.getString(LoginActivity.this, Constant
+                .PREFERENCE_KEY_DATA_SERVER_PORT);
 
-        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty
-                (dataServerPort)) {
+        if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty(dataServerPort)) {
             return false;
         }
 
         return true;
+    }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {"android.permission" + "" + "" + "" + "" + ""
+            + ".READ_EXTERNAL_STORAGE", "android.permission" + ".WRITE_EXTERNAL_STORAGE"};
+
+    /**
+     * App申请系统相关权限
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity, "android.permission" +
+                    ".WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
@@ -318,33 +315,6 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
         LoginActivity.this.sendBroadcast(intent);
     }
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {"android.permission" + ""
-            + "" + "" + "" + ""
-            + ".READ_EXTERNAL_STORAGE", "android.permission" +
-            ".WRITE_EXTERNAL_STORAGE"};
-
-    /**
-     * App申请系统相关权限
-     *
-     * @param activity
-     */
-    public static void verifyStoragePermissions(Activity activity) {
-        try {
-            //检测是否有写的权限
-            int permission = ActivityCompat.checkSelfPermission(activity,
-                    "android.permission" +
-                            ".WRITE_EXTERNAL_STORAGE");
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
-                        REQUEST_EXTERNAL_STORAGE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 根据是否获取焦点，改变View的背景
      *
@@ -354,11 +324,9 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
     private void setBtnBackground(View v, boolean isFocus) {
         if (isFocus) {
             // v.setBackgroundResource(R.drawable.btn_login_bg_pressed);
-            v.setBackgroundColor(this.getResources().getColor(R.color
-                    .colorPrimaryDark));
+            v.setBackgroundColor(this.getResources().getColor(R.color.colorPrimaryDark));
         } else {
-            v.setBackgroundColor(this.getResources().getColor(R.color
-                    .status_view));
+            v.setBackgroundColor(this.getResources().getColor(R.color.status_view));
         }
     }
 
@@ -375,13 +343,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
         }
     }
 
-    private String getSystemProperty(Context context, String key) throws
-            IllegalArgumentException {
+    private String getSystemProperty(Context context, String key) throws IllegalArgumentException {
         String ret = "";
         try {
             ClassLoader cl = context.getClassLoader();
-            Class SystemProperties = cl.loadClass("android.os" + "" +
-                    ".SystemProperties");
+            Class SystemProperties = cl.loadClass("android.os" + "" + ".SystemProperties");
             Class[] paramTypes = new Class[1];
             paramTypes[0] = String.class;
             Method get = SystemProperties.getMethod("get", paramTypes);
@@ -402,8 +368,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
         try {
             PackageManager packageManager = getPackageManager();
             //getPackageName()是你当前类的包名，0代表是获取版本信息
-            PackageInfo packInfo = packageManager.getPackageInfo
-                    (getPackageName(), 0);
+            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
             LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionName);
             return packInfo.versionName;
         } catch (Exception e) {

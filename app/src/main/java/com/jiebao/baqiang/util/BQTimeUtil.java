@@ -3,6 +3,8 @@ package com.jiebao.baqiang.util;
 import android.text.TextUtils;
 import android.util.TimeUtils;
 
+import java.util.Date;
+
 /**
  * Created by Administrator on 2018/3/20 0020.
  */
@@ -77,5 +79,18 @@ public class BQTimeUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 根据时间字符串获取Date实例
+     *
+     * @param time
+     * @return
+     */
+    public static Date getDateInstanceFromTime(String time) {
+
+
+        return null;
+
     }
 }

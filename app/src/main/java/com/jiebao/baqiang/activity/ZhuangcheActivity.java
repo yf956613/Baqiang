@@ -41,7 +41,9 @@ import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements View
@@ -127,7 +129,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
-                mZcFajianFileContent.setIdentify(vehicleId);
+                mZcFajianFileContent.setmVehicleID(vehicleId);
             }
         });
         mTvVehicleId.setOnKeyListener(new View.OnKeyListener() {
@@ -346,6 +348,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     @Override
     public void syncViewAfterUpload() {
         super.syncViewAfterUpload();
+
+        // TODO F1事件触发刷新UI
     }
 
     private void prepareDataForView() {
@@ -360,7 +364,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                         mTvVehicleId.dismissDropDown();
                         mTvVehicleId.setText(list.get(0), false);
 
-                        mZcFajianFileContent.setIdentify(list.get(0));
+                        mZcFajianFileContent.setmVehicleID(list.get(0));
 
                         Editable spannable = mTvVehicleId.getText();
                         Selection.setSelection(spannable, spannable.length());
@@ -458,10 +462,13 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
      * @param barcode
      */
     private boolean insertForScanner(String barcode) {
+        Date scanDate = new Date();
+
         mZcFajianFileContent.setGoodsType("2");
-        mZcFajianFileContent.setScanDate(TextStringUtil.getFormatTimeString());
+        mZcFajianFileContent.setScanDate(scanDate);
         mZcFajianFileContent.setShipmentNumber(barcode);
-        mZcFajianFileContent.setOperateDate(TextStringUtil.getFormatTime());
+        // 该结果从 扫码时间 转化得来
+        mZcFajianFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd").format(scanDate));
         return ZcFajianDBHelper.insertDataToDatabase(mZcFajianFileContent);
     }
 
@@ -622,17 +629,20 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         if (mListData != null && mListData.size() != 0) {
             String firstScanner = mListData.get(0).getScannerData();
             try {
-                list = db.selector(ZCFajianFileContent.class).where("运单编号", "=", firstScanner)
-                        .and("是否可用", "=", "可用").and("是否上传", "=", "未上传").findAll();
+                list = db.selector(ZCFajianFileContent.class).where("ShipmentID", "=",
+                        firstScanner).and("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                        .findAll();
                 if (list != null) {
                     if (list.size() != 1) {
                         LogUtil.trace("包含重复录入项，请检查录入条件");
                     } else {
+                        // TODO 是否是第一个记录ID？
                         int firstID = list.get(0).getId();
                         LogUtil.trace("firstScanner:" + firstScanner + "; firstID:" + firstID);
 
                         list = db.selector(ZCFajianFileContent.class).where("id", ">", firstID)
-                                .and("是否可用", "=", "可用").and("是否上传", "=", "未上传").findAll();
+                                .and("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                                .findAll();
                         if (null != list && list.size() != 0) {
                             mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
                             if (mZcFajianDispatchFileName.linkToTXTFile()) {
@@ -643,10 +653,11 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                                     String content = javaBean.getmCurrentValue() + "\r\n";
                                     if (mZcfajianUploadFile.writeContentToFile(content, true)) {
                                         WhereBuilder whereBuilder = WhereBuilder.b();
-                                        whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                                        whereBuilder.and("是否可用", "=", "可用");
+                                        whereBuilder.and("ShipmentID", "=", javaBean
+                                                .getShipmentNumber());
+                                        whereBuilder.and("IsUsed", "=", "Used");
                                         int record = db.update(ZCFajianFileContent.class,
-                                                whereBuilder, new KeyValue("是否上传", "已上传"));
+                                                whereBuilder, new KeyValue("IsUpload", "Load"));
 
                                         if (1 == record) {
                                             increaseOrDecreaseRecords(0);

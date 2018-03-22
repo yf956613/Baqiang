@@ -7,6 +7,9 @@ import com.jiebao.baqiang.util.LogUtil;
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 封装 装车发件 功能中，待存储文件中每一个内容，文件内容编码为：gb2312
  * <p>
@@ -14,7 +17,7 @@ import org.xutils.db.annotation.Table;
  */
 
 @Table(name = "zcfajian")
-public class ZCFajianFileContent implements IFileContentBean{
+public class ZCFajianFileContent implements IFileContentBean {
     private static final String TAG = ZCFajianFileContent.class.getSimpleName();
 
     // 0259200         20170221235917  2880273772877    5955513  20170221 0
@@ -60,7 +63,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.id = id;
     }
 
-    @Column(name = "扫描类型编号")
+    @Column(name = "ScannerType")
     private String mScannerType;
 
     public String getmScannerType() {
@@ -71,7 +74,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mScannerType = mScannerType;
     }
 
-    @Column(name = "下一站网点编号")
+    @Column(name = "NextStationID")
     private String mNextStation;
 
     public String getNextStation() {
@@ -82,18 +85,18 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mNextStation = nextStation;
     }
 
-    @Column(name = "扫描日期")
-    private String mScanDate;
+    @Column(name = "ScanDate")
+    private Date mScanDate;
 
-    public String getScanDate() {
+    public Date getScanDate() {
         return mScanDate;
     }
 
-    public void setScanDate(String scanDate) {
+    public void setScanDate(Date scanDate) {
         this.mScanDate = scanDate;
     }
 
-    @Column(name = "物品类别")
+    @Column(name = "GoodsType")
     private String mGoodsType;
 
     public String getGoodsType() {
@@ -104,7 +107,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mGoodsType = goodsType;
     }
 
-    @Column(name = "快件类型")
+    @Column(name = "ShipmentType")
     private String mShipmentType;
 
     public String getShipmentType() {
@@ -115,7 +118,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mShipmentType = shipmentType;
     }
 
-    @Column(name = "运单编号")
+    @Column(name = "ShipmentID")
     private String mShipmentNumber;
 
     public String getShipmentNumber() {
@@ -126,7 +129,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mShipmentNumber = shipmentNumber;
     }
 
-    @Column(name = "扫描员工编号")
+    @Column(name = "ScanEmployeeNumber")
     private String mScanEmployeeNumber;
 
     public String getScanEmployeeNumber() {
@@ -137,7 +140,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mScanEmployeeNumber = scanEmployeeNumber;
     }
 
-    @Column(name = "操作日期")
+    @Column(name = "OperateDate")
     private String mOperateDate;
 
     public String getOperateDate() {
@@ -148,7 +151,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mOperateDate = operateDate;
     }
 
-    @Column(name = "重量")
+    @Column(name = "Weight")
     private String mWeight;
 
     public String getWeight() {
@@ -159,19 +162,18 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mWeight = weight;
     }
 
-    @Column(name = "车辆识别号")
-    private String identify;
+    @Column(name = "VehicleID")
+    private String mVehicleID;
 
-    public String getIdentify() {
-        return identify;
+    public String getmVehicleID() {
+        return mVehicleID;
     }
 
-    public void setIdentify(String identify) {
-        this.identify = identify;
+    public void setmVehicleID(String mVehicleID) {
+        this.mVehicleID = mVehicleID;
     }
 
-    // 是否上传状态标识
-    @Column(name = "是否上传")
+    @Column(name = "IsUpload")
     private String mStatus;
 
     public String getmStatus() {
@@ -182,7 +184,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mStatus = mStatus;
     }
 
-    @Column(name = "是否可用")
+    @Column(name = "IsUsed")
     private String mIsUsed;
 
     public String getmIsUsed() {
@@ -193,17 +195,13 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mIsUsed = mIsUsed;
     }
 
-
-    /**
-     * 默认构造函数
-     */
     public ZCFajianFileContent() {
 
     }
 
-    public ZCFajianFileContent(String mScannerType, String mNextStation, String mScanDate, String
+    public ZCFajianFileContent(String mScannerType, String mNextStation, Date mScanDate, String
             mGoodsType, String mShipmentType, String mShipmentNumber, String mScanEmployeeNumber,
-                               String mOperateDate, String mWeight, String identify, String
+                               String mOperateDate, String mWeight, String mVehicleID, String
                                        mStatus, String mIsUsed) {
         this.mScannerType = mScannerType;
         this.mNextStation = mNextStation;
@@ -214,7 +212,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         this.mScanEmployeeNumber = mScanEmployeeNumber;
         this.mOperateDate = mOperateDate;
         this.mWeight = mWeight;
-        this.identify = identify;
+        this.mVehicleID = mVehicleID;
         this.mStatus = mStatus;
         this.mIsUsed = mIsUsed;
     }
@@ -237,8 +235,7 @@ public class ZCFajianFileContent implements IFileContentBean{
         stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
 
         // 添加扫描时间
-        stringBuffer.append(this.mScanDate);
-        stringBuffer.append(countBlankAndAppend(this.mScanDate, SCAN_DATE));
+        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format(mScanDate));
 
         // 物品类别
         stringBuffer.append(this.mGoodsType);
@@ -267,8 +264,8 @@ public class ZCFajianFileContent implements IFileContentBean{
         // 空格
         stringBuffer.append(appendBlankSpace(BLANK_SPACE1));
         //车辆识别码
-        stringBuffer.append(this.identify);
-        stringBuffer.append(countBlankAndAppend(this.identify, IDENTFY_NUMBER));
+        stringBuffer.append(this.mVehicleID);
+        stringBuffer.append(countBlankAndAppend(this.mVehicleID, IDENTFY_NUMBER));
 
         // 其他空格
         stringBuffer.append(appendBlankSpace(OTHERS));
@@ -320,11 +317,11 @@ public class ZCFajianFileContent implements IFileContentBean{
     public String toString() {
         return "ZCFajianFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
                 "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
-                "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", " + "mShipmentType='"
-                + mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " + "mOperateDate='" +
-                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' + ", identify='" +
-                identify + '\'' + ", mStatus='" + mStatus + '\'' + ", " + "mIsUsed='" + mIsUsed +
-                '\'' + '}';
+                "" + "" + "" + "" + "" + "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' +
+                ", " + "mShipmentType='" + mShipmentType + '\'' + ", mShipmentNumber='" +
+                mShipmentNumber + '\'' + ", " + "mScanEmployeeNumber='" + mScanEmployeeNumber +
+                '\'' + ", " + "mOperateDate='" + mOperateDate + '\'' + ", " + "mWeight='" +
+                mWeight + '\'' + ", mVehicleID='" + mVehicleID + '\'' + ", mStatus='" + mStatus +
+                '\'' + ", " + "mIsUsed='" + mIsUsed + '\'' + '}';
     }
 }

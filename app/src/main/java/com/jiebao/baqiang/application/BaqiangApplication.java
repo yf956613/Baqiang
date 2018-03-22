@@ -7,22 +7,31 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.listener.UIHandler;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.FileUtil;
+import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.x;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 public class BaqiangApplication extends Application {
+    private static final String TAG = BaqiangApplication.class.getSimpleName();
 
     public static Context mContext;
     public static Properties prop;
@@ -40,25 +49,22 @@ public class BaqiangApplication extends Application {
     public static Activity mTopActivity;
     public static boolean isSoftDecodeScan = false;
 
+    private static Handler mMainThreadHandler;
     public static UIHandler handler = new UIHandler(Looper.getMainLooper());
 
-    public static Context getContext() {
-        return mContext;
-    }
+    /**
+     * 维护Activity 的list
+     */
+    private static List<Activity> mActivitys = Collections.synchronizedList(new
+            LinkedList<Activity>());
 
-    public static String getFormatStr(int strId, Object... args) {
-        String formatStr = mContext.getString(strId);
-        return String.format(formatStr, args);
-    }
-
-    public static String getStr(int strId) {
-        return mContext.getString(strId);
-    }
-
-    private static Handler mMainThreadHandler;
 
     public static Handler getmMainThreadHandler() {
         return mMainThreadHandler;
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     @Override
@@ -79,14 +85,15 @@ public class BaqiangApplication extends Application {
         x.Ext.setDebug(false);
 
         initAutoUploadRecords();
+        registerActivityListener();
     }
 
     private void initAutoUploadRecords() {
         AlarmManager mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 
-        int tenMinutes = 1 * 60 * 1000;
+        int tenMinutes = 10 * 60 * 1000;
         long triggerAtMillis = System.currentTimeMillis() + tenMinutes;
-        long intervalMillis = 1 * 60 * 1000;
+        long intervalMillis = 10 * 60 * 1000;
         int requestCode = 0;
 
         Intent intent = new Intent();
@@ -213,7 +220,6 @@ public class BaqiangApplication extends Application {
         }
     }
 
-
     public static int getOperateType() {
         String value = prop.getProperty(Constant.ARG_OPERATE_TYPE, "1");
 //        if(StringUtil.isNumeric(value)){
@@ -225,4 +231,206 @@ public class BaqiangApplication extends Application {
     public static boolean isDebug() {
         return true;
     }
+
+    public static String getFormatStr(int strId, Object... args) {
+        String formatStr = mContext.getString(strId);
+        return String.format(formatStr, args);
+    }
+
+    public static String getStr(int strId) {
+        return mContext.getString(strId);
+    }
+
+    private void registerActivityListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+
+                @Override
+                public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                    pushActivity(activity);
+                }
+
+                @Override
+                public void onActivityStarted(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityResumed(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityPaused(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityStopped(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+                }
+
+                @Override
+                public void onActivityDestroyed(Activity activity) {
+                    if (null == mActivitys && mActivitys.isEmpty()) {
+                        return;
+                    } else {
+                        if (mActivitys.contains(activity)) {
+                            popActivity(activity);
+                        } else {
+                            // do nothing
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * @param activity 作用说明 ：添加一个activity到管理里
+     */
+    public void pushActivity(Activity activity) {
+        mActivitys.add(activity);
+        LogUtil.trace("activityList:size:" + mActivitys.size());
+    }
+
+    /**
+     * @param activity 作用说明 ：删除一个activity在管理里
+     */
+    public void popActivity(Activity activity) {
+        mActivitys.remove(activity);
+        LogUtil.trace("activityList:size:" + mActivitys.size());
+    }
+
+    /**
+     * @return 作用说明 ：获取当前最顶部activity的实例
+     */
+    public static Activity getTopActivity() {
+        Activity mBaseActivity = null;
+        synchronized (mActivitys) {
+            final int size = mActivitys.size() - 1;
+            if (size < 0) {
+                return null;
+            }
+            mBaseActivity = mActivitys.get(size);
+        }
+        return mBaseActivity;
+    }
+
+    /**
+     * get current Activity 获取当前Activity（栈中最后一个压入的）
+     */
+    public static Activity getLatestActivity() {
+        if (mActivitys == null || mActivitys.isEmpty()) {
+            return null;
+        }
+
+        Activity activity = mActivitys.get(mActivitys.size() - 1);
+        return activity;
+    }
+
+    /**
+     * @return 作用说明 ：获取当前最顶部的acitivity 名字
+     */
+    public static String getTopActivityName() {
+        Activity mBaseActivity = null;
+        synchronized (mActivitys) {
+            final int size = mActivitys.size() - 1;
+            if (size < 0) {
+                return null;
+            }
+            mBaseActivity = mActivitys.get(size);
+        }
+        return mBaseActivity.getClass().getName();
+    }
+
+    /**
+     * 结束当前Activity（栈中最后一个压入的）
+     */
+    public static void finishCurrentActivity() {
+        if (mActivitys == null || mActivitys.isEmpty()) {
+            return;
+        }
+
+        Activity activity = mActivitys.get(mActivitys.size() - 1);
+        finishActivity(activity);
+    }
+
+    /**
+     * 结束指定的Activity
+     */
+    public static void finishActivity(Activity activity) {
+        if (mActivitys == null || mActivitys.isEmpty()) {
+            return;
+        }
+
+        if (activity != null) {
+            mActivitys.remove(activity);
+            activity.finish();
+            activity = null;
+        }
+    }
+
+    /**
+     * 结束指定类名的Activity
+     */
+    public static void finishActivity(Class<?> cls) {
+        if (mActivitys == null || mActivitys.isEmpty()) {
+            return;
+        }
+        for (Activity activity : mActivitys) {
+            if (activity.getClass().equals(cls)) {
+                finishActivity(activity);
+            }
+        }
+    }
+
+    /**
+     * 按照指定类名找到activity
+     *
+     * @param cls
+     * @return
+     */
+    public static Activity findActivity(Class<?> cls) {
+        Activity targetActivity = null;
+        if (mActivitys != null) {
+            for (Activity activity : mActivitys) {
+                if (activity.getClass().equals(cls)) {
+                    targetActivity = activity;
+                    break;
+                }
+            }
+        }
+        return targetActivity;
+    }
+
+    /**
+     * 结束所有Activity
+     */
+    public static void finishAllActivity() {
+        if (mActivitys == null) {
+            return;
+        }
+        for (Activity activity : mActivitys) {
+            activity.finish();
+        }
+        mActivitys.clear();
+    }
+
+    /**
+     * 退出应用程序
+     */
+    public static void appExit() {
+        try {
+            LogUtil.trace("app exit");
+            finishAllActivity();
+        } catch (Exception e) {
+        }
+    }
+
 }

@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.custView.BatteryView;
-import com.jiebao.baqiang.global.AppManager;
 import com.jiebao.baqiang.global.Content;
 import com.jiebao.baqiang.global.Footer;
 import com.jiebao.baqiang.global.Header;
@@ -155,7 +154,6 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
             }
         }
 
-        AppManager.getAppManager().addActivity(this);
         registerStatusTnfo();
     }
 
@@ -224,8 +222,6 @@ public abstract class BaseActivity extends FragmentActivity implements Header, F
         closeLoadinDialog();
 
         unregisterStatusTnfo();
-        AppManager.getAppManager().finishActivity(this);
-
     }
 
     @Override

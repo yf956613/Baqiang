@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.SearchRecordsAdapter;
@@ -23,6 +22,9 @@ import com.jiebao.baqiang.util.SharedUtil;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,7 +64,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
         String beginTime = intent.getStringExtra("start_time");
         String endTime = intent.getStringExtra("end_time");
         // type:装车发件; begin:2018-3-22 00:00; end:2018-3-22 23:59 --> 20180320204809
-
+        // begin:20180322000000; end:20180322235959
         LogUtil.trace("begin:" + BQTimeUtil.convertSearchTime(beginTime, 1) + "; end:" +
                 BQTimeUtil.convertSearchTime(endTime, 2));
 
@@ -73,7 +75,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             mTvRecordsAll.setText("" + ZcFajianDBHelper.findUsableRecords());
             mTvRecordsUnload.setText("" + ZcFajianDBHelper.findUnloadRecords());
 
-            mListData = (List<IFileContentBean>) (List<?>) ZcFajianDBHelper.getUsableRecords();
+            try {
+                mListData = (List<IFileContentBean>) (List<?>) ZcFajianDBHelper.getLimitedTimeRecords
+                        (new SimpleDateFormat("yyyyMMddHHmmss").parse(beginTime), new SimpleDateFormat("yyyyMMddHHmmss").parse(endTime));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             mSearchRecordsAdapter = new SearchRecordsAdapter(SearchRecordsActivity.this, mListData);
             mListViewData.setAdapter(mSearchRecordsAdapter);
 
@@ -135,8 +142,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                     TextView tvSaleID = dialog.findViewById(R.id.tv_sale_id);
                     tvSaleID.setText(idString);
 
-                    TextView tvScanTime = dialog.findViewById(R.id.tv_scan_time);
-                    tvScanTime.setText(bean.getScanDate());
+                    /*TextView tvScanTime = dialog.findViewById(R.id.tv_scan_time);
+                    tvScanTime.setText(bean.getScanDate());*/
 
                 }
             });
@@ -165,5 +172,10 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
         });
     }
 
+    @Override
+    public void syncViewAfterUpload() {
+        super.syncViewAfterUpload();
 
+
+    }
 }

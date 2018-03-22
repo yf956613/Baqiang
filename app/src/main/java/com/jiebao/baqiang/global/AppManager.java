@@ -10,7 +10,6 @@ import java.util.Stack;
  * 应用程序Activity管理类：用于Activity管理和应用程序退出
  */
 public class AppManager {
-
 	private static Stack<Activity> mActivityStack;
 	private static AppManager mManagerInstance;
 

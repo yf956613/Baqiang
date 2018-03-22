@@ -134,7 +134,7 @@
 
         <service android:name="com.jiebao.baqiang.service.DownLoadApkFileService" />
 
-        <receiver android:name=".receiver.AutoUploadRecords">
+        <receiver android:name=".receiver.AutoUploadRecordsReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.jiebao.upload.records" />
             </intent-filter>

@@ -61,10 +61,12 @@ public class ScannerBaseAdatper extends BaseAdapter {
         }
 
         ScannerListViewBean bean = mData.get(position);
-        // TODO 此处序号为int类型数值，填充时需要转为String
-        holder.mTvID.setText("" + bean.getId());
-        holder.mTvScannerData.setText(bean.getScannerData());
-        holder.mTvStatus.setText(bean.getStatus());
+        if(bean != null){
+            // TODO 此处序号为int类型数值，填充时需要转为String
+            holder.mTvID.setText("" + bean.getId());
+            holder.mTvScannerData.setText(bean.getScannerData());
+            holder.mTvStatus.setText(bean.getStatus());
+        }
 
         return convertView;
     }

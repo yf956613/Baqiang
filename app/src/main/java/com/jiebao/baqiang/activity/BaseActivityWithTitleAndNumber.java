@@ -21,19 +21,11 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
-import com.jiebao.baqiang.data.arrival.CargoArrivalFileName;
-import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
-import com.jiebao.baqiang.data.arrival.UnloadArrivalFileName;
-import com.jiebao.baqiang.data.bean.UploadServerFile;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
-import com.jiebao.baqiang.data.dispatch.ShipmentDispatchFileName;
-import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
-import com.jiebao.baqiang.data.stay.StayHouseFileContent;
-import com.jiebao.baqiang.data.stay.StayHouseFileName;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
-import com.jiebao.baqiang.global.AppManager;
+import com.jiebao.baqiang.data.db.DaojianDBHelper;
+import com.jiebao.baqiang.data.db.FajianDBHelper;
+import com.jiebao.baqiang.data.db.LiucangDBHelper;
+import com.jiebao.baqiang.data.db.XcdjDBHelper;
+import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
 import com.jiebao.baqiang.global.Footer;
@@ -44,13 +36,6 @@ import com.jiebao.baqiang.scan.ScanListener;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
-
-import org.xutils.DbManager;
-import org.xutils.common.util.KeyValue;
-import org.xutils.db.sqlite.WhereBuilder;
-import org.xutils.ex.DbException;
-
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/13 0013.
@@ -162,27 +147,16 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case Constant.F1_KEY_CODE: {
-                    // BaseActivity中获取F1按键执行上传操作
-
-                    // 全局扫描5张数据表，可用、未上传标记的记录
-                    DbManager db = BQDataBaseHelper.getDb();
-                    // 1. 上传留仓数据
-                    uploadStayHouseData(db);
-                    // 2. 上传装车发件数据
-                    uploadLoadSendData(db);
-                    // 3. 上传卸车到件数据
-                    uploadUnloadArrivalData(db);
-                    // 4. 上传到件数据
-                    uploadCargoArrivalData(db);
-                    // 5. 上传发件数据
-                    uploadShipmentData(db);
-                    // N. 更新UI
-                    syncViewAfterUpload();
+                    ZcFajianDBHelper.uploadZcfjUnloadRecords();
+                    XcdjDBHelper.uploadXcdjUnloadRecords();
+                    DaojianDBHelper.uploadDaojianUnloadRecords();
+                    FajianDBHelper.uploadFajianUnloadRecords();
+                    LiucangDBHelper.uploadLiucangUnloadRecords();
 
                     Toast.makeText(this, "数据上传成功", Toast.LENGTH_SHORT).show();
+                    // F1事件，传递给Activity更新UI
+                    syncViewAfterUpload();
 
-                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                            .SYNC_UNLOAD_DATA_TYPE_ALL));
                 }
             }
         }
@@ -190,238 +164,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         return super.onKeyDown(keyCode, event);
     }
 
-    /**
-     * 提供给子类覆写，用于上传数据后更新UI
-     */
-    public void syncViewAfterUpload() {
-
-    }
-
-    private void uploadStayHouseData(DbManager db) {
-        // 1. 留仓件 上传
-        List<StayHouseFileContent> list = null;
-        try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(StayHouseFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                // 2. 获取随机文件名
-                StayHouseFileName mStayHouseFileName = new StayHouseFileName();
-                if (mStayHouseFileName.linkToTXTFile()) {
-                    // 3. 链接创建的文件和上传功能
-                    UploadServerFile mUploadServerFile = new UploadServerFile(mStayHouseFileName
-                            .getFileInstance());
-                    for (int index = 0; index < list.size(); index++) {
-                        // 4. 创建写入文本的字符串，并写入文本
-                        StayHouseFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
-                            // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mUploadServerFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void uploadLoadSendData(DbManager db) {
-        List<ZCFajianFileContent> list = null;
-        try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(ZCFajianFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                // 2. 获取随机文件名
-                ZCFajianDispatchFileName mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
-                if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                    // 3. 链接创建的文件和上传功能
-                    UploadServerFile mZcfajianUploadFile = new UploadServerFile
-                            (mZcFajianDispatchFileName.getFileInstance());
-                    for (int index = 0; index < list.size(); index++) {
-                        // 4. 创建写入文本的字符串，并写入文本
-                        ZCFajianFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                            // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mZcfajianUploadFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void uploadUnloadArrivalData(DbManager db) {
-        List<UnloadArrivalFileContent> list = null;
-        try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(UnloadArrivalFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                // 2. 获取随机文件名
-                UnloadArrivalFileName mUnloadArrivalFileName = new UnloadArrivalFileName();
-                if (mUnloadArrivalFileName.linkToTXTFile()) {
-                    // 3. 链接创建的文件和上传功能
-                    UploadServerFile mUploadServerFile = new UploadServerFile
-                            (mUnloadArrivalFileName.getFileInstance());
-                    for (int index = 0; index < list.size(); index++) {
-                        // 4. 创建写入文本的字符串，并写入文本
-                        UnloadArrivalFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
-                            // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(UnloadArrivalFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mUploadServerFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void uploadCargoArrivalData(DbManager db) {
-        List<CargoArrivalFileContent> list = null;
-        try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(CargoArrivalFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                // 2. 获取随机文件名
-                CargoArrivalFileName mCargoArrivalFileName = new CargoArrivalFileName();
-                if (mCargoArrivalFileName.linkToTXTFile()) {
-                    // 3. 链接创建的文件和上传功能
-                    UploadServerFile mUploadServerFile = new UploadServerFile
-                            (mCargoArrivalFileName.getFileInstance());
-                    for (int index = 0; index < list.size(); index++) {
-                        // 4. 创建写入文本的字符串，并写入文本
-                        CargoArrivalFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
-                            // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(CargoArrivalFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mUploadServerFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void uploadShipmentData(DbManager db) {
-        List<ShipmentFileContent> list = null;
-        try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(ShipmentFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                // 2. 获取随机文件名
-                ShipmentDispatchFileName mShipmentDispatchFileName = new ShipmentDispatchFileName();
-                if (mShipmentDispatchFileName.linkToTXTFile()) {
-                    // 3. 链接创建的文件和上传功能
-                    UploadServerFile mShipmentUploadFile = new UploadServerFile
-                            (mShipmentDispatchFileName.getFileInstance());
-                    for (int index = 0; index < list.size(); index++) {
-                        // 4. 创建写入文本的字符串，并写入文本
-                        ShipmentFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mShipmentUploadFile.writeContentToFile(content, true)) {
-                            // 不能删除数据，应该是否上传标志位为：已上传
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            // 5. 将当前数据库中对应数据“是否上传”标志置为：已上传
-                            db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mShipmentUploadFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
-        } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
 
     // 让子类处理消息
     protected void handler(Message msg) {
@@ -457,9 +199,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 }
             }
         }
-
-        // Activity管理类
-        AppManager.getAppManager().addActivity(this);
     }
 
     @Override
@@ -493,8 +232,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
         mIsDestroyed = true;
         closeLoadinDialog();
-
-        AppManager.getAppManager().finishActivity(this);
     }
 
     protected int getFootTxtNum() {
@@ -573,6 +310,67 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         setContentView(contentLayout);
     }
 
+    @Override
+    public void setFooterBtnVisible(int tvId, int visableState) {
+        mFooterLayout.getChildAt(tvId).setVisibility(visableState);
+    }
+
+    public void setFootLayout(LinearLayout footLayout) {
+        mFooterLayout = footLayout;
+    }
+
+    @Override
+    public TextView getFooterTextView(int index) {
+        if (index < 0 || index > FOOTER_BUTTONS_NUM - 1) {
+            System.err.println("Footer button index is out of bound.");
+        } else {
+            return (TextView) mFooterLayout.getChildAt(index);
+        }
+        return null;
+    }
+
+    @Override
+    public void setFooterTVText(int tvId, String text) {
+        TextView footTv = (TextView) mFooterLayout.getChildAt(tvId);
+        footTv.setTextColor(0xffffffff);
+        footTv.setText(text);
+    }
+
+    /**
+     * 如何交互？
+     */
+    public void showLoadinDialog() {
+        if (mIsDestroyed) {
+            return;
+        }
+
+        if (null == loadingBulider) {
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
+                    .style.myLoadingTheme));
+            loadingBulider = builder.create();
+            loadingBulider.setCancelable(false);
+            loadingBulider.setView(view, 0, 0, 0, 0);
+            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener() {
+
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    // TODO 屏蔽Back按键
+                    /*if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        closeLoadinDialog();
+                        loadingBulider = null;
+                    }*/
+                    return false;
+                }
+            });
+            loadingBulider.setCanceledOnTouchOutside(false);
+        }
+        if (!loadingBulider.isShowing()) {
+            loadingBulider.show();
+        }
+    }
+
+
     private int mLastX = 0;
     private int mLastY = 0;
     private int initialTouchX = 0;
@@ -633,6 +431,15 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
     protected void timeout(long timeout) {
 
+    }
+
+    /**
+     * 提供给子类覆写，用于上传数据后更新UI
+     */
+    public void syncViewAfterUpload() {
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                .SYNC_UNLOAD_DATA_TYPE_ALL));
+        // do child other update view steps
     }
 
     /**
@@ -741,65 +548,4 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         LogUtil.trace("unloadRecords:" + unloadRecords);
         return unloadRecords;
     }
-
-    @Override
-    public void setFooterBtnVisible(int tvId, int visableState) {
-        mFooterLayout.getChildAt(tvId).setVisibility(visableState);
-    }
-
-    public void setFootLayout(LinearLayout footLayout) {
-        mFooterLayout = footLayout;
-    }
-
-    @Override
-    public TextView getFooterTextView(int index) {
-        if (index < 0 || index > FOOTER_BUTTONS_NUM - 1) {
-            System.err.println("Footer button index is out of bound.");
-        } else {
-            return (TextView) mFooterLayout.getChildAt(index);
-        }
-        return null;
-    }
-
-    @Override
-    public void setFooterTVText(int tvId, String text) {
-        TextView footTv = (TextView) mFooterLayout.getChildAt(tvId);
-        footTv.setTextColor(0xffffffff);
-        footTv.setText(text);
-    }
-
-    /**
-     * 如何交互？
-     */
-    public void showLoadinDialog() {
-        if (mIsDestroyed) {
-            return;
-        }
-
-        if (null == loadingBulider) {
-            View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
-                    .style.myLoadingTheme));
-            loadingBulider = builder.create();
-            loadingBulider.setCancelable(false);
-            loadingBulider.setView(view, 0, 0, 0, 0);
-            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener() {
-
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    // TODO 屏蔽Back按键
-                    /*if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        closeLoadinDialog();
-                        loadingBulider = null;
-                    }*/
-                    return false;
-                }
-            });
-            loadingBulider.setCanceledOnTouchOutside(false);
-        }
-        if (!loadingBulider.isShowing()) {
-            loadingBulider.show();
-        }
-    }
-
 }
