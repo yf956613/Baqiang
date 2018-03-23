@@ -9,6 +9,8 @@ import com.jiebao.baqiang.global.NetworkConstant;
 
 public class SharedUtil {
 
+    private Object mObject = new Object();
+
     /**
      * 默认 SharePreferences文件名.
      */

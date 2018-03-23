@@ -43,6 +43,6 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
                 BaqiangApplication.getTopActivity();
         LogUtil.trace("class name:" + BaqiangApplication.getTopActivityName());
 
-        mTopActivity.syncViewAfterUpload();
+        mTopActivity.syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
     }
 }

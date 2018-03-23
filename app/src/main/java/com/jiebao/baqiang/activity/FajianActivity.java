@@ -811,8 +811,8 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     @Override
-    public void syncViewAfterUpload() {
-        super.syncViewAfterUpload();
+    public void syncViewAfterUpload(int updateType) {
+        super.syncViewAfterUpload(updateType);
 
         reQueryUnUploadDataForListView();
     }

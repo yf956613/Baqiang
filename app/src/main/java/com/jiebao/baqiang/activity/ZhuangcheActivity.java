@@ -346,8 +346,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     @Override
-    public void syncViewAfterUpload() {
-        super.syncViewAfterUpload();
+    public void syncViewAfterUpload(int updateType) {
+        super.syncViewAfterUpload(updateType);
 
         // TODO F1事件触发刷新UI
     }

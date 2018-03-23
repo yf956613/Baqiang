@@ -737,8 +737,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     }
 
     @Override
-    public void syncViewAfterUpload() {
-        super.syncViewAfterUpload();
+    public void syncViewAfterUpload(int updateType) {
+        super.syncViewAfterUpload(updateType);
 
         reQueryUnUploadDataForListView();
     }

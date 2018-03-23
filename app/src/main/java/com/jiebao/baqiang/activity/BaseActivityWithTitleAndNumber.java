@@ -21,11 +21,13 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
+import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
@@ -37,6 +39,11 @@ import com.jiebao.baqiang.scan.ScanListener;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/13 0013.
@@ -156,8 +163,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
                     Toast.makeText(this, "数据上传成功", Toast.LENGTH_SHORT).show();
                     // F1事件，传递给Activity更新UI
-                    syncViewAfterUpload();
-
+                    syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
                 }
             }
         }
@@ -437,9 +443,9 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     /**
      * 提供给子类覆写，用于上传数据后更新UI
      */
-    public void syncViewAfterUpload() {
-        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                .SYNC_UNLOAD_DATA_TYPE_ALL));
+    public void syncViewAfterUpload(int updateType) {
+        LogUtil.trace("<------------------------>1111");
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(updateType));
         // do child other update view steps
     }
 
@@ -450,19 +456,10 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
      * @return
      */
     public int searchUnloadDataForUpdate(int updateType) {
+        LogUtil.trace("updateType:" + updateType);
         int unloadRecords = 0;
 
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_ZCFJ);
-
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_XCDJ);
-
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_DJ);
-
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_FJ);
-
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_LCJ);
-
-        /*DbManager db = BQDataBaseHelper.getDb();
+        DbManager db = BQDataBaseHelper.getDb();
         switch (updateType) {
             case Constant.SYNC_UNLOAD_DATA_TYPE_ALL: {
                 break;
@@ -470,11 +467,15 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ: {
                 try {
-                    // 装车发件：查询数据库中标识位“未上传”的记录
                     List<ZCFajianFileContent> zCFajianData = db.selector(ZCFajianFileContent
-                            .class).where("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
+                            .class).where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used")
+                            .findAll();
                     if (zCFajianData != null && zCFajianData.size() != 0) {
+                        // FIXME 是否有延迟？
+                        LogUtil.trace("--->" + zCFajianData.size());
                         SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, zCFajianData.size());
+                    } else {
+                        // do nothing
                     }
                 } catch (DbException e) {
                     e.printStackTrace();
@@ -501,7 +502,17 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
             default:
                 break;
-        }*/
+        }
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_ZCFJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_XCDJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_DJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_FJ);
+
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_LCJ);
 
         /*int unloadDataRecords = 0;
 

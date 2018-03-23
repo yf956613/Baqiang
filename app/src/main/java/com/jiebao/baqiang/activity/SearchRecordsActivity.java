@@ -129,7 +129,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                         dialog.dismiss();
 
                                         // TODO 刷新UI，重写执行查询操作
-                                        syncViewAfterUpload();
+                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     }
                                 });
 
@@ -148,7 +148,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                         dialog.dismiss();
 
                                         // TODO 刷新UI，重写执行查询操作
-                                        syncViewAfterUpload();
+                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     }
                                 });
 
@@ -203,7 +203,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                 if (SearchType.ZCFJ.equals(mSearchFlag)) {
                     ZCfajianUploadFile.redoUploadRecords(mListData);
 
-                    syncViewAfterUpload();
+                    syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                 } else if (SearchType.XCDJ.equals(mSearchFlag)) {
                     setHeaderLeftViewText("卸车到件查询");
                     mSearchFlag = SearchType.XCDJ;
@@ -224,8 +224,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
     }
 
     @Override
-    public void syncViewAfterUpload() {
-        super.syncViewAfterUpload();
+    public void syncViewAfterUpload(int updateType) {
+        super.syncViewAfterUpload(updateType);
 
         initData();
         mSearchRecordsAdapter.notifyDataSetChanged();
