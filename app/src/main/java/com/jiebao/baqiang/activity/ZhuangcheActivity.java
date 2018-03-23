@@ -30,6 +30,7 @@ import com.jiebao.baqiang.data.db.VehicleInfoDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
@@ -77,7 +78,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     private ZCFajianDispatchFileName mZcFajianDispatchFileName;
     private ZCFajianFileContent mZcFajianFileContent;
-    private UploadServerFile mZcfajianUploadFile;
+    private ZCfajianUploadFile mZcfajianUploadFile;
 
     private Vibrator mDeviceVibrator;
     private int mScanCount;
@@ -283,13 +284,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             case Constant.F2_KEY_CODE: {
                 LogUtil.trace();
 
-                String barcode = mListData.get(0).getScannerData();
-                if (ZcFajianDBHelper.isRecordUpload(barcode)) {
-                    Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
-                            .show();
-                    return true;
-                }
-
                 deleteLastestRecord();
                 // 消费F2按键事件
                 return true;
@@ -385,9 +379,12 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
 
             mScannerBaseAdatper.notifyDataSetChanged();
+
+            if (!mListView.isStackFromBottom()) {
+                mListView.setStackFromBottom(true);
+            }
+            mListView.setStackFromBottom(false);
         }
-
-
     }
 
     private void prepareDataForView() {
@@ -536,6 +533,16 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
      * F2按键触发删除最新扫码记录，ListView最上一条记录
      */
     private void deleteLastestRecord() {
+        if (mListData == null || mListData.size() == 0) {
+            return;
+        }
+
+        String barcode = mListData.get(0).getScannerData();
+        if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (mListData != null && mListData.size() != 0) {
             LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + mListData
                     .get(0).getScannerData());
@@ -549,7 +556,15 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ZcFajianDBHelper.deleteFindedBean(mListData.get(0).getScannerData());
+                    String barcode = mListData.get(0).getScannerData();
+                    if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+                        Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                                .LENGTH_SHORT).show();
+
+                        return;
+                    }
+
+                    ZcFajianDBHelper.deleteFindedBean(barcode);
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
                             .getScannerData(), 0);
 
@@ -588,7 +603,15 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ZcFajianDBHelper.deleteFindedBean(mListData.get(position).getScannerData());
+                    String barcode = mListData.get(position).getScannerData();
+                    if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+                        Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                                .LENGTH_SHORT).show();
+
+                        return;
+                    }
+
+                    ZcFajianDBHelper.deleteFindedBean(barcode);
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, mListData.get
                             (position).getScannerData(), position);
                     increaseOrDecreaseRecords(0);
@@ -681,7 +704,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                         if (null != list && list.size() != 0) {
                             mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
                             if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                                mZcfajianUploadFile = new UploadServerFile
+                                mZcfajianUploadFile = new ZCfajianUploadFile
                                         (mZcFajianDispatchFileName.getFileInstance());
                                 for (int index = 0; index < list.size(); index++) {
                                     ZCFajianFileContent javaBean = list.get(index);

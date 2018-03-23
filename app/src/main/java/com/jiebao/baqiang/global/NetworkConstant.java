@@ -38,7 +38,7 @@ public interface NetworkConstant {
     String PAYMENT_TYPE_SERVLET = "/JBBaQiang/PayWay";
 
     //TODO 留仓原因
-    String LiuCang_TYPE ="/JBBaQiang/Storehouse";
+    String LiuCang_TYPE = "/JBBaQiang/Storehouse";
 
     // TODO 公司员工表
     String EMPLOYEE = "/JBBaQiang";
@@ -67,5 +67,8 @@ public interface NetworkConstant {
 
     // apk下载路径
     String APK_DOWNLOAD_URL = "/JBWeb/DownloadFile";
+
+    int UPLOAD_FILE_SUCCESS = 1;
+    int UPLOAD_FILE_FAILED = 0;
 
 }

@@ -1,25 +1,19 @@
 package com.jiebao.baqiang.receiver;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.jiebao.baqiang.activity.BaseActivityWithSearchTitle;
 import com.jiebao.baqiang.activity.BaseActivityWithTitleAndNumber;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
-import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
-
-import org.xutils.DbManager;
 
 /**
  * Created by Administrator on 2018/3/21 0021.

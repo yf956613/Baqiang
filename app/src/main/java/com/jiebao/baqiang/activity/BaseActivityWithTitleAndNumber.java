@@ -21,13 +21,11 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
@@ -39,11 +37,6 @@ import com.jiebao.baqiang.scan.ScanListener;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
-
-import org.xutils.DbManager;
-import org.xutils.ex.DbException;
-
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/13 0013.
@@ -214,9 +207,13 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
         LogUtil.trace();
 
-        // FIXME 界面重新获取焦点后，刷新 统计值
-        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                .SYNC_UNLOAD_DATA_TYPE_ALL));
+        if(BaqiangApplication.getLatestActivity() instanceof LoginActivity){
+            mHeaderRightView.setVisibility(View.INVISIBLE);
+        }else{
+            // FIXME 界面重新获取焦点后，刷新 统计值
+            setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                    .SYNC_UNLOAD_DATA_TYPE_ALL));
+        }
 
         if (isSupportScan()) {
             ScanHelper.getInstance().Open_Barcode(this);

@@ -2,7 +2,7 @@ package com.jiebao.baqiang.global;
 
 public class Constant {
     // 调试阶段开关
-    public final static boolean DEBUG = true;
+    public final static boolean DEBUG = false;
 
     // 连续扫描延时，单位：ms
     public final static int TIME_SCAN_DELAY = 5000;
