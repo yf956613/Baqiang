@@ -16,8 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.adapter.FilterListener;
+import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
@@ -34,7 +34,6 @@ import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
-import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.KeyValue;
@@ -83,6 +82,10 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     private Vibrator mDeviceVibrator;
     private int mScanCount;
     private boolean mIsScanRunning = false;
+
+    public enum DeleteAction {
+        DELETE_ACTION_F2, DELETE_ACTION_CHOOSE
+    }
 
     @Override
     protected void onDestroy() {
@@ -278,6 +281,15 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
 
             case Constant.F2_KEY_CODE: {
+                LogUtil.trace();
+
+                String barcode = mListData.get(0).getScannerData();
+                if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+                    Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
+
                 deleteLastestRecord();
                 // 消费F2按键事件
                 return true;
@@ -342,15 +354,40 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void clickHappend(int position) {
+        // 判断当前record是否已上传
+
+        String barcode = mListData.get(position).getScannerData();
+        if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         deleteChooseRecord(position);
     }
 
     @Override
     public void syncViewAfterUpload(int updateType) {
+        // 刷新UI，更新未上传统计值
         super.syncViewAfterUpload(updateType);
 
-        LogUtil.trace();
-        // TODO F1事件触发刷新UI
+        // TODO F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
+        if (mListData != null) {
+            // 1. 取出mListData中的所有元素
+            for (int index = 0; index < mListData.size(); index++) {
+                ScannerListViewBean bean = mListData.get(index);
+                boolean isUpload = ZcFajianDBHelper.isRecordUpload(bean.getScannerData());
+
+                if (isUpload) {
+                    bean.setStatus("已上传");
+                } else {
+                    // do nothing
+                }
+            }
+
+            mScannerBaseAdatper.notifyDataSetChanged();
+        }
+
+
     }
 
     private void prepareDataForView() {
@@ -507,7 +544,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除最新记录？");
+            normalDialog.setMessage("是否删除：" + mListData.get(0).getScannerData() + " 记录？");
             normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                 @Override
@@ -515,6 +552,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     ZcFajianDBHelper.deleteFindedBean(mListData.get(0).getScannerData());
                     updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
                             .getScannerData(), 0);
+
                     increaseOrDecreaseRecords(0);
                 }
             });
@@ -545,7 +583,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否记录？");
+            normalDialog.setMessage("是否删除：" + mListData.get(position).getScannerData() + " 记录？");
             normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                 @Override
@@ -614,10 +652,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             mListView.setStackFromBottom(true);
         }
         mListView.setStackFromBottom(false);
-    }
-
-    public enum DeleteAction {
-        DELETE_ACTION_F2, DELETE_ACTION_CHOOSE
     }
 
     /**

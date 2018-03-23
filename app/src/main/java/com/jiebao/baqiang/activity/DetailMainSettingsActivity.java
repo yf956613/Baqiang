@@ -122,30 +122,6 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
         }
     }
 
-    private void initAutoUploadRecords() {
-        AlarmManager mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
-
-        int tenMinutes = 1 * 60 * 1000;
-        long triggerAtMillis = System.currentTimeMillis() + tenMinutes;
-        long intervalMillis = 1 * 60 * 1000;
-        int requestCode = 0;
-
-        Intent intent = new Intent();
-        intent.setAction(Constant.AUTO_ACTION_UPLOAD_RECORDS);
-        PendingIntent mPendingIntent = PendingIntent.getBroadcast(this, requestCode, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        /**
-         * int type：闹钟类型 AlarmManager.RTC_WAKEUP 使用绝对时间
-         * long triggerAtMillis：闹钟首次执行时间，如果设置为（绝对时间）System.currentTimeMillis()会默认在5秒后执行首次
-         *                          如果设置成System.currentTimeMillis() + 20 * 1000，首次执行在20秒后
-         * long intervalMillis：两次执行时间间隔
-         * PendingIntent operation：闹钟响应动作
-         */
-        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, intervalMillis,
-                mPendingIntent);
-    }
-
     /**
      * 自动上传时间设置
      */
@@ -160,6 +136,9 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
         Button btnPositive = (Button) dialog.findViewById(R.id.btn_sure);
         Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
         final EditText etContent = (EditText) dialog.findViewById(R.id.edt_auto_time);
+        int timeInterval = SharedUtil.getInt(DetailMainSettingsActivity.this, Constant
+                .PREFERENCE_NAME_AUTO_UPLOAD_TIME);
+        etContent.setText("" + timeInterval);
 
         btnPositive.setOnClickListener(new View.OnClickListener() {
 
@@ -168,6 +147,9 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
                 String setTime = etContent.getText().toString();
                 if (!TextUtils.isEmpty(setTime)) {
                     int intervalMinute = Integer.parseInt(setTime);
+
+                    SharedUtil.putInt(DetailMainSettingsActivity.this, Constant
+                            .PREFERENCE_NAME_AUTO_UPLOAD_TIME, intervalMinute);
 
                     AlarmManager mAlarmManager = (AlarmManager) getSystemService(Service
                             .ALARM_SERVICE);
@@ -185,6 +167,8 @@ public class DetailMainSettingsActivity extends BaseActivityWithTitleAndNumber i
                             intervalMillis, mPendingIntent);
 
                     dialog.dismiss();
+                } else {
+                    // do nothing
                 }
             }
         });

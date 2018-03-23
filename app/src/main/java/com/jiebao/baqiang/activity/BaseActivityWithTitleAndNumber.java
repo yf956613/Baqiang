@@ -60,13 +60,13 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     private float mHeaderRightViewTextSize = 20;
     private int mHeaderRightViewTextColor = Color.BLACK;
 
-    // TODO 头部
+    // 头部
     private FrameLayout mHeaderLayout;
     private TextView mHeaderLeftView;
     private TextView mHeaderRightView;
     private RelativeLayout.LayoutParams mHeaderLayoutParams;
 
-    // TODO 中部内容布局
+    // 中部内容布局
     private RelativeLayout mContentLayout;
     private View mContent;
     private RelativeLayout.LayoutParams mContentViewParams;
@@ -74,7 +74,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     private RelativeLayout mGlobalLayout;
     private RelativeLayout.LayoutParams mFooterLayoutParams;
 
-    // TODO 底部
+    // 底部
     protected LinearLayout mFooterLayout;
     private RelativeLayout.LayoutParams mContentLayoutParams;
 
@@ -211,6 +211,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     @Override
     protected void onResume() {
         super.onResume();
+
+        LogUtil.trace();
 
         // FIXME 界面重新获取焦点后，刷新 统计值
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
@@ -443,7 +445,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
      * 提供给子类覆写，用于上传数据后更新UI
      */
     public void syncViewAfterUpload(int updateType) {
-        LogUtil.trace("<------------------------>1111");
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(updateType));
         // do child other update view steps
     }

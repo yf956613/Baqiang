@@ -150,6 +150,30 @@ public class ZcFajianDBHelper {
     }
 
     /**
+     * 统计指定时间范围内的 未上传 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * 根据运单编号，设置数据为不可用。
      * <p>
      * 1. 运单编号匹配；
@@ -229,6 +253,38 @@ public class ZcFajianDBHelper {
 
         return false;
     }
+
+    /**
+     * 搜索指定记录是否已经上传
+     * <p>
+     * 1. 运单号匹配；
+     * 2. 可用；
+     *
+     * @param barcode
+     * @return
+     */
+    public static boolean isRecordUpload(String barcode) {
+        DbManager dbManager = BQDataBaseHelper.getDb();
+
+        try {
+            List<ZCFajianFileContent> list = dbManager.selector(ZCFajianFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ShipmentID", "=", barcode).findAll();
+            if (list != null && list.size() != 0) {
+                LogUtil.trace("search size:" + list.size());
+                if ("Unload".equals(list.get(0).getmStatus())) {
+                    return false;
+                } else if ("Load".equals(list.get(0).getmStatus())) {
+                    return true;
+                } else {
+                    // do nothing
+                }
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /*public void reQueryUnUploadDataForListView() {
         DbManager db = BQDataBaseHelper.getDb();

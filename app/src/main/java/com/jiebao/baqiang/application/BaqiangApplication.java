@@ -19,6 +19,7 @@ import com.jiebao.baqiang.listener.UIHandler;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.x;
 
@@ -89,11 +90,17 @@ public class BaqiangApplication extends Application {
     }
 
     private void initAutoUploadRecords() {
+        int timeInterval = SharedUtil.getInt(this, Constant.PREFERENCE_NAME_AUTO_UPLOAD_TIME);
+        if (timeInterval == 0) {
+            timeInterval = 10;
+            SharedUtil.putInt(this, Constant.PREFERENCE_NAME_AUTO_UPLOAD_TIME, timeInterval);
+        }
+
         AlarmManager mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 
-        int tenMinutes = 10 * 60 * 1000;
+        int tenMinutes = timeInterval * 60 * 1000;
         long triggerAtMillis = System.currentTimeMillis() + tenMinutes;
-        long intervalMillis = 10 * 60 * 1000;
+        long intervalMillis = timeInterval * 60 * 1000;
         int requestCode = 0;
 
         Intent intent = new Intent();

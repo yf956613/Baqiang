@@ -72,27 +72,22 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             setHeaderLeftViewText("装车发件查询");
             mSearchFlag = SearchType.ZCFJ;
 
-
             try {
-                mTvRecordsAll.setText("" + ZcFajianDBHelper.findTimeLimitedUsableRecords(new
-                        SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil.convertSearchTime
-                        (beginTime, 1)).getTime(), new SimpleDateFormat("yyyyMMddHHmmss").parse
-                        (BQTimeUtil.convertSearchTime(endTime, 2)).getTime()));
-                mTvRecordsUnload.setText("" + ZcFajianDBHelper.findUnloadRecords());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+                long mBeginDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                        .convertSearchTime(beginTime, 1)).getTime();
+                long mEndDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                        .convertSearchTime(endTime, 2)).getTime();
 
-            try {
+                mTvRecordsAll.setText("" + ZcFajianDBHelper.findTimeLimitedUsableRecords
+                        (mBeginDate, mEndDate));
+                mTvRecordsUnload.setText("" + ZcFajianDBHelper.findTimeLimitedUnloadRecords
+                        (mBeginDate, mEndDate));
+
                 mListData = (List<IFileContentBean>) (List<?>) ZcFajianDBHelper
-                        .getLimitedTimeRecords(new SimpleDateFormat("yyyyMMddHHmmss").parse
-                                (BQTimeUtil.convertSearchTime(beginTime, 1)).getTime(), new
-                                SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
-                                .convertSearchTime(endTime, 2)).getTime());
-
+                        .getLimitedTimeRecords(mBeginDate, mEndDate);
                 if (null != mListData && mListData.size() != 0) {
-                    mSearchRecordsAdapter = new SearchRecordsAdapter(SearchRecordsActivity.this,
-                            mListData);
+                    mSearchRecordsAdapter = new SearchRecordsAdapter(SearchRecordsActivity
+                            .this, mListData);
                     mListViewData.setAdapter(mSearchRecordsAdapter);
                     mListViewData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -133,10 +128,11 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     @Override
                                     public void onClick(View v) {
+                                        // 上传当前单条记录
                                         ZCfajianUploadFile.singleRecordUpload(bean);
                                         dialog.dismiss();
 
-                                        // TODO 刷新UI，重写执行查询操作
+                                        // 刷新UI，重写执行查询操作
                                         syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     }
                                 });
@@ -152,10 +148,11 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     @Override
                                     public void onClick(View v) {
+                                        // 删除指定运单号记录，且是未上传，将该记录设置为不可用
                                         ZcFajianDBHelper.deleteFindedBean(bean.getShipmentNumber());
                                         dialog.dismiss();
 
-                                        // TODO 刷新UI，重写执行查询操作
+                                        // 刷新UI，重写执行查询操作
                                         syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     }
                                 });
@@ -183,6 +180,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                         }
                     });
                 }
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -209,6 +207,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                 LogUtil.trace("mSearchFlag:" + mSearchFlag);
 
                 if (SearchType.ZCFJ.equals(mSearchFlag)) {
+                    // 重传当前ListView中的所有记录
                     ZCfajianUploadFile.redoUploadRecords(mListData);
 
                     syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);

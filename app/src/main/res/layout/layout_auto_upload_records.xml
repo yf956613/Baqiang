@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="设置巴枪编号"
+        android:text="设置自动上传时间"
         android:textSize="20sp" />
 
     <LinearLayout

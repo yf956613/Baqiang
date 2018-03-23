@@ -277,10 +277,13 @@ public class Constant {
     // 自动上传记录
     public static final String AUTO_ACTION_UPLOAD_RECORDS = "android.intent.action.jiebao.upload"
             + ".records";
+    public static final String PREFERENCE_NAME_AUTO_UPLOAD_TIME = "auto_upload_time";
 
     public static final String SEARCH_NAME_ZCFJ = "装车发件";
     public static final String SEARCH_NAME_XCDJ = "卸车到件";
     public static final String SEARCH_NAME_DJ = "到件";
     public static final String SEARCH_NAME_FJ = "发件";
     public static final String SEARCH_NAME_LCJ = "留仓件";
+
+
 }
