@@ -31,9 +31,6 @@ public class UpdateLiuCangType extends UpdateInterface {
     private static final String DB_NAME = "liucang";
 
     private static String mUpdateLiuCangTypeUrl = "";
-    private volatile static UpdateLiuCangType mInstance;
-
-    private IDownloadStatus mDataDownloadStatus;
 
     public void setDataDownloadStatus(IDownloadStatus dataDownloadFinish) {
         this.mDataDownloadStatus = dataDownloadFinish;
@@ -43,16 +40,19 @@ public class UpdateLiuCangType extends UpdateInterface {
         infoId = Constant.LIUCANGTYPEINFO_ID;
     }
 
-    public static UpdateLiuCangType getInstance() {
-        if (mInstance == null) {
-            synchronized (UpdateLiuCangType.class) {
-                if (mInstance == null) {
+    public static UpdateInterface getInstance() {
+        if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateLiuCangType)))) {
+            synchronized (UpdateSalesServiceData.class) {
+                if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateLiuCangType)))) {
                     mInstance = new UpdateLiuCangType();
                 }
             }
         }
-
         return mInstance;
+    }
+
+    public void updateData() {
+        updateLiuCangType();
     }
 
     public boolean updateLiuCangType() {
@@ -70,8 +70,6 @@ public class UpdateLiuCangType extends UpdateInterface {
             @Override
             public void onSuccess(String liucang) {
 
-                mDataDownloadStatus.downloadFinish(infoId);
-
                 Gson gson = new Gson();
                 final LiucangListInfo list = gson.fromJson(liucang, LiucangListInfo.class);
 
@@ -82,6 +80,8 @@ public class UpdateLiuCangType extends UpdateInterface {
                         storageData(list);
                     }
                 }).start();
+
+                mDataDownloadStatus.downloadFinish(infoId);
             }
 
             @Override

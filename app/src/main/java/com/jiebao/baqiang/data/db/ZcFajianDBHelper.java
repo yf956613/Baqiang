@@ -50,6 +50,33 @@ public class ZcFajianDBHelper {
     }
 
     /**
+     * 统计指定时间范围内的 总可用 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+        LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+
+    /**
      * 获取所有可用记录
      *
      * @return

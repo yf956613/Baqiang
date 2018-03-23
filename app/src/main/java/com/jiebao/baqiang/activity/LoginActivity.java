@@ -84,6 +84,18 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
 
         mTvAppVersion.setText(getCurrentVersionName());
         mTvSystemVersion.setText(getSystemProperty(LoginActivity.this, "ro" + ".jiebao.version"));
+        //init first start default value
+        String isFirstStart =  SharedUtil.getString(this, Constant.PREFERENCE_KEY_BAQIANG_FIRST_START);
+        if(isFirstStart == null || isFirstStart.equals("true")) {
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_ADDRESS, "193.112.127.158");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_PORT, "9876");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER, "193.112.127.158");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER_PORT, "9876");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "193.112.127.158");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_SALE_SERVICE, "0020");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_BAQIANG_FIRST_START, "false");
+        }
+
     }
 
     private void initListener() {
@@ -214,7 +226,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
                         if ("1".equals(loginResponse.getAuthRet())) {
                             Toast.makeText(BaqiangApplication.getContext(), "登录成功", Toast
                                     .LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            //here we set password edittext ""
+                            mEtPassward.setText("");
+                            startActivity(new Intent(LoginActivity.this,
+                                    MainActivity.class));
                         } else {
                             Toast.makeText(BaqiangApplication.getContext(), "用户名或密码错误，请重新登录",
                                     Toast.LENGTH_SHORT).show();

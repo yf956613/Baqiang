@@ -212,11 +212,10 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     protected void onResume() {
         super.onResume();
 
-        // FIXME
+        // FIXME 界面重新获取焦点后，刷新 统计值
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_ALL));
 
-        // BaqiangApplication.mTopActivity = this;
         if (isSupportScan()) {
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
@@ -459,28 +458,21 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         LogUtil.trace("updateType:" + updateType);
         int unloadRecords = 0;
 
-        DbManager db = BQDataBaseHelper.getDb();
         switch (updateType) {
             case Constant.SYNC_UNLOAD_DATA_TYPE_ALL: {
+                unloadRecords = ZcFajianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+
                 break;
             }
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ: {
-                try {
-                    List<ZCFajianFileContent> zCFajianData = db.selector(ZCFajianFileContent
-                            .class).where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used")
-                            .findAll();
-                    if (zCFajianData != null && zCFajianData.size() != 0) {
-                        // FIXME 是否有延迟？
-                        LogUtil.trace("--->" + zCFajianData.size());
-                        SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, zCFajianData.size());
-                    } else {
-                        // do nothing
-                    }
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
+                unloadRecords = ZcFajianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
 
+                LogUtil.trace("unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -503,8 +495,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             default:
                 break;
         }
-
-        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_ZCFJ);
 
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_XCDJ);
 

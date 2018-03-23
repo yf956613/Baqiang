@@ -19,7 +19,10 @@ import android.widget.Toast;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
+import com.jiebao.baqiang.data.bean.ShipmentType;
+import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.updateData.ServerInfo;
+import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.updateData.UpdateLiuCangType;
 import com.jiebao.baqiang.data.updateData.UpdateSalesServiceData;
 import com.jiebao.baqiang.data.updateData.UpdateShipmentType;
@@ -309,9 +312,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void updateServerInfo(String serverinfo, String time, String apkVersion) {
-            Log.e("linjiazhi", "serverinfo " + serverinfo);
-            Log.e("linjiazhi", "time " + time);
-            Log.e("linjiazhi", "apkVersion " + apkVersion);
+            LogUtil.trace("get updateServerInfo done ");
             Message serverMsg = Message.obtain();
             serverMsg.what = Constant.DOWNLOAD_SERVERINFO_SUCCESS;
             mHandler.sendMessage(serverMsg);
@@ -320,12 +321,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void showServerInfoError(String errorMsg) {
+            LogUtil.trace("showServerInfoError ");
             Message serverMsg = Message.obtain();
             serverMsg.what = Constant.UPDATE_SEVERINFO_FAILED;
             mHandler.sendMessage(serverMsg);
         }
 
     }
+
+    public static int dstCnt = 0;
 
     /**
      * 异步下载任务
@@ -336,38 +340,43 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
      */
     class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
 
-        private int updataCnt = 0;
-        private int sucessCnt = 0;
-        private int failedCnt = 0;
+        private UpdateInterface updateInterface;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            updataCnt = 0;
-            sucessCnt = 0;
-            failedCnt = 0;
-
             // MainThread 强制更新后台数据
             showProgressDialog();
+        }
+
+        public void setUpdateInterface(UpdateInterface uInterface) {
+            updateInterface = uInterface;
         }
 
         @Override
         protected Long doInBackground(String... strings) {
             // WorkerThread
             LogUtil.trace("doInBackground parameters:" + Arrays.toString(strings));
+            if(updateInterface != null) {
+                updateInterface.setDataDownloadStatus(this);
+                updateInterface.updateData();
+            }
 
-            // 更新网点数据
-            UpdateSalesServiceData.getInstance().setDataDownloadStatus(this);
-            UpdateSalesServiceData.getInstance().updateSalesService();
-            // 更新快件类型正常
-            UpdateShipmentType.getInstance().setDataDownloadStatus(this);
-            UpdateShipmentType.getInstance().updateShipmentType();
-            // 更新留仓原因正常
-            UpdateLiuCangType.getInstance().setDataDownloadStatus(this);
-            UpdateLiuCangType.getInstance().updateLiuCangType();
-            // 更新车辆信息正常
-            UpdateVehicleInfo.getInstance().setDataDownloadStatus(this);
-            UpdateVehicleInfo.getInstance().updateVehicleInfo();
+//            // 更新网点数据
+//            UpdateSalesServiceData.getInstance().setDataDownloadStatus(this);
+//            UpdateSalesServiceData.getInstance().updateData();
+
+//            // 更新快件类型正常
+//            UpdateShipmentType.getInstance().setDataDownloadStatus(this);
+//            UpdateShipmentType.getInstance().updateData();
+
+//            // 更新留仓原因正常
+//            UpdateLiuCangType.getInstance().setDataDownloadStatus(this);
+//            UpdateLiuCangType.getInstance().updateData();
+
+//            // 更新车辆信息正常
+//            UpdateVehicleInfo.getInstance().setDataDownloadStatus(this);
+//            UpdateVehicleInfo.getInstance().updateData();
 
             return null;
         }
@@ -387,9 +396,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         public void startDownload(int infoId) {
             LogUtil.trace("startDownload " + infoId);
 
-            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
-                    + sucessCnt);
-
             Message startMsg = Message.obtain();
             startMsg.what = Constant.STARTDOWNLOAD_INFO + infoId;
             startMsg.arg1 = infoId;
@@ -398,56 +404,51 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void downloadFinish(int infoId) {
-            updataCnt++;
-            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
-                    + sucessCnt);
             LogUtil.trace("downloadFinish " + infoId);
+
+            dstCnt++;
+
             Message dlInfoMsg = Message.obtain();
             dlInfoMsg.what = Constant.DOWNLOAD_INFO_SUCCESS + infoId;
             mHandler.sendMessage(dlInfoMsg);
 
-            Message dlSuccessMsg = Message.obtain();
-            dlSuccessMsg.what = Constant.DOWNLOAD_SUCCESS;
-            dlSuccessMsg.arg1 = infoId;
-            mHandler.sendMessage(dlSuccessMsg);
+            Message dlsuccessMsg = Message.obtain();
+            dlsuccessMsg.what = Constant.DOWNLOAD_SUCCESS;
+            mHandler.sendMessage(dlsuccessMsg);
+
         }
 
         @Override
         public void updateDataFinish(int infoId) {
-            sucessCnt++;
-            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
-                    + sucessCnt);
             LogUtil.trace("updateDataFinish" + +infoId);
+
             Message updateMsg = Message.obtain();
             updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
             updateMsg.arg1 = infoId;
             mHandler.sendMessage(updateMsg);
 
-            if (updataCnt == Constant.MAX_DOWNLOAD_COUNT) {
-                Message alldone = Message.obtain();
-                alldone.what = Constant.DO_ALL_FINISH;
-                mHandler.sendMessage(alldone);
+            if(dstCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                Message alldoneMsg = Message.obtain();
+                alldoneMsg.what = Constant.DO_ALL_FINISH;
+                mHandler.sendMessage(alldoneMsg);
             }
 
         }
 
         @Override
         public void downLoadError(int infoId, String errorMsg) {
-            updataCnt++;
-            failedCnt++;
-            LogUtil.trace("updataCnt:" + updataCnt + "; failedCnt:" + failedCnt + "; sucessCnt:"
-                    + sucessCnt);
-            LogUtil.trace("infoId " + infoId + " errorMsg: " + errorMsg);
+            LogUtil.trace("downLoadError infoId " + infoId + " errorMsg: " + errorMsg);
+
+            dstCnt++;
+
             Message errMsg = Message.obtain();
             errMsg.what = Constant.UPDATE_DATA_FAILED + infoId;
             errMsg.arg1 = infoId;
             mHandler.sendMessage(errMsg);
 
-            Message dlFaildMsg = Message.obtain();
-            dlFaildMsg.what = Constant.DOWNLOAD_FAILED;
-            dlFaildMsg.arg1 = infoId;
-            mHandler.sendMessage(dlFaildMsg);
-
+            Message dlerrMsg = Message.obtain();
+            dlerrMsg.what = Constant.DOWNLOAD_FAILED;
+            mHandler.sendMessage(errMsg);
         }
     }
 
@@ -508,88 +509,96 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     String time = ServerInfo.getInstance().getServerTime();
 
                     if (time != null) {
-                        Log.e("linjiazhi", "update system time " + time);
                         Intent timeIntent = new Intent();
                         timeIntent.setAction("com.time.UPDATETIME");
                         timeIntent.putExtra("time", Long.parseLong(time));
                         MainActivity.this.sendBroadcast(timeIntent);
+                        LogUtil.trace("start to update system time");
                     }
 
                     if ((!("unknown".equals(ServerInfo.getInstance().getServerApkVersin()))) &&
                             getCurrentVersionCode() < resolveServerAppVersionCode(ServerInfo
                                     .getInstance().getServerApkVersin())) {
-                        LogUtil.trace("start to download");
+                        LogUtil.trace("start to download apk");
                         String mApkFileDownloadUrl = SharedUtil.getJiebaoServletAddresFromSP
                                 (BaqiangApplication.getContext(), NetworkConstant.APK_DOWNLOAD_URL);
                         if (mApkFileDownloadUrl != null) {
                             Intent service = new Intent(MainActivity.this, DownLoadApkFileService
                                     .class);
                             service.putExtra("downloadurl", mApkFileDownloadUrl);
-                            Toast.makeText(MainActivity.this, "正在下载更新APK中", Toast.LENGTH_SHORT)
+                            Toast.makeText(MainActivity.this, "正在下载更新APK中", Toast.LENGTH_LONG)
                                     .show();
                             startService(service);
                         }
 
                     } else {
-                        Log.e("linjiazhi", "update data");
-                        Toast.makeText(MainActivity.this, "APK已经是最新版本!", Toast.LENGTH_SHORT).show();
-                        DataSyncTask dataSyncTask = new DataSyncTask();
-                        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+                        //set count 0 begin download data
+                        dstCnt = 0;
+                        DataSyncTask shipmentDataSyncTask = new DataSyncTask();
+                        shipmentDataSyncTask.setUpdateInterface(UpdateShipmentType.getInstance());
                         if (!Constant.DEBUG) {
-                            dataSyncTask.execute("start_param");
+                            shipmentDataSyncTask.execute("start_param");
                         }
-
                     }
 
                     break;
                 }
-
                 case Constant.UPDATE_SEVERINFO_FAILED: {
                     break;
                 }
 
+
                 case Constant.DOWNLOAD_FAILED: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
-                            .MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
                     break;
                 }
 
                 case Constant.DOWNLOAD_SUCCESS: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
-                            .MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
                     break;
                 }
-
                 case Constant.UPDATE_SUCCESS: {
                     break;
                 }
-
                 case Constant.DOWNLOAD_UPDATE_DONE: {
                     break;
                 }
 
+
                 case Constant.STARTDOWNLOAD_SALESINFO: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .download_salesinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_salesinfo_success));
+                    DataSyncTask liucangDataSyncTask = new DataSyncTask();
+                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
+                    if (!Constant.DEBUG) {
+                        liucangDataSyncTask.execute("start_param");
+                    }
+
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_DONE: {
-
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_FAILED: {
                     break;
                 }
 
+
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .download_shipmenttypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_shipmenttypeinfo_success));
+                    DataSyncTask salesDataSyncTask = new DataSyncTask();
+                    salesDataSyncTask.setUpdateInterface(UpdateSalesServiceData.getInstance());
+                    // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+                    if (!Constant.DEBUG) {
+                        salesDataSyncTask.execute("start_param");
+                    }
                     break;
                 }
                 case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
@@ -601,11 +610,16 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
 
                 case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .download_liucangtypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_liucangtypeinfo_success));
+                    DataSyncTask vehiceDataSyncTask = new DataSyncTask();
+                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
+                    if (!Constant.DEBUG) {
+                        vehiceDataSyncTask.execute("start_param");
+                    }
                     break;
                 }
                 case Constant.UPDATE_LIUCANGTYPEINFO_DONE: {
@@ -617,11 +631,11 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .download_vehiceinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_vehiceinfo_success));
                     break;
                 }
                 case Constant.UPDATE_VEHICEINFO_DONE: {

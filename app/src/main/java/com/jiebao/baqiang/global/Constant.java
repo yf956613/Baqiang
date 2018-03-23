@@ -200,6 +200,9 @@ public class Constant {
     public static final String PREFERENCE_KEY_SYSTEM_ARG = "system_arg";
     public static final String PREFERENCE_KEY_DEVICE_ID = "device_id";
 
+    //
+    public static final String PREFERENCE_KEY_BAQIANG_FIRST_START = "baqiang_first_start";
+
     // 是否记住用户名和密码
     public static final String KEY_IS_REMEMBER_PSW = "is_remember_psw";
     // 网点编号，和员工编号相关

@@ -35,28 +35,24 @@ public class UpdateSalesServiceData extends UpdateInterface {
     private static final String DB_NAME = "salesservice";
 
     private static String mSalesServiceUrl = "";
-    private volatile static UpdateSalesServiceData mInstance;
-
-    private IDownloadStatus mDataDownloadStatus;
 
     private UpdateSalesServiceData() {
         infoId = Constant.SALESINFO_ID;
     }
 
-    public static UpdateSalesServiceData getInstance() {
-        if (mInstance == null) {
+    public static UpdateInterface getInstance() {
+        if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateSalesServiceData)))) {
             synchronized (UpdateSalesServiceData.class) {
-                if (mInstance == null) {
+                if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateSalesServiceData)))) {
                     mInstance = new UpdateSalesServiceData();
                 }
             }
         }
-
         return mInstance;
     }
 
-    public void setDataDownloadStatus(IDownloadStatus dataDownloadStatus) {
-        this.mDataDownloadStatus = dataDownloadStatus;
+    public void updateData() {
+        updateSalesService();
     }
 
     public void updateSalesService() {
@@ -73,8 +69,6 @@ public class UpdateSalesServiceData extends UpdateInterface {
 
             @Override
             public void onSuccess(String saleServices) {
-                mDataDownloadStatus.downloadFinish(infoId);
-
                 // 创建Gson对象时，指定时间格式
                 Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
                 final SalesServiceList salesServiceList = gson.fromJson(saleServices,
@@ -88,6 +82,8 @@ public class UpdateSalesServiceData extends UpdateInterface {
                         storageData(salesServiceList);
                     }
                 }).start();
+
+                mDataDownloadStatus.downloadFinish(infoId);
             }
 
             @Override

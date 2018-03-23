@@ -31,28 +31,25 @@ public class UpdateShipmentType extends UpdateInterface {
     private static final String DB_NAME = "shipmenttype";
 
     private static String mUpdateShipmentTpyeUrl = "";
-    private volatile static UpdateShipmentType mInstance;
-
-    private IDownloadStatus mDataDownloadStatus;
-
-    public void setDataDownloadStatus(IDownloadStatus dataDownloadFinish) {
-        this.mDataDownloadStatus = dataDownloadFinish;
-    }
 
     private UpdateShipmentType() {
         infoId = Constant.SHIPMENTTYPEINFO_ID;
     }
 
-    public static UpdateShipmentType getInstance() {
-        if (mInstance == null) {
+    public static UpdateInterface getInstance() {
+
+        if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateShipmentType)))) {
             synchronized (UpdateShipmentType.class) {
-                if (mInstance == null) {
+                if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateShipmentType)))) {
                     mInstance = new UpdateShipmentType();
                 }
             }
         }
-
         return mInstance;
+    }
+
+    public void updateData() {
+        updateShipmentType();
     }
 
     public boolean updateShipmentType() {
@@ -70,8 +67,6 @@ public class UpdateShipmentType extends UpdateInterface {
             @Override
             public void onSuccess(String saleServices) {
 
-                mDataDownloadStatus.downloadFinish(infoId);
-
                 Gson gson = new Gson();
                 final ShipmentTypeList list = gson.fromJson(saleServices, ShipmentTypeList.class);
 
@@ -81,6 +76,9 @@ public class UpdateShipmentType extends UpdateInterface {
                         storageData(list);
                     }
                 }).start();
+
+                mDataDownloadStatus.downloadFinish(infoId);
+
             }
 
             @Override

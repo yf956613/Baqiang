@@ -349,6 +349,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     public void syncViewAfterUpload(int updateType) {
         super.syncViewAfterUpload(updateType);
 
+        LogUtil.trace();
         // TODO F1事件触发刷新UI
     }
 

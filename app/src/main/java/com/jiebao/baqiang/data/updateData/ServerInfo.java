@@ -91,8 +91,6 @@ public class ServerInfo extends UpdateInterface  {
         mServerInfoUrl = SharedUtil.getJiebaoServletAddresFromSP(BaqiangApplication
                 .getContext(), NetworkConstant.APP_UPDATE_INFO);
 
-        Log.e("linjiazhi", "mServerInfoUrl " + mServerInfoUrl);
-
         RequestParams params = new RequestParams(mServerInfoUrl);
         params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
@@ -107,9 +105,6 @@ public class ServerInfo extends UpdateInterface  {
                 Gson gson = new Gson();
                 AppUpdateBean appInfo = gson.fromJson(serverInfo, AppUpdateBean.class);
                 LogUtil.trace("appInfo:" + appInfo.toString());
-                Log.e("linjiazhi", "appInfo:" + appInfo.toString());
-                if ("unknown".equals(appInfo.getBaQiangApkVersion())) {
-                }
 
                 serverVersion = appInfo.getServerVersion();
                 serverTime = appInfo.getServerTime();
@@ -121,9 +116,6 @@ public class ServerInfo extends UpdateInterface  {
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace(throwable.getMessage());
-
-                Log.e("linjiazhi", throwable.getMessage());
-
                 mServerInfoStatus.showServerInfoError(throwable.getMessage());
             }
 

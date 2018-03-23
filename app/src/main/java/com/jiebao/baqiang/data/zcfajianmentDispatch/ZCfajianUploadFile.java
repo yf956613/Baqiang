@@ -179,8 +179,8 @@ public class ZCfajianUploadFile implements IShipmentFileUpload {
                         whereBuilder.and("IsUsed", "=", "Used");
                         whereBuilder.and("IsUpload", "=", "Unload");
                         try {
-                            int result = db.update(ZCFajianFileContent.class, whereBuilder, new
-                                    KeyValue("IsUpload", "Load"));
+                            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
+                                    ("IsUpload", "Load"));
                         } catch (DbException e) {
                             e.printStackTrace();
                         }

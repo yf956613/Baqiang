@@ -72,8 +72,16 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             setHeaderLeftViewText("装车发件查询");
             mSearchFlag = SearchType.ZCFJ;
 
-            mTvRecordsAll.setText("" + ZcFajianDBHelper.findUsableRecords());
-            mTvRecordsUnload.setText("" + ZcFajianDBHelper.findUnloadRecords());
+
+            try {
+                mTvRecordsAll.setText("" + ZcFajianDBHelper.findTimeLimitedUsableRecords(new
+                        SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil.convertSearchTime
+                        (beginTime, 1)).getTime(), new SimpleDateFormat("yyyyMMddHHmmss").parse
+                        (BQTimeUtil.convertSearchTime(endTime, 2)).getTime()));
+                mTvRecordsUnload.setText("" + ZcFajianDBHelper.findUnloadRecords());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             try {
                 mListData = (List<IFileContentBean>) (List<?>) ZcFajianDBHelper

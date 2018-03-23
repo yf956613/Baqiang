@@ -360,8 +360,8 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                             Intent service = new Intent(AdministratorSettingActivity.this,
                                     DownLoadApkFileService.class);
                             service.putExtra("downloadurl", mApkFileDownloadUrl);
-                            Toast.makeText(AdministratorSettingActivity.this, "正在下载中", Toast
-                                    .LENGTH_SHORT).show();
+                            Toast.makeText(AdministratorSettingActivity.this, "正在下载中",
+                                    Toast.LENGTH_LONG).show();
                             startService(service);
                         } else {
                             Toast.makeText(AdministratorSettingActivity.this, "APK已经是最新版本!",

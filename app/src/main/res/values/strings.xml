@@ -338,4 +338,9 @@
 	<string name="download_liucangtypeinfo_success">成功下载留仓原因,正在更新本地数据....</string> 
 	<string name="download_vehiceinfo_success">成功下载车辆信息,正在更新本地数据....</string>
 
+	<string name="download_salesinfo">正在下载更新网点信息....</string> 
+	<string name="download_shipmenttypeinfo">正在下载更新快件方式....</string> 
+	<string name="download_liucangtypeinfo">正在下载更新留仓原因....</string> 
+	<string name="download_vehiceinfo">正在下载更新车辆信息....</string> 
+	
 </resources>

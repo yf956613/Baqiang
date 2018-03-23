@@ -35,27 +35,24 @@ public class UpdateVehicleInfo extends UpdateInterface {
     private static final String DB_NAME = "vehicleinfo";
 
     private static String mUpdateVehicleInfoUrl = "";
-    private volatile static UpdateVehicleInfo mInstance;
-
-    private IDownloadStatus mDataDownloadStatus;
-
-    public void setDataDownloadStatus(IDownloadStatus dataDownloadStatus) {
-        this.mDataDownloadStatus = dataDownloadStatus;
-    }
 
     private UpdateVehicleInfo() {
         infoId = Constant.VEHICEINFO_ID;
     }
 
-    public static UpdateVehicleInfo getInstance() {
-        if (mInstance == null) {
+    public static UpdateInterface getInstance() {
+        if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateVehicleInfo)))) {
             synchronized (UpdateVehicleInfo.class) {
-                if (mInstance == null) {
+                if (mInstance == null || ((mInstance != null) && (!(mInstance instanceof UpdateVehicleInfo)))) {
                     mInstance = new UpdateVehicleInfo();
                 }
             }
         }
         return mInstance;
+    }
+
+    public void updateData() {
+        updateVehicleInfo();
     }
 
     public boolean updateVehicleInfo() {
@@ -74,8 +71,6 @@ public class UpdateVehicleInfo extends UpdateInterface {
             @Override
             public void onSuccess(String vehicleInfo) {
 
-                mDataDownloadStatus.downloadFinish(infoId);
-
                 Gson gson = new Gson();
                 final VehicleInfoList list = gson.fromJson(vehicleInfo, VehicleInfoList.class);
 
@@ -85,6 +80,8 @@ public class UpdateVehicleInfo extends UpdateInterface {
                         storageData(list);
                     }
                 }).start();
+
+                mDataDownloadStatus.downloadFinish(infoId);
             }
 
             @Override
