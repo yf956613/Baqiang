@@ -12,23 +12,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/car_code"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="@string/car_code" />
 
         <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_car_code"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:dropDownHeight="300dp"
-            android:selectAllOnFocus="true"
-            android:singleLine="true" />
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -39,23 +29,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/before_station"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="@string/before_station" />
 
         <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_before_station"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:dropDownHeight="300dp"
-            android:selectAllOnFocus="true"
-            android:singleLine="true" />
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,21 +46,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="运单号"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="运单号" />
 
         <!--设置最小的匹配输入次数-->
         <EditText
             android:id="@+id/et_shipment_number"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:singleLine="true" />
+            style="@style/ShipmentNumberStyle" />
     </LinearLayout>
 
     <LinearLayout

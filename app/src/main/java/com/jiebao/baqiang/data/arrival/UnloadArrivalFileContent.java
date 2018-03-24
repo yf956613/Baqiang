@@ -1,18 +1,21 @@
 package com.jiebao.baqiang.data.arrival;
 
+import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 封装卸车到件模块中待上传文件信息，扫描信息存入数据库，具体格式参考：卸车.txt
  */
 
 @Table(name = "xcdaojian")
-public class UnloadArrivalFileContent {
-    private static final String TAG = UnloadArrivalFileContent.class
-            .getSimpleName();
+public class UnloadArrivalFileContent extends IFileContentBean{
+    private static final String TAG = UnloadArrivalFileContent.class.getSimpleName();
 
     // 22C             20170221235220  45067672999      A800     20170221 0
     //      Z000024
@@ -50,21 +53,29 @@ public class UnloadArrivalFileContent {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name = "扫描类型编号")
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Column(name = "ScannerType")
     private String mScannerType;
 
-    public String getmScannerType() {
+    public String getScannerType() {
         return mScannerType;
     }
 
-    public void setmScannerType(String mScannerType) {
+    public void setScannerType(String mScannerType) {
         this.mScannerType = mScannerType;
     }
 
-    @Column(name = "下一站网点编号")
+    @Column(name = "PreviousStationID")
     private String mPreviousStation;
 
-    public String getNextStation() {
+    public String getPreviousStation() {
         return mPreviousStation;
     }
 
@@ -72,18 +83,18 @@ public class UnloadArrivalFileContent {
         this.mPreviousStation = previousStation;
     }
 
-    @Column(name = "扫描时间")
-    private String mScanDate;
+    @Column(name = "ScanDate")
+    private Date mScanDate;
 
-    public String getScanDate() {
+    public Date getScanDate() {
         return mScanDate;
     }
 
-    public void setScanDate(String scanDate) {
+    public void setScanDate(Date scanDate) {
         this.mScanDate = scanDate;
     }
 
-    @Column(name = "物品类别")
+    @Column(name = "GoodsType")
     private String mGoodsType;
 
     public String getGoodsType() {
@@ -94,7 +105,7 @@ public class UnloadArrivalFileContent {
         this.mGoodsType = goodsType;
     }
 
-    @Column(name = "快件类型")
+    @Column(name = "ShipmentType")
     private String mShipmentType;
 
     public String getShipmentType() {
@@ -105,7 +116,7 @@ public class UnloadArrivalFileContent {
         this.mShipmentType = shipmentType;
     }
 
-    @Column(name = "运单编号")
+    @Column(name = "ShipmentID")
     private String mShipmentNumber;
 
     public String getShipmentNumber() {
@@ -116,7 +127,7 @@ public class UnloadArrivalFileContent {
         this.mShipmentNumber = shipmentNumber;
     }
 
-    @Column(name = "扫描员工编号")
+    @Column(name = "ScanEmployeeNumber")
     private String mScanEmployeeNumber;
 
     public String getScanEmployeeNumber() {
@@ -127,7 +138,7 @@ public class UnloadArrivalFileContent {
         this.mScanEmployeeNumber = scanEmployeeNumber;
     }
 
-    @Column(name = "操作日期")
+    @Column(name = "OperateDate")
     private String mOperateDate;
 
     public String getOperateDate() {
@@ -138,7 +149,7 @@ public class UnloadArrivalFileContent {
         this.mOperateDate = operateDate;
     }
 
-    @Column(name = "重量")
+    @Column(name = "Weight")
     private String mWeight;
 
     public String getWeight() {
@@ -149,7 +160,7 @@ public class UnloadArrivalFileContent {
         this.mWeight = weight;
     }
 
-    @Column(name = "车辆识别号")
+    @Column(name = "VehicleID")
     private String mVehicleId;
 
     public String getVehicleId() {
@@ -161,25 +172,25 @@ public class UnloadArrivalFileContent {
     }
 
     // 是否上传状态标识
-    @Column(name = "是否上传")
+    @Column(name = "IsUpload")
     private String mStatus;
 
-    public String getmStatus() {
+    public String getStatus() {
         return mStatus;
     }
 
-    public void setmStatus(String mStatus) {
+    public void setStatus(String mStatus) {
         this.mStatus = mStatus;
     }
 
-    @Column(name = "是否可用")
+    @Column(name = "IsUsed")
     private String mIsUsed;
 
-    public String getmIsUsed() {
+    public String getIsUsed() {
         return mIsUsed;
     }
 
-    public void setmIsUsed(String mIsUsed) {
+    public void setIsUsed(String mIsUsed) {
         this.mIsUsed = mIsUsed;
     }
 
@@ -191,14 +202,11 @@ public class UnloadArrivalFileContent {
 
     }
 
-    public UnloadArrivalFileContent(String mPreviousStation, String
-            mScanDate, String mGoodsType,
-                                    String mShipmentType, String
-                                            mShipmentNumber, String
-                                            mScanEmployeeNumber, String
-                                            mOperateDate, String
-                                            mWeight, String mVehicleId,
-                                    String mStatus, String mIsUsed) {
+    public UnloadArrivalFileContent(String mPreviousStation, Date mScanDate, String mGoodsType,
+                                    String mShipmentType, String mShipmentNumber, String
+                                            mScanEmployeeNumber, String mOperateDate, String
+                                            mWeight, String mVehicleId, String mStatus, String
+                                            mIsUsed) {
         this.mScannerType = TYPE_SUFFIX;
         this.mPreviousStation = mPreviousStation;
         this.mScanDate = mScanDate;
@@ -228,12 +236,10 @@ public class UnloadArrivalFileContent {
 
         // 添加上一站网点编号
         stringBuffer.append(this.mPreviousStation);
-        stringBuffer.append(countBlankAndAppend(this.mPreviousStation,
-                PREVIOUS_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mPreviousStation, PREVIOUS_STATION));
 
         // 添加扫描时间
-        stringBuffer.append(this.mScanDate);
-        stringBuffer.append(countBlankAndAppend(this.mScanDate, SCAN_DATE));
+        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format(mScanDate));
 
         // 物品类别
         stringBuffer.append(this.mGoodsType);
@@ -244,13 +250,11 @@ public class UnloadArrivalFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -316,19 +320,13 @@ public class UnloadArrivalFileContent {
 
     @Override
     public String toString() {
-        return "UnloadArrivalFileContent{" + "mScannerType='" + mScannerType
-                + '\'' + ", " +
-                "mPreviousStation='" + mPreviousStation + '\'' + ", " +
-                "mScanDate='" + mScanDate +
-                '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", " +
-                "mShipmentType='" + mShipmentType
-                + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " +
-                "mOperateDate='" +
-                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", " +
-                "mVehicleId='" +
-                mVehicleId + '\'' + ", mStatus='" + mStatus + '\'' + ", " +
-                "mIsUsed='" + mIsUsed +
-                '\'' + '}';
+        return "UnloadArrivalFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mPreviousStation='" + mPreviousStation + '\'' + ", " + "mScanDate='" + mScanDate
+                + '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", " + "mShipmentType='" +
+                mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " + "mOperateDate='" +
+                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", " + "mVehicleId='" +
+                mVehicleId + '\'' + ", mStatus='" + mStatus + '\'' + ", " + "mIsUsed='" + mIsUsed
+                + '\'' + '}';
     }
 }

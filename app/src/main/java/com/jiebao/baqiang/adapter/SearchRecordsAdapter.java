@@ -87,7 +87,7 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
             } else if (mData.get(0) instanceof UnloadArrivalFileContent) {
                 // 卸车到件
                 UnloadArrivalFileContent bean = (UnloadArrivalFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvStatus.setText(bean.getStatus());
                 holder.mTvScannerData.setText(bean.getShipmentNumber());
                 holder.mTvTime.setText("" + bean.getOperateDate());
             } else if (mData.get(0) instanceof CargoArrivalFileContent) {

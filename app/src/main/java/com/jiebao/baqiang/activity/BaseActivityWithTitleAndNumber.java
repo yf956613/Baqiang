@@ -2,6 +2,7 @@ package com.jiebao.baqiang.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
@@ -475,8 +476,13 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         switch (updateType) {
             case Constant.SYNC_UNLOAD_DATA_TYPE_ALL: {
                 unloadRecords = ZcFajianDBHelper.findUnloadRecords();
-                // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+                LogUtil.trace("ZcFajian: unloadRecords-->" + unloadRecords);
+
+                unloadRecords = XcdjDBHelper.findUnloadRecords();
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
+                LogUtil.trace("Xcdj: unloadRecords-->" + unloadRecords);
+
 
                 break;
             }
@@ -491,6 +497,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             }
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_XCDJ: {
+                unloadRecords = XcdjDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
+
+                LogUtil.trace("unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -510,12 +521,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 break;
         }
 
+        unloadRecords = 0;
+        unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_ZCFJ);
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_XCDJ);
-
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_DJ);
-
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_FJ);
-
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_LCJ);
 
         /*int unloadDataRecords = 0;
@@ -563,5 +573,15 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
         LogUtil.trace("unloadRecords:" + unloadRecords);
         return unloadRecords;
+    }
+
+    /**
+     * 触发扫码
+     */
+    public void triggerForScanner() {
+        Intent intent = new Intent();
+        intent.setAction("com.jb.action.F4key");
+        intent.putExtra("F4key", "down");
+        this.sendBroadcast(intent);
     }
 }

@@ -17,6 +17,7 @@ import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.NetworkUtils;
 
 /**
  * Created by Administrator on 2018/3/21 0021.
@@ -30,6 +31,11 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
         final BaseActivityWithTitleAndNumber mTopActivity = (BaseActivityWithTitleAndNumber)
                 BaqiangApplication.getTopActivity();
         LogUtil.trace("class name:" + BaqiangApplication.getTopActivityName());
+
+        if (!NetworkUtils.isNetworkConnected(mTopActivity)) {
+            Toast.makeText(mTopActivity, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 

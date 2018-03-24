@@ -199,11 +199,11 @@ public class ZCFajianFileContent extends IFileContentBean {
 
     }
 
-    public ZCFajianFileContent(String mScannerType, String mNextStation, Date mScanDate, String
+    public ZCFajianFileContent(String mNextStation, Date mScanDate, String
             mGoodsType, String mShipmentType, String mShipmentNumber, String mScanEmployeeNumber,
                                String mOperateDate, String mWeight, String mVehicleID, String
                                        mStatus, String mIsUsed) {
-        this.mScannerType = mScannerType;
+        this.mScannerType = TYPE_SUFFIX;
         this.mNextStation = mNextStation;
         this.mScanDate = mScanDate;
         this.mGoodsType = mGoodsType;

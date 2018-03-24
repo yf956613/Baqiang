@@ -146,6 +146,7 @@ public class CommonUploadFile {
      * @return
      */
     public void uploadFile() {
+        LogUtil.trace("<3333333333333>");
         mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
                 NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);

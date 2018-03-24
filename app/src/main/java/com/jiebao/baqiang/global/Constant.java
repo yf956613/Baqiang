@@ -230,16 +230,16 @@ public class Constant {
     // 到/发件扫描判断开关
     public static final String PREFERENCE_KEY_SCAN_SWITCH = "scan_switch";
 
+    // 装车发件表名
+    public static final String DB_TABLE_NAME_LOAD_SEND = "zcfajian";
     // 卸车到件表名
     public static final String DB_TABLE_NAME_UNLOAD_ARRIVAL = "xcdaojian";
     // 到件表名
     public static final String DB_TABLE_NAME_CARGO_ARRIVAL = "daojian";
-    // 留仓件表名
-    public static final String DB_TABLE_NAME_STAY_HOUSE = "liucangjian";
-    // 装车发件表名
-    public static final String DB_TABLE_NAME_LOAD_SEND = "zcfajian";
     // 发件表名
     public static final String DB_TABLE_NAME_SHIPMENT = "fajian";
+    // 留仓件表名
+    public static final String DB_TABLE_NAME_STAY_HOUSE = "liucangjian";
 
     // 基础数据：车辆信息
     public static final String DB_TABLE_NAME_VEHICLE_INFO = "vehicleinfo";

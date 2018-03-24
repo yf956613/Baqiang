@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FilterListener;
-import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
@@ -26,16 +25,12 @@ import com.jiebao.baqiang.data.bean.CommonScannerListViewBean;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
 import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.data.bean.ScannerListViewBean;
-import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.SalesServiceDBHelper;
 import com.jiebao.baqiang.data.db.ShipmentTypeDBHelper;
 import com.jiebao.baqiang.data.db.VehicleInfoDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
@@ -43,15 +38,15 @@ import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
-import org.xutils.common.util.KeyValue;
-import org.xutils.db.sqlite.WhereBuilder;
-import org.xutils.ex.DbException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 装车发件
+ */
 public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = ZhuangcheActivity.class.getSimpleName();
@@ -105,7 +100,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
         prepareDataForView();
     }
-
 
     @Override
     public void initData() {
@@ -285,8 +279,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
 
             case Constant.F2_KEY_CODE: {
-                LogUtil.trace();
-
                 deleteLastestRecord();
                 // 消费F2按键事件
                 return true;
@@ -325,12 +317,26 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         mIsScanRunning = true;
     }
 
-
     @Override
     protected void timeout(long timeout) {
         super.timeout(timeout);
         LogUtil.trace("timeout:" + timeout);
         mIsScanRunning = false;
+    }
+
+    @Override
+    public void clickHappend(int position) {
+        LogUtil.trace("position:" + position);
+
+        ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(position)
+                .getScannerBean();
+        // 此处ListView中数据是有ID值的
+        if (ZcFajianDBHelper.isRecordUpload(barcode.getId())) {
+            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        deleteChooseRecord(barcode, position);
     }
 
     @Override
@@ -348,21 +354,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 break;
             }
         }
-    }
-
-    @Override
-    public void clickHappend(int position) {
-        LogUtil.trace("position:" + position);
-
-        ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(position)
-                .getScannerBean();
-        // 此处ListView中数据是有ID值的
-        if (ZcFajianDBHelper.isRecordUpload(barcode.getId())) {
-            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        deleteChooseRecord(barcode, position);
     }
 
     @Override
@@ -484,17 +475,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
         mListData = new ArrayList<>();
         mScannerBaseAdatper = new CommonScannerBaseAdapter(ZhuangcheActivity.this, mListData);
-    }
-
-    /**
-     * 触发扫码
-     */
-    private void triggerForScanner() {
-        Intent intent = new Intent();
-        intent.setAction("com.jb.action.F4key");
-        intent.putExtra("F4key", "down");
-        ZhuangcheActivity.this.sendBroadcast(intent);
-        LogUtil.trace("1: mIsScanRunning=" + mIsScanRunning);
     }
 
     /**
@@ -641,7 +621,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         } else {
             // do nothing
         }
-
     }
 
     /**

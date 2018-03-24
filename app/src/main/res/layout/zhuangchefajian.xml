@@ -27,7 +27,6 @@
         android:orientation="horizontal">
 
         <TextView
-
             style="@style/PreviousInfoTextView"
             android:text="下一站" />
 
