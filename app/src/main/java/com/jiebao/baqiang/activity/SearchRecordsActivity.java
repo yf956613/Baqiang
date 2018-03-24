@@ -8,28 +8,21 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.SearchRecordsAdapter;
 import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
-import com.jiebao.baqiang.data.bean.CommonUploadFile;
-import com.jiebao.baqiang.data.bean.ICommonUpdateFileCallBack;
 import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
 
-import org.xutils.DbManager;
-import org.xutils.common.Callback;
-import org.xutils.common.util.KeyValue;
-import org.xutils.db.sqlite.WhereBuilder;
-import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
@@ -109,10 +102,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                             final ZCFajianFileContent bean = (ZCFajianFileContent) mListData.get
                                     (position);
                             if (bean != null) {
-                                // 点击事件：弹出该记录的详细信息
                                 final AlertDialog dialog = new AlertDialog.Builder
-                                        (SearchRecordsActivity
-                                        .this).create();
+                                        (SearchRecordsActivity.this).create();
                                 dialog.setView(LayoutInflater.from(SearchRecordsActivity.this)
                                         .inflate(R.layout.alert_dialog_search_detail, null));
                                 dialog.setCanceledOnTouchOutside(false);
@@ -137,8 +128,15 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     @Override
                                     public void onClick(View v) {
-                                        dialog.dismiss();
-                                        showLoadinDialog();
+                                        if (!NetworkUtils.isNetworkConnected(SearchRecordsActivity
+                                                .this)) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        } else {
+                                            dialog.dismiss();
+                                            showLoadinDialog();
+                                        }
 
                                         new CommonDbHelperToUploadFile<ZCFajianFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
@@ -159,7 +157,6 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                             @Override
                                             public boolean onFinish() {
-                                                LogUtil.trace("99999");
                                                 return false;
                                             }
                                         }).uploadSingleRecord(bean);
@@ -168,7 +165,6 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                 Button btnDelete = dialog.findViewById(R.id.btn_delete);
                                 if ("Load".equals(bean.getmStatus())) {
-                                    // 已上传，不能执行删除操作
                                     btnDelete.setVisibility(View.GONE);
                                 } else {
                                     // do nothing
@@ -177,12 +173,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // 删除指定运单号记录，且是未上传，将该记录设置为不可用
-                                        ZcFajianDBHelper.deleteFindedBean(bean.getShipmentNumber());
+                                        if (ZcFajianDBHelper.deleteFindedBean(bean
+                                                .getShipmentNumber())) {
+                                            syncViewAfterUpload(Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                        }
                                         dialog.dismiss();
-
-                                        // 刷新UI，重写执行查询操作
-                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     }
                                 });
 
@@ -237,9 +233,27 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                 if (SearchType.ZCFJ.equals(mSearchFlag)) {
                     // 重传当前ListView中的所有记录
-                    ZCfajianUploadFile.redoUploadRecords(mListData);
+                    showLoadinDialog();
+                    new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
-                    syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 刷新UI，重写执行查询操作
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                            closeLoadinDialog();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).redoUploadRecords(mListData);
                 } else if (SearchType.XCDJ.equals(mSearchFlag)) {
                     setHeaderLeftViewText("卸车到件查询");
                     mSearchFlag = SearchType.XCDJ;

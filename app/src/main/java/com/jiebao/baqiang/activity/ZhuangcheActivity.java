@@ -20,7 +20,12 @@ import com.jiebao.baqiang.adapter.FilterListener;
 import com.jiebao.baqiang.adapter.ScannerBaseAdatper;
 import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
+import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
+import com.jiebao.baqiang.data.bean.CommonScannerBaseAdapter;
+import com.jiebao.baqiang.data.bean.CommonScannerListViewBean;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
+import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
+import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.bean.ScannerListViewBean;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
@@ -34,6 +39,7 @@ import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
@@ -73,12 +79,9 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     private TestTipsAdatper mShipmentTypeAdapter;
 
     // 保存当前功能项录入的记录
-    private List<ScannerListViewBean> mListData;
-    private ScannerBaseAdatper mScannerBaseAdatper;
-
-    private ZCFajianDispatchFileName mZcFajianDispatchFileName;
+    private List<CommonScannerListViewBean> mListData;
+    private CommonScannerBaseAdapter mScannerBaseAdatper;
     private ZCFajianFileContent mZcFajianFileContent;
-    private ZCfajianUploadFile mZcfajianUploadFile;
 
     private Vibrator mDeviceVibrator;
     private int mScanCount;
@@ -312,8 +315,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         }
 
         boolean isInsertSuccess = insertForScanner(barcode);
-        updateUIForScanner(barcode);
         LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
+        updateUIForScanner(barcode);
         if (isInsertSuccess) {
             increaseOrDecreaseRecords(1);
         }
@@ -321,6 +324,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         triggerForScanner();
         mIsScanRunning = true;
     }
+
 
     @Override
     protected void timeout(long timeout) {
@@ -348,15 +352,17 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void clickHappend(int position) {
-        // 判断当前record是否已上传
+        LogUtil.trace("position:" + position);
 
-        String barcode = mListData.get(position).getScannerData();
-        if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+        ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(position)
+                .getScannerBean();
+        // 此处ListView中数据是有ID值的
+        if (ZcFajianDBHelper.isRecordUpload(barcode.getId())) {
             Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        deleteChooseRecord(position);
+        deleteChooseRecord(barcode, position);
     }
 
     @Override
@@ -364,18 +370,18 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         // 刷新UI，更新未上传统计值
         super.syncViewAfterUpload(updateType);
 
-        // TODO F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
+        // F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
         if (mListData != null) {
-            // 1. 取出mListData中的所有元素
             for (int index = 0; index < mListData.size(); index++) {
-                ScannerListViewBean bean = mListData.get(index);
-                boolean isUpload = ZcFajianDBHelper.isRecordUpload(bean.getScannerData());
+                CommonScannerListViewBean listViewBean = mListData.get(index);
 
-                if (isUpload) {
-                    bean.setStatus("已上传");
-                } else {
-                    // do nothing
-                }
+                // origin data
+                ZCFajianFileContent barcode = (ZCFajianFileContent) listViewBean.getScannerBean();
+                // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
+                ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord(barcode
+                        .getShipmentNumber(), barcode.getScanDate());
+
+                listViewBean.setScannerBean(bean);
             }
 
             mScannerBaseAdatper.notifyDataSetChanged();
@@ -477,7 +483,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         mZcFajianFileContent = FileContentHelper.getZCFajianFileContent();
 
         mListData = new ArrayList<>();
-        mScannerBaseAdatper = new ScannerBaseAdatper(ZhuangcheActivity.this, mListData);
+        mScannerBaseAdatper = new CommonScannerBaseAdapter(ZhuangcheActivity.this, mListData);
     }
 
     /**
@@ -508,19 +514,26 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
-     * 扫码，录入后更新UI
+     * 扫码，录入后更新 EditText ListView
+     * <p>
+     * ListView中数据 和 数据库中的数据绑定，并更新数据
+     * <p>
+     * 目的：让ZCFajianFileContent bean获取插入数据库的ID值，作为唯一搜索内容
      *
      * @param barcode
      */
     private void updateUIForScanner(String barcode) {
         mEtDeliveryNumber.setText(barcode);
 
-        ScannerListViewBean mFajianListViewBean = new ScannerListViewBean();
-        mFajianListViewBean.setId(++mScanCount);
-        mFajianListViewBean.setScannerData(barcode);
-        mFajianListViewBean.setStatus("未上传");
+        // 把 instert 的 record 从数据库中取出来，该record内容是更新后的内容
+        ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord(mZcFajianFileContent
+                .getShipmentNumber(), mZcFajianFileContent.getScanDate());
+        CommonScannerListViewBean mCommonScannerListViewBean = new CommonScannerListViewBean();
+        mCommonScannerListViewBean.setId(++mScanCount);
+        mCommonScannerListViewBean.setScannerBean(bean);
 
-        mListData.add(0, mFajianListViewBean);
+        // 添加到最前面
+        mListData.add(0, mCommonScannerListViewBean);
         mScannerBaseAdatper.notifyDataSetChanged();
 
         if (!mListView.isStackFromBottom()) {
@@ -537,36 +550,36 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             return;
         }
 
-        String barcode = mListData.get(0).getScannerData();
-        if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+        // ListView中最近录入的record
+        final ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(0).getScannerBean();
+        final int barcodeID = barcode.getId();
+
+        if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
             Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (mListData != null && mListData.size() != 0) {
-            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + mListData
-                    .get(0).getScannerData());
+            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + barcode
+                    .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + mListData.get(0).getScannerData() + " 记录？");
+            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + " 记录？");
             normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String barcode = mListData.get(0).getScannerData();
-                    if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+                    if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
-
                         return;
                     }
 
-                    ZcFajianDBHelper.deleteFindedBean(barcode);
-                    updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, mListData.get(0)
-                            .getScannerData(), 0);
+                    ZcFajianDBHelper.deleteFindedBean(barcodeID);
+                    updateListViewForDelete(DeleteAction.DELETE_ACTION_F2, 0);
 
                     increaseOrDecreaseRecords(0);
                 }
@@ -587,33 +600,33 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     /**
      * 通过滑动删除指定记录
      *
-     * @param position
+     * @param bean
      */
-    private void deleteChooseRecord(final int position) {
+    private void deleteChooseRecord(final ZCFajianFileContent bean, final int position) {
         if (mListData != null && mListData.size() != 0) {
-            LogUtil.trace("position:" + position + "; " + "barcode:" + mListData.get(position)
-                    .getScannerData());
+            LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + mListData.get(position).getScannerData() + " 记录？");
+            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " 记录？");
             normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String barcode = mListData.get(position).getScannerData();
-                    if (ZcFajianDBHelper.isRecordUpload(barcode)) {
+                    int barcodeID = bean.getId();
+                    if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
-
                         return;
                     }
 
-                    ZcFajianDBHelper.deleteFindedBean(barcode);
-                    updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, mListData.get
-                            (position).getScannerData(), position);
+                    // 根据ID值，设置record为不可用
+                    ZcFajianDBHelper.deleteFindedBean(barcodeID);
+                    // 刷新UI，ListView
+                    updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, position);
+
                     increaseOrDecreaseRecords(0);
                 }
             });
@@ -634,7 +647,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     /**
      * 删除操作执行后，触发刷新显示当前Activity的ListView
      */
-    private void updateListViewForDelete(DeleteAction action, String barcode, int position) {
+    private void updateListViewForDelete(DeleteAction action, int position) {
         switch (action) {
             case DELETE_ACTION_F2: {
                 if (mListData != null) {
@@ -650,20 +663,15 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
             case DELETE_ACTION_CHOOSE: {
                 if (mListData != null) {
-                    String tmp = mListData.get(position).getScannerData();
-                    if (!TextUtils.isEmpty(tmp) && tmp.equals(barcode)) {
-                        mListData.remove(mListData.get(position));
+                    mListData.remove(mListData.get(position));
 
-                        for (int index = position - 1; index >= 0; index--) {
-                            int id = mListData.get(index).getId();
-                            mListData.get(index).setId(--id);
-                        }
-
-                        --mScanCount;
-                        mScannerBaseAdatper.notifyDataSetChanged();
-                    } else {
-                        // do nothing
+                    for (int index = position - 1; index >= 0; index--) {
+                        int id = mListData.get(index).getId();
+                        mListData.get(index).setId(--id);
                     }
+
+                    --mScanCount;
+                    mScannerBaseAdatper.notifyDataSetChanged();
                 } else {
                     // do nothing
                 }
@@ -678,73 +686,54 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
-     * 将ListView当前录入记录上传服务器，以第一条扫码时间为界线，上传最新录入记录
+     * 将ListView当前录入记录上传服务器，根据ID上传
      */
     private void uploadListViewDataToServer() {
+        if (!NetworkUtils.isNetworkConnected(ZhuangcheActivity
+                .this)) {
+            Toast.makeText(ZhuangcheActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        showLoadinDialog();
+
         DbManager db = BQDataBaseHelper.getDb();
         List<ZCFajianFileContent> list = null;
-
         if (mListData != null && mListData.size() != 0) {
-            String firstScanner = mListData.get(0).getScannerData();
-            try {
-                list = db.selector(ZCFajianFileContent.class).where("ShipmentID", "=",
-                        firstScanner).and("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
-                        .findAll();
-                if (list != null) {
-                    if (list.size() != 1) {
-                        LogUtil.trace("包含重复录入项，请检查录入条件");
-                    } else {
-                        // TODO 是否是第一个记录ID？
-                        int firstID = list.get(0).getId();
-                        LogUtil.trace("firstScanner:" + firstScanner + "; firstID:" + firstID);
-
-                        list = db.selector(ZCFajianFileContent.class).where("id", ">", firstID)
-                                .and("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
-                                .findAll();
-                        if (null != list && list.size() != 0) {
-                            mZcFajianDispatchFileName = new ZCFajianDispatchFileName();
-                            if (mZcFajianDispatchFileName.linkToTXTFile()) {
-                                mZcfajianUploadFile = new ZCfajianUploadFile
-                                        (mZcFajianDispatchFileName.getFileInstance());
-                                for (int index = 0; index < list.size(); index++) {
-                                    ZCFajianFileContent javaBean = list.get(index);
-                                    String content = javaBean.getmCurrentValue() + "\r\n";
-                                    if (mZcfajianUploadFile.writeContentToFile(content, true)) {
-                                        WhereBuilder whereBuilder = WhereBuilder.b();
-                                        whereBuilder.and("ShipmentID", "=", javaBean
-                                                .getShipmentNumber());
-                                        whereBuilder.and("IsUsed", "=", "Used");
-                                        int record = db.update(ZCFajianFileContent.class,
-                                                whereBuilder, new KeyValue("IsUpload", "Load"));
-
-                                        if (1 == record) {
-                                            increaseOrDecreaseRecords(0);
-                                        }
-                                    } else {
-                                        LogUtil.trace("写入文件失败");
-                                    }
-                                }
-                                // FIXME 文件是否上传成功
-                                mZcfajianUploadFile.uploadFile();
-                            } else {
-                                LogUtil.trace("创建文件失败");
-                            }
-                        } else {
-                            LogUtil.trace("当前数据库没有需要上传数据");
-                        }
-                    }
-                } else {
-                    LogUtil.trace("未找到当前列表第一条记录");
-                }
-            } catch (DbException e) {
-                e.printStackTrace();
+            ArrayList<IFileContentBean> uploadContent = new ArrayList<>();
+            // 根据当前ListView中的数据，上传记录
+            for (int index = 0; index < mListData.size(); index++) {
+                // 1. 循环找到 item 的 ID
+                uploadContent.add(mListData.get(index).getScannerBean());
             }
 
+            new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                @Override
+                public boolean onSuccess(String s) {
+                    // 文件上传存在延时
+                    Toast.makeText(ZhuangcheActivity.this, "文件上传成功", Toast.LENGTH_SHORT).show();
+                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                            .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
+                    return true;
+                }
+
+                @Override
+                public boolean onError(Throwable throwable, boolean b) {
+                    return false;
+                }
+
+                @Override
+                public boolean onFinish() {
+                    closeLoadinDialog();
+                    ZhuangcheActivity.this.finish();
+
+                    return false;
+                }
+            }).redoUploadRecords(uploadContent);
         } else {
             // do nothing
         }
-
-        ZhuangcheActivity.this.finish();
     }
 
     /**
@@ -770,7 +759,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         }
 
         SharedUtil.putInt(ZhuangcheActivity.this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
-
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
     }

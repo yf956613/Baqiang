@@ -1,5 +1,6 @@
 package com.jiebao.baqiang.data.bean;
 
+import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.global.FileConstant;
@@ -112,7 +113,6 @@ public class CommonUploadFile {
         currentFileName.append(this.mTime + this.mNoRepeatString + FILE_SUFFIX);
         final String fileName = FileConstant.APP_SDCARD_FILE_NAME + currentFileName.toString();
 
-        // return FileUtils.createOrExistsFile(fileName) ? true : false;
         if (FileUtils.createOrExistsFile(fileName)) {
             mCurrentFileName = fileName;
             return true;
@@ -165,7 +165,15 @@ public class CommonUploadFile {
 
             @Override
             public void onSuccess(String s) {
-                mCallbackListener.uploadSuccess(s);
+                Gson gson = new Gson();
+                UploadFileResponseBean loginResponse = gson.fromJson(s, UploadFileResponseBean
+                        .class);
+
+                if (loginResponse.getUploadRet() == 1) {
+                    mCallbackListener.uploadSuccess(s);
+                }else{
+                    // do nothing 可能其他原因导致失败
+                }
             }
 
             @Override

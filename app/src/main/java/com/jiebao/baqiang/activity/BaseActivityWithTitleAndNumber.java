@@ -21,11 +21,14 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
+import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
+import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
@@ -143,20 +146,33 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        LogUtil.trace("BaseActivity onKeyDown: " + keyCode);
-
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case Constant.F1_KEY_CODE: {
-                    ZCfajianUploadFile.uploadZcfjUnloadRecords();
-                    XcdjDBHelper.uploadXcdjUnloadRecords();
-                    DaojianDBHelper.uploadDaojianUnloadRecords();
-                    FajianDBHelper.uploadFajianUnloadRecords();
-                    LiucangDBHelper.uploadLiucangUnloadRecords();
+                    new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
-                    Toast.makeText(this, "数据上传成功", Toast.LENGTH_SHORT).show();
-                    // F1事件，传递给Activity更新UI
-                    syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 文件上传存在延时
+                            Toast.makeText(BaseActivityWithTitleAndNumber.this, "文件上传成功", Toast
+                                    .LENGTH_SHORT).show();
+                            // F1事件，传递给Activity更新UI
+                            setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                                    .SYNC_UNLOAD_DATA_TYPE_ALL));
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).uploadUnloadRecords();
+                    return true;
                 }
             }
         }
@@ -207,9 +223,9 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
         LogUtil.trace();
 
-        if(BaqiangApplication.getLatestActivity() instanceof LoginActivity){
+        if (BaqiangApplication.getLatestActivity() instanceof LoginActivity) {
             mHeaderRightView.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             // FIXME 界面重新获取焦点后，刷新 统计值
             setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                     .SYNC_UNLOAD_DATA_TYPE_ALL));

@@ -1,7 +1,7 @@
 package com.jiebao.baqiang.data.bean;
 
 /**
- * Created by Administrator on 2018/3/23 0023.
+ * 文件上传服务，反馈结果JavaBean
  */
 
 public class UploadFileResponseBean {
