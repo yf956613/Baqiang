@@ -12,14 +12,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.data.bean.SearchTime;
+import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.TextStringUtil;
 
 import org.xutils.x;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -183,16 +187,38 @@ public class BussinessQueryActivity extends BaseActivityWithTitleAndNumber imple
             }
 
             case R.id.btn_search: {
+                String beginTime = mShowBeginTime.getDayString() + " " + mShowBeginTime
+                        .getHourString();
+                String endTime = mShowEndTime.getDayString() + " " + mShowEndTime.getHourString();
+
+                try {
+                    long mBeginDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                            .convertSearchTime(beginTime, 1)).getTime();
+                    long mEndDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                            .convertSearchTime(endTime, 2)).getTime();
+
+                    if (mBeginDate > mEndDate) {
+                        Toast.makeText(BussinessQueryActivity.this, "开始时间必须早于结束时间！", Toast
+                                .LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+
                 Intent intent = new Intent(BussinessQueryActivity.this, SearchRecordsActivity
                         .class);
                 intent.putExtra("search_type", mBussinessType);
-                intent.putExtra("start_time", mShowBeginTime.getDayString() + " " +
-                        mShowBeginTime.getHourString());
-                intent.putExtra("end_time", mShowEndTime.getDayString() + " " + mShowEndTime
-                        .getHourString());
+                intent.putExtra("start_time", beginTime);
+                intent.putExtra("end_time", endTime);
                 this.startActivity(intent);
+
                 break;
             }
+
+            default:
+                break;
         }
     }
 

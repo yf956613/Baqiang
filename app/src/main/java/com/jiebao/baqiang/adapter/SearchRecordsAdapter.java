@@ -18,7 +18,10 @@ import com.jiebao.baqiang.util.LogUtil;
 import java.util.List;
 
 /**
- * Created by Administrator on 2018/3/21 0021.
+ * 搜索界面，与ListView对应的数据适配器Adapter
+ * <p>
+ * 1. 保存的数据可抽象为类型T，接收诸如：装车发件、卸车到件等数据类型;
+ * 2. 上述数据类型保存记录所有内容（包括Table的Record的主键id），方便搜索；
  */
 
 public class SearchRecordsAdapter<T> extends BaseAdapter {
@@ -108,6 +111,8 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
             } else {
                 // do nothing
             }
+        } else {
+            // do nothing
         }
 
         return convertView;

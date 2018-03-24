@@ -11,7 +11,12 @@ import android.widget.TextView;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.SearchRecordsAdapter;
+import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
+import com.jiebao.baqiang.data.bean.CommonUploadFile;
+import com.jiebao.baqiang.data.bean.ICommonUpdateFileCallBack;
+import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
+import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
@@ -20,6 +25,11 @@ import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
+import org.xutils.DbManager;
+import org.xutils.common.Callback;
+import org.xutils.common.util.KeyValue;
+import org.xutils.db.sqlite.WhereBuilder;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
@@ -98,7 +108,6 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                             final ZCFajianFileContent bean = (ZCFajianFileContent) mListData.get
                                     (position);
-
                             if (bean != null) {
                                 // 点击事件：弹出该记录的详细信息
                                 final AlertDialog dialog = new AlertDialog.Builder
@@ -128,12 +137,32 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // 上传当前单条记录
-                                        ZCfajianUploadFile.singleRecordUpload(bean);
                                         dialog.dismiss();
+                                        showLoadinDialog();
 
-                                        // 刷新UI，重写执行查询操作
-                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                        new CommonDbHelperToUploadFile<ZCFajianFileContent>()
+                                                .setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                                            @Override
+                                            public boolean onSuccess(String s) {
+                                                // 刷新UI，重写执行查询操作
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                                closeLoadinDialog();
+                                                return true;
+                                            }
+
+                                            @Override
+                                            public boolean onError(Throwable throwable, boolean b) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onFinish() {
+                                                LogUtil.trace("99999");
+                                                return false;
+                                            }
+                                        }).uploadSingleRecord(bean);
                                     }
                                 });
 
@@ -235,7 +264,9 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
         super.syncViewAfterUpload(updateType);
 
         initData();
-        mSearchRecordsAdapter.notifyDataSetChanged();
+        if (mSearchRecordsAdapter != null) {
+            mSearchRecordsAdapter.notifyDataSetChanged();
+        }
     }
 
 }

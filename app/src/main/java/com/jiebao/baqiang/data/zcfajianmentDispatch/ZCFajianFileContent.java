@@ -17,7 +17,7 @@ import java.util.Date;
  */
 
 @Table(name = "zcfajian")
-public class ZCFajianFileContent implements IFileContentBean {
+public class ZCFajianFileContent extends IFileContentBean {
     private static final String TAG = ZCFajianFileContent.class.getSimpleName();
 
     // 0259200         20170221235917  2880273772877    5955513  20170221 0

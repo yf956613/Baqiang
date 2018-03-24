@@ -1,7 +1,6 @@
 package com.jiebao.baqiang.data.bean;
 
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
@@ -21,7 +20,7 @@ import java.io.UnsupportedEncodingException;
  * 上传服务器Servlet地址固定，UploadServerFile为全局文件上传类
  */
 
-public class UploadServerFile implements IShipmentFileUpload {
+public class UploadServerFile {
     private static final String TAG = UploadServerFile.class.getSimpleName();
 
     private File mFile;
@@ -92,11 +91,5 @@ public class UploadServerFile implements IShipmentFileUpload {
 
         return false;
     }
-
-    @Override
-    public boolean uploadSuccess() {
-        return false;
-    }
-
 
 }

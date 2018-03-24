@@ -8,9 +8,12 @@ import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
+import com.jiebao.baqiang.data.updateData.UpdateInterface;
+import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
 import com.jiebao.baqiang.util.LogUtil;
+import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
@@ -25,17 +28,23 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
- * Created by LENOVO on 2018/2/2.
+ * Created by Administrator on 2018/3/23 0023.
  */
 
-public class ZCfajianUploadFile implements IShipmentFileUpload {
+public class TestUploadFile {
+
     private static final String TAG = ZCfajianUploadFile.class.getSimpleName();
 
     private File mFile;
     private String mUploadUrl = "";
+    private IShipmentFileUpload mCallbackListener;
 
-    public ZCfajianUploadFile(File file) {
+    public TestUploadFile(File file) {
         this.mFile = file;
+    }
+
+    public void setCallbackListener(IShipmentFileUpload callbackListener) {
+        this.mCallbackListener = callbackListener;
     }
 
     /**
@@ -58,15 +67,14 @@ public class ZCfajianUploadFile implements IShipmentFileUpload {
     }
 
     public boolean uploadFile() {
-        SharedPreferences sp = BaqiangApplication.getContext().getSharedPreferences("ServerInfo",
-                Context.MODE_PRIVATE);
-        if (sp != null) {
-            String ip = sp.getString("Ip", "");
-            String port = sp.getString("Port", "");
-            mUploadUrl = NetworkConstant.HTTP_DOMAIN + ip + ":" + port + NetworkConstant
-                    .UPLOAD_SERVLET;
-        }
+        LogUtil.trace("4444444444444444444444");
+        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+                NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
+
+        params.addQueryStringParameter("saleId", UpdateInterface.salesId);
+        params.addQueryStringParameter("userName", UpdateInterface.userName);
+        params.addQueryStringParameter("password", UpdateInterface.psw);
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
@@ -79,7 +87,8 @@ public class ZCfajianUploadFile implements IShipmentFileUpload {
 
             @Override
             public void onSuccess(String s) {
-                LogUtil.trace("<111111111111111111111>");
+                LogUtil.trace("<5555555555555555555555555>");
+                mCallbackListener.uploadSuccess();
             }
 
             @Override
@@ -98,11 +107,6 @@ public class ZCfajianUploadFile implements IShipmentFileUpload {
             }
         });
 
-        return false;
-    }
-
-    @Override
-    public boolean uploadSuccess() {
         return false;
     }
 
@@ -238,6 +242,4 @@ public class ZCfajianUploadFile implements IShipmentFileUpload {
             e.printStackTrace();
         }
     }
-
-
 }
