@@ -337,16 +337,66 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                             } else {
                                 // do nothing
                             }
-
-                            final IFileContentBean finalBean1 = bean;
                             btnDelete.setOnClickListener(new View.OnClickListener() {
 
                                 @Override
                                 public void onClick(View v) {
-                                    if (ZcFajianDBHelper.deleteFindedBean
-                                            (finalBean1.getShipmentNumber())) {
-                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                    if (finalBean instanceof ZCFajianFileContent) {
+                                        if (ZcFajianDBHelper.isRecordUpload(finalBean.getId())) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (ZcFajianDBHelper.deleteFindedBean(finalBean.getId
+                                                    ())) {
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                            }
+                                        }
+                                    } else if (finalBean instanceof UnloadArrivalFileContent) {
+                                        if (XcdjDBHelper.isRecordUpload(finalBean.getId())) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (XcdjDBHelper.deleteFindedBean(finalBean.getId())) {
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_XCDJ);
+                                            }
+                                        }
+                                    } else if (finalBean instanceof CargoArrivalFileContent) {
+                                        if (DaojianDBHelper.isRecordUpload(finalBean.getId())) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (DaojianDBHelper.deleteFindedBean(finalBean.getId
+                                                    ())) {
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                            }
+                                        }
+                                    } else if (finalBean instanceof ShipmentFileContent) {
+                                        if (FajianDBHelper.isRecordUpload(finalBean.getId())) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (FajianDBHelper.deleteFindedBean(finalBean.getId()
+                                            )) {
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_FJ);
+                                            }
+                                        }
+                                    } else if (finalBean instanceof StayHouseFileContent) {
+                                        if (LiucangDBHelper.isRecordUpload(finalBean.getId())) {
+                                            Toast.makeText(SearchRecordsActivity.this,
+                                                    "记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (LiucangDBHelper.deleteFindedBean(finalBean.getId
+                                                    ())) {
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_LCJ);
+                                            }
+                                        }
                                     }
+
                                     dialog.dismiss();
                                 }
                             });

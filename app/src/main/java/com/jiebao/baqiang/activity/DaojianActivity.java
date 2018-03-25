@@ -268,6 +268,27 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
     @Override
     public void syncViewAfterUpload(int updateType) {
         super.syncViewAfterUpload(updateType);
+
+        // F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
+        if (mListData != null) {
+            for (int index = 0; index < mListData.size(); index++) {
+                CommonScannerListViewBean listViewBean = mListData.get(index);
+
+                // origin data
+                CargoArrivalFileContent barcode = (CargoArrivalFileContent) listViewBean.getScannerBean();
+                // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
+                CargoArrivalFileContent bean = DaojianDBHelper.getNewInRecord(barcode
+                        .getShipmentNumber(), barcode.getScanDate());
+                listViewBean.setScannerBean(bean);
+            }
+
+            mScannerBaseAdatper.notifyDataSetChanged();
+
+            if (!mListView.isStackFromBottom()) {
+                mListView.setStackFromBottom(true);
+            }
+            mListView.setStackFromBottom(false);
+        }
     }
 
     private void prepareDataForView() {

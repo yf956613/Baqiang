@@ -15,6 +15,8 @@ import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.util.LogUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,19 +69,18 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
 
         if (null != mData && mData.size() != 0) {
             if (mData.get(0) instanceof ZCFajianFileContent) {
-                LogUtil.trace("装车");
-
                 // 装车发件
                 ZCFajianFileContent bean = (ZCFajianFileContent) mData.get(position);
                 if (bean != null) {
                     if ("Unload".equals(bean.getStatus())) {
-                        holder.mTvStatus.setText("未上传");
+                        holder.mTvStatus.setText("未传");
                     } else {
-                        holder.mTvStatus.setText("已上传");
+                        holder.mTvStatus.setText("已传");
                     }
 
                     holder.mTvScannerData.setText(bean.getShipmentNumber());
-                    holder.mTvTime.setText("" + bean.getOperateDate());
+                    holder.mTvTime.setText("" + new SimpleDateFormat("yyyyMMddHHmmss").format(
+                            (bean.getScanDate())));
                 } else {
                     // do nothing
                 }
@@ -88,13 +89,14 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 UnloadArrivalFileContent bean = (UnloadArrivalFileContent) mData.get(position);
                 if (bean != null) {
                     if ("Unload".equals(bean.getStatus())) {
-                        holder.mTvStatus.setText("未上传");
+                        holder.mTvStatus.setText("未传");
                     } else {
-                        holder.mTvStatus.setText("已上传");
+                        holder.mTvStatus.setText("已传");
                     }
 
                     holder.mTvScannerData.setText(bean.getShipmentNumber());
-                    holder.mTvTime.setText("" + bean.getOperateDate());
+                    holder.mTvTime.setText("" + new SimpleDateFormat("yyyyMMddHHmmss").format(
+                            (bean.getScanDate())));
                 } else {
                     // do nothing
                 }
@@ -103,13 +105,14 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 CargoArrivalFileContent bean = (CargoArrivalFileContent) mData.get(position);
                 if (bean != null) {
                     if ("Unload".equals(bean.getStatus())) {
-                        holder.mTvStatus.setText("未上传");
+                        holder.mTvStatus.setText("未传");
                     } else {
-                        holder.mTvStatus.setText("已上传");
+                        holder.mTvStatus.setText("已传");
                     }
 
                     holder.mTvScannerData.setText(bean.getShipmentNumber());
-                    holder.mTvTime.setText("" + bean.getOperateDate());
+                    holder.mTvTime.setText("" + new SimpleDateFormat("yyyyMMddHHmmss").format(
+                            (bean.getScanDate())));
                 } else {
                     // do nothing
                 }
@@ -118,13 +121,14 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 ShipmentFileContent bean = (ShipmentFileContent) mData.get(position);
                 if (bean != null) {
                     if ("Unload".equals(bean.getStatus())) {
-                        holder.mTvStatus.setText("未上传");
+                        holder.mTvStatus.setText("未传");
                     } else {
-                        holder.mTvStatus.setText("已上传");
+                        holder.mTvStatus.setText("已传");
                     }
 
                     holder.mTvScannerData.setText(bean.getShipmentNumber());
-                    holder.mTvTime.setText("" + bean.getOperateDate());
+                    holder.mTvTime.setText("" + new SimpleDateFormat("yyyyMMddHHmmss").format(
+                            (bean.getScanDate())));
                 } else {
                     // do nothing
                 }
@@ -133,13 +137,14 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 StayHouseFileContent bean = (StayHouseFileContent) mData.get(position);
                 if (bean != null) {
                     if ("Unload".equals(bean.getStatus())) {
-                        holder.mTvStatus.setText("未上传");
+                        holder.mTvStatus.setText("未传");
                     } else {
-                        holder.mTvStatus.setText("已上传");
+                        holder.mTvStatus.setText("已传");
                     }
 
                     holder.mTvScannerData.setText(bean.getShipmentNumber());
-                    holder.mTvTime.setText("" + bean.getOperateDate());
+                    holder.mTvTime.setText("" + new SimpleDateFormat("yyyyMMddHHmmss").format(
+                            (bean.getScanDate())));
                 } else {
                     // do nothing
                 }

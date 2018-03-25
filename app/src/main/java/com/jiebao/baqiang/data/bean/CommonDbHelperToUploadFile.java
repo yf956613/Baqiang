@@ -15,8 +15,11 @@ import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据库 到 待上传文件的 功能封装类
@@ -578,7 +581,8 @@ public class CommonDbHelperToUploadFile<T> {
     }
 
     // 顺序上传状态表
-    private HashMap mUploadStatus = null;
+    private volatile HashMap mUploadStatus = null;
+    private int mUploadFileNumber = 0;
 
     /**
      * 自动上传、F1上传 全局未上传文件功能
@@ -601,6 +605,28 @@ public class CommonDbHelperToUploadFile<T> {
                     .where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used").findAll();
             final List<StayHouseFileContent> lcjListData = db.selector(StayHouseFileContent
                     .class).where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used").findAll();
+
+            // 需要上传哪些文件？
+            if (null != zcfjListData && zcfjListData.size() != 0) {
+                mUploadFileNumber++;
+            }
+
+            if (null != xcdjListData && xcdjListData.size() != 0) {
+                mUploadFileNumber++;
+            }
+
+            if (null != djListData && djListData.size() != 0) {
+                mUploadFileNumber++;
+            }
+
+            if (null != fjListData && fjListData.size() != 0) {
+                mUploadFileNumber++;
+            }
+
+            if (null != lcjListData && lcjListData.size() != 0) {
+                mUploadFileNumber++;
+            }
+
             if (null != zcfjListData && zcfjListData.size() != 0) {
                 // 上传 ZCFajianFileContent
                 uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.ZCFJ_TYPE);
@@ -623,6 +649,7 @@ public class CommonDbHelperToUploadFile<T> {
                             WhereBuilder whereBuilder = WhereBuilder.b();
                             whereBuilder.and("id", "=", bean.getId());
                             LogUtil.trace("上传所有记录 ID：" + bean.getId());
+
                             try {
                                 db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
                                         ("IsUpload", "Load"));
@@ -630,16 +657,16 @@ public class CommonDbHelperToUploadFile<T> {
                                 e.printStackTrace();
                             }
                         }
-
-                        // mCallbackListener.onSuccess(s);
                         mUploadStatus.put("zcfj", true);
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onSuccess(isAllRecordsUploadSuccess());
+                        }
                         return true;
                     }
 
                     @Override
                     public boolean uploadError(Throwable throwable, boolean b) {
-                        // mCallbackListener.onError(throwable, b);
-
+                        mCallbackListener.onError(throwable, b);
                         mUploadStatus.put("zcfj", false);
                         return false;
                     }
@@ -651,7 +678,9 @@ public class CommonDbHelperToUploadFile<T> {
 
                     @Override
                     public boolean uploadFinish() {
-                        // mCallbackListener.onFinish();
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onFinish();
+                        }
 
                         return false;
                     }
@@ -694,14 +723,16 @@ public class CommonDbHelperToUploadFile<T> {
                             }
                         }
 
-                        // mCallbackListener.onSuccess(s);
                         mUploadStatus.put("xcdj", true);
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onSuccess(isAllRecordsUploadSuccess());
+                        }
                         return true;
                     }
 
                     @Override
                     public boolean uploadError(Throwable throwable, boolean b) {
-                        // mCallbackListener.onError(throwable, b);
+                        mCallbackListener.onError(throwable, b);
                         mUploadStatus.put("xcdj", false);
                         return false;
                     }
@@ -713,7 +744,9 @@ public class CommonDbHelperToUploadFile<T> {
 
                     @Override
                     public boolean uploadFinish() {
-                        // mCallbackListener.onFinish();
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onFinish();
+                        }
 
                         return false;
                     }
@@ -756,14 +789,16 @@ public class CommonDbHelperToUploadFile<T> {
                             }
                         }
 
-                        // mCallbackListener.onSuccess(s);
                         mUploadStatus.put("dj", true);
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onSuccess(isAllRecordsUploadSuccess());
+                        }
                         return true;
                     }
 
                     @Override
                     public boolean uploadError(Throwable throwable, boolean b) {
-                        // mCallbackListener.onError(throwable, b);
+                        mCallbackListener.onError(throwable, b);
                         mUploadStatus.put("dj", false);
                         return false;
                     }
@@ -775,7 +810,9 @@ public class CommonDbHelperToUploadFile<T> {
 
                     @Override
                     public boolean uploadFinish() {
-                        // mCallbackListener.onFinish();
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onFinish();
+                        }
 
                         return false;
                     }
@@ -816,14 +853,17 @@ public class CommonDbHelperToUploadFile<T> {
                             }
                         }
 
-                        mCallbackListener.onSuccess(s);
                         mUploadStatus.put("fj", true);
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onSuccess(isAllRecordsUploadSuccess());
+                        }
+
                         return true;
                     }
 
                     @Override
                     public boolean uploadError(Throwable throwable, boolean b) {
-                        // mCallbackListener.onError(throwable, b);
+                        mCallbackListener.onError(throwable, b);
                         mUploadStatus.put("fj", false);
                         return false;
                     }
@@ -835,7 +875,9 @@ public class CommonDbHelperToUploadFile<T> {
 
                     @Override
                     public boolean uploadFinish() {
-                        // mCallbackListener.onFinish();
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onFinish();
+                        }
 
                         return false;
                     }
@@ -877,14 +919,16 @@ public class CommonDbHelperToUploadFile<T> {
                             }
                         }
 
-                        mCallbackListener.onSuccess(s);
                         mUploadStatus.put("lcj", true);
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onSuccess(isAllRecordsUploadSuccess());
+                        }
                         return true;
                     }
 
                     @Override
                     public boolean uploadError(Throwable throwable, boolean b) {
-                        // mCallbackListener.onError(throwable, b);
+                        mCallbackListener.onError(throwable, b);
                         mUploadStatus.put("lcj", false);
                         return false;
                     }
@@ -896,7 +940,9 @@ public class CommonDbHelperToUploadFile<T> {
 
                     @Override
                     public boolean uploadFinish() {
-                        // mCallbackListener.onFinish();
+                        if (mUploadStatus.size() >= mUploadFileNumber) {
+                            mCallbackListener.onFinish();
+                        }
 
                         return false;
                     }
@@ -911,5 +957,47 @@ public class CommonDbHelperToUploadFile<T> {
             LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 判断文件是否上传成功
+     *
+     * @return
+     */
+    private String isAllRecordsUploadSuccess() {
+        LogUtil.trace("" + mUploadStatus);
+
+        // 如果每个Key-Value中的Value是true，则表示上传成功
+        StringBuffer sBuffer = new StringBuffer();
+        Iterator iter = mUploadStatus.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String key = (String) entry.getKey();
+            boolean value = (boolean) entry.getValue();
+            System.out.println(key + ":" + value);
+
+            if ("zcfj".equals(key)) {
+                if (!value) {
+                    sBuffer.append("装车发件文件上传失败 ");
+                }
+            } else if ("xcdj".equals(key)) {
+                if (!value) {
+                    sBuffer.append("卸车到件文件上传失败 ");
+                }
+            } else if ("dj".equals(key)) {
+                if (!value) {
+                    sBuffer.append("到件文件上传失败 ");
+                }
+            } else if ("fj".equals(key)) {
+                if (!value) {
+                    sBuffer.append("发件文件上传失败 ");
+                }
+            } else if ("lcj".equals(key)) {
+                if (!value) {
+                    sBuffer.append("留仓件文件上传失败 ");
+                }
+            }
+        }
+        return sBuffer.toString();
     }
 }

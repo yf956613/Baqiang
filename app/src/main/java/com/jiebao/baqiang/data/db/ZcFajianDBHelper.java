@@ -245,8 +245,6 @@ public class ZcFajianDBHelper {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
-            /*whereBuilder.and("ShipmentID", "=", barcode);
-            whereBuilder.and("IsUpload", "=", "Unload");*/
             whereBuilder.and("id", "=", barcodeID);
             db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
 

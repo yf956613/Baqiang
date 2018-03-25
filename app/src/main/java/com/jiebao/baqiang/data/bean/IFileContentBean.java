@@ -6,19 +6,23 @@ package com.jiebao.baqiang.data.bean;
 
 public class IFileContentBean {
 
-    public String getStatus(){
+    public int getId() {
+        return 0;
+    }
+
+    public String getStatus() {
         return null;
     }
 
-    public String getShipmentNumber(){
+    public String getShipmentNumber() {
         return null;
     }
 
-    public String getScanEmployeeNumber(){
+    public String getScanEmployeeNumber() {
         return null;
     }
 
-    public String getOperateDate(){
+    public String getOperateDate() {
         return null;
     }
 }

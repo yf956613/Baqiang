@@ -371,7 +371,6 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
                 ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord(barcode
                         .getShipmentNumber(), barcode.getScanDate());
-
                 listViewBean.setScannerBean(bean);
             }
 

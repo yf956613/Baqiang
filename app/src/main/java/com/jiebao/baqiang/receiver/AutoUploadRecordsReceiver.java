@@ -38,11 +38,14 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
                 return;
             }
 
+            // 此处的Activity不显示Dialog，完成后，更新UI即可
             new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                 @Override
                 public boolean onSuccess(String s) {
-                    Toast.makeText(mTopActivity, "文件上传成功", Toast.LENGTH_SHORT).show();
+                    LogUtil.trace("s:" + s);
+
+                    Toast.makeText(mTopActivity, s, Toast.LENGTH_SHORT).show();
                     // F1事件，传递给Activity更新UI
                     mTopActivity.syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
                     return true;
@@ -55,6 +58,11 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
 
                 @Override
                 public boolean onFinish() {
+                    LogUtil.trace();
+
+                    // F1事件，传递给Activity更新UI
+                    mTopActivity.syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+
                     return false;
                 }
             }).uploadUnloadRecords();
