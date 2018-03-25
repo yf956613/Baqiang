@@ -95,6 +95,86 @@ public class FajianDBHelper {
     }
 
     /**
+     * 获取 指定时间范围内 可用 记录
+     * <p>
+     * 1. 可用数据；
+     * 2. 满足时间限制；
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static List<ShipmentFileContent> getLimitedTimeRecords(long beginTime, long endTime) {
+        LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list;
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 统计指定时间范围内的 总可用 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+        LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class)
+                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                            ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 统计指定时间范围内的 未上传 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class)
+                    .where("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate",
+                            ">=", new Date(beginTime)).and("ScanDate", "<=", new Date(endTime))
+                    .findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * 每次扫描后，先将数据存入数据库，需要的数据可根据ZCFajianFileContent对应
      * <p>
      * 1. 存入数据库；

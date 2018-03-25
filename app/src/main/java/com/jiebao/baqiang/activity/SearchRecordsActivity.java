@@ -12,10 +12,19 @@ import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.SearchRecordsAdapter;
+import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
+import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
 import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
+import com.jiebao.baqiang.data.db.DaojianDBHelper;
+import com.jiebao.baqiang.data.db.FajianDBHelper;
+import com.jiebao.baqiang.data.db.LiucangDBHelper;
+import com.jiebao.baqiang.data.db.ShipmentTypeDBHelper;
+import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
+import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
@@ -64,22 +73,22 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
         Intent intent = this.getIntent();
         // 开始时间的秒数，默认是：00；结束时间的秒数，默认是：59
         String searchType = intent.getStringExtra("search_type");
-        String beginTime = intent.getStringExtra("start_time");
+        final String beginTime = intent.getStringExtra("start_time");
         String endTime = intent.getStringExtra("end_time");
         // type:装车发件; begin:2018-3-22 00:00; end:2018-3-22 23:59 --> 20180320204809
         // begin:20180322000000; end:20180322235959
         LogUtil.trace("begin:" + BQTimeUtil.convertSearchTime(beginTime, 1) + "; end:" +
                 BQTimeUtil.convertSearchTime(endTime, 2));
 
-        if (Constant.SEARCH_NAME_ZCFJ.equals(searchType)) {
-            setHeaderLeftViewText("装车发件查询");
-            mSearchFlag = SearchType.ZCFJ;
+        try {
+            long mBeginDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                    .convertSearchTime(beginTime, 1)).getTime();
+            long mEndDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
+                    .convertSearchTime(endTime, 2)).getTime();
 
-            try {
-                long mBeginDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
-                        .convertSearchTime(beginTime, 1)).getTime();
-                long mEndDate = new SimpleDateFormat("yyyyMMddHHmmss").parse(BQTimeUtil
-                        .convertSearchTime(endTime, 2)).getTime();
+            if (Constant.SEARCH_NAME_ZCFJ.equals(searchType)) {
+                setHeaderLeftViewText("装车发件查询");
+                mSearchFlag = SearchType.ZCFJ;
 
                 mTvRecordsAll.setText("" + ZcFajianDBHelper.findTimeLimitedUsableRecords
                         (mBeginDate, mEndDate));
@@ -88,56 +97,120 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                 mListData = (List<IFileContentBean>) (List<?>) ZcFajianDBHelper
                         .getLimitedTimeRecords(mBeginDate, mEndDate);
-                if (null != mListData && mListData.size() != 0) {
-                    mSearchRecordsAdapter = new SearchRecordsAdapter(SearchRecordsActivity
-                            .this, mListData);
-                    mListViewData.setAdapter(mSearchRecordsAdapter);
-                    mListViewData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            } else if (Constant.SEARCH_NAME_XCDJ.equals(searchType)) {
+                setHeaderLeftViewText("卸车到件查询");
+                mSearchFlag = SearchType.XCDJ;
 
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                                long id) {
-                            LogUtil.trace("position:" + position + "; id:" + id);
+                mTvRecordsAll.setText("" + XcdjDBHelper.findTimeLimitedUsableRecords(mBeginDate,
+                        mEndDate));
+                mTvRecordsUnload.setText("" + XcdjDBHelper.findTimeLimitedUnloadRecords
+                        (mBeginDate, mEndDate));
 
-                            final ZCFajianFileContent bean = (ZCFajianFileContent) mListData.get
-                                    (position);
-                            if (bean != null) {
-                                final AlertDialog dialog = new AlertDialog.Builder
-                                        (SearchRecordsActivity.this).create();
-                                dialog.setView(LayoutInflater.from(SearchRecordsActivity.this)
-                                        .inflate(R.layout.alert_dialog_search_detail, null));
-                                dialog.setCanceledOnTouchOutside(false);
-                                dialog.show();
+                mListData = (List<IFileContentBean>) (List<?>) XcdjDBHelper.getLimitedTimeRecords
+                        (mBeginDate, mEndDate);
+            } else if (Constant.SEARCH_NAME_DJ.equals(searchType)) {
+                setHeaderLeftViewText("到件查询");
+                mSearchFlag = SearchType.DJ;
 
-                                Button btnCancel = dialog.findViewById(R.id.btn_cancel);
-                                btnCancel.setOnClickListener(new View.OnClickListener() {
+                mTvRecordsAll.setText("" + DaojianDBHelper.findTimeLimitedUsableRecords
+                        (mBeginDate, mEndDate));
+                mTvRecordsUnload.setText("" + DaojianDBHelper.findTimeLimitedUnloadRecords
+                        (mBeginDate, mEndDate));
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialog.dismiss();
-                                    }
-                                });
+                mListData = (List<IFileContentBean>) (List<?>) DaojianDBHelper
+                        .getLimitedTimeRecords(mBeginDate, mEndDate);
+            } else if (Constant.SEARCH_NAME_FJ.equals(searchType)) {
+                setHeaderLeftViewText("发件查询");
+                mSearchFlag = SearchType.FJ;
 
-                                Button btnRedoUpload = dialog.findViewById(R.id.btn_redo_upload);
-                                if ("Unload".equals(bean.getStatus())) {
-                                    btnRedoUpload.setText("上传");
-                                } else {
-                                    // do nothing
+                mTvRecordsAll.setText("" + FajianDBHelper.findTimeLimitedUsableRecords
+                        (mBeginDate, mEndDate));
+                mTvRecordsUnload.setText("" + FajianDBHelper.findTimeLimitedUnloadRecords
+                        (mBeginDate, mEndDate));
+
+                mListData = (List<IFileContentBean>) (List<?>) FajianDBHelper
+                        .getLimitedTimeRecords(mBeginDate, mEndDate);
+            } else if (Constant.SEARCH_NAME_LCJ.equals(searchType)) {
+                setHeaderLeftViewText("卸车到件查询");
+                mSearchFlag = SearchType.LCJ;
+
+                mTvRecordsAll.setText("" + LiucangDBHelper.findTimeLimitedUsableRecords
+                        (mBeginDate, mEndDate));
+                mTvRecordsUnload.setText("" + LiucangDBHelper.findTimeLimitedUnloadRecords
+                        (mBeginDate, mEndDate));
+
+                mListData = (List<IFileContentBean>) (List<?>) LiucangDBHelper
+                        .getLimitedTimeRecords(mBeginDate, mEndDate);
+            } else {
+                // do nothing
+            }
+
+            if (null != mListData && mListData.size() != 0) {
+                mSearchRecordsAdapter = new SearchRecordsAdapter(SearchRecordsActivity
+                        .this, mListData);
+                mListViewData.setAdapter(mSearchRecordsAdapter);
+                mListViewData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long
+                            id) {
+                        LogUtil.trace("position:" + position + "; id:" + id);
+
+                        IFileContentBean bean = null;
+                        if (mListData.get(position) instanceof ZCFajianFileContent) {
+                            bean = (ZCFajianFileContent) mListData.get(position);
+                        } else if (mListData.get(position) instanceof UnloadArrivalFileContent) {
+                            bean = (UnloadArrivalFileContent) mListData.get(position);
+                        } else if (mListData.get(position) instanceof CargoArrivalFileContent) {
+                            bean = (CargoArrivalFileContent) mListData.get(position);
+                        } else if (mListData.get(position) instanceof ShipmentFileContent) {
+                            bean = (ShipmentFileContent) mListData.get(position);
+                        } else if (mListData.get(position) instanceof StayHouseFileContent) {
+                            bean = (StayHouseFileContent) mListData.get(position);
+                        } else {
+                            // do nothing
+                        }
+
+                        if (bean != null) {
+                            final AlertDialog dialog = new AlertDialog.Builder
+                                    (SearchRecordsActivity.this).create();
+                            dialog.setView(LayoutInflater.from(SearchRecordsActivity.this)
+                                    .inflate(R.layout.alert_dialog_search_detail, null));
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
+
+                            Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+                            btnCancel.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
                                 }
-                                btnRedoUpload.setOnClickListener(new View.OnClickListener() {
+                            });
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        if (!NetworkUtils.isNetworkConnected(SearchRecordsActivity
-                                                .this)) {
-                                            Toast.makeText(SearchRecordsActivity.this,
-                                                    "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
-                                            return;
-                                        } else {
-                                            dialog.dismiss();
-                                            showLoadinDialog();
-                                        }
+                            Button btnRedoUpload = dialog.findViewById(R.id.btn_redo_upload);
+                            if ("Unload".equals(bean.getStatus())) {
+                                btnRedoUpload.setText("上传");
+                            } else {
+                                // do nothing
+                            }
 
+                            final IFileContentBean finalBean = bean;
+                            btnRedoUpload.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    if (!NetworkUtils.isNetworkConnected(SearchRecordsActivity
+                                            .this)) {
+                                        Toast.makeText(SearchRecordsActivity.this, "网络不可用，请检查网络",
+                                                Toast.LENGTH_SHORT).show();
+                                        return;
+                                    } else {
+                                        dialog.dismiss();
+                                        showLoadinDialog();
+                                    }
+
+                                    if (finalBean instanceof ZCFajianFileContent) {
                                         new CommonDbHelperToUploadFile<ZCFajianFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -159,70 +232,150 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                             public boolean onFinish() {
                                                 return false;
                                             }
-                                        }).uploadSingleRecord(bean);
-                                    }
-                                });
+                                        }).uploadSingleRecord(finalBean);
+                                    } else if (finalBean instanceof UnloadArrivalFileContent) {
+                                        new CommonDbHelperToUploadFile<UnloadArrivalFileContent>
+                                                ().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
-                                Button btnDelete = dialog.findViewById(R.id.btn_delete);
-                                if ("Load".equals(bean.getStatus())) {
-                                    btnDelete.setVisibility(View.GONE);
-                                } else {
-                                    // do nothing
+                                            @Override
+                                            public boolean onSuccess(String s) {
+                                                // 刷新UI，重写执行查询操作
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_XCDJ);
+                                                closeLoadinDialog();
+                                                return true;
+                                            }
+
+                                            @Override
+                                            public boolean onError(Throwable throwable, boolean b) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onFinish() {
+                                                return false;
+                                            }
+                                        }).uploadSingleRecord(finalBean);
+                                    } else if (finalBean instanceof CargoArrivalFileContent) {
+                                        new CommonDbHelperToUploadFile<CargoArrivalFileContent>()
+                                                .setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                                            @Override
+                                            public boolean onSuccess(String s) {
+                                                // 刷新UI，重写执行查询操作
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                                closeLoadinDialog();
+                                                return true;
+                                            }
+
+                                            @Override
+                                            public boolean onError(Throwable throwable, boolean b) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onFinish() {
+                                                return false;
+                                            }
+                                        }).uploadSingleRecord(finalBean);
+                                    } else if (finalBean instanceof ShipmentFileContent) {
+                                        new CommonDbHelperToUploadFile<ShipmentFileContent>()
+                                                .setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                                            @Override
+                                            public boolean onSuccess(String s) {
+                                                // 刷新UI，重写执行查询操作
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                                closeLoadinDialog();
+                                                return true;
+                                            }
+
+                                            @Override
+                                            public boolean onError(Throwable throwable, boolean b) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onFinish() {
+                                                return false;
+                                            }
+                                        }).uploadSingleRecord(finalBean);
+                                    } else if (finalBean instanceof StayHouseFileContent) {
+                                        new CommonDbHelperToUploadFile<StayHouseFileContent>()
+                                                .setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                                            @Override
+                                            public boolean onSuccess(String s) {
+                                                // 刷新UI，重写执行查询操作
+                                                syncViewAfterUpload(Constant
+                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                                closeLoadinDialog();
+                                                return true;
+                                            }
+
+                                            @Override
+                                            public boolean onError(Throwable throwable, boolean b) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onFinish() {
+                                                return false;
+                                            }
+                                        }).uploadSingleRecord(finalBean);
+                                    } else {
+                                        // do nothing
+                                    }
                                 }
-                                btnDelete.setOnClickListener(new View.OnClickListener() {
+                            });
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        if (ZcFajianDBHelper.deleteFindedBean(bean
-                                                .getShipmentNumber())) {
-                                            syncViewAfterUpload(Constant
-                                                    .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
-                                        }
-                                        dialog.dismiss();
-                                    }
-                                });
-
-                                TextView tvShipmentNumber = dialog.findViewById(R.id
-                                        .tv_shipment_number);
-                                tvShipmentNumber.setText(bean.getShipmentNumber());
-
-                                TextView tvOperator = dialog.findViewById(R.id.tv_operator);
-                                tvOperator.setText(bean.getScanEmployeeNumber());
-
-                                String idString = SharedUtil.getString(SearchRecordsActivity
-                                        .this, Constant.PREFERENCE_KEY_SALE_SERVICE);
-                                LogUtil.trace("idString:" + idString);
-
-                                TextView tvOperatorID = dialog.findViewById(R.id.tv_operator_id);
-                                tvOperatorID.setText(bean.getScanEmployeeNumber().replace
-                                        (idString, ""));
-                                TextView tvSaleID = dialog.findViewById(R.id.tv_sale_id);
-                                tvSaleID.setText(idString);
-
-                                TextView tvScanTime = dialog.findViewById(R.id.tv_scan_time);
-                                tvScanTime.setText(bean.getOperateDate());
+                            Button btnDelete = dialog.findViewById(R.id.btn_delete);
+                            if ("Load".equals(bean.getStatus())) {
+                                btnDelete.setVisibility(View.GONE);
+                            } else {
+                                // do nothing
                             }
-                        }
-                    });
-                }
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+                            final IFileContentBean finalBean1 = bean;
+                            btnDelete.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    if (ZcFajianDBHelper.deleteFindedBean
+                                            (finalBean1.getShipmentNumber())) {
+                                        syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ);
+                                    }
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            TextView tvShipmentNumber = dialog.findViewById(R.id
+                                    .tv_shipment_number);
+                            tvShipmentNumber.setText(bean.getShipmentNumber());
+
+                            TextView tvOperator = dialog.findViewById(R.id.tv_operator);
+                            tvOperator.setText(bean.getScanEmployeeNumber());
+
+                            String idString = SharedUtil.getString(SearchRecordsActivity
+                                    .this, Constant.PREFERENCE_KEY_SALE_SERVICE);
+                            TextView tvOperatorID = dialog.findViewById(R.id.tv_operator_id);
+                            tvOperatorID.setText(bean.getScanEmployeeNumber().replace(idString,
+                                    ""));
+                            TextView tvSaleID = dialog.findViewById(R.id.tv_sale_id);
+                            tvSaleID.setText(idString);
+
+                            TextView tvScanTime = dialog.findViewById(R.id.tv_scan_time);
+                            tvScanTime.setText(bean.getOperateDate());
+                        }
+                    }
+                });
+            } else {
+                // do nothing
             }
-        } else if (Constant.SEARCH_NAME_XCDJ.equals(searchType)) {
-            setHeaderLeftViewText("卸车到件查询");
-            mSearchFlag = SearchType.XCDJ;
-        } else if (Constant.SEARCH_NAME_DJ.equals(searchType)) {
-            setHeaderLeftViewText("到件查询");
-            mSearchFlag = SearchType.DJ;
-        } else if (Constant.SEARCH_NAME_FJ.equals(searchType)) {
-            setHeaderLeftViewText("发件查询");
-            mSearchFlag = SearchType.FJ;
-        } else if (Constant.SEARCH_NAME_LCJ.equals(searchType)) {
-            setHeaderLeftViewText("留仓件查询");
-            mSearchFlag = SearchType.LCJ;
-        } else {
-            // do nothing
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         mBtnUploadRedo.setOnClickListener(new View.OnClickListener() {
@@ -231,9 +384,10 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             public void onClick(View v) {
                 LogUtil.trace("mSearchFlag:" + mSearchFlag);
 
+                showLoadinDialog();
+
+                // 重传当前ListView中的所有记录
                 if (SearchType.ZCFJ.equals(mSearchFlag)) {
-                    // 重传当前ListView中的所有记录
-                    showLoadinDialog();
                     new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                         @Override
@@ -255,17 +409,92 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                         }
                     }).redoUploadRecords(mListData);
                 } else if (SearchType.XCDJ.equals(mSearchFlag)) {
-                    setHeaderLeftViewText("卸车到件查询");
-                    mSearchFlag = SearchType.XCDJ;
+                    new CommonDbHelperToUploadFile<UnloadArrivalFileContent>()
+                            .setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 刷新UI，重写执行查询操作
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_XCDJ);
+                            closeLoadinDialog();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).redoUploadRecords(mListData);
                 } else if (SearchType.DJ.equals(mSearchFlag)) {
-                    setHeaderLeftViewText("到件查询");
-                    mSearchFlag = SearchType.DJ;
+                    new CommonDbHelperToUploadFile<CargoArrivalFileContent>().setCallbackListener
+                            (new IDbHelperToUploadFileCallback() {
+
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 刷新UI，重写执行查询操作
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_DJ);
+                            closeLoadinDialog();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).redoUploadRecords(mListData);
                 } else if (SearchType.FJ.equals(mSearchFlag)) {
-                    setHeaderLeftViewText("发件查询");
-                    mSearchFlag = SearchType.FJ;
+                    new CommonDbHelperToUploadFile<ShipmentFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 刷新UI，重写执行查询操作
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_FJ);
+                            closeLoadinDialog();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).redoUploadRecords(mListData);
                 } else if (SearchType.LCJ.equals(mSearchFlag)) {
-                    setHeaderLeftViewText("留仓件查询");
-                    mSearchFlag = SearchType.LCJ;
+                    new CommonDbHelperToUploadFile<StayHouseFileContent>().setCallbackListener
+                            (new IDbHelperToUploadFileCallback() {
+
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 刷新UI，重写执行查询操作
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_LCJ);
+                            closeLoadinDialog();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onFinish() {
+                            return false;
+                        }
+                    }).redoUploadRecords(mListData);
                 } else {
                     // do nothing
                 }

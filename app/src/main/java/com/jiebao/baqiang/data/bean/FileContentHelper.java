@@ -3,6 +3,7 @@ package com.jiebao.baqiang.data.bean;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
+import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.util.TextStringUtil;
@@ -114,7 +115,7 @@ public class FileContentHelper {
     }
 
     /**
-     * 初始化时，先构建一个ShipmentFileContent实体
+     * 发件
      *
      * @return
      */
@@ -143,5 +144,32 @@ public class FileContentHelper {
 
         return new ShipmentFileContent(nextStation, scanDate, goodsType, shipmentType,
                 shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
+    }
+
+    /**
+     * 留仓件
+     *
+     * @return
+     */
+    public static StayHouseFileContent getStayHouseFileContent() {
+        // 扫描时间
+        Date scanDate = new Date();
+        // 留仓原因
+        String stayHouseReason = "";
+        // 快件类型
+        String shipmentType = "";
+        // 运单编号
+        String shipmentNumber = "";
+        // 扫描员工编号
+        String scanEmployeeNumber = UpdateInterface.userName;
+        // 操作日期
+        String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
+        // 是否上传状态
+        String status = "Unload";
+        // 是否可用
+        String isUsed = "Used";
+
+        return new StayHouseFileContent(scanDate, stayHouseReason, shipmentType, shipmentNumber,
+                scanEmployeeNumber, operateDate, status, isUsed);
     }
 }

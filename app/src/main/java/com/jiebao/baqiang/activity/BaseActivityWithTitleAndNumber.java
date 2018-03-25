@@ -484,14 +484,17 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 LogUtil.trace("Xcdj: unloadRecords-->" + unloadRecords);
 
                 unloadRecords = DaojianDBHelper.findUnloadRecords();
-                // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
                 LogUtil.trace("Dj: unloadRecords:" + unloadRecords);
 
-                unloadRecords = DaojianDBHelper.findUnloadRecords();
-                // 更新SP存储值
+                unloadRecords = FajianDBHelper.findUnloadRecords();
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ, unloadRecords);
-                LogUtil.trace("unloadRecords:" + unloadRecords);
+                LogUtil.trace("Fj:unloadRecords:" + unloadRecords);
+
+                unloadRecords = LiucangDBHelper.findUnloadRecords();
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
+                LogUtil.trace("FJ:unloadRecords:" + unloadRecords);
+
                 break;
             }
 
@@ -532,6 +535,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             }
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_LCJ: {
+                unloadRecords = LiucangDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
+
+                LogUtil.trace("LCJ:unloadRecords:" + unloadRecords);
                 break;
             }
 

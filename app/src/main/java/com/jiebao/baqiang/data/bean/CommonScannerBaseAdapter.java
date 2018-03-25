@@ -11,6 +11,7 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
+import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 
 import java.util.List;
@@ -101,8 +102,15 @@ public class CommonScannerBaseAdapter extends BaseAdapter {
                 } else {
                     holder.mTvStatus.setText("已上传");
                 }
-            } else {
-                // 其他类型
+            } else if (bean instanceof StayHouseFileContent) {
+                StayHouseFileContent value = (StayHouseFileContent) bean;
+                holder.mTvScannerData.setText(value.getShipmentNumber());
+
+                if ("Unload".equals(value.getStatus())) {
+                    holder.mTvStatus.setText("未上传");
+                } else {
+                    holder.mTvStatus.setText("已上传");
+                }
             }
         }
 

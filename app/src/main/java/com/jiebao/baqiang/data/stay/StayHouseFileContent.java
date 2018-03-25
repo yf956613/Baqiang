@@ -1,15 +1,19 @@
 package com.jiebao.baqiang.data.stay;
 
+import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 货件留仓扫描时生成一行文本，具体参考：货件留仓扫描.txt
  */
 @Table(name = "liucangjian")
-public class StayHouseFileContent {
+public class StayHouseFileContent extends IFileContentBean {
     private static final String TAG = StayHouseFileContent.class.getSimpleName();
 
     private static final int LENGTH = 91;
@@ -39,40 +43,48 @@ public class StayHouseFileContent {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name = "扫描类型编号")
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Column(name = "ScannerType")
     private String mScannerType;
 
-    public String getmScannerType() {
+    public String getScannerType() {
         return mScannerType;
     }
 
-    public void setmScannerType(String mScannerType) {
+    public void setScannerType(String mScannerType) {
         this.mScannerType = mScannerType;
     }
 
-    @Column(name = "编号")
+    @Column(name = "SerialNumber")
     private String mSerialNumber;
 
-    public String getmSerialNumber() {
+    public String getSerialNumber() {
         return mSerialNumber;
     }
 
-    public void setmSerialNumber(String mSerialNumber) {
+    public void setSerialNumber(String mSerialNumber) {
         this.mSerialNumber = mSerialNumber;
     }
 
-    @Column(name = "扫描时间")
-    private String mScanDate;
+    @Column(name = "ScanDate")
+    private Date mScanDate;
 
-    public String getScanDate() {
+    public Date getScanDate() {
         return mScanDate;
     }
 
-    public void setScanDate(String scanDate) {
+    public void setScanDate(Date scanDate) {
         this.mScanDate = scanDate;
     }
 
-    @Column(name = "留仓原因")
+    @Column(name = "StayReason")
     private String mStayReason;
 
     public String getStayReason() {
@@ -83,7 +95,7 @@ public class StayHouseFileContent {
         this.mStayReason = stayReason;
     }
 
-    @Column(name = "快件类型")
+    @Column(name = "ShipmentType")
     private String mShipmentType;
 
     public String getShipmentType() {
@@ -94,7 +106,7 @@ public class StayHouseFileContent {
         this.mShipmentType = shipmentType;
     }
 
-    @Column(name = "运单编号")
+    @Column(name = "ShipmentID")
     private String mShipmentNumber;
 
     public String getShipmentNumber() {
@@ -105,7 +117,7 @@ public class StayHouseFileContent {
         this.mShipmentNumber = shipmentNumber;
     }
 
-    @Column(name = "扫描员工编号")
+    @Column(name = "ScanEmployeeNumber")
     private String mScanEmployeeNumber;
 
     public String getScanEmployeeNumber() {
@@ -116,7 +128,7 @@ public class StayHouseFileContent {
         this.mScanEmployeeNumber = scanEmployeeNumber;
     }
 
-    @Column(name = "操作日期")
+    @Column(name = "OperateDate")
     private String mOperateDate;
 
     public String getOperateDate() {
@@ -128,25 +140,25 @@ public class StayHouseFileContent {
     }
 
     // 是否上传状态标识
-    @Column(name = "是否上传")
+    @Column(name = "IsUpload")
     private String mStatus;
 
-    public String getmStatus() {
+    public String getStatus() {
         return mStatus;
     }
 
-    public void setmStatus(String mStatus) {
+    public void setmtatus(String mStatus) {
         this.mStatus = mStatus;
     }
 
-    @Column(name = "是否可用")
+    @Column(name = "IsUsed")
     private String mIsUsed;
 
-    public String getmIsUsed() {
+    public String getIsUsed() {
         return mIsUsed;
     }
 
-    public void setmIsUsed(String mIsUsed) {
+    public void setIsUsed(String mIsUsed) {
         this.mIsUsed = mIsUsed;
     }
 
@@ -157,9 +169,9 @@ public class StayHouseFileContent {
 
     }
 
-    public StayHouseFileContent(String mScanDate, String mStayReason, String mShipmentType,
-                                String mShipmentNumber, String mScanEmployeeNumber, String
-                                        mOperateDate, String mStatus, String mIsUsed) {
+    public StayHouseFileContent(Date mScanDate, String mStayReason, String mShipmentType, String
+            mShipmentNumber, String mScanEmployeeNumber, String mOperateDate, String mStatus,
+                                String mIsUsed) {
         this.mScannerType = TYPE_SUFFIX;
         this.mSerialNumber = SERIAL_NUMBER_VALUE;
         this.mScanDate = mScanDate;
@@ -190,8 +202,7 @@ public class StayHouseFileContent {
         stringBuffer.append(countBlankAndAppend(this.mSerialNumber, SERIAL_NUMBER));
 
         // 添加扫描时间
-        stringBuffer.append(this.mScanDate);
-        stringBuffer.append(countBlankAndAppend(this.mScanDate, SCAN_DATE));
+        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format(mScanDate));
 
         // 留仓原因
         stringBuffer.append(this.mStayReason);

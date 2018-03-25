@@ -83,31 +83,66 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 } else {
                     // do nothing
                 }
-
             } else if (mData.get(0) instanceof UnloadArrivalFileContent) {
                 // 卸车到件
                 UnloadArrivalFileContent bean = (UnloadArrivalFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getStatus());
-                holder.mTvScannerData.setText(bean.getShipmentNumber());
-                holder.mTvTime.setText("" + bean.getOperateDate());
+                if (bean != null) {
+                    if ("Unload".equals(bean.getStatus())) {
+                        holder.mTvStatus.setText("未上传");
+                    } else {
+                        holder.mTvStatus.setText("已上传");
+                    }
+
+                    holder.mTvScannerData.setText(bean.getShipmentNumber());
+                    holder.mTvTime.setText("" + bean.getOperateDate());
+                } else {
+                    // do nothing
+                }
             } else if (mData.get(0) instanceof CargoArrivalFileContent) {
                 // 到件
                 CargoArrivalFileContent bean = (CargoArrivalFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getStatus());
-                holder.mTvScannerData.setText(bean.getShipmentNumber());
-                holder.mTvTime.setText("" + bean.getOperateDate());
+                if (bean != null) {
+                    if ("Unload".equals(bean.getStatus())) {
+                        holder.mTvStatus.setText("未上传");
+                    } else {
+                        holder.mTvStatus.setText("已上传");
+                    }
+
+                    holder.mTvScannerData.setText(bean.getShipmentNumber());
+                    holder.mTvTime.setText("" + bean.getOperateDate());
+                } else {
+                    // do nothing
+                }
             } else if (mData.get(0) instanceof ShipmentFileContent) {
                 // 发件
                 ShipmentFileContent bean = (ShipmentFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getStatus());
-                holder.mTvScannerData.setText(bean.getShipmentNumber());
-                holder.mTvTime.setText("" + bean.getOperateDate());
+                if (bean != null) {
+                    if ("Unload".equals(bean.getStatus())) {
+                        holder.mTvStatus.setText("未上传");
+                    } else {
+                        holder.mTvStatus.setText("已上传");
+                    }
+
+                    holder.mTvScannerData.setText(bean.getShipmentNumber());
+                    holder.mTvTime.setText("" + bean.getOperateDate());
+                } else {
+                    // do nothing
+                }
             } else if (mData.get(0) instanceof StayHouseFileContent) {
                 // 留仓件
                 StayHouseFileContent bean = (StayHouseFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getmStatus());
-                holder.mTvScannerData.setText(bean.getShipmentNumber());
-                holder.mTvTime.setText("" + bean.getOperateDate());
+                if (bean != null) {
+                    if ("Unload".equals(bean.getStatus())) {
+                        holder.mTvStatus.setText("未上传");
+                    } else {
+                        holder.mTvStatus.setText("已上传");
+                    }
+
+                    holder.mTvScannerData.setText(bean.getShipmentNumber());
+                    holder.mTvTime.setText("" + bean.getOperateDate());
+                } else {
+                    // do nothing
+                }
             } else {
                 // do nothing
             }

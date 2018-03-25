@@ -3,6 +3,7 @@ package com.jiebao.baqiang.data.db;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileName;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
+import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -70,6 +71,86 @@ public class XcdjDBHelper {
         }
 
         return null;
+    }
+
+    /**
+     * 获取 指定时间范围内 可用 记录
+     * <p>
+     * 1. 可用数据；
+     * 2. 满足时间限制；
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static List<UnloadArrivalFileContent> getLimitedTimeRecords(long beginTime, long endTime) {
+        LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list;
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 统计指定时间范围内的 总可用 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+        LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
+
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
+                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                            ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 统计指定时间范围内的 未上传 记录数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
+                    .where("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate",
+                            ">=", new Date(beginTime)).and("ScanDate", "<=", new Date(endTime))
+                    .findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     /**
