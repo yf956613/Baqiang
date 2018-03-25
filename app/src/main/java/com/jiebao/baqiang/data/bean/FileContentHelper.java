@@ -1,5 +1,6 @@
 package com.jiebao.baqiang.data.bean;
 
+import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
@@ -14,6 +15,11 @@ import java.util.Date;
 
 public class FileContentHelper {
 
+    /**
+     * 装车发件
+     *
+     * @return
+     */
     public static ZCFajianFileContent getZCFajianFileContent() {
         // 下一站网点编码
         String nextStation = "";
@@ -43,7 +49,7 @@ public class FileContentHelper {
     }
 
     /**
-     * 初始化时，先构建一个ShipmentFileContent实体
+     * 卸车到件
      *
      * @return
      */
@@ -61,7 +67,7 @@ public class FileContentHelper {
         // 扫描员工编号
         String scanEmployeeNumber = UpdateInterface.userName;
         // 操作日期
-        String operateDate = TextStringUtil.getFormatTime();
+        String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 重量
         String weight = "0.0";
         // 车辆识别号
@@ -73,5 +79,36 @@ public class FileContentHelper {
 
         return new UnloadArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
                 shipmentNumber, scanEmployeeNumber, operateDate, weight, vehicleID, status, isUsed);
+    }
+
+    /**
+     * 到件
+     *
+     * @return
+     */
+    public static CargoArrivalFileContent getCargoArrivalFileContent() {
+        // 上一站点编号  模拟
+        String previousStation = String.valueOf("59406");
+        // 扫描时间
+        Date scanDate = new Date();
+        // 物品类型
+        String goodsType = "";
+        // 快件类型
+        String shipmentType = "";
+        // 运单编号
+        String shipmentNumber = "";
+        // 扫描员工编号
+        String scanEmployeeNumber = UpdateInterface.userName;
+        // 操作日期
+        String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
+        // 重量
+        String weight = "0.0";
+        // 是否上传状态
+        String status = "Unload";
+        // 是否可用
+        String isUsed = "Used";
+
+        return new CargoArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
     }
 }

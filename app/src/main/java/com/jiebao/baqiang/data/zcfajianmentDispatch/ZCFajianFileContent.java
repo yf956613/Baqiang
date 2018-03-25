@@ -66,11 +66,11 @@ public class ZCFajianFileContent extends IFileContentBean {
     @Column(name = "ScannerType")
     private String mScannerType;
 
-    public String getmScannerType() {
+    public String getScannerType() {
         return mScannerType;
     }
 
-    public void setmScannerType(String mScannerType) {
+    public void setScannerType(String mScannerType) {
         this.mScannerType = mScannerType;
     }
 
@@ -176,11 +176,11 @@ public class ZCFajianFileContent extends IFileContentBean {
     @Column(name = "IsUpload")
     private String mStatus;
 
-    public String getmStatus() {
+    public String getStatus() {
         return mStatus;
     }
 
-    public void setmStatus(String mStatus) {
+    public void setStatus(String mStatus) {
         this.mStatus = mStatus;
     }
 

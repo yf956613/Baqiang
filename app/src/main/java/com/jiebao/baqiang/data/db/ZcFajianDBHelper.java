@@ -341,9 +341,9 @@ public class ZcFajianDBHelper {
                     ("IsUsed", "=", "Used").and("ShipmentID", "=", barcode).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
-                if ("Unload".equals(list.get(0).getmStatus())) {
+                if ("Unload".equals(list.get(0).getStatus())) {
                     return false;
-                } else if ("Load".equals(list.get(0).getmStatus())) {
+                } else if ("Load".equals(list.get(0).getStatus())) {
                     return true;
                 } else {
                     // do nothing
@@ -373,9 +373,9 @@ public class ZcFajianDBHelper {
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
 
-                if ("Unload".equals(list.get(0).getmStatus())) {
+                if ("Unload".equals(list.get(0).getStatus())) {
                     return false;
-                } else if ("Load".equals(list.get(0).getmStatus())) {
+                } else if ("Load".equals(list.get(0).getStatus())) {
                     return true;
                 } else {
                     // do nothing
@@ -386,7 +386,6 @@ public class ZcFajianDBHelper {
         }
         return false;
     }
-
 
     /*public void reQueryUnUploadDataForListView() {
         DbManager db = BQDataBaseHelper.getDb();

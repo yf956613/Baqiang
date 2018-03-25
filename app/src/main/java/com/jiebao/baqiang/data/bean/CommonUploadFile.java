@@ -166,19 +166,22 @@ public class CommonUploadFile {
 
             @Override
             public void onSuccess(String s) {
+                LogUtil.trace("s" + s);
                 Gson gson = new Gson();
                 UploadFileResponseBean loginResponse = gson.fromJson(s, UploadFileResponseBean
                         .class);
 
                 if (loginResponse.getUploadRet() == 1) {
                     mCallbackListener.uploadSuccess(s);
-                }else{
+                } else {
                     // do nothing 可能其他原因导致失败
                 }
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
+                LogUtil.trace("error:" + throwable.getLocalizedMessage());
+
                 mCallbackListener.uploadError(throwable, b);
             }
 

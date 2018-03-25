@@ -42,6 +42,51 @@ public class SalesServiceDBHelper {
         return mArrayInfo;
     }
 
+
+    /**
+     * 根据type值，获取不同类型的站点列表
+     *
+     * @param type 1：类型为中心；2：类型为网点
+     * @return
+     */
+    public static List<String> getSalesServiceOfCentreOrBranch(int type) {
+        List<SalesService> mData = null;
+        DbManager dbManager = BQDataBaseHelper.getDb();
+
+        switch (type) {
+            case 1: {
+                try {
+                    mData = dbManager.selector(SalesService.class).where("类型", "=", "中心").findAll();
+                } catch (DbException e) {
+                    LogUtil.trace();
+                    e.printStackTrace();
+
+                    return null;
+                }
+
+                break;
+            }
+            case 2: {
+                try {
+                    mData = dbManager.selector(SalesService.class).where("类型", "=", "网点").findAll();
+                } catch (DbException e) {
+                    LogUtil.trace();
+                    e.printStackTrace();
+
+                    return null;
+                }
+                break;
+            }
+        }
+
+        List<String> mArrayInfo = new ArrayList<>();
+        for (int index = 0; index < mData.size(); index++) {
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
+        }
+
+        return mArrayInfo;
+    }
+
     /**
      * 通过网点名称查询对应的网点编号
      *

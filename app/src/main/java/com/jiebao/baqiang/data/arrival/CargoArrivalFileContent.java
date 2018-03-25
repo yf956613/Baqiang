@@ -1,18 +1,21 @@
 package com.jiebao.baqiang.data.arrival;
 
+import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 封装到件模块中待上传文件信息，扫描信息存入数据库，具体格式参考：到件.txt
  */
 
 @Table(name = "daojian")
-public class CargoArrivalFileContent {
-    private static final String TAG = CargoArrivalFileContent.class
-            .getSimpleName();
+public class CargoArrivalFileContent extends IFileContentBean{
+    private static final String TAG = CargoArrivalFileContent.class.getSimpleName();
 
     private static final int LENGTH = 91;
     // 扫描类型编号长度
@@ -44,21 +47,29 @@ public class CargoArrivalFileContent {
     @Column(name = "id", isId = true, autoGen = true, property = "NOT NULL")
     private int id;
 
-    @Column(name = "扫描类型编号")
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Column(name = "ScannerType")
     private String mScannerType;
 
-    public String getmScannerType() {
+    public String getScannerType() {
         return mScannerType;
     }
 
-    public void setmScannerType(String mScannerType) {
+    public void setScannerType(String mScannerType) {
         this.mScannerType = mScannerType;
     }
 
-    @Column(name = "下一站网点编号")
+    @Column(name = "PreviousStationID")
     private String mPreviousStation;
 
-    public String getNextStation() {
+    public String getPreviousStation() {
         return mPreviousStation;
     }
 
@@ -66,18 +77,18 @@ public class CargoArrivalFileContent {
         this.mPreviousStation = previousStation;
     }
 
-    @Column(name = "扫描时间")
-    private String mScanDate;
+    @Column(name = "ScanDate")
+    private Date mScanDate;
 
-    public String getScanDate() {
+    public Date getScanDate() {
         return mScanDate;
     }
 
-    public void setScanDate(String scanDate) {
+    public void setScanDate(Date scanDate) {
         this.mScanDate = scanDate;
     }
 
-    @Column(name = "物品类别")
+    @Column(name = "GoodsType")
     private String mGoodsType;
 
     public String getGoodsType() {
@@ -88,7 +99,7 @@ public class CargoArrivalFileContent {
         this.mGoodsType = goodsType;
     }
 
-    @Column(name = "快件类型")
+    @Column(name = "ShipmentType")
     private String mShipmentType;
 
     public String getShipmentType() {
@@ -99,7 +110,7 @@ public class CargoArrivalFileContent {
         this.mShipmentType = shipmentType;
     }
 
-    @Column(name = "运单编号")
+    @Column(name = "ShipmentID")
     private String mShipmentNumber;
 
     public String getShipmentNumber() {
@@ -110,7 +121,7 @@ public class CargoArrivalFileContent {
         this.mShipmentNumber = shipmentNumber;
     }
 
-    @Column(name = "扫描员工编号")
+    @Column(name = "ScanEmployeeNumber")
     private String mScanEmployeeNumber;
 
     public String getScanEmployeeNumber() {
@@ -121,7 +132,7 @@ public class CargoArrivalFileContent {
         this.mScanEmployeeNumber = scanEmployeeNumber;
     }
 
-    @Column(name = "操作日期")
+    @Column(name = "OperateDate")
     private String mOperateDate;
 
     public String getOperateDate() {
@@ -132,7 +143,7 @@ public class CargoArrivalFileContent {
         this.mOperateDate = operateDate;
     }
 
-    @Column(name = "重量")
+    @Column(name = "Weight")
     private String mWeight;
 
     public String getWeight() {
@@ -144,25 +155,25 @@ public class CargoArrivalFileContent {
     }
 
     // 是否上传状态标识
-    @Column(name = "是否上传")
+    @Column(name = "IsUpload")
     private String mStatus;
 
-    public String getmStatus() {
+    public String getStatus() {
         return mStatus;
     }
 
-    public void setmStatus(String mStatus) {
+    public void setStatus(String mStatus) {
         this.mStatus = mStatus;
     }
 
-    @Column(name = "是否可用")
+    @Column(name = "IsUsed")
     private String mIsUsed;
 
-    public String getmIsUsed() {
+    public String getIsUsed() {
         return mIsUsed;
     }
 
-    public void setmIsUsed(String mIsUsed) {
+    public void setIsUsed(String mIsUsed) {
         this.mIsUsed = mIsUsed;
     }
 
@@ -173,14 +184,10 @@ public class CargoArrivalFileContent {
 
     }
 
-    public CargoArrivalFileContent(String mPreviousStation, String mScanDate,
-                                   String mGoodsType,
-                                   String mShipmentType, String
-                                           mShipmentNumber, String
-                                           mScanEmployeeNumber, String
-                                           mOperateDate, String
-                                           mWeight, String mStatus, String
-                                           mIsUsed) {
+    public CargoArrivalFileContent(String mPreviousStation, Date mScanDate, String mGoodsType,
+                                   String mShipmentType, String mShipmentNumber, String
+                                           mScanEmployeeNumber, String mOperateDate, String
+                                           mWeight, String mStatus, String mIsUsed) {
         this.mScannerType = TYPE_SUFFIX;
         this.mPreviousStation = mPreviousStation;
         this.mScanDate = mScanDate;
@@ -209,12 +216,10 @@ public class CargoArrivalFileContent {
 
         // 添加上一站网点编号
         stringBuffer.append(this.mPreviousStation);
-        stringBuffer.append(countBlankAndAppend(this.mPreviousStation,
-                PREVIOUS_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mPreviousStation, PREVIOUS_STATION));
 
         // 添加扫描时间
-        stringBuffer.append(this.mScanDate);
-        stringBuffer.append(countBlankAndAppend(this.mScanDate, SCAN_DATE));
+        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format(mScanDate));
 
         // 物品类别
         stringBuffer.append(this.mGoodsType);
@@ -225,13 +230,11 @@ public class CargoArrivalFileContent {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
-                SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
-                SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -291,17 +294,12 @@ public class CargoArrivalFileContent {
 
     @Override
     public String toString() {
-        return "CargoArrivalFileContent{" + "mScannerType='" + mScannerType +
-                '\'' + ", " +
-                "mPreviousStation='" + mPreviousStation + '\'' + ", " +
-                "mScanDate='" + mScanDate +
-                '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", " +
-                "mShipmentType='" + mShipmentType
-                + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " +
-                "mOperateDate='" +
-                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", " +
-                "mStatus='" + mStatus +
-                '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
+        return "CargoArrivalFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
+                "mPreviousStation='" + mPreviousStation + '\'' + ", " + "mScanDate='" + mScanDate
+                + '\'' + ", mGoodsType='" + mGoodsType + '\'' + ", " + "mShipmentType='" +
+                mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
+                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " + "mOperateDate='" +
+                mOperateDate + '\'' + ", mWeight='" + mWeight + '\'' + ", " + "mStatus='" +
+                mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
     }
 }

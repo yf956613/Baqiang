@@ -483,7 +483,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
                 LogUtil.trace("Xcdj: unloadRecords-->" + unloadRecords);
 
+                unloadRecords = DaojianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
 
+                LogUtil.trace("Dj: unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -506,6 +510,12 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             }
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_DJ: {
+                unloadRecords = DaojianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
+
+                LogUtil.trace("unloadRecords:" + unloadRecords);
+
                 break;
             }
 
@@ -527,49 +537,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_DJ);
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_FJ);
         unloadRecords += SharedUtil.getInt(this, Constant.PREFERENCE_NAME_LCJ);
-
-        /*int unloadDataRecords = 0;
-
-        DbManager db = BQDataBaseHelper.getDb();
-        try {
-            // 留仓件：查询数据库中标识位“未上传”，且数据可用的记录
-            List<StayHouseFileContent> stayHouseData = db.selector(StayHouseFileContent.class)
-                    .where("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
-            if (stayHouseData != null && stayHouseData.size() != 0) {
-                unloadDataRecords += stayHouseData.size();
-            }
-
-            // 装车发件：查询数据库中标识位“未上传”的记录
-            List<ZCFajianFileContent> zCFajianData = db.selector(ZCFajianFileContent.class).where
-                    ("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
-            if (zCFajianData != null && zCFajianData.size() != 0) {
-                unloadDataRecords += zCFajianData.size();
-            }
-
-            // 卸车到件：查询数据库中标识位“未上传”的记录
-            List<UnloadArrivalFileContent> unloadArrivalData = db.selector
-                    (UnloadArrivalFileContent.class).where("是否上传", "like", "未上传").and("是否可用",
-                    "=", "可用").findAll();
-            if (unloadArrivalData != null && unloadArrivalData.size() != 0) {
-                unloadDataRecords += unloadArrivalData.size();
-            }
-
-            // 到件：查询数据库中标识位“未上传”的记录
-            List<CargoArrivalFileContent> cargoArrivalData = db.selector(CargoArrivalFileContent
-                    .class).where("是否上传", "like", "未上传").and("是否可用", "=", "可用").findAll();
-            if (cargoArrivalData != null && cargoArrivalData.size() != 0) {
-                unloadDataRecords += cargoArrivalData.size();
-            }
-
-            // 发件：查询数据库中标识位“未上传”的记录
-            List<ShipmentFileContent> shipmentData = db.selector(ShipmentFileContent.class).where
-                    ("是否上传", "=", "未上传").and("是否可用", "=", "可用").findAll();
-            if (shipmentData != null && shipmentData.size() != 0) {
-                unloadDataRecords += shipmentData.size();
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
-        }*/
 
         LogUtil.trace("unloadRecords:" + unloadRecords);
         return unloadRecords;

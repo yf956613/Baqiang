@@ -72,7 +72,7 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
                 // 装车发件
                 ZCFajianFileContent bean = (ZCFajianFileContent) mData.get(position);
                 if (bean != null) {
-                    if ("Unload".equals(bean.getmStatus())) {
+                    if ("Unload".equals(bean.getStatus())) {
                         holder.mTvStatus.setText("未上传");
                     } else {
                         holder.mTvStatus.setText("已上传");
@@ -93,7 +93,7 @@ public class SearchRecordsAdapter<T> extends BaseAdapter {
             } else if (mData.get(0) instanceof CargoArrivalFileContent) {
                 // 到件
                 CargoArrivalFileContent bean = (CargoArrivalFileContent) mData.get(position);
-                holder.mTvStatus.setText(bean.getmStatus());
+                holder.mTvStatus.setText(bean.getStatus());
                 holder.mTvScannerData.setText(bean.getShipmentNumber());
                 holder.mTvTime.setText("" + bean.getOperateDate());
             } else if (mData.get(0) instanceof ShipmentFileContent) {

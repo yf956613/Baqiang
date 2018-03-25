@@ -119,7 +119,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 });
 
                                 Button btnRedoUpload = dialog.findViewById(R.id.btn_redo_upload);
-                                if ("Unload".equals(bean.getmStatus())) {
+                                if ("Unload".equals(bean.getStatus())) {
                                     btnRedoUpload.setText("上传");
                                 } else {
                                     // do nothing
@@ -164,7 +164,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 });
 
                                 Button btnDelete = dialog.findViewById(R.id.btn_delete);
-                                if ("Load".equals(bean.getmStatus())) {
+                                if ("Load".equals(bean.getStatus())) {
                                     btnDelete.setVisibility(View.GONE);
                                 } else {
                                     // do nothing

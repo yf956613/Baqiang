@@ -523,6 +523,33 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
+     * 增加或减少未上传记录数，记录数存储在SP中
+     *
+     * @param actionType 0：减少；1：增加
+     */
+    private void increaseOrDecreaseRecords(int actionType) {
+        int unloadRecords = SharedUtil.getInt(ZhuangcheActivity.this, Constant
+                .PREFERENCE_NAME_ZCFJ);
+        LogUtil.trace("unloadRecords:" + unloadRecords);
+
+        switch (actionType) {
+            case 0: {
+                --unloadRecords;
+
+                break;
+            }
+            case 1: {
+                ++unloadRecords;
+                break;
+            }
+        }
+
+        SharedUtil.putInt(ZhuangcheActivity.this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
+    }
+
+    /**
      * F2按键触发删除最新扫码记录，ListView最上一条记录
      */
     private void deleteLastestRecord() {
@@ -714,32 +741,4 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             // do nothing
         }
     }
-
-    /**
-     * 增加或减少未上传记录数，记录数存储在SP中
-     *
-     * @param actionType 0：减少；1：增加
-     */
-    private void increaseOrDecreaseRecords(int actionType) {
-        int unloadRecords = SharedUtil.getInt(ZhuangcheActivity.this, Constant
-                .PREFERENCE_NAME_ZCFJ);
-        LogUtil.trace("unloadRecords:" + unloadRecords);
-
-        switch (actionType) {
-            case 0: {
-                --unloadRecords;
-
-                break;
-            }
-            case 1: {
-                ++unloadRecords;
-                break;
-            }
-        }
-
-        SharedUtil.putInt(ZhuangcheActivity.this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
-        setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
-    }
-
 }
