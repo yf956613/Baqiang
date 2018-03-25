@@ -434,10 +434,11 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             public void onClick(View v) {
                 LogUtil.trace("mSearchFlag:" + mSearchFlag);
 
-                showLoadinDialog();
-
                 // 重传当前ListView中的所有记录
-                if (SearchType.ZCFJ.equals(mSearchFlag)) {
+                if (SearchType.ZCFJ.equals(mSearchFlag) && mListData != null && mListData.size()
+                        != 0) {
+                    showLoadinDialog();
+
                     new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                         @Override
@@ -455,10 +456,14 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                         @Override
                         public boolean onFinish() {
+                            closeLoadinDialog();
                             return false;
                         }
                     }).redoUploadRecords(mListData);
-                } else if (SearchType.XCDJ.equals(mSearchFlag)) {
+                } else if (SearchType.XCDJ.equals(mSearchFlag) && mListData != null && mListData
+                        .size() != 0) {
+                    showLoadinDialog();
+
                     new CommonDbHelperToUploadFile<UnloadArrivalFileContent>()
                             .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -477,10 +482,14 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                         @Override
                         public boolean onFinish() {
+                            closeLoadinDialog();
                             return false;
                         }
                     }).redoUploadRecords(mListData);
-                } else if (SearchType.DJ.equals(mSearchFlag)) {
+                } else if (SearchType.DJ.equals(mSearchFlag) && mListData != null && mListData
+                        .size() != 0) {
+                    showLoadinDialog();
+
                     new CommonDbHelperToUploadFile<CargoArrivalFileContent>().setCallbackListener
                             (new IDbHelperToUploadFileCallback() {
 
@@ -499,10 +508,14 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                         @Override
                         public boolean onFinish() {
+                            closeLoadinDialog();
                             return false;
                         }
                     }).redoUploadRecords(mListData);
-                } else if (SearchType.FJ.equals(mSearchFlag)) {
+                } else if (SearchType.FJ.equals(mSearchFlag) && mListData != null && mListData
+                        .size() != 0) {
+                    showLoadinDialog();
+
                     new CommonDbHelperToUploadFile<ShipmentFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                         @Override
@@ -520,10 +533,14 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                         @Override
                         public boolean onFinish() {
+                            closeLoadinDialog();
                             return false;
                         }
                     }).redoUploadRecords(mListData);
-                } else if (SearchType.LCJ.equals(mSearchFlag)) {
+                } else if (SearchType.LCJ.equals(mSearchFlag) && mListData != null && mListData
+                        .size() != 0) {
+                    showLoadinDialog();
+
                     new CommonDbHelperToUploadFile<StayHouseFileContent>().setCallbackListener
                             (new IDbHelperToUploadFileCallback() {
 
@@ -542,6 +559,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                         @Override
                         public boolean onFinish() {
+                            closeLoadinDialog();
                             return false;
                         }
                     }).redoUploadRecords(mListData);
