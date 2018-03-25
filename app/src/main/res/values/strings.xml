@@ -343,4 +343,13 @@
 	<string name="download_liucangtypeinfo">正在下载更新留仓原因....</string> 
 	<string name="download_vehiceinfo">正在下载更新车辆信息....</string> 
 	
+	<string name="sync_serverinfo">正在同步服务信息....</string>
+	<string name="sync_serverinfo_success">同步服务信息成功</string>
+	<string name="sync_serverinfo_failed">同步服务信息失败</string>  
+	<string name="sync_servertimer">正在同步时间....</string>  
+	<string name="download_baqiangapk">正在下载新版本巴枪应用....</string>
+	<string name="download_baqiangapk_failed">下载新版本巴枪应用失败</string> 
+  <string name="download_baqiangapk_success">下载新版本巴枪成功</string> 
+  <string name="download_success_no">下载成功:</string> 
+  <string name="download_failed_no">下载失败:</string> 
 </resources>

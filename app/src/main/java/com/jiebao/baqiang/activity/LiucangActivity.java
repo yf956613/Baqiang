@@ -257,6 +257,29 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public void syncViewAfterUpload(int updateType) {
         super.syncViewAfterUpload(updateType);
 
+        // F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
+        if (mListData != null) {
+            LogUtil.trace("size:" + mListData.size());
+
+            for (int index = 0; index < mListData.size(); index++) {
+                CommonScannerListViewBean listViewBean = mListData.get(index);
+
+                // origin data
+                StayHouseFileContent barcode = (StayHouseFileContent) listViewBean.getScannerBean();
+                // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
+                StayHouseFileContent bean = LiucangDBHelper.getNewInRecord(barcode
+                        .getShipmentNumber(), barcode.getScanDate());
+
+                listViewBean.setScannerBean(bean);
+            }
+
+            mScannerBaseAdatper.notifyDataSetChanged();
+
+            if (!mListView.isStackFromBottom()) {
+                mListView.setStackFromBottom(true);
+            }
+            mListView.setStackFromBottom(false);
+        }
     }
 
     private void prepareDataForView() {

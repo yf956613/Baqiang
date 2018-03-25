@@ -158,8 +158,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                             Toast.makeText(BaseActivityWithTitleAndNumber.this, "文件上传成功", Toast
                                     .LENGTH_SHORT).show();
                             // F1事件，传递给Activity更新UI
-                            setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                                    .SYNC_UNLOAD_DATA_TYPE_ALL));
+                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
                             return true;
                         }
 
@@ -358,6 +357,13 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         footTv.setText(text);
     }
 
+    private TextView loadingTextView = null;
+    public void updateLoadingDialogMsg(String msg) {
+        if (loadingBulider != null && loadingTextView != null) {
+            loadingTextView.setText(msg);
+        }
+    }
+
     /**
      * 如何交互？
      */
@@ -368,6 +374,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
         if (null == loadingBulider) {
             View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
+            loadingTextView = (TextView)view.findViewById(R.id.id_load_text);
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
                     .style.myLoadingTheme));
             loadingBulider = builder.create();

@@ -1,19 +1,27 @@
 package com.jiebao.baqiang.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
@@ -38,6 +46,7 @@ import com.jiebao.baqiang.util.SharedUtil;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
@@ -166,10 +175,11 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         ServerInfoSyncTask serverInfoSyncTask = new ServerInfoSyncTask();
         // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
         if (!Constant.DEBUG) {
-            Log.e("linjiazhi", "ServerInfoSyncTask");
+            Log.e("ljz", "ServerInfoSyncTask");
             serverInfoSyncTask.execute("start_param");
+            showLoadinDialog();
+            updateLoadingDialogMsg(getString(R.string.sync_serverinfo));
         }
-
     }
 
     private void initListener() {
@@ -204,7 +214,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 break;
             }
 
-            case R.id.btn_query:{
+            case R.id.btn_query: {
                 Intent intent = new Intent(MainActivity.this, BussinessQueryActivity.class);
                 MainActivity.this.startActivity(intent);
 
@@ -234,9 +244,13 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             mDownloadProgressDialog.setTitle("提示信息：");
             mDownloadProgressDialog.setMessage("正在下载资料列表...");
             // 设置最大更新下载数据量
-            mDownloadProgressDialog.setMax(Constant.MAX_DOWNLOAD_COUNT + 1);
+            mDownloadProgressDialog.setMax(Constant.MAX_DOWNLOAD_COUNT);
         }
-        mDownloadProgressDialog.show();
+
+        if (!mDownloadProgressDialog.isShowing()) {
+            mDownloadProgressDialog.show();
+        }
+
     }
 
     /**
@@ -293,7 +307,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         protected Long doInBackground(String... strings) {
             ServerInfo.getInstance().setDataDownloadStatus(this);
             ServerInfo.getInstance().getServerInfo();
-            Log.e("linjiazhi", "doInBackground");
+            Log.e("ljz", "doInBackground");
 
             return null;
         }
@@ -329,7 +343,48 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
     }
 
-    public static int dstCnt = 0;
+    private static final String downloadApkAction = "com.jiebao.baqinag.download";
+
+    class BaQiangAPKDownloadReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            LogUtil.trace("BaQiangAPKDownloadReceiver；onReceive");
+            Log.e("ljz", "BaQiangAPKDownloadReceiver onReceive");
+
+            if (intent.getAction().equals(downloadApkAction)) {
+                boolean state = intent.getBooleanExtra("downloadstate", false);
+                if (state) {
+                    updateLoadingDialogMsg(getString(R.string.download_baqiangapk_success));
+                } else {
+                    updateLoadingDialogMsg(getString(R.string.download_baqiangapk_failed));
+                }
+                closeLoadinDialog();
+            }
+        }
+    }
+
+    private BaQiangAPKDownloadReceiver mBaQiangAPKDownloadReceiver;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBaQiangAPKDownloadReceiver = new BaQiangAPKDownloadReceiver();
+        registerReceiver(mBaQiangAPKDownloadReceiver, new IntentFilter(downloadApkAction));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBaQiangAPKDownloadReceiver != null) unregisterReceiver(mBaQiangAPKDownloadReceiver);
+    }
+
+
+    public static int downloadCnt = 0;
+    public static int downloadSuccessCnt = 0;
+    public static int downloadFailedCnt = 0;
+    public static int updateSucessCnt = 0;
 
     /**
      * 异步下载任务
@@ -345,8 +400,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // MainThread 强制更新后台数据
-            showProgressDialog();
         }
 
         public void setUpdateInterface(UpdateInterface uInterface) {
@@ -357,7 +410,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         protected Long doInBackground(String... strings) {
             // WorkerThread
             LogUtil.trace("doInBackground parameters:" + Arrays.toString(strings));
-            if(updateInterface != null) {
+            if (updateInterface != null) {
                 updateInterface.setDataDownloadStatus(this);
                 updateInterface.updateData();
             }
@@ -406,7 +459,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         public void downloadFinish(int infoId) {
             LogUtil.trace("downloadFinish " + infoId);
 
-            dstCnt++;
+            downloadSuccessCnt++;
+            downloadCnt++;
 
             Message dlInfoMsg = Message.obtain();
             dlInfoMsg.what = Constant.DOWNLOAD_INFO_SUCCESS + infoId;
@@ -422,16 +476,12 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         public void updateDataFinish(int infoId) {
             LogUtil.trace("updateDataFinish" + +infoId);
 
+            updateSucessCnt++;
+
             Message updateMsg = Message.obtain();
             updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
             updateMsg.arg1 = infoId;
             mHandler.sendMessage(updateMsg);
-
-            if(dstCnt == Constant.MAX_DOWNLOAD_COUNT) {
-                Message alldoneMsg = Message.obtain();
-                alldoneMsg.what = Constant.DO_ALL_FINISH;
-                mHandler.sendMessage(alldoneMsg);
-            }
 
         }
 
@@ -439,7 +489,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         public void downLoadError(int infoId, String errorMsg) {
             LogUtil.trace("downLoadError infoId " + infoId + " errorMsg: " + errorMsg);
 
-            dstCnt++;
+            downloadFailedCnt++;
+            downloadCnt++;
 
             Message errMsg = Message.obtain();
             errMsg.what = Constant.UPDATE_DATA_FAILED + infoId;
@@ -514,6 +565,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                         timeIntent.putExtra("time", Long.parseLong(time));
                         MainActivity.this.sendBroadcast(timeIntent);
                         LogUtil.trace("start to update system time");
+                        updateLoadingDialogMsg(getString(R.string.sync_servertimer));
                     }
 
                     if ((!("unknown".equals(ServerInfo.getInstance().getServerApkVersin()))) &&
@@ -529,11 +581,20 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                             Toast.makeText(MainActivity.this, "正在下载更新APK中", Toast.LENGTH_LONG)
                                     .show();
                             startService(service);
+                            updateLoadingDialogMsg(getString(R.string.download_baqiangapk));
                         }
 
                     } else {
+                        closeLoadinDialog();
+
+                        // MainThread 强制更新后台数据
+                        showProgressDialog();
+
                         //set count 0 begin download data
-                        dstCnt = 0;
+                        downloadCnt = 0;
+                        downloadSuccessCnt = 0;
+                        downloadFailedCnt = 0;
+                        updateSucessCnt = 0;
                         DataSyncTask shipmentDataSyncTask = new DataSyncTask();
                         shipmentDataSyncTask.setUpdateInterface(UpdateShipmentType.getInstance());
                         if (!Constant.DEBUG) {
@@ -544,19 +605,38 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.UPDATE_SEVERINFO_FAILED: {
+                    closeLoadinDialog();
+                    Toast.makeText(MainActivity.this, activity.getString(R.string
+                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
                     break;
                 }
-
 
                 case Constant.DOWNLOAD_FAILED: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
+                            .MAX_DOWNLOAD_STEP);
+                    if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                        activity.mDownloadProgressDialog.dismiss();
+                        Toast.makeText(MainActivity.this, activity.getString(R.string
+                                .download_success_no) + downloadSuccessCnt + activity.getString(R
+                                .string.download_failed_no) + downloadFailedCnt, Toast
+                                .LENGTH_SHORT).show();
+                    }
+                    break;
+                }
+                case Constant.DOWNLOAD_SUCCESS: {
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
+                            .MAX_DOWNLOAD_STEP);
+                    if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                        activity.mDownloadProgressDialog.dismiss();
+                        Toast.makeText(MainActivity.this, activity.getString(R.string
+                                .download_success_no) + downloadSuccessCnt + activity.getString(R
+                                .string.download_failed_no) + downloadFailedCnt, Toast
+                                .LENGTH_SHORT).show();
+                    }
                     break;
                 }
 
-                case Constant.DOWNLOAD_SUCCESS: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
-                    break;
-                }
+
                 case Constant.UPDATE_SUCCESS: {
                     break;
                 }
@@ -567,7 +647,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
                 case Constant.STARTDOWNLOAD_SALESINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_salesinfo));
+                            .download_salesinfo) + "\n" + activity.getString(R.string
+                            .download_success_no) + downloadSuccessCnt + "\n" + activity
+                            .getString(R.string.download_failed_no) + downloadFailedCnt);
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
@@ -589,7 +671,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_shipmenttypeinfo));
+                            .download_shipmenttypeinfo) + "\n" + activity.getString(R.string
+                            .download_success_no) + downloadSuccessCnt + "\n" + activity
+                            .getString(R.string.download_failed_no) + downloadFailedCnt);
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
@@ -609,6 +693,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 }
 
 
+                //put it download in the end
                 case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
                             .download_liucangtypeinfo));
@@ -632,7 +717,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_vehiceinfo));
+                            .download_vehiceinfo) + "\n" + activity.getString(R.string
+                            .download_success_no) + downloadSuccessCnt + "\n" + activity
+                            .getString(R.string.download_failed_no) + downloadFailedCnt);
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {

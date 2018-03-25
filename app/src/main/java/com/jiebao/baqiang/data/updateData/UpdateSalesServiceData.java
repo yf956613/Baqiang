@@ -63,7 +63,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
         params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
-        params.setConnectTimeout(30 * 1000);
+        params.setConnectTimeout(45 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 

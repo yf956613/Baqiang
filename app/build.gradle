@@ -7,8 +7,8 @@ android {
         applicationId "com.jiebao.baqiang"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -39,7 +39,6 @@ dependencies {
     compile files('libs/fastjson-1.1.36.jar')
     compile files('libs/okhttp-2.4.0.jar')
     compile files('libs/okio-1.6.0.jar')
-    compile files('libs/ht380k4g-jar.jar')
     compile 'com.zhy:mpermission-api:1.0.0'
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'io.reactivex:rxandroid:1.2.1'

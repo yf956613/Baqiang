@@ -169,6 +169,23 @@ public class ScanHelper {
         setScanListener(activityName, scanListener, true);
     }
 
+
+    public void setScanFactoryConfig(Context context) {
+        Open_Barcode(context);
+        if (null != barcodeManager) {
+            barcodeManager.setScanIsReturnFactory(true);
+            Log.e("jiebao", "setScanPrefix");
+            barcodeManager.setScanPrefix();
+            if (null != barcodeManager) {
+                Log.e("jiebao", "initScanProtocol");
+                barcodeManager.initScanProtocol();
+            }
+        }
+
+        Close_Barcode();
+    }
+
+
     public void setScanListener(String activityName, ScanListener
             scanListener, boolean
             isActivityFocus) {

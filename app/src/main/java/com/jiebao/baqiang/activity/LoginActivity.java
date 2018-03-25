@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +22,7 @@ import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
+import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.AppUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -87,6 +89,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
         //init first start default value
         String isFirstStart =  SharedUtil.getString(this, Constant.PREFERENCE_KEY_BAQIANG_FIRST_START);
         if(isFirstStart == null || isFirstStart.equals("true")) {
+
+            LogUtil.trace("first start reset default value");
+            Log.e("jiebao", "first start reset default value");
+
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_ADDRESS, "193.112.127.158");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_PORT, "9876");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER, "193.112.127.158");
@@ -94,6 +100,8 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "193.112.127.158");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_SALE_SERVICE, "0020");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_BAQIANG_FIRST_START, "false");
+
+            ScanHelper.getInstance().setScanFactoryConfig(LoginActivity.this);
         }
 
     }

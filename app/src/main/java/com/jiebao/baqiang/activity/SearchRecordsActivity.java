@@ -287,7 +287,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                             public boolean onSuccess(String s) {
                                                 // 刷新UI，重写执行查询操作
                                                 syncViewAfterUpload(Constant
-                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                                        .SYNC_UNLOAD_DATA_TYPE_FJ);
                                                 closeLoadinDialog();
                                                 return true;
                                             }
@@ -310,7 +310,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                             public boolean onSuccess(String s) {
                                                 // 刷新UI，重写执行查询操作
                                                 syncViewAfterUpload(Constant
-                                                        .SYNC_UNLOAD_DATA_TYPE_DJ);
+                                                        .SYNC_UNLOAD_DATA_TYPE_LCJ);
                                                 closeLoadinDialog();
                                                 return true;
                                             }

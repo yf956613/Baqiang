@@ -37,12 +37,20 @@ public class DownLoadApkFileService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 long downId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+
+                Intent apkintent = new Intent();
+                apkintent.setAction("com.jiebao.baqinag.download");
                 if (mDownloadManager.getUriForDownloadedFile(downId) != null) {
                     installAPK(context, getRealFilePath(context, mDownloadManager.getUriForDownloadedFile
                             (downId)));
+                    apkintent.putExtra("downloadstate", true);
                 } else {
                     Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show();
+                    apkintent.putExtra("downloadstate", false);
                 }
+
+                sendBroadcast(apkintent);
                 DownLoadApkFileService.this.stopSelf();
             }
         }
