@@ -12,22 +12,12 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/next_station"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="@string/next_station" />
 
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_next_station"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:dropDownHeight="300dp"
-            android:selectAllOnFocus="true"
-            android:singleLine="true" />
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -38,22 +28,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="快件类型"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="快件类型" />
 
         <!--设置最小的匹配输入次数-->
-        <AutoCompleteTextView
+        <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_shipment_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true" />
+            style="@style/InfoEditText" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,21 +45,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/tracking_numb"
-            android:textSize="18sp" />
+            style="@style/PreviousInfoTextView"
+            android:text="@string/tracking_numb" />
 
         <!--设置最小的匹配输入次数-->
         <EditText
             android:id="@+id/et_shipment_number"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:completionThreshold="1"
-            android:singleLine="true" />
+            style="@style/ShipmentNumberStyle" />
     </LinearLayout>
 
     <LinearLayout

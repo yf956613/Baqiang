@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 
 import java.util.List;
@@ -84,6 +85,15 @@ public class CommonScannerBaseAdapter extends BaseAdapter {
                 }
             } else if (bean instanceof CargoArrivalFileContent) {
                 CargoArrivalFileContent value = (CargoArrivalFileContent) bean;
+                holder.mTvScannerData.setText(value.getShipmentNumber());
+
+                if ("Unload".equals(value.getStatus())) {
+                    holder.mTvStatus.setText("未上传");
+                } else {
+                    holder.mTvStatus.setText("已上传");
+                }
+            } else if (bean instanceof ShipmentFileContent) {
+                ShipmentFileContent value = (ShipmentFileContent) bean;
                 holder.mTvScannerData.setText(value.getShipmentNumber());
 
                 if ("Unload".equals(value.getStatus())) {

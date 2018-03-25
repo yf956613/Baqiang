@@ -486,8 +486,12 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 unloadRecords = DaojianDBHelper.findUnloadRecords();
                 // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
-
                 LogUtil.trace("Dj: unloadRecords:" + unloadRecords);
+
+                unloadRecords = DaojianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ, unloadRecords);
+                LogUtil.trace("unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -496,7 +500,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
 
-                LogUtil.trace("unloadRecords:" + unloadRecords);
+                LogUtil.trace("ZCFJ:unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -505,7 +509,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
 
-                LogUtil.trace("unloadRecords:" + unloadRecords);
+                LogUtil.trace("XCDJ:unloadRecords:" + unloadRecords);
                 break;
             }
 
@@ -514,12 +518,16 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 // 更新SP存储值
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
 
-                LogUtil.trace("unloadRecords:" + unloadRecords);
-
+                LogUtil.trace("DJ:unloadRecords:" + unloadRecords);
                 break;
             }
 
             case Constant.SYNC_UNLOAD_DATA_TYPE_FJ: {
+                unloadRecords = FajianDBHelper.findUnloadRecords();
+                // 更新SP存储值
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ, unloadRecords);
+
+                LogUtil.trace("FJ:unloadRecords:" + unloadRecords);
                 break;
             }
 

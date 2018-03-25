@@ -2,6 +2,7 @@ package com.jiebao.baqiang.data.bean;
 
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.util.TextStringUtil;
@@ -109,6 +110,38 @@ public class FileContentHelper {
         String isUsed = "Used";
 
         return new CargoArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
+    }
+
+    /**
+     * 初始化时，先构建一个ShipmentFileContent实体
+     *
+     * @return
+     */
+    public static ShipmentFileContent getShipmentFileContent() {
+        // 首次创建ShipmentFileContent实体时，内容为虚构，并不写入文本中
+        String nextStation = String.valueOf("59406");
+
+        // 扫描时间
+        Date scanDate = new Date();
+        // 物品类型
+        String goodsType = "";
+        // 快件类型
+        String shipmentType = String.valueOf("2");
+        // 运单编号
+        String shipmentNumber = "";
+        // 扫描员工编号
+        String scanEmployeeNumber = UpdateInterface.userName;
+        // 操作日期
+        String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
+        // 重量
+        String weight = "0.0";
+        // 是否上传状态
+        String status = "Unload";
+        // 是否可用
+        String isUsed = "Used";
+
+        return new ShipmentFileContent(nextStation, scanDate, goodsType, shipmentType,
                 shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
     }
 }

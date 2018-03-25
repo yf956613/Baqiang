@@ -3,6 +3,7 @@ package com.jiebao.baqiang.data.bean;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.util.LogUtil;
@@ -155,6 +156,52 @@ public class CommonDbHelperToUploadFile<T> {
 
                     try {
                         int result = db.update(CargoArrivalFileContent.class, whereBuilder, new
+                                KeyValue("IsUpload", "Load"));
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                    mCallbackListener.onSuccess(s);
+
+                    return true;
+                }
+
+                @Override
+                public boolean uploadError(Throwable throwable, boolean b) {
+                    mCallbackListener.onError(throwable, b);
+
+                    return false;
+                }
+
+                @Override
+                public boolean uploadCancel(Callback.CancelledException e) {
+                    return false;
+                }
+
+                @Override
+                public boolean uploadFinish() {
+                    mCallbackListener.onFinish();
+
+                    return false;
+                }
+            });
+
+            uploadFile.writeContentToFile(content, true);
+            uploadFile.uploadFile();
+        } else if (bean instanceof ShipmentFileContent) {
+            uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.FJ_TYPE);
+            final ShipmentFileContent value = (ShipmentFileContent) bean;
+            String content = value.getmCurrentValue() + "\r\n";
+            uploadFile.setCallbackListener(new ICommonUpdateFileCallBack() {
+
+                @Override
+                public boolean uploadSuccess(String s) {
+                    DbManager db = BQDataBaseHelper.getDb();
+                    WhereBuilder whereBuilder = WhereBuilder.b();
+                    whereBuilder.and("id", "=", value.getId());
+                    LogUtil.trace("上传单条记录 ID：" + value.getId());
+
+                    try {
+                        int result = db.update(ShipmentFileContent.class, whereBuilder, new
                                 KeyValue("IsUpload", "Load"));
                     } catch (DbException e) {
                         e.printStackTrace();
@@ -372,6 +419,61 @@ public class CommonDbHelperToUploadFile<T> {
                 });
 
                 uploadFile.uploadFile();
+            } else if (records.get(0) instanceof ShipmentFileContent) {
+                // CargoArrivalFileContent类型
+                uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.FJ_TYPE);
+
+                for (int index = 0; index < records.size(); index++) {
+                    ShipmentFileContent record = (ShipmentFileContent) records.get(index);
+                    String content = record.getmCurrentValue() + "\r\n";
+                    // 循环写入文件
+                    uploadFile.writeContentToFile(content, true);
+                }
+
+                uploadFile.setCallbackListener(new ICommonUpdateFileCallBack() {
+
+                    @Override
+                    public boolean uploadSuccess(String s) {
+                        DbManager db = BQDataBaseHelper.getDb();
+
+                        for (int index = 0; index < records.size(); index++) {
+                            ShipmentFileContent bean = (ShipmentFileContent) records.get(index);
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("id", "=", bean.getId());
+                            LogUtil.trace("上传所有记录 ID：" + bean.getId());
+                            try {
+                                db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
+                                        ("IsUpload", "Load"));
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        mCallbackListener.onSuccess(s);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean uploadError(Throwable throwable, boolean b) {
+                        mCallbackListener.onError(throwable, b);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean uploadCancel(Callback.CancelledException e) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean uploadFinish() {
+                        mCallbackListener.onFinish();
+
+                        return false;
+                    }
+                });
+
+                uploadFile.uploadFile();
             } else {
                 // 其他类型
             }
@@ -400,6 +502,8 @@ public class CommonDbHelperToUploadFile<T> {
                     ("IsUsed", "=", "Used").findAll();
             final List<CargoArrivalFileContent> djListData = db.selector(CargoArrivalFileContent
                     .class).where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used").findAll();
+            final List<ShipmentFileContent> fjListData = db.selector(ShipmentFileContent.class)
+                    .where("IsUpload", "=", "Unload").and("IsUsed", "=", "Used").findAll();
             if (null != zcfjListData && zcfjListData.size() != 0) {
                 // 上传 ZCFajianFileContent
                 uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.ZCFJ_TYPE);
@@ -557,7 +661,7 @@ public class CommonDbHelperToUploadFile<T> {
                             }
                         }
 
-                        mCallbackListener.onSuccess(s);
+                        // mCallbackListener.onSuccess(s);
                         mUploadStatus.put("dj", true);
                         return true;
                     }
@@ -587,6 +691,67 @@ public class CommonDbHelperToUploadFile<T> {
                 LogUtil.trace("到件没有数据可上传");
                 mUploadStatus.put("dj", true);
             }
+
+            if (null != fjListData && fjListData.size() != 0) {
+                // 上传 CargoArrivalFileContent
+                uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.FJ_TYPE);
+                for (int index = 0; index < fjListData.size(); index++) {
+                    ShipmentFileContent record = fjListData.get(index);
+                    String content = record.getmCurrentValue() + "\r\n";
+                    // 循环写入文件
+                    uploadFile.writeContentToFile(content, true);
+                }
+
+                uploadFile.setCallbackListener(new ICommonUpdateFileCallBack() {
+
+                    @Override
+                    public boolean uploadSuccess(String s) {
+                        DbManager db = BQDataBaseHelper.getDb();
+
+                        for (int index = 0; index < fjListData.size(); index++) {
+                            ShipmentFileContent bean = (ShipmentFileContent) fjListData.get(index);
+                            WhereBuilder whereBuilder = WhereBuilder.b();
+                            whereBuilder.and("id", "=", bean.getId());
+                            LogUtil.trace("上传所有记录 ID：" + bean.getId());
+                            try {
+                                db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
+                                        ("IsUpload", "Load"));
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        mCallbackListener.onSuccess(s);
+                        mUploadStatus.put("fj", true);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean uploadError(Throwable throwable, boolean b) {
+                        // mCallbackListener.onError(throwable, b);
+                        mUploadStatus.put("fj", false);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean uploadCancel(Callback.CancelledException e) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean uploadFinish() {
+                        // mCallbackListener.onFinish();
+
+                        return false;
+                    }
+                });
+                uploadFile.uploadFile();
+            } else {
+                // do nothing
+                LogUtil.trace("发件没有数据可上传");
+                mUploadStatus.put("fj", true);
+            }
+
         } catch (DbException e) {
             LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
             e.printStackTrace();

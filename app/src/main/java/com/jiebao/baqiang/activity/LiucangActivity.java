@@ -73,8 +73,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-
         ScanHelper.getInstance().barcodeManager.Barcode_Stop();
     }
 
@@ -82,11 +80,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     public void initView() {
         setContent(R.layout.liucang);
         setHeaderLeftViewText(getString(R.string.main_import));
+
+        prepareDataForView();
     }
 
     @Override
     public void initData() {
-        prepareDataForView();
+        ScanHelper.getInstance().barcodeManager.setScanTime(Constant.TIME_SCAN_DELAY);
 
         mDeviceVibrator = (Vibrator) this.getSystemService(this
                 .VIBRATOR_SERVICE);

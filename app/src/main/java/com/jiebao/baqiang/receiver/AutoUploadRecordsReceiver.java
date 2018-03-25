@@ -32,30 +32,32 @@ public class AutoUploadRecordsReceiver extends BroadcastReceiver {
                 BaqiangApplication.getTopActivity();
         LogUtil.trace("class name:" + BaqiangApplication.getTopActivityName());
 
-        if (!NetworkUtils.isNetworkConnected(mTopActivity)) {
-            Toast.makeText(mTopActivity, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
-            return;
+        if (mTopActivity != null) {
+            if (!NetworkUtils.isNetworkConnected(mTopActivity)) {
+                Toast.makeText(mTopActivity, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+
+                @Override
+                public boolean onSuccess(String s) {
+                    Toast.makeText(mTopActivity, "文件上传成功", Toast.LENGTH_SHORT).show();
+                    // F1事件，传递给Activity更新UI
+                    mTopActivity.syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+                    return true;
+                }
+
+                @Override
+                public boolean onError(Throwable throwable, boolean b) {
+                    return false;
+                }
+
+                @Override
+                public boolean onFinish() {
+                    return false;
+                }
+            }).uploadUnloadRecords();
         }
-
-        new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
-
-            @Override
-            public boolean onSuccess(String s) {
-                Toast.makeText(mTopActivity, "文件上传成功", Toast.LENGTH_SHORT).show();
-                // F1事件，传递给Activity更新UI
-                mTopActivity.syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
-                return true;
-            }
-
-            @Override
-            public boolean onError(Throwable throwable, boolean b) {
-                return false;
-            }
-
-            @Override
-            public boolean onFinish() {
-                return false;
-            }
-        }).uploadUnloadRecords();
     }
 }
