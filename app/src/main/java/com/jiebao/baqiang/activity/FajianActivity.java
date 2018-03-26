@@ -241,8 +241,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
 
     @Override
     protected void fillCode(String barcode) {
-        super.fillCode(barcode);
         LogUtil.d(TAG, "barcode:" + barcode);
+        if (TextUtils.isEmpty(barcode)) {
+            return;
+        }
 
         if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(FajianActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();

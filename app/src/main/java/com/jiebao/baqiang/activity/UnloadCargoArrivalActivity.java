@@ -243,7 +243,10 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
     @Override
     protected void fillCode(String barcode) {
-        super.fillCode(barcode);
+        LogUtil.d(TAG, "barcode:" + barcode);
+        if (TextUtils.isEmpty(barcode)) {
+            return;
+        }
 
         if (XcdjDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(UnloadCargoArrivalActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();

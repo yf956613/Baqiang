@@ -17,7 +17,7 @@ import java.util.Date;
  */
 
 @Table(name = "fajian")
-public class ShipmentFileContent extends IFileContentBean{
+public class ShipmentFileContent extends IFileContentBean {
     private static final String TAG = ShipmentFileContent.class.getSimpleName();
 
     // 0259200         20170221235917  2880273772877    5955513  20170221 0
@@ -231,6 +231,7 @@ public class ShipmentFileContent extends IFileContentBean{
 
         // 快件类型
         stringBuffer.append(this.mShipmentType);
+        stringBuffer.append(countBlankAndAppend(this.mShipmentType, SHIPMENT_TYPE));
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
@@ -300,10 +301,11 @@ public class ShipmentFileContent extends IFileContentBean{
     public String toString() {
         return "ShipmentFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
                 "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
-                "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", " + "mShipmentType='"
-                + mShipmentType + '\'' + ", mShipmentNumber='" + mShipmentNumber + '\'' + ", " +
-                "mScanEmployeeNumber='" + mScanEmployeeNumber + '\'' + ", " + "mOperateDate='" +
-                mOperateDate + '\'' + ", " + "mWeight='" + mWeight + '\'' + ", mStatus='" +
-                mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\'' + '}';
+                "" + "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' + ", " +
+                "mShipmentType='" + mShipmentType + '\'' + ", mShipmentNumber='" +
+                mShipmentNumber + '\'' + ", " + "mScanEmployeeNumber='" + mScanEmployeeNumber +
+                '\'' + ", " + "mOperateDate='" + mOperateDate + '\'' + ", " + "mWeight='" +
+                mWeight + '\'' + ", mStatus='" + mStatus + '\'' + ", mIsUsed='" + mIsUsed + '\''
+                + '}';
     }
 }

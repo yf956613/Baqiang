@@ -21,8 +21,8 @@ public class ZCFajianFileContent extends IFileContentBean {
     private static final String TAG = ZCFajianFileContent.class.getSimpleName();
 
     // 0259200         20170221235917  2880273772877    5955513  20170221 0
-    // 每一行包括91个字符，其中中文2个字符，每个字段长度不够时向右补空格
-    private static final int LENGTH = 91;
+    // 每一行包括109个字符，其中中文2个字符，每个字段长度不够时向右补空格
+    private static final int LENGTH = 109;
     // 扫描类型编号
     private static final int SCAN_TYPE = 2;
     // 下一站点编号
@@ -241,7 +241,7 @@ public class ZCFajianFileContent extends IFileContentBean {
         stringBuffer.append(this.mGoodsType);
         stringBuffer.append(countBlankAndAppend(this.mGoodsType, GOODS_TYPE));
 
-        // 快件类型
+        // 快件类型 快件类型必须选择，不需要添加空格
         stringBuffer.append(this.mShipmentType);
 
         // 运单编号

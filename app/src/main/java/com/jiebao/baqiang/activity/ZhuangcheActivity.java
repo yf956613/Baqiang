@@ -296,6 +296,10 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
 
+        if (TextUtils.isEmpty(barcode)) {
+            return;
+        }
+
         if (ZcFajianDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(ZhuangcheActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);

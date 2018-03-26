@@ -73,10 +73,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
     // 上一站快速提示数据适配器
     private TestTipsAdatper mPreviousStationAdapter;
 
-    private CargoArrivalFileName mCargoArrivalFileName;
     private CargoArrivalFileContent mCargoArrivalFileContent;
-    private UploadServerFile mUploadServerFile;
-
     private List<CommonScannerListViewBean> mListData;
     private CommonScannerBaseAdapter mScannerBaseAdatper;
 
@@ -201,8 +198,10 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber implements V
 
     @Override
     protected void fillCode(String barcode) {
-        super.fillCode(barcode);
-        LogUtil.trace("barcode:" + barcode);
+        LogUtil.d(TAG, "barcode:" + barcode);
+        if (TextUtils.isEmpty(barcode)) {
+            return;
+        }
 
         if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(DaojianActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();

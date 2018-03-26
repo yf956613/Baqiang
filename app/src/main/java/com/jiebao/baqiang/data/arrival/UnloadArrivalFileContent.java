@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 @Table(name = "xcdaojian")
-public class UnloadArrivalFileContent extends IFileContentBean{
+public class UnloadArrivalFileContent extends IFileContentBean {
     private static final String TAG = UnloadArrivalFileContent.class.getSimpleName();
 
     // 22C             20170221235220  45067672999      A800     20170221 0
@@ -247,6 +247,7 @@ public class UnloadArrivalFileContent extends IFileContentBean{
 
         // 快件类型
         stringBuffer.append(this.mShipmentType);
+        stringBuffer.append(countBlankAndAppend(this.mShipmentType, SHIPMENT_TYPE));
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);

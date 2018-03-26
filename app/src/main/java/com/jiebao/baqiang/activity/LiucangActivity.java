@@ -188,8 +188,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
     @Override
     protected void fillCode(String barcode) {
-        super.fillCode(barcode);
         LogUtil.d(TAG, "barcode:" + barcode);
+        if (TextUtils.isEmpty(barcode)) {
+            return;
+        }
 
         if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
             Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();

@@ -227,6 +227,7 @@ public class CargoArrivalFileContent extends IFileContentBean{
 
         // 快件类型
         stringBuffer.append(this.mShipmentType);
+        stringBuffer.append(countBlankAndAppend(this.mShipmentType, SHIPMENT_TYPE));
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
