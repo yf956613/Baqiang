@@ -120,12 +120,12 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                     break;
                 }
 
-                case R.id.btn_factory:{
+                case R.id.btn_factory: {
                     setLinearLayoutBackground(mLlFactory, hasFocus);
                     break;
                 }
 
-                case R.id.btn_bussiness_before:{
+                case R.id.btn_bussiness_before: {
                     setLinearLayoutBackground(mLlBussinessBefore, hasFocus);
                     break;
                 }
@@ -136,7 +136,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                     break;
                 }
 
-                case R.id.btn_logcat:{
+                case R.id.btn_logcat: {
                     setLinearLayoutBackground(mLlLogcat, hasFocus);
                     break;
                 }
@@ -288,8 +288,8 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                     dialog.dismiss();
 
                     // 保存网点编号
-                    SharedUtil.putString(AdministratorSettingActivity.this, Constant.PREFERENCE_KEY_DEVICE_ID,
-                            etContent.getText().toString());
+                    SharedUtil.putString(AdministratorSettingActivity.this, Constant
+                            .PREFERENCE_KEY_DEVICE_ID, etContent.getText().toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString
                             (AdministratorSettingActivity.this, "device_id"));*/
                     Toast.makeText(AdministratorSettingActivity.this, "巴枪编号存储成功", Toast
@@ -360,8 +360,8 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
                             Intent service = new Intent(AdministratorSettingActivity.this,
                                     DownLoadApkFileService.class);
                             service.putExtra("downloadurl", mApkFileDownloadUrl);
-                            Toast.makeText(AdministratorSettingActivity.this, "正在下载中",
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(AdministratorSettingActivity.this, "正在下载中", Toast
+                                    .LENGTH_LONG).show();
                             startService(service);
                         } else {
                             Toast.makeText(AdministratorSettingActivity.this, "APK已经是最新版本!",

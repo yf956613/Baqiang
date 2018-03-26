@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.listener.UIHandler;
 import com.jiebao.baqiang.util.AppUtil;
+import com.jiebao.baqiang.util.CrashHandler;
 import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
@@ -71,6 +72,12 @@ public class BaqiangApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogUtil.trace("");
+
+        initData();
+    }
+
+    public void initData() {
         mContext = getApplicationContext();
 
         initPath();
@@ -87,6 +94,9 @@ public class BaqiangApplication extends Application {
 
         initAutoUploadRecords();
         registerActivityListener();
+
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
     }
 
     private void initAutoUploadRecords() {
@@ -438,6 +448,14 @@ public class BaqiangApplication extends Application {
             finishAllActivity();
         } catch (Exception e) {
         }
+    }
+
+    public static int getActivitStackSize() {
+        if (mActivitys != null) {
+            return mActivitys.size();
+        }
+
+        return 0;
     }
 
 }
