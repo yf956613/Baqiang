@@ -20,7 +20,6 @@ import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
-import com.jiebao.baqiang.data.db.ShipmentTypeDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
@@ -131,7 +130,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                 mListData = (List<IFileContentBean>) (List<?>) FajianDBHelper
                         .getLimitedTimeRecords(mBeginDate, mEndDate);
             } else if (Constant.SEARCH_NAME_LCJ.equals(searchType)) {
-                setHeaderLeftViewText("卸车到件查询");
+                setHeaderLeftViewText("留仓件查询");
                 mSearchFlag = SearchType.LCJ;
 
                 mTvRecordsAll.setText("" + LiucangDBHelper.findTimeLimitedUsableRecords

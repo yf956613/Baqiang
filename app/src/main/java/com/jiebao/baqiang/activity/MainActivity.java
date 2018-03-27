@@ -1,8 +1,6 @@
 package com.jiebao.baqiang.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,19 +14,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.bean.AppUpdateBean;
-import com.jiebao.baqiang.data.bean.ShipmentType;
-import com.jiebao.baqiang.data.bean.VehicleInfo;
 import com.jiebao.baqiang.data.updateData.ServerInfo;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.updateData.UpdateLiuCangType;
@@ -46,7 +39,6 @@ import com.jiebao.baqiang.util.SharedUtil;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
@@ -176,7 +168,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
         if (!Constant.DEBUG) {
             Log.e("ljz", "ServerInfoSyncTask");
-            serverInfoSyncTask.execute("start_param");
+            serverInfoSyncTask.execute("ServerInfoSyncTask");
             showLoadinDialog();
             updateLoadingDialogMsg(getString(R.string.sync_serverinfo));
         }
@@ -410,6 +402,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         protected Long doInBackground(String... strings) {
             // WorkerThread
             LogUtil.trace("doInBackground parameters:" + Arrays.toString(strings));
+
+            Log.e("ljz", "doInBackground");
+
             if (updateInterface != null) {
                 updateInterface.setDataDownloadStatus(this);
                 updateInterface.updateData();
@@ -449,6 +444,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         public void startDownload(int infoId) {
             LogUtil.trace("startDownload " + infoId);
 
+            Log.e("ljz", "startDownload " + infoId);
+
             Message startMsg = Message.obtain();
             startMsg.what = Constant.STARTDOWNLOAD_INFO + infoId;
             startMsg.arg1 = infoId;
@@ -458,6 +455,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         public void downloadFinish(int infoId) {
             LogUtil.trace("downloadFinish " + infoId);
+
+            Log.e("ljz", "downloadFinish " + infoId);
 
             downloadSuccessCnt++;
             downloadCnt++;
@@ -474,12 +473,19 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void updateDataFinish(int infoId) {
-            LogUtil.trace("updateDataFinish" + +infoId);
+            LogUtil.trace("updateDataFinish " + +infoId);
+
+            Log.e("ljz", "updateDataFinish " + infoId);
 
             updateSucessCnt++;
 
+            Message msg = Message.obtain();
+            msg.what = Constant.UPDATE_DATA_DONE + infoId;
+            msg.arg1 = infoId;
+            mHandler.sendMessage(msg);
+
             Message updateMsg = Message.obtain();
-            updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE + infoId;
+            updateMsg.what = Constant.DOWNLOAD_UPDATE_DONE;
             updateMsg.arg1 = infoId;
             mHandler.sendMessage(updateMsg);
 
@@ -488,6 +494,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         public void downLoadError(int infoId, String errorMsg) {
             LogUtil.trace("downLoadError infoId " + infoId + " errorMsg: " + errorMsg);
+
+            Log.e("ljz", "downLoadError " + infoId);
 
             downloadFailedCnt++;
             downloadCnt++;
@@ -598,7 +606,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                         DataSyncTask shipmentDataSyncTask = new DataSyncTask();
                         shipmentDataSyncTask.setUpdateInterface(UpdateShipmentType.getInstance());
                         if (!Constant.DEBUG) {
-                            shipmentDataSyncTask.execute("start_param");
+                            shipmentDataSyncTask.execute("shipmentDataSyncTask");
                         }
                     }
 
@@ -611,84 +619,101 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
 
+
                 case Constant.DOWNLOAD_FAILED: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
-                            .MAX_DOWNLOAD_STEP);
-                    if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
+
+                    Log.e("ljz", "DOWNLOAD_FAILED downloadCnt " + downloadCnt
+                            + " downloadSuccessCnt " + downloadSuccessCnt
+                            + " downloadFailedCnt " + downloadFailedCnt
+                            + " updateSucessCnt " + updateSucessCnt);
+
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    if ((downloadCnt == Constant.MAX_DOWNLOAD_COUNT)) {
                         activity.mDownloadProgressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, activity.getString(R.string
-                                .download_success_no) + downloadSuccessCnt + activity.getString(R
-                                .string.download_failed_no) + downloadFailedCnt, Toast
-                                .LENGTH_SHORT).show();
                     }
                     break;
                 }
                 case Constant.DOWNLOAD_SUCCESS: {
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant
-                            .MAX_DOWNLOAD_STEP);
-                    if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
-                        activity.mDownloadProgressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, activity.getString(R.string
-                                .download_success_no) + downloadSuccessCnt + activity.getString(R
-                                .string.download_failed_no) + downloadFailedCnt, Toast
-                                .LENGTH_SHORT).show();
-                    }
                     break;
                 }
-
 
                 case Constant.UPDATE_SUCCESS: {
                     break;
                 }
                 case Constant.DOWNLOAD_UPDATE_DONE: {
+
+                    Log.e("ljz", "DOWNLOAD_UPDATE_DONE downloadCnt " + downloadCnt
+                            + " downloadSuccessCnt " + downloadSuccessCnt
+                            + " downloadFailedCnt " + downloadFailedCnt
+                            + " updateSucessCnt " + updateSucessCnt);
+
+                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
+                        activity.mDownloadProgressDialog.dismiss();
+                    }
                     break;
                 }
 
 
                 case Constant.STARTDOWNLOAD_SALESINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_salesinfo) + "\n" + activity.getString(R.string
-                            .download_success_no) + downloadSuccessCnt + "\n" + activity
-                            .getString(R.string.download_failed_no) + downloadFailedCnt);
+                            .download_salesinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
-                    DataSyncTask liucangDataSyncTask = new DataSyncTask();
-                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
-                    if (!Constant.DEBUG) {
-                        liucangDataSyncTask.execute("start_param");
-                    }
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .update_salesinfo));
 
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_DONE: {
+                    Log.e("ljz", "UPDATE_SALESINFO_DONE");
+                    DataSyncTask vehiceDataSyncTask = new DataSyncTask();
+                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
+                    if (!Constant.DEBUG) {
+                        vehiceDataSyncTask.execute("vehiceDataSyncTask");
+                    }
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_FAILED: {
+                    Log.e("ljz", "UPDATE_SALESINFO_FAILED");
+                    DataSyncTask vehiceDataSyncTask = new DataSyncTask();
+                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
+                    if (!Constant.DEBUG) {
+                        vehiceDataSyncTask.execute("vehiceDataSyncTask");
+                    }
                     break;
                 }
 
 
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_shipmenttypeinfo) + "\n" + activity.getString(R.string
-                            .download_success_no) + downloadSuccessCnt + "\n" + activity
-                            .getString(R.string.download_failed_no) + downloadFailedCnt);
+                            .download_shipmenttypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .update_shipmenttypeinfo));
+                    break;
+                }
+                case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
+                    Log.e("ljz", "UPDATE_SHIPMENTTYPEINFO_DONE");
                     DataSyncTask salesDataSyncTask = new DataSyncTask();
                     salesDataSyncTask.setUpdateInterface(UpdateSalesServiceData.getInstance());
                     // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
                     if (!Constant.DEBUG) {
-                        salesDataSyncTask.execute("start_param");
+                        salesDataSyncTask.execute("salesDataSyncTask");
                     }
                     break;
                 }
-                case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
-                    break;
-                }
                 case Constant.UPDATE_SHIPMENTTYPEINFO_FAILED: {
+                    Log.e("ljz", "UPDATE_SHIPMENTTYPEINFO_FAILED");
+                    DataSyncTask salesDataSyncTask = new DataSyncTask();
+                    salesDataSyncTask.setUpdateInterface(UpdateSalesServiceData.getInstance());
+                    // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+                    if (!Constant.DEBUG) {
+                        salesDataSyncTask.execute("salesDataSyncTask");
+                    }
                     break;
                 }
 
@@ -700,35 +725,46 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                     break;
                 }
                 case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
-                    DataSyncTask vehiceDataSyncTask = new DataSyncTask();
-                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
-                    if (!Constant.DEBUG) {
-                        vehiceDataSyncTask.execute("start_param");
-                    }
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .update_liucangtypeinfo));
                     break;
                 }
                 case Constant.UPDATE_LIUCANGTYPEINFO_DONE: {
+                    Log.e("ljz", "UPDATE_LIUCANGTYPEINFO_DONE");
                     break;
                 }
                 case Constant.UPDATE_LIUCANGTYPEINFO_FAILED: {
+                    Log.e("ljz", "UPDATE_LIUCANGTYPEINFO_FAILED");
                     break;
                 }
 
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_vehiceinfo) + "\n" + activity.getString(R.string
-                            .download_success_no) + downloadSuccessCnt + "\n" + activity
-                            .getString(R.string.download_failed_no) + downloadFailedCnt);
+                            .download_vehiceinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
+                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
+                            .update_vehiceinfo));
                     break;
                 }
                 case Constant.UPDATE_VEHICEINFO_DONE: {
+                    Log.e("ljz", "UPDATE_VEHICEINFO_DONE");
+                    DataSyncTask liucangDataSyncTask = new DataSyncTask();
+                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
+                    if (!Constant.DEBUG) {
+                        liucangDataSyncTask.execute("liucangDataSyncTask");
+                    }
                     break;
                 }
                 case Constant.UPDATE_VEHICEINFO_FAILED: {
+                    Log.e("ljz", "UPDATE_VEHICEINFO_FAILED");
+                    DataSyncTask liucangDataSyncTask = new DataSyncTask();
+                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
+                    if (!Constant.DEBUG) {
+                        liucangDataSyncTask.execute("liucangDataSyncTask");
+                    }
                     break;
                 }
 

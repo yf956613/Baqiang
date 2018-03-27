@@ -218,6 +218,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
                 Constant.PREFERENCE_KEY_USERNAME));
         params.addQueryStringParameter("password", SharedUtil.getString(LoginActivity.this,
                 Constant.PREFERENCE_KEY_PSW));
+        params.setConnectTimeout(45 * 1000);
 
         // TODO 从日志看出，下述回调都是在MainThread运行的
         final Callback.Cancelable post = x.http().post(params, new Callback

@@ -237,6 +237,9 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
         Date scanDate = new Date();
 
         // 快速到件，设置上一站编码为""
+        /*mCargoArrivalFileContent.setPreviousStation("" + SharedUtil.getString
+                (FastDaojianActivity.this, Constant
+                        .PREFERENCE_KEY_SALE_SERVICE));*/
         mCargoArrivalFileContent.setPreviousStation("");
         mCargoArrivalFileContent.setScanDate(scanDate);
         mCargoArrivalFileContent.setShipmentNumber(barcode);
