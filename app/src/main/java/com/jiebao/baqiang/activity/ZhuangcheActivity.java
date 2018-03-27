@@ -47,7 +47,8 @@ import java.util.List;
 /**
  * 装车发件
  */
-public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements View
+public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
+        implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = ZhuangcheActivity.class.getSimpleName();
 
@@ -103,11 +104,14 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     @Override
     public void initData() {
-        ScanHelper.getInstance().barcodeManager.setScanTime(Constant.TIME_SCAN_DELAY);
+        ScanHelper.getInstance().barcodeManager.setScanTime(Constant
+                .TIME_SCAN_DELAY);
 
-        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
+        mDeviceVibrator = (Vibrator) this.getSystemService(this
+                .VIBRATOR_SERVICE);
 
-        mTvVehicleId = ZhuangcheActivity.this.findViewById(R.id.tv_vehicle_code);
+        mTvVehicleId = ZhuangcheActivity.this.findViewById(R.id
+                .tv_vehicle_code);
         mTvVehicleId.setAdapter(mVehicleInfoAdapter);
         // 监听EditText是否获取焦点
         mTvVehicleId.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -124,10 +128,12 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 }
             }
         });
-        mTvVehicleId.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvVehicleId.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
                 mZcFajianFileContent.setmVehicleID(vehicleId);
@@ -146,10 +152,12 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
         });
 
-        mTvNextStation = ZhuangcheActivity.this.findViewById(R.id.tv_next_station);
+        mTvNextStation = ZhuangcheActivity.this.findViewById(R.id
+                .tv_next_station);
         mTvNextStation.setAdapter(mNextStationAdapter);
         // 监听EditText是否获取焦点
-        mTvNextStation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvNextStation.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -163,13 +171,16 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 }
             }
         });
-        mTvNextStation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvNextStation.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定下一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverName = mTvNextStation.getText().toString();
-                String serverID = SalesServiceDBHelper.getServerIdFromName(serverName);
+                String serverID = SalesServiceDBHelper.getServerIdFromName
+                        (serverName);
                 if (!TextUtils.isEmpty(serverID)) {
                     // 更新下一站网点编号
                     mZcFajianFileContent.setNextStation(serverID);
@@ -189,9 +200,11 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
         });
 
-        mTvShipmentType = ZhuangcheActivity.this.findViewById(R.id.tv_shipment_type);
+        mTvShipmentType = ZhuangcheActivity.this.findViewById(R.id
+                .tv_shipment_type);
         mTvShipmentType.setAdapter(mShipmentTypeAdapter);
-        mTvShipmentType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvShipmentType.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -205,13 +218,16 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 }
             }
         });
-        mTvShipmentType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvShipmentType.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定快件类型，则解析快件类型编号，更新ShipmentFileContent实体内容
                 String shipmentTypeName = mTvShipmentType.getText().toString();
-                String shipmentTypeID = ShipmentTypeDBHelper.getShipmentTypeIDFromName
+                String shipmentTypeID = ShipmentTypeDBHelper
+                        .getShipmentTypeIDFromName
                         (shipmentTypeName);
                 if (!TextUtils.isEmpty(shipmentTypeID)) {
                     mZcFajianFileContent.setShipmentType(shipmentTypeID);
@@ -231,12 +247,14 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
         });
 
-        mEtDeliveryNumber = ZhuangcheActivity.this.findViewById(R.id.et_shipment_number);
+        mEtDeliveryNumber = ZhuangcheActivity.this.findViewById(R.id
+                .et_shipment_number);
         mBtnSure = ZhuangcheActivity.this.findViewById(R.id.btn_ensure);
         mBtnCancel = ZhuangcheActivity.this.findViewById(R.id.btn_back);
         mBtnSure.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);
-        mListView = ZhuangcheActivity.this.findViewById(R.id.list_view_scan_data);
+        mListView = ZhuangcheActivity.this.findViewById(R.id
+                .list_view_scan_data);
         mListView.setDelButtonClickListener(ZhuangcheActivity.this);
         mListView.setAdapter(mScannerBaseAdatper);
     }
@@ -245,20 +263,26 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                if (!VehicleInfoDBHelper.checkVehicleInfo(mTvVehicleId.getText().toString())) {
-                    Toast.makeText(ZhuangcheActivity.this, "车辆码信息异常", Toast.LENGTH_SHORT).show();
+                if (!VehicleInfoDBHelper.checkVehicleInfo(mTvVehicleId
+                        .getText().toString())) {
+                    Toast.makeText(ZhuangcheActivity.this, "车辆码信息异常", Toast
+                            .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
-                } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation.getText()
+                } else if (!SalesServiceDBHelper.checkServerInfo
+                        (mTvNextStation.getText()
                         .toString())) {
-                    Toast.makeText(ZhuangcheActivity.this, "下一站网点信息异常", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ZhuangcheActivity.this, "下一站网点信息异常", Toast
+                            .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
-                } else if (!ShipmentTypeDBHelper.checkShipmentType(mTvShipmentType.getText()
+                } else if (!ShipmentTypeDBHelper.checkShipmentType
+                        (mTvShipmentType.getText()
                         .toString())) {
-                    Toast.makeText(ZhuangcheActivity.this, "快件类型信息异常", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ZhuangcheActivity.this, "快件类型信息异常", Toast
+                            .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
@@ -301,7 +325,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         }
 
         if (ZcFajianDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(ZhuangcheActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ZhuangcheActivity.this, "运单号已存在", Toast
+                    .LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
             mIsScanRunning = true;
@@ -332,11 +357,13 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
     public void clickHappend(int position) {
         LogUtil.trace("position:" + position);
 
-        ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(position)
+        ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get
+                (position)
                 .getScannerBean();
         // 此处ListView中数据是有ID值的
         if (ZcFajianDBHelper.isRecordUpload(barcode.getId())) {
-            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
@@ -354,7 +381,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             case R.id.btn_back: {
                 ZhuangcheActivity.this.finish();
 
-                LogUtil.trace("All size:" + ZcFajianDBHelper.findUsableRecords());
+                LogUtil.trace("All size:" + ZcFajianDBHelper
+                        .findUsableRecords());
                 break;
             }
         }
@@ -371,9 +399,11 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 CommonScannerListViewBean listViewBean = mListData.get(index);
 
                 // origin data
-                ZCFajianFileContent barcode = (ZCFajianFileContent) listViewBean.getScannerBean();
+                ZCFajianFileContent barcode = (ZCFajianFileContent)
+                        listViewBean.getScannerBean();
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
-                ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord(barcode
+                ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord
+                        (barcode
                         .getShipmentNumber(), barcode.getScanDate());
                 listViewBean.setScannerBean(bean);
             }
@@ -389,95 +419,108 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
 
     private void prepareDataForView() {
         mVehicleInfo = VehicleInfoDBHelper.getAllVehicleID();
-        mVehicleInfoAdapter = new TestTipsAdatper(ZhuangcheActivity.this, mVehicleInfo, new
+        mVehicleInfoAdapter = new TestTipsAdatper(ZhuangcheActivity.this,
+                mVehicleInfo, new
                 FilterListener() {
 
-            @Override
-            public void getFilterData(List<String> list) {
-                if (list != null) {
-                    if (list.size() == 1) {
-                        mTvVehicleId.dismissDropDown();
-                        mTvVehicleId.setText(list.get(0), false);
+                    @Override
+                    public void getFilterData(List<String> list) {
+                        if (list != null) {
+                            if (list.size() == 1) {
+                                mTvVehicleId.dismissDropDown();
+                                mTvVehicleId.setText(list.get(0), false);
 
-                        mZcFajianFileContent.setmVehicleID(list.get(0));
+                                mZcFajianFileContent.setmVehicleID(list.get(0));
 
-                        Editable spannable = mTvVehicleId.getText();
-                        Selection.setSelection(spannable, spannable.length());
-                    } else {
-                        // do nothing
+                                Editable spannable = mTvVehicleId.getText();
+                                Selection.setSelection(spannable, spannable
+                                        .length());
+                            } else {
+                                // do nothing
+                            }
+                        } else {
+                            // do nothing
+                        }
                     }
-                } else {
-                    // do nothing
-                }
-            }
-        });
+                });
 
         mNextStationInfo = SalesServiceDBHelper.getAllSalesServiceData();
-        mNextStationAdapter = new TestTipsAdatper(ZhuangcheActivity.this, mNextStationInfo, new
+        mNextStationAdapter = new TestTipsAdatper(ZhuangcheActivity.this,
+                mNextStationInfo, new
                 FilterListener() {
 
-            @Override
-            public void getFilterData(List<String> list) {
-                if (list != null) {
-                    if (list.size() == 1) {
-                        String[] arr = list.get(0).toString().split("  ");
-                        mTvNextStation.dismissDropDown();
+                    @Override
+                    public void getFilterData(List<String> list) {
+                        if (list != null) {
+                            if (list.size() == 1) {
+                                String[] arr = list.get(0).toString().split("" +
+                                        "  ");
+                                mTvNextStation.dismissDropDown();
 
-                        if (arr != null) {
-                            if (arr.length >= 2) {
-                                mTvNextStation.setText(arr[1], false);
-                                mZcFajianFileContent.setNextStation(arr[0]);
+                                if (arr != null) {
+                                    if (arr.length >= 2) {
+                                        mTvNextStation.setText(arr[1], false);
+                                        mZcFajianFileContent.setNextStation
+                                                (arr[0]);
+                                    }
+                                } else {
+                                    mTvNextStation.setText(list.get(0)
+                                            .toString(), false);
+                                }
+
+                                Editable spannable = mTvNextStation.getText();
+                                Selection.setSelection(spannable, spannable
+                                        .length());
+                            } else {
+                                // do nothing
                             }
                         } else {
-                            mTvNextStation.setText(list.get(0).toString(), false);
+                            // do nothing
                         }
-
-                        Editable spannable = mTvNextStation.getText();
-                        Selection.setSelection(spannable, spannable.length());
-                    } else {
-                        // do nothing
                     }
-                } else {
-                    // do nothing
-                }
-            }
-        });
+                });
 
         mShipmentTypeInfo = ShipmentTypeDBHelper.getShipmentTypeInfo();
-        mShipmentTypeAdapter = new TestTipsAdatper(ZhuangcheActivity.this, mShipmentTypeInfo, new
+        mShipmentTypeAdapter = new TestTipsAdatper(ZhuangcheActivity.this,
+                mShipmentTypeInfo, new
                 FilterListener() {
 
-            @Override
-            public void getFilterData(List<String> list) {
-                if (list != null) {
-                    if (list.size() == 1) {
-                        String[] arr = list.get(0).toString().split("  ");
-                        mTvShipmentType.dismissDropDown();
+                    @Override
+                    public void getFilterData(List<String> list) {
+                        if (list != null) {
+                            if (list.size() == 1) {
+                                String[] arr = list.get(0).toString().split("" +
+                                        "  ");
+                                mTvShipmentType.dismissDropDown();
 
-                        if (arr != null) {
-                            if (arr.length >= 2) {
-                                mTvShipmentType.setText(arr[1], false);
-                                mZcFajianFileContent.setShipmentType(arr[0]);
+                                if (arr != null) {
+                                    if (arr.length >= 2) {
+                                        mTvShipmentType.setText(arr[1], false);
+                                        mZcFajianFileContent.setShipmentType
+                                                (arr[0]);
+                                    }
+                                } else {
+                                    mTvShipmentType.setText(list.get(0)
+                                            .toString(), false);
+                                }
+
+                                Editable spannable = mTvShipmentType.getText();
+                                Selection.setSelection(spannable, spannable
+                                        .length());
+                            } else {
+                                // do nothing
                             }
                         } else {
-                            mTvShipmentType.setText(list.get(0).toString(), false);
+                            // do nothing
                         }
-
-                        Editable spannable = mTvShipmentType.getText();
-                        Selection.setSelection(spannable, spannable.length());
-                    } else {
-                        // do nothing
                     }
-                } else {
-                    // do nothing
-                }
-            }
-        });
+                });
 
         mZcFajianFileContent = FileContentHelper.getZCFajianFileContent();
 
         mListData = new ArrayList<>();
-        mScannerBaseAdatper = new CommonScannerBaseAdapter(ZhuangcheActivity.this, mListData);
+        mScannerBaseAdatper = new CommonScannerBaseAdapter(ZhuangcheActivity
+                .this, mListData);
     }
 
     /**
@@ -492,7 +535,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         mZcFajianFileContent.setScanDate(scanDate);
         mZcFajianFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
-        mZcFajianFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd").format(scanDate));
+        mZcFajianFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd")
+                .format(scanDate));
         return ZcFajianDBHelper.insertDataToDatabase(mZcFajianFileContent);
     }
 
@@ -509,9 +553,11 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         mEtDeliveryNumber.setText(barcode);
 
         // 把 instert 的 record 从数据库中取出来，该record内容是更新后的内容
-        ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord(mZcFajianFileContent
+        ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord
+                (mZcFajianFileContent
                 .getShipmentNumber(), mZcFajianFileContent.getScanDate());
-        CommonScannerListViewBean mCommonScannerListViewBean = new CommonScannerListViewBean();
+        CommonScannerListViewBean mCommonScannerListViewBean = new
+                CommonScannerListViewBean();
         mCommonScannerListViewBean.setId(++mScanCount);
         mCommonScannerListViewBean.setScannerBean(bean);
 
@@ -547,7 +593,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
             }
         }
 
-        SharedUtil.putInt(ZhuangcheActivity.this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+        SharedUtil.putInt(ZhuangcheActivity.this, Constant
+                .PREFERENCE_NAME_ZCFJ, unloadRecords);
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
     }
@@ -561,29 +608,36 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
         }
 
         // ListView中最近录入的record
-        final ZCFajianFileContent barcode = (ZCFajianFileContent) mListData.get(0).getScannerBean();
+        final ZCFajianFileContent barcode = (ZCFajianFileContent) mListData
+                .get(0).getScannerBean();
         final int barcodeID = barcode.getId();
 
         if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
-            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
         if (mListData != null && mListData.size() != 0) {
-            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + barcode
+            LogUtil.trace("mListData.size:" + mListData.size() + "; " +
+                    "barcode:" + barcode
                     .getShipmentNumber());
 
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder
+                    (ZhuangcheActivity
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
+                    " 记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                        Toast.makeText(ZhuangcheActivity.this,
+                                "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
                         return;
                     }
@@ -594,7 +648,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -612,22 +667,27 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
      *
      * @param bean
      */
-    private void deleteChooseRecord(final ZCFajianFileContent bean, final int position) {
+    private void deleteChooseRecord(final ZCFajianFileContent bean, final int
+            position) {
         if (mListData != null && mListData.size() != 0) {
             LogUtil.trace("待删除的内容：" + bean.toString());
 
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(ZhuangcheActivity
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder
+                    (ZhuangcheActivity
                     .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
+                    "记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int barcodeID = bean.getId();
                     if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(ZhuangcheActivity.this, "当前记录已上传，不能删除", Toast
+                        Toast.makeText(ZhuangcheActivity.this,
+                                "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
                         return;
                     }
@@ -635,12 +695,14 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                     // 根据ID值，设置record为不可用
                     ZcFajianDBHelper.deleteFindedBean(barcodeID);
                     // 刷新UI，ListView
-                    updateListViewForDelete(DeleteAction.DELETE_ACTION_CHOOSE, position);
+                    updateListViewForDelete(DeleteAction
+                            .DELETE_ACTION_CHOOSE, position);
 
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -698,9 +760,16 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
      * 将ListView当前录入记录上传服务器，根据ID上传
      */
     private void uploadListViewDataToServer() {
+        if (mListData == null) {
+            return;
+        } else if (mListData != null && mListData.size() == 0) {
+            return;
+        }
+
         if (!NetworkUtils.isNetworkConnected(ZhuangcheActivity
                 .this)) {
-            Toast.makeText(ZhuangcheActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ZhuangcheActivity.this, "网络不可用，请检查网络", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
@@ -716,13 +785,16 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber implements
                 uploadContent.add(mListData.get(index).getScannerBean());
             }
 
-            new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+            new CommonDbHelperToUploadFile<ZCFajianFileContent>()
+                    .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                 @Override
                 public boolean onSuccess(String s) {
                     // 文件上传存在延时
-                    Toast.makeText(ZhuangcheActivity.this, "文件上传成功", Toast.LENGTH_SHORT).show();
-                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                    Toast.makeText(ZhuangcheActivity.this, "文件上传成功", Toast
+                            .LENGTH_SHORT).show();
+                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate
+                            (Constant
                             .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
                     return true;
                 }

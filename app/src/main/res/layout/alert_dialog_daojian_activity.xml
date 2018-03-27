@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:gravity="center"
-    android:weightSum="2"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:weightSum="2">
 
     <Button
         android:id="@+id/btn_activity_common"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="60dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_selector"
         android:text="正常扫描"
         android:textSize="25sp"
         android:textStyle="bold"/>
@@ -19,8 +20,9 @@
     <Button
         android:id="@+id/btn_activity_fast"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="60dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_selector"
         android:text="快速扫描"
         android:textSize="25sp"
         android:textStyle="bold"/>

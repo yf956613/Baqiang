@@ -624,6 +624,12 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements Vi
      * 将ListView当前录入记录上传服务器，根据ID上传
      */
     private void uploadListViewDataToServer() {
+        if (mListData == null) {
+            return;
+        } else if (mListData != null && mListData.size() == 0) {
+            return;
+        }
+
         if (!NetworkUtils.isNetworkConnected(FajianActivity
                 .this)) {
             Toast.makeText(FajianActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();

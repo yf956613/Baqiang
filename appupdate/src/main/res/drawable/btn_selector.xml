@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--点击-->
+    <item
+        android:drawable="@color/colorYellow"
+        android:state_pressed="true"/>
+    <!--获取焦点时-->
+    <item
+        android:drawable="@color/colorPrimaryDark"
+        android:state_focused="true"/>
+
+    <!--默认-->
+    <item
+        android:drawable="@color/colorAccent"/>
+
+</selector>

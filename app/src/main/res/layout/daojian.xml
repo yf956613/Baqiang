@@ -88,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_yellow_selector"
+            android:background="@drawable/btn_selector"
             android:text="@string/save"
             android:textAllCaps="false"
             android:textColor="@color/white" />
@@ -101,7 +101,7 @@
             android:layout_marginLeft="@dimen/margin_min"
             android:layout_marginStart="@dimen/margin_min"
             android:layout_weight="1"
-            android:background="@drawable/bg_green_selector"
+            android:background="@drawable/btn_selector"
             android:text="@string/tab_back"
             android:textAllCaps="false"
             android:textColor="@color/white" />

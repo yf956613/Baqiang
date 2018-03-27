@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_car_code"
@@ -13,12 +13,12 @@
 
         <TextView
             style="@style/PreviousInfoTextView"
-            android:text="@string/car_code" />
+            android:text="@string/car_code"/>
 
         <!--设置最小的匹配输入次数-->
         <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_car_code"
-            style="@style/InfoEditText" />
+            style="@style/InfoEditText"/>
     </LinearLayout>
 
     <LinearLayout
@@ -30,12 +30,12 @@
 
         <TextView
             style="@style/PreviousInfoTextView"
-            android:text="@string/before_station" />
+            android:text="@string/before_station"/>
 
         <!--设置最小的匹配输入次数-->
         <com.jiebao.baqiang.custView.TestAutoView
             android:id="@+id/tv_before_station"
-            style="@style/InfoEditText" />
+            style="@style/InfoEditText"/>
     </LinearLayout>
 
     <LinearLayout
@@ -47,12 +47,12 @@
 
         <TextView
             style="@style/PreviousInfoTextView"
-            android:text="运单号" />
+            android:text="运单号"/>
 
         <!--设置最小的匹配输入次数-->
         <EditText
             android:id="@+id/et_shipment_number"
-            style="@style/ShipmentNumberStyle" />
+            style="@style/ShipmentNumberStyle"/>
     </LinearLayout>
 
     <LinearLayout
@@ -69,7 +69,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="序号"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -77,7 +77,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="单号"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <TextView
             android:layout_width="0dp"
@@ -85,7 +85,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="状态"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
     </LinearLayout>
 
@@ -103,10 +103,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_yellow_selector"
+            android:background="@drawable/btn_selector"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/btn_back"
@@ -116,10 +116,10 @@
             android:layout_marginLeft="@dimen/margin_min"
             android:layout_marginStart="@dimen/margin_min"
             android:layout_weight="1"
-            android:background="@drawable/bg_green_selector"
+            android:background="@drawable/btn_selector"
             android:text="@string/tab_back"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <com.jiebao.baqiang.custView.CouldDeleteListView
