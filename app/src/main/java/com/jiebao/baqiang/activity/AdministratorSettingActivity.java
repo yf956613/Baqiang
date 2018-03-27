@@ -1,14 +1,10 @@
 package com.jiebao.baqiang.activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +26,6 @@ import com.jiebao.baqiang.util.SharedUtil;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
-import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
@@ -446,7 +441,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
         // 删除目录
         deleteFile(new File(rootFile.getPath() + "/bqapk"));
         deleteFile(new File(rootFile.getPath() + "/BaQiang"));
-        deleteFile(new File(rootFile.getPath() + "/bqDB"));
+        // deleteFile(new File(rootFile.getPath() + "/bqDB"));
     }
 
     private void deleteFile(File file) {
