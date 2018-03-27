@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -34,7 +36,8 @@ import org.xutils.x;
 /**
  * 数据采集界面
  */
-public class DataCollectActivity extends BaseActivityWithTitleAndNumber implements View
+public class DataCollectActivity extends BaseActivityWithTitleAndNumber
+        implements View
         .OnClickListener {
     private static final String TAG = "DataCollectActivity";
 
@@ -151,7 +154,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
                 }
 
                 case R.id.btn_unload_receive_package: {
-                    setLinearLayoutBackground(mLlUnloadReceivePackage, hasFocus);
+                    setLinearLayoutBackground(mLlUnloadReceivePackage,
+                            hasFocus);
                     break;
                 }
 
@@ -191,12 +195,14 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
                 }
 
                 case R.id.btn_replay_for_arrive_package: {
-                    setLinearLayoutBackground(mLlReplayForArrivePackage, hasFocus);
+                    setLinearLayoutBackground(mLlReplayForArrivePackage,
+                            hasFocus);
                     break;
                 }
 
                 case R.id.btn_replay_for_send_package: {
-                    setLinearLayoutBackground(mLlReplayForSendPackage, hasFocus);
+                    setLinearLayoutBackground(mLlReplayForSendPackage,
+                            hasFocus);
                     break;
                 }
 
@@ -234,8 +240,10 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         setHeaderLeftViewText("采集功能项");
         x.view().inject(DataCollectActivity.this);
 
-        if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication.isSoftDecodeScan) {
-            MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE, Manifest.permission.CAMERA);
+        if (Build.VERSION.SDK_INT >= 23 && BaqiangApplication
+                .isSoftDecodeScan) {
+            MPermissions.requestPermissions(this, REQUEST_CAMARA_CODE,
+                    Manifest.permission.CAMERA);
         }
     }
 
@@ -261,7 +269,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
         // 卸车到件
         mBtnUnloadReceivePackage.setOnClickListener(this);
-        mBtnUnloadReceivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnUnloadReceivePackage.setOnFocusChangeListener
+                (mLlFocusChangeListener);
 
         // 到件
         mBtnArrivePackage.setOnClickListener(this);
@@ -293,11 +302,13 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
         // 回单到件
         mBtnReplayForArrivePackage.setOnClickListener(this);
-        mBtnReplayForArrivePackage.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnReplayForArrivePackage.setOnFocusChangeListener
+                (mLlFocusChangeListener);
 
         // 回单发件
         mBtnReplayForSendPackage.setOnClickListener(this);
-        mBtnReplayForSendPackage.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnReplayForSendPackage.setOnFocusChangeListener
+                (mLlFocusChangeListener);
 
         // 留仓
         mBtnLeavePackage.setOnClickListener(this);
@@ -347,7 +358,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
     @Override
     public void onClick(View view) {
         if (!isDBBaseExist) {
-            Toast.makeText(DataCollectActivity.this, "资料信息数据库异常，请重新下载数据资料", Toast.LENGTH_SHORT)
+            Toast.makeText(DataCollectActivity.this, "资料信息数据库异常，请重新下载数据资料",
+                    Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -406,15 +418,20 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
 
     @PermissionDenied(REQUEST_CAMARA_CODE)
     public void requestCameraFail() {
-        PermissionSettingManager.showPermissionSetting(false, this, getString(R.string
-                .tip_camare_permission), getString(R.string.tip_permission_setting));
+        PermissionSettingManager.showPermissionSetting(false, this, getString
+                (R.string
+                        .tip_camare_permission), getString(R.string
+                .tip_permission_setting));
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[]
+            permissions,
                                            @NonNull int[] grantResults) {
-        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MPermissions.onRequestPermissionsResult(this, requestCode,
+                permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions,
+                grantResults);
     }
 
     /**
@@ -445,8 +462,41 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
      * 到件
      */
     private void daojian() {
-        Intent intent = new Intent(this, DaojianActivity.class);
-        startActivity(intent);
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setView(LayoutInflater.from(this).inflate(R.layout
+                .alert_dialog_daojian_activity, null));
+        dialog.show();
+        dialog.getWindow().setContentView(R.layout
+                .alert_dialog_daojian_activity);
+        Button btnPositive = (Button) dialog.findViewById(R.id
+                .btn_activity_fast);
+        Button btnNegative = (Button) dialog.findViewById(R.id
+                .btn_activity_common);
+
+        btnPositive.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent(DataCollectActivity.this,
+                        FastDaojianActivity.class);
+                startActivity(intent);
+
+                dialog.dismiss();
+            }
+        });
+        btnNegative.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent(DataCollectActivity.this,
+                        DaojianActivity.class);
+                startActivity(intent);
+
+                dialog.dismiss();
+            }
+        });
+
+
     }
 
     /**
@@ -464,8 +514,10 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
      * @param account
      * @param pwd
      */
-    private void IfPrePay(final String saleId, final String account, final String pwd) {
-        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+    private void IfPrePay(final String saleId, final String account, final
+    String pwd) {
+        mLoginUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                        .getContext(),
                 NetworkConstant.PREPAY_STATE);
         LogUtil.trace("path:" + mLoginUrl);
 
@@ -473,7 +525,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
         params.addQueryStringParameter("saleId", saleId);
         params.addQueryStringParameter("userName", account);
         params.addQueryStringParameter("password", pwd);
-        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " + "pwd:" + pwd);
+        LogUtil.e(TAG, "saleId:" + saleId + "; userName:" + account + "; " +
+                "pwd:" + pwd);
 
         final Callback.Cancelable post = x.http().post(params, new Callback
                 .CommonCallback<String>() {
@@ -483,16 +536,19 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber implemen
                 LogUtil.trace("return s:" + s);
 
                 Gson gson = new Gson();
-                LoginResponse loginResponse = gson.fromJson(s, LoginResponse.class);
+                LoginResponse loginResponse = gson.fromJson(s, LoginResponse
+                        .class);
                 if (loginResponse != null) {
                     if ("1".equals(loginResponse.getAuthRet())) {
                         gotoUpload();
                     } else {
-                        Toast.makeText(BaqiangApplication.getContext(), "预付款不足", Toast
-                                .LENGTH_SHORT).show();
+                        Toast.makeText(BaqiangApplication.getContext(),
+                                "预付款不足", Toast
+                                        .LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(BaqiangApplication.getContext(), "预付款不足", Toast.LENGTH_SHORT)
+                    Toast.makeText(BaqiangApplication.getContext(), "预付款不足",
+                            Toast.LENGTH_SHORT)
                             .show();
                 }
             }

@@ -4,20 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Vibrator;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jiebao.baqiang.R;
-import com.jiebao.baqiang.adapter.FilterListener;
-import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
@@ -28,7 +22,6 @@ import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
-import com.jiebao.baqiang.data.db.SalesServiceDBHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
@@ -43,44 +36,30 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 到件
- * <p>
- * 1. 若管理员设置中，到/发件扫描判断开关为开状态，上一站只显示类型为“网点”的项
+ * 中心站点，快速扫描录单
  */
-public class DaojianActivity extends BaseActivityWithTitleAndNumber
-        implements View
-        .OnClickListener, CouldDeleteListView.DelButtonClickListener {
-    private static final String TAG = DaojianActivity.class.getSimpleName();
 
-    private AutoCompleteTextView mTvPreviousStation;
-    private Button mBtnSure, mBtnCancel;
+public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
+        implements View.OnClickListener, CouldDeleteListView
+        .DelButtonClickListener {
+    private static final String TAG = FastDaojianActivity.class.getSimpleName();
+
     private CouldDeleteListView mListView;
     private EditText mEtDeliveryNumber;
-
-    // 上一站网点信息
-    private List<String> mPreviousStationInfo;
-    // 上一站快速提示数据适配器
-    private TestTipsAdatper mPreviousStationAdapter;
 
     private CargoArrivalFileContent mCargoArrivalFileContent;
     private List<CommonScannerListViewBean> mListData;
     private CommonScannerBaseAdapter mScannerBaseAdatper;
+    private Button mBtnSure, mBtnCancel;
 
     private int mScanCount;
     private Vibrator mDeviceVibrator;
     private boolean mIsScanRunning = false;
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        ScanHelper.getInstance().barcodeManager.Barcode_Stop();
-    }
-
-    @Override
     public void initView() {
-        setContent(R.layout.daojian);
-        setHeaderLeftViewText(getString(R.string.main_query));
+        setContent(R.layout.activity_fast_daojian);
+        setHeaderLeftViewText("快速到件");
 
         prepareDataForView();
     }
@@ -93,64 +72,17 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         mDeviceVibrator = (Vibrator) this.getSystemService(this
                 .VIBRATOR_SERVICE);
 
-        mTvPreviousStation = DaojianActivity.this.findViewById(R.id
-                .tv_before_station);
-        mTvPreviousStation.setAdapter(mPreviousStationAdapter);
-        mTvPreviousStation.setOnFocusChangeListener(new View
-                .OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    // 如果当前内容为空，则提示；同时，编辑时自动提示
-                    if (TextUtils.isEmpty(mTvPreviousStation.getText())) {
-                        mTvPreviousStation.showDropDown();
-                    }
-                } else {
-                    LogUtil.trace("mTvPreviousStation no hasFocus");
-                }
-            }
-        });
-        mTvPreviousStation.setOnItemClickListener(new AdapterView
-                .OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int
-                    position, long id) {
-                // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
-                String serverName = mTvPreviousStation.getText().toString();
-                String serverID = SalesServiceDBHelper.getServerIdFromName
-                        (serverName);
-                if (!TextUtils.isEmpty(serverID)) {
-                    // 更新下一站网点编号
-                    mCargoArrivalFileContent.setPreviousStation(serverID);
-                }
-            }
-        });
-        mTvPreviousStation.setOnKeyListener(new View.OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_DEL: {
-                        mTvPreviousStation.setText("", true);
-                    }
-                }
-                return false;
-            }
-
-        });
-
-        mEtDeliveryNumber = DaojianActivity.this.findViewById(R.id
+        mEtDeliveryNumber = FastDaojianActivity.this.findViewById(R.id
                 .et_shipment_number);
 
-        mBtnSure = DaojianActivity.this.findViewById(R.id.btn_ensure);
-        mBtnCancel = DaojianActivity.this.findViewById(R.id.btn_back);
+        mBtnSure = FastDaojianActivity.this.findViewById(R.id.btn_ensure);
+        mBtnCancel = FastDaojianActivity.this.findViewById(R.id.btn_back);
         mBtnSure.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);
 
-        mListView = DaojianActivity.this.findViewById(R.id.list_view_scan_data);
-        mListView.setDelButtonClickListener(DaojianActivity.this);
+        mListView = FastDaojianActivity.this.findViewById(R.id
+                .list_view_scan_data);
+        mListView.setDelButtonClickListener(FastDaojianActivity.this);
         mListView.setAdapter(mScannerBaseAdatper);
     }
 
@@ -158,26 +90,18 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation
-                        .getText().toString()
-                )) {
-                    Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
-                            .LENGTH_SHORT).show();
+                LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
 
-                    mDeviceVibrator.vibrate(1000);
-                    return true;
-                } else {
-                    LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
-                    if (!mIsScanRunning) {
-                        // 没有扫码，发出一次扫码广播
-                        Intent intent = new Intent();
-                        intent.setAction("com.jb.action.F4key");
-                        intent.putExtra("F4key", "down");
-                        DaojianActivity.this.sendBroadcast(intent);
-                        LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
-                        mIsScanRunning = true;
-                    }
+                if (!mIsScanRunning) {
+                    // 没有扫码，发出一次扫码广播
+                    Intent intent = new Intent();
+                    intent.setAction("com.jb.action.F4key");
+                    intent.putExtra("F4key", "down");
+                    FastDaojianActivity.this.sendBroadcast(intent);
+                    LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
+                    mIsScanRunning = true;
                 }
+
 
                 return true;
             }
@@ -203,7 +127,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         }
 
         if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
+            Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
                     .LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
@@ -233,23 +157,6 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     }
 
     @Override
-    public void clickHappend(int position) {
-        LogUtil.trace("position:" + position);
-
-        CargoArrivalFileContent barcode = (CargoArrivalFileContent) mListData
-                .get(position)
-                .getScannerBean();
-        // 此处ListView中数据是有ID值的
-        if (DaojianDBHelper.isRecordUpload(barcode.getId())) {
-            Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除", Toast
-                    .LENGTH_SHORT).show();
-            return;
-        }
-
-        deleteChooseRecord(barcode, position);
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ensure: {
@@ -258,13 +165,30 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             }
 
             case R.id.btn_back: {
-                DaojianActivity.this.finish();
+                FastDaojianActivity.this.finish();
                 LogUtil.trace("All size:" + DaojianDBHelper.findUsableRecords
                         ());
 
                 break;
             }
         }
+    }
+
+    @Override
+    public void clickHappend(int position) {
+        LogUtil.trace("position:" + position);
+
+        CargoArrivalFileContent barcode = (CargoArrivalFileContent) mListData
+                .get(position)
+                .getScannerBean();
+        // 此处ListView中数据是有ID值的
+        if (DaojianDBHelper.isRecordUpload(barcode.getId())) {
+            Toast.makeText(FastDaojianActivity.this, "当前记录已上传，不能删除", Toast
+                    .LENGTH_SHORT).show();
+            return;
+        }
+
+        deleteChooseRecord(barcode, position);
     }
 
     @Override
@@ -296,65 +220,12 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     }
 
     private void prepareDataForView() {
-        mPreviousStationInfo = resolvePreviousStationData();
-        mPreviousStationAdapter = new TestTipsAdatper(DaojianActivity.this,
-                mPreviousStationInfo,
-                new FilterListener() {
-
-                    @Override
-                    public void getFilterData(List<String> list) {
-                        if (list != null) {
-                            if (list.size() == 1) {
-                                String[] arr = list.get(0).toString().split("" +
-                                        "  ");
-                                mTvPreviousStation.dismissDropDown();
-
-                                if (arr != null) {
-                                    if (arr.length >= 2) {
-                                        mTvPreviousStation.setText(arr[1],
-                                                false);
-                                        mCargoArrivalFileContent
-                                                .setPreviousStation(arr[0]);
-                                    }
-                                } else {
-                                    mTvPreviousStation.setText(list.get(0)
-                                            .toString(), false);
-                                }
-
-                                Editable spannable = mTvPreviousStation
-                                        .getText();
-                                Selection.setSelection(spannable, spannable
-                                        .length());
-                            } else {
-                                // do nothing
-                            }
-                        } else {
-                            // do nothing
-                        }
-                    }
-                });
-
         mCargoArrivalFileContent = FileContentHelper
                 .getCargoArrivalFileContent();
 
         mListData = new ArrayList<>();
-        mScannerBaseAdatper = new CommonScannerBaseAdapter(DaojianActivity
+        mScannerBaseAdatper = new CommonScannerBaseAdapter(FastDaojianActivity
                 .this, mListData);
-    }
-
-    /**
-     * 解析上一站网点信息
-     * <p>
-     * 1. 数据源从SalesServiceDBHelper中取；
-     * 2. 做二次过滤，如果 到/发件扫描判断 开关为 开状态，上一站只显示类型为“网点”的项
-     */
-    private List<String> resolvePreviousStationData() {
-        boolean isOpen = SharedUtil.getBoolean(DaojianActivity.this, Constant
-                .PREFERENCE_KEY_SCAN_SWITCH);
-
-        return isOpen ? SalesServiceDBHelper.getSalesServiceOfCentreOrBranch
-                (2) :
-                SalesServiceDBHelper.getSalesServiceOfCentreOrBranch(1);
     }
 
     /**
@@ -365,6 +236,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     private boolean insertForScanner(String barcode) {
         Date scanDate = new Date();
 
+        // 快速到件，设置上一站编码为""
+        mCargoArrivalFileContent.setPreviousStation("");
         mCargoArrivalFileContent.setScanDate(scanDate);
         mCargoArrivalFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
@@ -411,7 +284,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
      * @param actionType 0：减少；1：增加
      */
     private void increaseOrDecreaseRecords(int actionType) {
-        int unloadRecords = SharedUtil.getInt(DaojianActivity.this, Constant
+        int unloadRecords = SharedUtil.getInt(FastDaojianActivity.this, Constant
                 .PREFERENCE_NAME_DJ);
         LogUtil.trace("unloadRecords:" + unloadRecords);
 
@@ -427,7 +300,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             }
         }
 
-        SharedUtil.putInt(DaojianActivity.this, Constant.PREFERENCE_NAME_DJ,
+        SharedUtil.putInt(FastDaojianActivity.this, Constant.PREFERENCE_NAME_DJ,
                 unloadRecords);
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_DJ));
@@ -444,7 +317,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (DaojianActivity
+                    (FastDaojianActivity
                             .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
@@ -457,7 +330,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 public void onClick(DialogInterface dialog, int which) {
                     int barcodeID = bean.getId();
                     if (DaojianDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除",
+                        Toast.makeText(FastDaojianActivity.this, "当前记录已上传，不能删除",
                                 Toast.LENGTH_SHORT)
                                 .show();
                         return;
@@ -544,7 +417,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         final int barcodeID = barcode.getId();
 
         if (DaojianDBHelper.isRecordUpload(barcodeID)) {
-            Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除", Toast
+            Toast.makeText(FastDaojianActivity.this, "当前记录已上传，不能删除", Toast
                     .LENGTH_SHORT).show();
             return;
         }
@@ -555,7 +428,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                     .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (DaojianActivity
+                    (FastDaojianActivity
                             .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
@@ -567,7 +440,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (DaojianDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除",
+                        Toast.makeText(FastDaojianActivity.this, "当前记录已上传，不能删除",
                                 Toast.LENGTH_SHORT)
                                 .show();
                         return;
@@ -598,9 +471,9 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
      * 将ListView当前录入记录上传服务器，根据ID上传
      */
     private void uploadListViewDataToServer() {
-        if (!NetworkUtils.isNetworkConnected(DaojianActivity
+        if (!NetworkUtils.isNetworkConnected(FastDaojianActivity
                 .this)) {
-            Toast.makeText(DaojianActivity.this, "网络不可用，请检查网络", Toast
+            Toast.makeText(FastDaojianActivity.this, "网络不可用，请检查网络", Toast
                     .LENGTH_SHORT).show();
             return;
         }
@@ -623,12 +496,13 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                         @Override
                         public boolean onSuccess(String s) {
                             // 文件上传存在延时
-                            Toast.makeText(DaojianActivity.this, "文件上传成功", Toast
-                                    .LENGTH_SHORT).show();
+                            Toast.makeText(FastDaojianActivity.this,
+                                    "文件上传成功", Toast
+                                            .LENGTH_SHORT).show();
                             setHeaderRightViewText("未上传：" +
                                     searchUnloadDataForUpdate
-                                    (Constant
-                                            .SYNC_UNLOAD_DATA_TYPE_DJ));
+                                            (Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_DJ));
                             return true;
                         }
 
@@ -640,7 +514,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                         @Override
                         public boolean onFinish() {
                             closeLoadinDialog();
-                            DaojianActivity.this.finish();
+                            FastDaojianActivity.this.finish();
 
                             return false;
                         }
