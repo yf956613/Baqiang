@@ -64,14 +64,15 @@ public class CommonUploadFile {
 
     public CommonUploadFile(UploadFileType type) {
         this.mTime = TextStringUtil.getFormatTimeString();
-        this.mNoRepeatString = TextStringUtil.generateShortUuid();
+        this.mNoRepeatString = TextStringUtil.generateNumberUuid();
         this.type = type;
 
         // /sdcard/BaQiang目录下生成文件
         mFile = getFileInstance();
     }
 
-    public void setCallbackListener(ICommonUpdateFileCallBack callbackListener) {
+    public void setCallbackListener(ICommonUpdateFileCallBack
+                                            callbackListener) {
         this.mCallbackListener = callbackListener;
     }
 
@@ -111,7 +112,8 @@ public class CommonUploadFile {
         }
 
         currentFileName.append(this.mTime + this.mNoRepeatString + FILE_SUFFIX);
-        final String fileName = FileConstant.APP_SDCARD_FILE_NAME + currentFileName.toString();
+        final String fileName = FileConstant.APP_SDCARD_FILE_NAME +
+                currentFileName.toString();
 
         if (FileUtils.createOrExistsFile(fileName)) {
             mCurrentFileName = fileName;
@@ -130,7 +132,8 @@ public class CommonUploadFile {
      */
     public boolean writeContentToFile(String valueContent, boolean isAppend) {
         try {
-            FileIOUtils.writeFileFromBytesByStream(mFile, valueContent.getBytes("GB2312"),
+            FileIOUtils.writeFileFromBytesByStream(mFile, valueContent
+                            .getBytes("GB2312"),
                     isAppend);
             return true;
         } catch (UnsupportedEncodingException e) {
@@ -147,7 +150,8 @@ public class CommonUploadFile {
      */
     public void uploadFile() {
         LogUtil.trace("<3333333333333>");
-        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication.getContext(),
+        mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
+                        .getContext(),
                 NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
 
@@ -156,8 +160,10 @@ public class CommonUploadFile {
         params.addQueryStringParameter("password", UpdateInterface.psw);
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
-        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());
-        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "" + this.mFile.length());
+        params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile
+                .getName());
+        params.addQueryStringParameter(NetworkConstant.PKG_SIZE, "" + this
+                .mFile.length());
         params.addQueryStringParameter(NetworkConstant.PGK_CHECKSUM, "sdfa");
         params.addQueryStringParameter(NetworkConstant.PKG_TYPE, "1");
         params.addQueryStringParameter(NetworkConstant.PKG_ENC, "0");
@@ -168,7 +174,8 @@ public class CommonUploadFile {
             public void onSuccess(String s) {
                 LogUtil.trace("s" + s);
                 Gson gson = new Gson();
-                UploadFileResponseBean loginResponse = gson.fromJson(s, UploadFileResponseBean
+                UploadFileResponseBean loginResponse = gson.fromJson(s,
+                        UploadFileResponseBean
                         .class);
 
                 if (loginResponse.getUploadRet() == 1) {

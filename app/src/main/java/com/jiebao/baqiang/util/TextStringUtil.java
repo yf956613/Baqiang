@@ -15,11 +15,19 @@ import java.util.UUID;
 
 public class TextStringUtil {
 
-    public static String[] chars = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
-            "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0",
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H",
-            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y",
+    public static String[] chars = new String[]{"a", "b", "c", "d", "e", "f",
+            "g", "h", "i", "j",
+            "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+            "x", "y", "z", "0",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D",
+            "E", "F", "G", "H",
+            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+            "V", "W", "X", "Y",
             "Z"};
+
+    public static String[] NUMBER_CHARS = new String[]{"0",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9"
+    };
 
     /**
      * 生成8位带有字母或数字的字符串，有效避免重复
@@ -38,13 +46,30 @@ public class TextStringUtil {
     }
 
     /**
+     * 8位数字随机数
+     *
+     * @return
+     */
+    public static String generateNumberUuid() {
+        StringBuffer shortBuffer = new StringBuffer();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        for (int i = 0; i < 8; i++) {
+            String str = uuid.substring(i * 4, i * 4 + 4);
+            int x = Integer.parseInt(str, 16);
+            shortBuffer.append(NUMBER_CHARS[x % 0x0A]);
+        }
+        return shortBuffer.toString();
+    }
+
+    /**
      * 生成指定格式的事件字符串
      *
      * @return
      */
     public static String getFormatTimeString() {
         long current = System.currentTimeMillis();
-        String time = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(current));
+        String time = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date
+                (current));
         return time;
     }
 
@@ -80,7 +105,8 @@ public class TextStringUtil {
             day = diff / (24 * 60 * 60 * 1000);
             hour = (diff / (60 * 60 * 1000) - day * 24);
             min = ((diff / (60 * 1000)) - day * 24 * 60 - hour * 60);
-            sec = (diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+            sec = (diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min *
+                    60);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -97,7 +123,8 @@ public class TextStringUtil {
      */
     public static String getFormatTime() {
         long current = System.currentTimeMillis();
-        String time = new SimpleDateFormat("yyyyMMdd").format(new Date(current));
+        String time = new SimpleDateFormat("yyyyMMdd").format(new Date
+                (current));
         return time;
     }
 
@@ -109,7 +136,8 @@ public class TextStringUtil {
      */
     public static boolean isIpAddressAvailable(String text) {
         if (!TextUtils.isEmpty(text)) {
-            String regex = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." + "" +
+            String regex = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." +
+                    "" +
                     "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." + "" +
                     "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." + "" +
                     "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
@@ -128,7 +156,8 @@ public class TextStringUtil {
      */
     public static boolean isPortCheckAvailable(String text) {
         if (text != null && !text.isEmpty()) {
-            String regex = "([0-9]|[1-9]\\d{1," + "3}|[1-5]\\d{4}|6[0-5]{2}[0-3][0-5])";
+            String regex = "([0-9]|[1-9]\\d{1," +
+                    "3}|[1-5]\\d{4}|6[0-5]{2}[0-3][0-5])";
             if (text.matches(regex)) {
                 return true;
             }

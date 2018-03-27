@@ -30,7 +30,6 @@ import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCfajianUploadFile;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.Content;
 import com.jiebao.baqiang.global.Footer;
@@ -500,7 +499,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
                 unloadRecords = LiucangDBHelper.findUnloadRecords();
                 SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
-                LogUtil.trace("FJ:unloadRecords:" + unloadRecords);
+                LogUtil.trace("LCJ:unloadRecords:" + unloadRecords);
 
                 break;
             }
