@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.updateData.ServerInfo;
+import com.jiebao.baqiang.data.updateData.SyncServerTime;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.updateData.UpdateLiuCangType;
 import com.jiebao.baqiang.data.updateData.UpdateSalesServiceData;
@@ -322,6 +323,14 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     private void syncDataAction() {
+
+        ServerTimeSyncTask serverTimeSyncTask = new ServerTimeSyncTask();
+        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+        if (!Constant.DEBUG) {
+            Log.e("ljz", "serverTimeSyncTask");
+            serverTimeSyncTask.execute("serverTimeSyncTask");
+        }
+
         ServerInfoSyncTask serverInfoSyncTask = new ServerInfoSyncTask();
         // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
         if (!Constant.DEBUG) {
@@ -378,10 +387,13 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         return 1;
     }
 
+
     /**
      * 请求服务器时间，更新设备当前时间
      */
-    class ServerTimeSyncTask extends AsyncTask<String, Integer, Long> {
+    class ServerTimeSyncTask extends AsyncTask<String, Integer, Long>
+            implements IServerInfoStatus {
+
 
         @Override
         protected void onPreExecute() {
@@ -390,6 +402,14 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
         @Override
         protected Long doInBackground(String... strings) {
+
+            Log.e("ljz", "doInBackground" +Arrays.toString
+                    (strings));
+
+            SyncServerTime.getInstance().setDataDownloadStatus(this);
+            // 执行服务器数据请求
+            SyncServerTime.getInstance().getRequestServerTime();
+
             return null;
         }
 
@@ -403,6 +423,28 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
             // MainThread
+        }
+
+        @Override
+        public void updateServerInfo(String serverinfo, String time, String
+                apkVersion) {
+
+                LogUtil.trace("ServerTimeSyncTask " + serverinfo +  " " + time + " " + apkVersion);
+                Log.e("ljz", "ServerTimeSyncTask " + serverinfo +  " " + time + " " + apkVersion);
+
+                if (time != null && time.length() > 0) {
+                    Intent timeIntent = new Intent();
+                    timeIntent.setAction("com.time.UPDATETIME");
+                    timeIntent.putExtra("time", Long.parseLong(time));
+                    MainActivity.this.sendBroadcast(timeIntent);
+                    LogUtil.trace("start to update system time");
+                    updateLoadingDialogMsg(getString(R.string.sync_servertimer));
+                }
+        }
+
+        @Override
+        public void showServerInfoError(String errorMsg) {
+            LogUtil.trace("showServerInfoError ServerTimeSyncTask ");
         }
 
     }
@@ -420,10 +462,14 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
         @Override
         protected Long doInBackground(String... strings) {
+
+            Log.e("ljz", "doInBackground" +Arrays.toString
+                    (strings));
+
             ServerInfo.getInstance().setDataDownloadStatus(this);
             // 执行服务器数据请求
             ServerInfo.getInstance().getServerInfo();
-            LogUtil.e("ljz", "doInBackground");
+
 
             return null;
         }
@@ -444,6 +490,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         public void updateServerInfo(String serverinfo, String time, String
                 apkVersion) {
             LogUtil.trace("get updateServerInfo done ");
+
+            Log.e("ljz", "ServerInfoSyncTask " + serverinfo +  " " + time + " " + apkVersion);
 
             Message serverMsg = Message.obtain();
             // 捷宝服务器数据同步成功
@@ -491,7 +539,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
             LogUtil.trace("doInBackground parameters:" + Arrays.toString
                     (strings));
 
-            Log.e("ljz", "doInBackground");
+            Log.e("ljz", "doInBackground" +Arrays.toString
+                    (strings));
 
             if (updateInterface != null) {
                 updateInterface.setDataDownloadStatus(this);
@@ -638,6 +687,24 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                                     .download_baqiangapk));
                         } else {
                             // do nothing
+                            closeLoadinDialog();
+
+                            // MainThread 强制更新后台数据
+                            showProgressDialog();
+
+                            //set count 0 begin download data
+                            downloadCnt = 0;
+                            downloadSuccessCnt = 0;
+                            downloadFailedCnt = 0;
+                            updateSucessCnt = 0;
+                            DataSyncTask shipmentDataSyncTask = new DataSyncTask();
+                            shipmentDataSyncTask.setUpdateInterface
+                                    (UpdateShipmentType.getInstance());
+                            if (!Constant.DEBUG) {
+                                shipmentDataSyncTask.execute
+                                        ("shipmentDataSyncTask");
+                            }
+
                         }
 
                     } else {
@@ -667,6 +734,23 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                     Toast.makeText(MainActivity.this, activity.getString(R
                             .string
                             .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
+
+                    // MainThread 强制更新后台数据
+                    showProgressDialog();
+
+                    //set count 0 begin download data
+                    downloadCnt = 0;
+                    downloadSuccessCnt = 0;
+                    downloadFailedCnt = 0;
+                    updateSucessCnt = 0;
+                    DataSyncTask shipmentDataSyncTask = new DataSyncTask();
+                    shipmentDataSyncTask.setUpdateInterface
+                            (UpdateShipmentType.getInstance());
+                    if (!Constant.DEBUG) {
+                        shipmentDataSyncTask.execute
+                                ("shipmentDataSyncTask");
+                    }
+
                     break;
                 }
 

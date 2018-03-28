@@ -18,7 +18,10 @@ import org.xutils.x;
 public class SyncServerTime extends UpdateInterface {
     private static final String TAG = SyncServerTime.class.getSimpleName();
 
+    private String serverVersion;
     private String serverTime;
+    private String serverApkVersin;
+
     private volatile static SyncServerTime mInstance;
     private static String mServerInfoUrl = "";
     private IServerInfoStatus mServerInfoStatus;
@@ -43,7 +46,7 @@ public class SyncServerTime extends UpdateInterface {
     }
 
     public void getRequestServerTime() {
-        mServerInfoUrl = SharedUtil.getJiebaoServletAddresFromSP
+        mServerInfoUrl = SharedUtil.getServletAddresFromSP
                 (BaqiangApplication.getContext(), NetworkConstant
                         .SYNC_SERVER_TIME);
 
@@ -51,7 +54,7 @@ public class SyncServerTime extends UpdateInterface {
         params.addQueryStringParameter("saleId", salesId);
         params.addQueryStringParameter("userName", userName);
         params.addQueryStringParameter("password", psw);
-        params.setConnectTimeout(45 * 1000);
+        params.setConnectTimeout(15 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {
 
@@ -62,8 +65,14 @@ public class SyncServerTime extends UpdateInterface {
                         AppUpdateBean.class);
                 LogUtil.trace("appInfo:" + appInfo.toString());
 
+                serverVersion = appInfo.getServerVersion();
                 serverTime = appInfo.getServerTime();
-                mServerInfoStatus.updateServerInfo("", serverTime, "");
+                serverApkVersin = appInfo.getBaQiangApkVersion();
+
+                // 请求成功
+                mServerInfoStatus.updateServerInfo(serverVersion, serverTime,
+                        serverApkVersin);
+
             }
 
             @Override

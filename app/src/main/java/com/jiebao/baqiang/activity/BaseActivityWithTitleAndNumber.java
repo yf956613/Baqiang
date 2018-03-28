@@ -358,7 +358,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
     private TextView loadingTextView = null;
     public void updateLoadingDialogMsg(String msg) {
-        if (loadingBulider != null && loadingTextView != null) {
+
+        if (loadingBulider != null && loadingTextView != null && loadingBulider.isShowing()) {
             loadingTextView.setText(msg);
         }
     }

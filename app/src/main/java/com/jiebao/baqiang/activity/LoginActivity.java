@@ -93,11 +93,11 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
             LogUtil.trace("first start reset default value");
             Log.e("jiebao", "first start reset default value");
 
-            SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_ADDRESS, "193.112.127.158");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_ADDRESS, "10.1.1.187");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_DATA_SERVER_PORT, "9876");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER, "193.112.127.158");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER_PORT, "9876");
-            SharedUtil.putString(this, Constant.PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "193.112.127.158");
+            SharedUtil.putString(this, Constant.PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "10.1.1.187");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_SALE_SERVICE, "0020");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_BAQIANG_FIRST_START, "false");
 
