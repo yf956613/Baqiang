@@ -48,9 +48,11 @@ import java.util.List;
  * 卸车到件
  */
 
-public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber implements View
+public class UnloadCargoArrivalActivity extends
+        BaseActivityWithTitleAndNumber implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
-    private static final String TAG = UnloadCargoArrivalActivity.class.getSimpleName();
+    private static final String TAG = UnloadCargoArrivalActivity.class
+            .getSimpleName();
 
     private AutoCompleteTextView mTvVehicleId, mTvPreviousStation;
     private Button mBtnSure, mBtnCancel;
@@ -95,11 +97,14 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
     @Override
     public void initData() {
-        ScanHelper.getInstance().barcodeManager.setScanTime(Constant.TIME_SCAN_DELAY);
+        ScanHelper.getInstance().barcodeManager.setScanTime(Constant
+                .TIME_SCAN_DELAY);
 
-        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
+        mDeviceVibrator = (Vibrator) this.getSystemService(this
+                .VIBRATOR_SERVICE);
 
-        mTvVehicleId = UnloadCargoArrivalActivity.this.findViewById(R.id.tv_car_code);
+        mTvVehicleId = UnloadCargoArrivalActivity.this.findViewById(R.id
+                .tv_car_code);
         mTvVehicleId.setAdapter(mVehicleInfoAdapter);
         // 监听EditText是否获取焦点
         mTvVehicleId.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -116,10 +121,12 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 }
             }
         });
-        mTvVehicleId.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvVehicleId.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
@@ -138,10 +145,12 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         });
 
-        mTvPreviousStation = UnloadCargoArrivalActivity.this.findViewById(R.id.tv_before_station);
+        mTvPreviousStation = UnloadCargoArrivalActivity.this.findViewById(R
+                .id.tv_before_station);
         mTvPreviousStation.setAdapter(mPreviousStationAdapter);
         // 监听EditText是否获取焦点
-        mTvPreviousStation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvPreviousStation.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -155,13 +164,16 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 }
             }
         });
-        mTvPreviousStation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvPreviousStation.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverName = mTvPreviousStation.getText().toString();
-                String serverID = SalesServiceDBHelper.getServerIdFromName(serverName);
+                String serverID = SalesServiceDBHelper.getServerIdFromName
+                        (serverName);
                 if (!TextUtils.isEmpty(serverID)) {
                     // 更新上一站网点编号
                     mUnloadArrivalFileContent.setPreviousStation(serverID);
@@ -181,14 +193,18 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         });
 
-        mEtDeliveryNumber = UnloadCargoArrivalActivity.this.findViewById(R.id.et_shipment_number);
+        mEtDeliveryNumber = UnloadCargoArrivalActivity.this.findViewById(R.id
+                .et_shipment_number);
 
-        mBtnSure = UnloadCargoArrivalActivity.this.findViewById(R.id.btn_ensure);
-        mBtnCancel = UnloadCargoArrivalActivity.this.findViewById(R.id.btn_back);
+        mBtnSure = UnloadCargoArrivalActivity.this.findViewById(R.id
+                .btn_ensure);
+        mBtnCancel = UnloadCargoArrivalActivity.this.findViewById(R.id
+                .btn_back);
         mBtnSure.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);
 
-        mListView = UnloadCargoArrivalActivity.this.findViewById(R.id.list_view_scan_data);
+        mListView = UnloadCargoArrivalActivity.this.findViewById(R.id
+                .list_view_scan_data);
         mListView.setDelButtonClickListener(UnloadCargoArrivalActivity.this);
         mListView.setAdapter(mScannerBaseAdatper);
     }
@@ -197,15 +213,19 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                if (!VehicleInfoDBHelper.checkVehicleInfo(mTvVehicleId.getText().toString())) {
-                    Toast.makeText(UnloadCargoArrivalActivity.this, "车辆码信息异常", Toast
+                if (!VehicleInfoDBHelper.checkVehicleInfo(mTvVehicleId
+                        .getText().toString())) {
+                    Toast.makeText(UnloadCargoArrivalActivity.this,
+                            "车辆码信息异常", Toast
                             .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
                     return true;
-                } else if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation.getText()
+                } else if (!SalesServiceDBHelper.checkServerInfo
+                        (mTvPreviousStation.getText()
                         .toString())) {
-                    Toast.makeText(UnloadCargoArrivalActivity.this, "上一站网点信息异常", Toast
+                    Toast.makeText(UnloadCargoArrivalActivity.this,
+                            "上一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
 
                     mDeviceVibrator.vibrate(1000);
@@ -249,7 +269,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         }
 
         if (XcdjDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(UnloadCargoArrivalActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UnloadCargoArrivalActivity.this, "运单号已存在", Toast
+                    .LENGTH_SHORT).show();
             mDeviceVibrator.vibrate(1000);
 
             mIsScanRunning = true;
@@ -281,11 +302,13 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     public void clickHappend(int position) {
         LogUtil.trace("position:" + position);
 
-        UnloadArrivalFileContent barcode = (UnloadArrivalFileContent) mListData.get(position)
+        UnloadArrivalFileContent barcode = (UnloadArrivalFileContent)
+                mListData.get(position)
                 .getScannerBean();
         // 此处ListView中数据是有ID值的
         if (XcdjDBHelper.isRecordUpload(barcode.getId())) {
-            Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
+            Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除",
+                    Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -324,10 +347,12 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 CommonScannerListViewBean listViewBean = mListData.get(index);
 
                 // origin data
-                UnloadArrivalFileContent barcode = (UnloadArrivalFileContent) listViewBean
+                UnloadArrivalFileContent barcode = (UnloadArrivalFileContent)
+                        listViewBean
                         .getScannerBean();
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
-                UnloadArrivalFileContent bean = XcdjDBHelper.getNewInRecord(barcode
+                UnloadArrivalFileContent bean = XcdjDBHelper.getNewInRecord
+                        (barcode
                         .getShipmentNumber(), barcode.getScanDate());
 
                 listViewBean.setScannerBean(bean);
@@ -344,31 +369,35 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
     private void prepareDataForView() {
         mVehicleInfo = VehicleInfoDBHelper.getAllVehicleID();
-        mVehicleInfoAdapter = new TestTipsAdatper(UnloadCargoArrivalActivity.this, mVehicleInfo,
+        mVehicleInfoAdapter = new TestTipsAdatper(UnloadCargoArrivalActivity
+                .this, mVehicleInfo,
                 new FilterListener() {
 
-            @Override
-            public void getFilterData(List<String> list) {
-                if (list != null) {
-                    if (list.size() == 1) {
-                        mTvVehicleId.dismissDropDown();
-                        mTvVehicleId.setText(list.get(0), false);
+                    @Override
+                    public void getFilterData(List<String> list) {
+                        if (list != null) {
+                            if (list.size() == 1) {
+                                mTvVehicleId.dismissDropDown();
+                                mTvVehicleId.setText(list.get(0), false);
 
-                        mUnloadArrivalFileContent.setVehicleId(list.get(0));
+                                mUnloadArrivalFileContent.setVehicleId(list
+                                        .get(0));
 
-                        Editable spannable = mTvVehicleId.getText();
-                        Selection.setSelection(spannable, spannable.length());
-                    } else {
-                        // do nothing
+                                Editable spannable = mTvVehicleId.getText();
+                                Selection.setSelection(spannable, spannable
+                                        .length());
+                            } else {
+                                // do nothing
+                            }
+                        } else {
+                            // do nothing
+                        }
                     }
-                } else {
-                    // do nothing
-                }
-            }
-        });
+                });
 
         mPreviousStationInfo = SalesServiceDBHelper.getAllSalesServiceData();
-        mPreviousStationAdapter = new TestTipsAdatper(UnloadCargoArrivalActivity.this,
+        mPreviousStationAdapter = new TestTipsAdatper
+                (UnloadCargoArrivalActivity.this,
                 mPreviousStationInfo, new FilterListener() {
 
             @Override
@@ -381,10 +410,12 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                         if (arr != null) {
                             if (arr.length >= 2) {
                                 mTvPreviousStation.setText(arr[1], false);
-                                mUnloadArrivalFileContent.setPreviousStation(arr[0]);
+                                mUnloadArrivalFileContent.setPreviousStation
+                                        (arr[0]);
                             }
                         } else {
-                            mTvPreviousStation.setText(list.get(0).toString(), false);
+                            mTvPreviousStation.setText(list.get(0).toString()
+                                    , false);
                         }
 
                         Editable spannable = mTvPreviousStation.getText();
@@ -398,11 +429,14 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         });
 
-        mUnloadArrivalFileContent = FileContentHelper.getUnloadArrivalFileContent();
-        LogUtil.trace("mUnloadArrivalFileContent:" + mUnloadArrivalFileContent.toString());
+        mUnloadArrivalFileContent = FileContentHelper
+                .getUnloadArrivalFileContent();
+        LogUtil.trace("mUnloadArrivalFileContent:" +
+                mUnloadArrivalFileContent.toString());
 
         mListData = new ArrayList<>();
-        mScannerBaseAdatper = new CommonScannerBaseAdapter(UnloadCargoArrivalActivity.this,
+        mScannerBaseAdatper = new CommonScannerBaseAdapter
+                (UnloadCargoArrivalActivity.this,
                 mListData);
     }
 
@@ -416,9 +450,11 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
         mUnloadArrivalFileContent.setScanDate(scanDate);
         mUnloadArrivalFileContent.setShipmentNumber(barcode);
-        mUnloadArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime());
+        mUnloadArrivalFileContent.setOperateDate(TextStringUtil.getFormatTime
+                ());
         // 该结果从 扫码时间 转化得来
-        mUnloadArrivalFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd").format(scanDate));
+        mUnloadArrivalFileContent.setOperateDate(new SimpleDateFormat
+                ("yyyMMdd").format(scanDate));
         return XcdjDBHelper.insertDataToDatabase(mUnloadArrivalFileContent);
     }
 
@@ -435,9 +471,11 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         mEtDeliveryNumber.setText(barcode);
 
         // 把 instert 的 record 从数据库中取出来，该record内容是更新后的内容
-        UnloadArrivalFileContent bean = XcdjDBHelper.getNewInRecord(mUnloadArrivalFileContent
+        UnloadArrivalFileContent bean = XcdjDBHelper.getNewInRecord
+                (mUnloadArrivalFileContent
                 .getShipmentNumber(), mUnloadArrivalFileContent.getScanDate());
-        CommonScannerListViewBean mCommonScannerListViewBean = new CommonScannerListViewBean();
+        CommonScannerListViewBean mCommonScannerListViewBean = new
+                CommonScannerListViewBean();
         mCommonScannerListViewBean.setId(++mScanCount);
         mCommonScannerListViewBean.setScannerBean(bean);
 
@@ -457,7 +495,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
      * @param actionType 0：减少；1：增加
      */
     private void increaseOrDecreaseRecords(int actionType) {
-        int unloadRecords = SharedUtil.getInt(UnloadCargoArrivalActivity.this, Constant
+        int unloadRecords = SharedUtil.getInt(UnloadCargoArrivalActivity
+                .this, Constant
                 .PREFERENCE_NAME_XCDJ);
         LogUtil.trace("unloadRecords:" + unloadRecords);
 
@@ -473,7 +512,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
             }
         }
 
-        SharedUtil.putInt(UnloadCargoArrivalActivity.this, Constant.PREFERENCE_NAME_XCDJ,
+        SharedUtil.putInt(UnloadCargoArrivalActivity.this, Constant
+                        .PREFERENCE_NAME_XCDJ,
                 unloadRecords);
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_XCDJ));
@@ -484,23 +524,27 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
      *
      * @param bean
      */
-    private void deleteChooseRecord(final UnloadArrivalFileContent bean, final int position) {
+    private void deleteChooseRecord(final UnloadArrivalFileContent bean,
+                                    final int position) {
         if (mListData != null && mListData.size() != 0) {
             LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
                     (UnloadCargoArrivalActivity
-                    .this);
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
+                    "记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int barcodeID = bean.getId();
                     if (XcdjDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除", Toast
+                        Toast.makeText(UnloadCargoArrivalActivity.this,
+                                "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
                         return;
                     }
@@ -508,13 +552,15 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                     // 根据ID值，设置record为不可用
                     XcdjDBHelper.deleteFindedBean(barcodeID);
                     // 刷新UI，ListView
-                    updateListViewForDelete(ZhuangcheActivity.DeleteAction.DELETE_ACTION_CHOOSE,
+                    updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                                    .DELETE_ACTION_CHOOSE,
                             position);
 
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -530,7 +576,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
     /**
      * 删除操作执行后，触发刷新显示当前Activity的ListView
      */
-    private void updateListViewForDelete(ZhuangcheActivity.DeleteAction action, int position) {
+    private void updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                                                 action, int position) {
         switch (action) {
             case DELETE_ACTION_F2: {
                 if (mListData != null) {
@@ -577,43 +624,51 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
         }
 
         // ListView中最近录入的record
-        final UnloadArrivalFileContent barcode = (UnloadArrivalFileContent) mListData.get(0)
+        final UnloadArrivalFileContent barcode = (UnloadArrivalFileContent)
+                mListData.get(0)
                 .getScannerBean();
         final int barcodeID = barcode.getId();
 
         if (XcdjDBHelper.isRecordUpload(barcodeID)) {
-            Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
+            Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除",
+                    Toast.LENGTH_SHORT)
                     .show();
             return;
         }
 
         if (mListData != null && mListData.size() != 0) {
-            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + barcode
+            LogUtil.trace("mListData.size:" + mListData.size() + "; " +
+                    "barcode:" + barcode
                     .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
                     (UnloadCargoArrivalActivity
-                    .this);
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
+                    " 记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (XcdjDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(UnloadCargoArrivalActivity.this, "当前记录已上传，不能删除", Toast
+                        Toast.makeText(UnloadCargoArrivalActivity.this,
+                                "当前记录已上传，不能删除", Toast
                                 .LENGTH_SHORT).show();
                         return;
                     }
 
                     XcdjDBHelper.deleteFindedBean(barcodeID);
-                    updateListViewForDelete(ZhuangcheActivity.DeleteAction.DELETE_ACTION_F2, 0);
+                    updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                            .DELETE_ACTION_F2, 0);
 
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -638,7 +693,8 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
 
         if (!NetworkUtils.isNetworkConnected(UnloadCargoArrivalActivity
                 .this)) {
-            Toast.makeText(UnloadCargoArrivalActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT)
+            Toast.makeText(UnloadCargoArrivalActivity.this, "网络不可用，请检查网络",
+                    Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -655,14 +711,17 @@ public class UnloadCargoArrivalActivity extends BaseActivityWithTitleAndNumber i
                 uploadContent.add(mListData.get(index).getScannerBean());
             }
 
-            new CommonDbHelperToUploadFile<UnloadArrivalFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+            new CommonDbHelperToUploadFile<UnloadArrivalFileContent>()
+                    .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                 @Override
                 public boolean onSuccess(String s) {
                     // 文件上传存在延时
-                    Toast.makeText(UnloadCargoArrivalActivity.this, "文件上传成功", Toast.LENGTH_SHORT)
+                    Toast.makeText(UnloadCargoArrivalActivity.this, "文件上传成功",
+                            Toast.LENGTH_SHORT)
                             .show();
-                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
+                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate
+                            (Constant
                             .SYNC_UNLOAD_DATA_TYPE_XCDJ));
                     return true;
                 }

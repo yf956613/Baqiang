@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
@@ -292,29 +291,32 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK: {
                 // 提示是否切换账号
-                final AlertDialog.Builder normalDialog = new AlertDialog
+                final AlertDialog.Builder dialogBuilder = new AlertDialog
                         .Builder(MainActivity.this);
-                normalDialog.setTitle("提示");
-                normalDialog.setCancelable(false);
-                normalDialog.setMessage("是否退出当前账号？");
-                normalDialog.setPositiveButton("确定", new DialogInterface
-                        .OnClickListener() {
+                dialogBuilder.setTitle("提示");
 
+                View view = MainActivity.this.getLayoutInflater()
+                        .inflate(R.layout.alert_dialog_toast, null);
+                dialogBuilder.setView(view);
+                final AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
+
+                Button btnCancel = view.findViewById(R.id.btn_cancel);
+                btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                Button btnSure = view.findViewById(R.id.btn_sure);
+                btnSure.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
                         // 回退到LoginActivity
                         MainActivity.this.finish();
                     }
                 });
-                normalDialog.setNegativeButton("取消", new DialogInterface
-                        .OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                normalDialog.show();
 
                 return true;
             }

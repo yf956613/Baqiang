@@ -239,9 +239,9 @@ public class AdministratorSettingActivity extends
     private void showAlertDialogForServerID() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setView(LayoutInflater.from(this).inflate(R.layout
-                .alert_dialog, null));
+                .alert_dialog_set_serviceid, null));
         dialog.show();
-        dialog.getWindow().setContentView(R.layout.alert_dialog);
+        dialog.getWindow().setContentView(R.layout.alert_dialog_set_serviceid);
         Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
         Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
         final EditText etContent = (EditText) dialog.findViewById(R.id
