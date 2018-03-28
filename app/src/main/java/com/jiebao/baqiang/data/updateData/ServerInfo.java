@@ -1,39 +1,17 @@
 package com.jiebao.baqiang.data.updateData;
 
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jiebao.baqiang.activity.AdministratorSettingActivity;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
-import com.jiebao.baqiang.data.bean.SalesService;
-import com.jiebao.baqiang.data.bean.SalesServiceList;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.global.Constant;
-import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.IServerInfoStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
-import com.jiebao.baqiang.service.DownLoadApkFileService;
-import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
-import org.xutils.DbManager;
 import org.xutils.common.Callback;
-import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/3/20.

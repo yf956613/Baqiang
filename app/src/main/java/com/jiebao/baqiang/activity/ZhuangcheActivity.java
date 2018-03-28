@@ -211,7 +211,20 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                 if (hasFocus) {
                     // 如果当前内容为空，则提示；同时，编辑时自动提示
                     if (TextUtils.isEmpty(mTvShipmentType.getText())) {
-                        mTvShipmentType.showDropDown();
+                        // FIXME 默认选择汽运，不弹出提示框
+                        // mTvShipmentType.showDropDown();
+                        mTvShipmentType.setText("汽运");
+                        String shipmentTypeID = ShipmentTypeDBHelper
+                                .getShipmentTypeIDFromName
+                                        ("汽运");
+                        if (!TextUtils.isEmpty(shipmentTypeID)) {
+                            mZcFajianFileContent.setShipmentType
+                                    (shipmentTypeID);
+                        } else {
+                            // do nothing
+                        }
+                    } else {
+                        // do nothing
                     }
                 } else {
                     LogUtil.trace("mTvShipmentType no hasFocus");
@@ -228,7 +241,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                 String shipmentTypeName = mTvShipmentType.getText().toString();
                 String shipmentTypeID = ShipmentTypeDBHelper
                         .getShipmentTypeIDFromName
-                        (shipmentTypeName);
+                                (shipmentTypeName);
                 if (!TextUtils.isEmpty(shipmentTypeID)) {
                     mZcFajianFileContent.setShipmentType(shipmentTypeID);
                 }
@@ -272,7 +285,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     return true;
                 } else if (!SalesServiceDBHelper.checkServerInfo
                         (mTvNextStation.getText()
-                        .toString())) {
+                                .toString())) {
                     Toast.makeText(ZhuangcheActivity.this, "下一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
 
@@ -280,7 +293,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     return true;
                 } else if (!ShipmentTypeDBHelper.checkShipmentType
                         (mTvShipmentType.getText()
-                        .toString())) {
+                                .toString())) {
                     Toast.makeText(ZhuangcheActivity.this, "快件类型信息异常", Toast
                             .LENGTH_SHORT).show();
 
@@ -404,7 +417,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
                 ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord
                         (barcode
-                        .getShipmentNumber(), barcode.getScanDate());
+                                .getShipmentNumber(), barcode.getScanDate());
                 listViewBean.setScannerBean(bean);
             }
 
@@ -555,7 +568,8 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
         // 把 instert 的 record 从数据库中取出来，该record内容是更新后的内容
         ZCFajianFileContent bean = ZcFajianDBHelper.getNewInRecord
                 (mZcFajianFileContent
-                .getShipmentNumber(), mZcFajianFileContent.getScanDate());
+                        .getShipmentNumber(), mZcFajianFileContent
+                        .getScanDate());
         CommonScannerListViewBean mCommonScannerListViewBean = new
                 CommonScannerListViewBean();
         mCommonScannerListViewBean.setId(++mScanCount);
@@ -625,7 +639,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
                     (ZhuangcheActivity
-                    .this);
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
@@ -638,7 +652,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(ZhuangcheActivity.this,
                                 "当前记录已上传，不能删除", Toast
-                                .LENGTH_SHORT).show();
+                                        .LENGTH_SHORT).show();
                         return;
                     }
 
@@ -674,7 +688,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
                     (ZhuangcheActivity
-                    .this);
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
@@ -688,7 +702,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     if (ZcFajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(ZhuangcheActivity.this,
                                 "当前记录已上传，不能删除", Toast
-                                .LENGTH_SHORT).show();
+                                        .LENGTH_SHORT).show();
                         return;
                     }
 
@@ -788,30 +802,32 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
             new CommonDbHelperToUploadFile<ZCFajianFileContent>()
                     .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
-                @Override
-                public boolean onSuccess(String s) {
-                    // 文件上传存在延时
-                    Toast.makeText(ZhuangcheActivity.this, "文件上传成功", Toast
-                            .LENGTH_SHORT).show();
-                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate
-                            (Constant
-                            .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
-                    return true;
-                }
+                        @Override
+                        public boolean onSuccess(String s) {
+                            // 文件上传存在延时
+                            Toast.makeText(ZhuangcheActivity.this, "文件上传成功",
+                                    Toast
+                                            .LENGTH_SHORT).show();
+                            setHeaderRightViewText("未上传：" +
+                                    searchUnloadDataForUpdate
+                                            (Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
+                            return true;
+                        }
 
-                @Override
-                public boolean onError(Throwable throwable, boolean b) {
-                    return false;
-                }
+                        @Override
+                        public boolean onError(Throwable throwable, boolean b) {
+                            return false;
+                        }
 
-                @Override
-                public boolean onFinish() {
-                    closeLoadinDialog();
-                    ZhuangcheActivity.this.finish();
+                        @Override
+                        public boolean onFinish() {
+                            closeLoadinDialog();
+                            ZhuangcheActivity.this.finish();
 
-                    return false;
-                }
-            }).redoUploadRecords(uploadContent);
+                            return false;
+                        }
+                    }).redoUploadRecords(uploadContent);
         } else {
             // do nothing
         }

@@ -9,6 +9,8 @@ import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -35,12 +37,29 @@ public class StayHouseReasonDBHelper {
             e.printStackTrace();
         }
 
-        List<String> reasonData = new ArrayList<>();
-        for (int index = 0; index < mData.size(); index++) {
-            reasonData.add(mData.get(index).get编号() + "  " + mData.get(index).get名称());
+        if (mData != null) {
+            Collections.sort(mData, new Comparator<LiucangBean>() {
+
+                @Override
+                public int compare(LiucangBean o1, LiucangBean o2) {
+                    Integer idFirst = Integer.parseInt(o1.get编号());
+                    Integer idSecond = Integer.parseInt(o2.get编号());
+
+                    return idFirst.compareTo(idSecond);
+                }
+            });
+
+            List<String> reasonData = new ArrayList<>();
+            for (int index = 0; index < mData.size(); index++) {
+                reasonData.add(mData.get(index).get编号() + "  " + mData.get
+                        (index).get名称());
+            }
+
+            return reasonData;
+        } else {
+            return null;
         }
 
-        return reasonData;
     }
 
     /**
@@ -52,8 +71,9 @@ public class StayHouseReasonDBHelper {
     public static String getReasonIdFromName(String reason) {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
-            List<LiucangBean> data = dbManager.selector(LiucangBean.class).where("名称", "=",
-                    reason).limit(1).findAll();
+            List<LiucangBean> data = dbManager.selector(LiucangBean.class)
+                    .where("名称", "=",
+                            reason).limit(1).findAll();
 
             if (data != null && data.size() != 0) {
                 return data.get(0).get编号();
@@ -76,7 +96,8 @@ public class StayHouseReasonDBHelper {
             // 存在保存发件数据的表，从该表中查询对应的单号
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<LiucangBean> bean = dbManager.selector(LiucangBean.class).where("名称", "=",
+                List<LiucangBean> bean = dbManager.selector(LiucangBean
+                        .class).where("名称", "=",
                         reason).limit(1).findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("bean:" + bean.size());
