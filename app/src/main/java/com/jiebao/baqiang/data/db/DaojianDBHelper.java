@@ -103,6 +103,33 @@ public class DaojianDBHelper {
     }
 
     /**
+     * 统计 指定时间内 已上传总数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUploadRecords(long beginTime, long
+            endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<CargoArrivalFileContent> list = db.selector
+                    (CargoArrivalFileContent.class).where("IsUsed", "=",
+                    "Used").and("IsUpload", "=", "Load").and("ScanDate",
+                    ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * 统计指定时间范围内的 未上传 记录数
      *
      * @param beginTime

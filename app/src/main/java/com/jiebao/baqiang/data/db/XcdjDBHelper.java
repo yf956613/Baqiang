@@ -3,7 +3,6 @@ package com.jiebao.baqiang.data.db;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileName;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -35,7 +34,8 @@ public class XcdjDBHelper {
     public static int findUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class)
                     .where("IsUsed", "=", "Used").findAll();
             if (list != null) {
                 return list.size();
@@ -55,11 +55,14 @@ public class XcdjDBHelper {
      * @param scanTime：扫描时间
      * @return
      */
-    public static UnloadArrivalFileContent getNewInRecord(String barcode, Date scanTime) {
+    public static UnloadArrivalFileContent getNewInRecord(String barcode,
+                                                          Date scanTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
-                    .where("ShipmentID", "=", barcode).and("ScanDate", "=", scanTime).findAll();
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class)
+                    .where("ShipmentID", "=", barcode).and("ScanDate", "=",
+                            scanTime).findAll();
             if (list != null && list.size() == 1) {
                 return list.get(0);
             } else {
@@ -88,8 +91,10 @@ public class XcdjDBHelper {
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date
+                    (beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list;
@@ -109,14 +114,44 @@ public class XcdjDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUsableRecords(long beginTime, long
+            endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
-                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class)
+                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new
+                            Date(beginTime)).and
                             ("ScanDate", "<=", new Date(endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 统计 指定时间内 已上传总数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUploadRecords(long beginTime, long
+            endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class).where("IsUsed", "=",
+                    "Used").and("IsUpload", "=", "Load").and("ScanDate",
+                    ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -135,12 +170,16 @@ public class XcdjDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUnloadRecords(long beginTime, long
+            endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
-                    .where("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate",
-                            ">=", new Date(beginTime)).and("ScanDate", "<=", new Date(endTime))
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class)
+                    .where("IsUsed", "=", "Used").and("IsUpload", "=",
+                            "Unload").and("ScanDate",
+                            ">=", new Date(beginTime)).and("ScanDate", "<=",
+                            new Date(endTime))
                     .findAll();
             if (list != null) {
                 return list.size();
@@ -164,8 +203,10 @@ public class XcdjDBHelper {
     public static int findUnloadRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<UnloadArrivalFileContent> list = db.selector(UnloadArrivalFileContent.class)
-                    .where("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").findAll();
+            List<UnloadArrivalFileContent> list = db.selector
+                    (UnloadArrivalFileContent.class)
+                    .where("IsUsed", "=", "Used").and("IsUpload", "=",
+                            "Unload").findAll();
             if (list != null) {
                 return list.size();
             }
@@ -209,17 +250,22 @@ public class XcdjDBHelper {
      * @return
      */
     public static boolean isExistCurrentBarcode(String barcode) {
-        if (BQDataBaseHelper.tableIsExist(Constant.DB_TABLE_NAME_UNLOAD_ARRIVAL)) {
+        if (BQDataBaseHelper.tableIsExist(Constant
+                .DB_TABLE_NAME_UNLOAD_ARRIVAL)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<UnloadArrivalFileContent> bean = dbManager.selector(UnloadArrivalFileContent
-                        .class).where("ShipmentID", "=", barcode).and("IsUsed", "=", "Used")
+                List<UnloadArrivalFileContent> bean = dbManager.selector
+                        (UnloadArrivalFileContent
+                                .class).where("ShipmentID", "=", barcode).and
+                        ("IsUsed", "=", "Used")
                         .findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("size:" + bean.size());
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(new SimpleDateFormat
-                                ("yyyyMMddHHmmss").format(bean.get(index).getScanDate()),
+                        long[] delta = TextStringUtil.getDistanceTimes(new
+                                        SimpleDateFormat
+                                        ("yyyyMMddHHmmss").format(bean.get
+                                        (index).getScanDate()),
                                 TextStringUtil.getFormatTimeString());
                         if (BQTimeUtil.isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
@@ -257,8 +303,11 @@ public class XcdjDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<UnloadArrivalFileContent> list = dbManager.selector(UnloadArrivalFileContent
-                    .class).where("IsUsed", "=", "Used").and("ShipmentID", "=", barcode).findAll();
+            List<UnloadArrivalFileContent> list = dbManager.selector
+                    (UnloadArrivalFileContent
+                            .class).where("IsUsed", "=", "Used").and
+                    ("ShipmentID",
+                            "=", barcode).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
                 if ("Unload".equals(list.get(0).getStatus())) {
@@ -288,8 +337,9 @@ public class XcdjDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<UnloadArrivalFileContent> list = dbManager.selector(UnloadArrivalFileContent
-                    .class).where("id", "=", recordID).findAll();
+            List<UnloadArrivalFileContent> list = dbManager.selector
+                    (UnloadArrivalFileContent
+                            .class).where("id", "=", recordID).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
 
@@ -320,7 +370,8 @@ public class XcdjDBHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("id", "=", barcodeID);
-            db.update(UnloadArrivalFileContent.class, whereBuilder, new KeyValue("IsUsed",
+            db.update(UnloadArrivalFileContent.class, whereBuilder, new
+                    KeyValue("IsUsed",
                     "Unused"));
 
             return true;
@@ -342,10 +393,12 @@ public class XcdjDBHelper {
         List<UnloadArrivalFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(UnloadArrivalFileContent.class).where("是否上传", "like", "未上传").and
+            list = db.selector(UnloadArrivalFileContent.class).where("是否上传",
+                    "like", "未上传").and
                     ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
-                UnloadArrivalFileName mUnloadArrivalFileName = new UnloadArrivalFileName();
+                UnloadArrivalFileName mUnloadArrivalFileName = new
+                        UnloadArrivalFileName();
                 if (mUnloadArrivalFileName.linkToTXTFile()) {
                     UploadServerFile mUploadServerFile = new UploadServerFile
                             (mUnloadArrivalFileName.getFileInstance());
@@ -353,11 +406,14 @@ public class XcdjDBHelper {
                     for (int index = 0; index < list.size(); index++) {
                         UnloadArrivalFileContent javaBean = list.get(index);
                         String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
+                        if (mUploadServerFile.writeContentToFile(content,
+                                true)) {
                             WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            db.update(UnloadArrivalFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
+                            whereBuilder.and("运单编号", "=", javaBean
+                                    .getShipmentNumber());
+                            db.update(UnloadArrivalFileContent.class,
+                                    whereBuilder, new KeyValue
+                                            ("是否上传", "已上传"));
                         } else {
                             LogUtil.trace("写入文件失败");
                         }

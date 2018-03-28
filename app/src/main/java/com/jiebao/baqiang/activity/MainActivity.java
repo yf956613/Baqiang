@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -46,7 +47,8 @@ import java.util.Arrays;
  * 一级菜单界面，主要用户更新信息
  */
 
-public class MainActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
+public class MainActivity extends BaseActivityWithTitleAndNumber implements
+        View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @ViewInject(R.id.btn_data_collect)
@@ -200,21 +202,51 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_data_collect: {
-                Intent intent = new Intent(MainActivity.this, DataCollectActivity.class);
+                Intent intent = new Intent(MainActivity.this,
+                        DataCollectActivity.class);
                 MainActivity.this.startActivity(intent);
 
                 break;
             }
 
             case R.id.btn_query: {
-                Intent intent = new Intent(MainActivity.this, BussinessQueryActivity.class);
-                MainActivity.this.startActivity(intent);
+                final android.support.v7.app.AlertDialog dialog = new android
+                        .support.v7.app.AlertDialog.Builder(this).create();
+                dialog.setView(LayoutInflater.from(this).inflate(R.layout
+                        .alert_dialog_query, null));
+                dialog.show();
+                Button btnPositive = dialog.findViewById(R.id.btn_statistics);
+                Button btnNegative = dialog.findViewById(R.id.btn_query);
+
+                btnPositive.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                        Intent intent = new Intent(MainActivity.this,
+                                BussinessStatisticsActivity.class);
+                        MainActivity.this.startActivity(intent);
+
+                        dialog.dismiss();
+                    }
+                });
+                btnNegative.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                        Intent intent = new Intent(MainActivity.this,
+                                BussinessQueryActivity.class);
+                        MainActivity.this.startActivity(intent);
+
+                        dialog.dismiss();
+                    }
+                });
 
                 break;
             }
 
             case R.id.btn_settings: {
-                Intent intent = new Intent(MainActivity.this, DetailMainSettingsActivity.class);
+                Intent intent = new Intent(MainActivity.this,
+                        DetailMainSettingsActivity.class);
                 MainActivity.this.startActivity(intent);
 
                 break;
@@ -230,7 +262,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     private void showProgressDialog() {
         if (mDownloadProgressDialog == null) {
             mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
-            mDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mDownloadProgressDialog.setProgressStyle(ProgressDialog
+                    .STYLE_HORIZONTAL);
             mDownloadProgressDialog.setCanceledOnTouchOutside(false);
             mDownloadProgressDialog.setCancelable(false);
             mDownloadProgressDialog.setTitle("提示信息：");
@@ -259,11 +292,13 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK: {
                 // 提示是否切换账号
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(MainActivity.this);
+                final AlertDialog.Builder normalDialog = new AlertDialog
+                        .Builder(MainActivity.this);
                 normalDialog.setTitle("提示");
                 normalDialog.setCancelable(false);
                 normalDialog.setMessage("是否退出当前账号？");
-                normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                normalDialog.setPositiveButton("确定", new DialogInterface
+                        .OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -271,7 +306,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                         MainActivity.this.finish();
                     }
                 });
-                normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                normalDialog.setNegativeButton("取消", new DialogInterface
+                        .OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -288,7 +324,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     }
 
 
-    class ServerInfoSyncTask extends AsyncTask<String, Integer, Long> implements IServerInfoStatus {
+    class ServerInfoSyncTask extends AsyncTask<String, Integer, Long>
+            implements IServerInfoStatus {
 
         @Override
         protected void onPreExecute() {
@@ -317,7 +354,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         }
 
         @Override
-        public void updateServerInfo(String serverinfo, String time, String apkVersion) {
+        public void updateServerInfo(String serverinfo, String time, String
+                apkVersion) {
             LogUtil.trace("get updateServerInfo done ");
             Message serverMsg = Message.obtain();
             serverMsg.what = Constant.DOWNLOAD_SERVERINFO_SUCCESS;
@@ -335,7 +373,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
     }
 
-    private static final String downloadApkAction = "com.jiebao.baqinag.download";
+    private static final String downloadApkAction = "com.jiebao.baqinag" +
+            ".download";
 
     class BaQiangAPKDownloadReceiver extends BroadcastReceiver {
 
@@ -348,9 +387,11 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
             if (intent.getAction().equals(downloadApkAction)) {
                 boolean state = intent.getBooleanExtra("downloadstate", false);
                 if (state) {
-                    updateLoadingDialogMsg(getString(R.string.download_baqiangapk_success));
+                    updateLoadingDialogMsg(getString(R.string
+                            .download_baqiangapk_success));
                 } else {
-                    updateLoadingDialogMsg(getString(R.string.download_baqiangapk_failed));
+                    updateLoadingDialogMsg(getString(R.string
+                            .download_baqiangapk_failed));
                 }
                 closeLoadinDialog();
             }
@@ -363,13 +404,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBaQiangAPKDownloadReceiver = new BaQiangAPKDownloadReceiver();
-        registerReceiver(mBaQiangAPKDownloadReceiver, new IntentFilter(downloadApkAction));
+        registerReceiver(mBaQiangAPKDownloadReceiver, new IntentFilter
+                (downloadApkAction));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mBaQiangAPKDownloadReceiver != null) unregisterReceiver(mBaQiangAPKDownloadReceiver);
+        if (mBaQiangAPKDownloadReceiver != null)
+            unregisterReceiver(mBaQiangAPKDownloadReceiver);
     }
 
 
@@ -385,7 +428,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
      * Progress：后台任务执行的百分比
      * Result：返回值类型，和doInBackground（）方法的返回值类型保持一致
      */
-    class DataSyncTask extends AsyncTask<String, Integer, Long> implements IDownloadStatus {
+    class DataSyncTask extends AsyncTask<String, Integer, Long> implements
+            IDownloadStatus {
 
         private UpdateInterface updateInterface;
 
@@ -401,7 +445,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         @Override
         protected Long doInBackground(String... strings) {
             // WorkerThread
-            LogUtil.trace("doInBackground parameters:" + Arrays.toString(strings));
+            LogUtil.trace("doInBackground parameters:" + Arrays.toString
+                    (strings));
 
             Log.e("ljz", "doInBackground");
 
@@ -493,7 +538,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
         @Override
         public void downLoadError(int infoId, String errorMsg) {
-            LogUtil.trace("downLoadError infoId " + infoId + " errorMsg: " + errorMsg);
+            LogUtil.trace("downLoadError infoId " + infoId + " errorMsg: " +
+                    errorMsg);
 
             Log.e("ljz", "downLoadError " + infoId);
 
@@ -535,7 +581,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         try {
             PackageManager packageManager = getPackageManager();
             //getPackageName()是你当前类的包名，0代表是获取版本信息
-            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            PackageInfo packInfo = packageManager.getPackageInfo
+                    (getPackageName(), 0);
             LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionCode);
             return packInfo.versionCode;
         } catch (Exception e) {
@@ -544,7 +591,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
         return 1;
     }
 
-    private final DownloadStatusHandler mHandler = new DownloadStatusHandler(this);
+    private final DownloadStatusHandler mHandler = new DownloadStatusHandler
+            (this);
 
     private class DownloadStatusHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
@@ -573,23 +621,34 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                         timeIntent.putExtra("time", Long.parseLong(time));
                         MainActivity.this.sendBroadcast(timeIntent);
                         LogUtil.trace("start to update system time");
-                        updateLoadingDialogMsg(getString(R.string.sync_servertimer));
+                        updateLoadingDialogMsg(getString(R.string
+                                .sync_servertimer));
                     }
 
-                    if ((!("unknown".equals(ServerInfo.getInstance().getServerApkVersin()))) &&
-                            getCurrentVersionCode() < resolveServerAppVersionCode(ServerInfo
-                                    .getInstance().getServerApkVersin())) {
+                    if ((!("unknown".equals(ServerInfo.getInstance()
+                            .getServerApkVersin()))) &&
+                            getCurrentVersionCode() <
+                                    resolveServerAppVersionCode(ServerInfo
+                                            .getInstance().getServerApkVersin
+                                                    ())) {
                         LogUtil.trace("start to download apk");
-                        String mApkFileDownloadUrl = SharedUtil.getJiebaoServletAddresFromSP
-                                (BaqiangApplication.getContext(), NetworkConstant.APK_DOWNLOAD_URL);
+                        String mApkFileDownloadUrl = SharedUtil
+                                .getJiebaoServletAddresFromSP
+                                        (BaqiangApplication.getContext(),
+                                                NetworkConstant
+                                                        .APK_DOWNLOAD_URL);
                         if (mApkFileDownloadUrl != null) {
-                            Intent service = new Intent(MainActivity.this, DownLoadApkFileService
-                                    .class);
-                            service.putExtra("downloadurl", mApkFileDownloadUrl);
-                            Toast.makeText(MainActivity.this, "正在下载更新APK中", Toast.LENGTH_LONG)
+                            Intent service = new Intent(MainActivity.this,
+                                    DownLoadApkFileService
+                                            .class);
+                            service.putExtra("downloadurl",
+                                    mApkFileDownloadUrl);
+                            Toast.makeText(MainActivity.this, "正在下载更新APK中",
+                                    Toast.LENGTH_LONG)
                                     .show();
                             startService(service);
-                            updateLoadingDialogMsg(getString(R.string.download_baqiangapk));
+                            updateLoadingDialogMsg(getString(R.string
+                                    .download_baqiangapk));
                         }
 
                     } else {
@@ -604,9 +663,11 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                         downloadFailedCnt = 0;
                         updateSucessCnt = 0;
                         DataSyncTask shipmentDataSyncTask = new DataSyncTask();
-                        shipmentDataSyncTask.setUpdateInterface(UpdateShipmentType.getInstance());
+                        shipmentDataSyncTask.setUpdateInterface
+                                (UpdateShipmentType.getInstance());
                         if (!Constant.DEBUG) {
-                            shipmentDataSyncTask.execute("shipmentDataSyncTask");
+                            shipmentDataSyncTask.execute
+                                    ("shipmentDataSyncTask");
                         }
                     }
 
@@ -614,7 +675,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 }
                 case Constant.UPDATE_SEVERINFO_FAILED: {
                     closeLoadinDialog();
-                    Toast.makeText(MainActivity.this, activity.getString(R.string
+                    Toast.makeText(MainActivity.this, activity.getString(R
+                            .string
                             .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
                     break;
                 }
@@ -627,7 +689,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                             + " downloadFailedCnt " + downloadFailedCnt
                             + " updateSucessCnt " + updateSucessCnt);
 
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy
+                            (Constant.MAX_DOWNLOAD_STEP);
                     if ((downloadCnt == Constant.MAX_DOWNLOAD_COUNT)) {
                         activity.mDownloadProgressDialog.dismiss();
                     }
@@ -642,12 +705,14 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 }
                 case Constant.DOWNLOAD_UPDATE_DONE: {
 
-                    Log.e("ljz", "DOWNLOAD_UPDATE_DONE downloadCnt " + downloadCnt
+                    Log.e("ljz", "DOWNLOAD_UPDATE_DONE downloadCnt " +
+                            downloadCnt
                             + " downloadSuccessCnt " + downloadSuccessCnt
                             + " downloadFailedCnt " + downloadFailedCnt
                             + " updateSucessCnt " + updateSucessCnt);
 
-                    activity.mDownloadProgressDialog.incrementProgressBy(Constant.MAX_DOWNLOAD_STEP);
+                    activity.mDownloadProgressDialog.incrementProgressBy
+                            (Constant.MAX_DOWNLOAD_STEP);
                     if (downloadCnt == Constant.MAX_DOWNLOAD_COUNT) {
                         activity.mDownloadProgressDialog.dismiss();
                     }
@@ -656,20 +721,23 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
 
                 case Constant.STARTDOWNLOAD_SALESINFO: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_salesinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .download_salesinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .update_salesinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .update_salesinfo));
 
                     break;
                 }
                 case Constant.UPDATE_SALESINFO_DONE: {
                     Log.e("ljz", "UPDATE_SALESINFO_DONE");
                     DataSyncTask vehiceDataSyncTask = new DataSyncTask();
-                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
+                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo
+                            .getInstance());
                     if (!Constant.DEBUG) {
                         vehiceDataSyncTask.execute("vehiceDataSyncTask");
                     }
@@ -678,7 +746,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 case Constant.UPDATE_SALESINFO_FAILED: {
                     Log.e("ljz", "UPDATE_SALESINFO_FAILED");
                     DataSyncTask vehiceDataSyncTask = new DataSyncTask();
-                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo.getInstance());
+                    vehiceDataSyncTask.setUpdateInterface(UpdateVehicleInfo
+                            .getInstance());
                     if (!Constant.DEBUG) {
                         vehiceDataSyncTask.execute("vehiceDataSyncTask");
                     }
@@ -687,19 +756,22 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
 
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_shipmenttypeinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .download_shipmenttypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .update_shipmenttypeinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .update_shipmenttypeinfo));
                     break;
                 }
                 case Constant.UPDATE_SHIPMENTTYPEINFO_DONE: {
                     Log.e("ljz", "UPDATE_SHIPMENTTYPEINFO_DONE");
                     DataSyncTask salesDataSyncTask = new DataSyncTask();
-                    salesDataSyncTask.setUpdateInterface(UpdateSalesServiceData.getInstance());
+                    salesDataSyncTask.setUpdateInterface
+                            (UpdateSalesServiceData.getInstance());
                     // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
                     if (!Constant.DEBUG) {
                         salesDataSyncTask.execute("salesDataSyncTask");
@@ -709,7 +781,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 case Constant.UPDATE_SHIPMENTTYPEINFO_FAILED: {
                     Log.e("ljz", "UPDATE_SHIPMENTTYPEINFO_FAILED");
                     DataSyncTask salesDataSyncTask = new DataSyncTask();
-                    salesDataSyncTask.setUpdateInterface(UpdateSalesServiceData.getInstance());
+                    salesDataSyncTask.setUpdateInterface
+                            (UpdateSalesServiceData.getInstance());
                     // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
                     if (!Constant.DEBUG) {
                         salesDataSyncTask.execute("salesDataSyncTask");
@@ -720,13 +793,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
                 //put it download in the end
                 case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_liucangtypeinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .download_liucangtypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .update_liucangtypeinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .update_liucangtypeinfo));
                     break;
                 }
                 case Constant.UPDATE_LIUCANGTYPEINFO_DONE: {
@@ -740,19 +815,22 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
 
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .download_vehiceinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .download_vehiceinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
-                    activity.mDownloadProgressDialog.setMessage(activity.getString(R.string
-                            .update_vehiceinfo));
+                    activity.mDownloadProgressDialog.setMessage(activity
+                            .getString(R.string
+                                    .update_vehiceinfo));
                     break;
                 }
                 case Constant.UPDATE_VEHICEINFO_DONE: {
                     Log.e("ljz", "UPDATE_VEHICEINFO_DONE");
                     DataSyncTask liucangDataSyncTask = new DataSyncTask();
-                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
+                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType
+                            .getInstance());
                     if (!Constant.DEBUG) {
                         liucangDataSyncTask.execute("liucangDataSyncTask");
                     }
@@ -761,7 +839,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements View
                 case Constant.UPDATE_VEHICEINFO_FAILED: {
                     Log.e("ljz", "UPDATE_VEHICEINFO_FAILED");
                     DataSyncTask liucangDataSyncTask = new DataSyncTask();
-                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType.getInstance());
+                    liucangDataSyncTask.setUpdateInterface(UpdateLiuCangType
+                            .getInstance());
                     if (!Constant.DEBUG) {
                         liucangDataSyncTask.execute("liucangDataSyncTask");
                     }

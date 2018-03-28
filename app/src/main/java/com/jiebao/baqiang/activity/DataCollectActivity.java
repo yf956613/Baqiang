@@ -495,8 +495,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
                 dialog.dismiss();
             }
         });
-
-
     }
 
     /**

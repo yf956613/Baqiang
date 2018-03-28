@@ -1,9 +1,5 @@
 package com.jiebao.baqiang.data.db;
 
-import android.database.Cursor;
-
-import com.jiebao.baqiang.data.bean.UploadServerFile;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
@@ -43,11 +39,14 @@ public class ZcFajianDBHelper {
      * @param scanTime：扫描时间
      * @return
      */
-    public static ZCFajianFileContent getNewInRecord(String barcode, Date scanTime) {
+    public static ZCFajianFileContent getNewInRecord(String barcode, Date
+            scanTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("ShipmentID", "=", barcode).and("ScanDate", "=", scanTime).findAll();
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where
+                    ("ShipmentID", "=", barcode).and("ScanDate", "=",
+                    scanTime).findAll();
             if (list != null && list.size() == 1) {
                 return list.get(0);
             } else {
@@ -71,7 +70,8 @@ public class ZcFajianDBHelper {
     public static int findUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where
                     ("IsUsed", "=", "Used").findAll();
             if (list != null) {
                 return list.size();
@@ -92,7 +92,8 @@ public class ZcFajianDBHelper {
     public static List<ZCFajianFileContent> getUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent.class).where
+            List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent
+                    .class).where
                     ("IsUsed", "=", "Used").findAll();
             if (null != data && data.size() != 0) {
                 return data;
@@ -119,8 +120,10 @@ public class ZcFajianDBHelper {
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date
+                    (beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list;
@@ -140,13 +143,41 @@ public class ZcFajianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUsableRecords(long beginTime, long
+            endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where("IsUsed", "=", "Used").and("ScanDate",
+                    ">=", new Date(beginTime)).and("ScanDate", "<=", new Date
+                    (endTime)).findAll();
+            if (list != null) {
+                return list.size();
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * 统计 指定时间内 已上传总数
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static int findTimeLimitedUploadRecords(long beginTime, long
+            endTime) {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where("IsUsed", "=", "Used").and("IsUpload", "=",
+                    "Load").and("ScanDate", ">=", new Date(beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
@@ -170,8 +201,10 @@ public class ZcFajianDBHelper {
     public static int findUnloadRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").findAll();
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                    .findAll();
             if (list != null) {
                 return list.size();
             }
@@ -190,12 +223,16 @@ public class ZcFajianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUnloadRecords(long beginTime, long
+            endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate", ">=",
-                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
+            List<ZCFajianFileContent> list = db.selector(ZCFajianFileContent
+                    .class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                    .and("ScanDate", ">=",
+                            new Date(beginTime)).and("ScanDate", "<=", new Date
+                            (endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -222,7 +259,8 @@ public class ZcFajianDBHelper {
             // FIXME 3小之外，没有上传，相同的barcode设置为Unused？
             whereBuilder.and("ShipmentID", "=", barcode);
             whereBuilder.and("IsUpload", "=", "Unload");
-            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
+            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
+                    ("IsUsed", "Unused"));
 
             return true;
         } catch (DbException e) {
@@ -246,7 +284,8 @@ public class ZcFajianDBHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("id", "=", barcodeID);
-            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
+            db.update(ZCFajianFileContent.class, whereBuilder, new KeyValue
+                    ("IsUsed", "Unused"));
 
             return true;
         } catch (DbException e) {
@@ -264,7 +303,8 @@ public class ZcFajianDBHelper {
      * 2. 生成了 ID；
      * 3. 生成了 是否可用、是否上传的状态；
      */
-    public static boolean insertDataToDatabase(final ZCFajianFileContent zcFajianFileContent) {
+    public static boolean insertDataToDatabase(final ZCFajianFileContent
+                                                       zcFajianFileContent) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             db.save(zcFajianFileContent);
@@ -291,13 +331,17 @@ public class ZcFajianDBHelper {
         if (BQDataBaseHelper.tableIsExist(Constant.DB_TABLE_NAME_LOAD_SEND)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<ZCFajianFileContent> bean = dbManager.selector(ZCFajianFileContent.class)
-                        .where("ShipmentID", "=", barcode).and("IsUsed", "=", "Used").findAll();
+                List<ZCFajianFileContent> bean = dbManager.selector
+                        (ZCFajianFileContent.class)
+                        .where("ShipmentID", "=", barcode).and("IsUsed", "=",
+                                "Used").findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("size:" + bean.size());
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(new SimpleDateFormat
-                                ("yyyyMMddHHmmss").format(bean.get(index).getScanDate()),
+                        long[] delta = TextStringUtil.getDistanceTimes(new
+                                        SimpleDateFormat
+                                        ("yyyyMMddHHmmss").format(bean.get
+                                        (index).getScanDate()),
                                 TextStringUtil.getFormatTimeString());
                         if (BQTimeUtil.isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
@@ -335,8 +379,10 @@ public class ZcFajianDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<ZCFajianFileContent> list = dbManager.selector(ZCFajianFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ShipmentID", "=", barcode).findAll();
+            List<ZCFajianFileContent> list = dbManager.selector
+                    (ZCFajianFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ShipmentID", "=", barcode)
+                    .findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
                 if ("Unload".equals(list.get(0).getStatus())) {
@@ -366,7 +412,8 @@ public class ZcFajianDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<ZCFajianFileContent> list = dbManager.selector(ZCFajianFileContent.class).where
+            List<ZCFajianFileContent> list = dbManager.selector
+                    (ZCFajianFileContent.class).where
                     ("id", "=", recordID).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
@@ -389,7 +436,8 @@ public class ZcFajianDBHelper {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             // 查询数据库中标识位“未上传”的记录
-            List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent.class).where("是否上传",
+            List<ZCFajianFileContent> data = db.selector(ZCFajianFileContent
+            .class).where("是否上传",
                     "like", "未上传").and("是否可用", "=", "可用").findAll();
             if (null != data && data.size() != 0) {
                 LogUtil.d(TAG, "未上传记录：" + data.size());
@@ -399,10 +447,12 @@ public class ZcFajianDBHelper {
 
                 int count = 0;
                 for (int index = 0; index < data.size(); index++) {
-                    ScannerListViewBean fajianListViewBean = new ScannerListViewBean();
+                    ScannerListViewBean fajianListViewBean = new
+                    ScannerListViewBean();
                     // 一旦删除记录，则及时更新ID值
                     fajianListViewBean.setId(++count);
-                    fajianListViewBean.setScannerData(data.get(index).getShipmentNumber());
+                    fajianListViewBean.setScannerData(data.get(index)
+                    .getShipmentNumber());
                     fajianListViewBean.setStatus("未上传");
                     mListData.add(fajianListViewBean);
                 }
