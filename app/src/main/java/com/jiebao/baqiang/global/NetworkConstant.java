@@ -65,6 +65,8 @@ public interface NetworkConstant {
     // app软件更新，文件重命名为：baqing_2.apk 其中数字表示：VersionCode
     String APP_UPDATE_INFO = "/JBWeb/ServerInfo";
 
+    String SYNC_SERVER_TIME = "/JBWeb/ServerInfo";
+
     // apk下载路径
     String APK_DOWNLOAD_URL = "/JBWeb/DownloadFile";
 

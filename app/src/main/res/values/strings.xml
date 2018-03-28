@@ -348,9 +348,9 @@
     <string name="update_liucangtypeinfo">正在更新本地留仓原因....</string>
     <string name="update_vehiceinfo">正在更新本地车辆信息....</string>
 
-    <string name="sync_serverinfo">正在同步服务信息....</string>
-    <string name="sync_serverinfo_success">同步服务信息成功</string>
-    <string name="sync_serverinfo_failed">同步服务信息失败</string>
+    <string name="sync_serverinfo">正在同步服务器信息....</string>
+    <string name="sync_serverinfo_success">同步服务器信息成功</string>
+    <string name="sync_serverinfo_failed">同步服务器信息失败</string>
     <string name="sync_servertimer">正在同步时间....</string>
 
     <string name="download_baqiangapk">正在下载新版本巴枪应用....</string>

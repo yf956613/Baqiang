@@ -3,7 +3,6 @@ package com.jiebao.baqiang.data.updateData;
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
-import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.IServerInfoStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.LogUtil;
@@ -14,45 +13,21 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 /**
- * Created by Administrator on 2018/3/20.
+ * 请求服务器时间
  */
+public class SyncServerTime extends UpdateInterface {
+    private static final String TAG = SyncServerTime.class.getSimpleName();
 
-public class ServerInfo extends UpdateInterface {
-
-    private static final String TAG = "ServerInfo";
+    private String serverTime;
+    private volatile static SyncServerTime mInstance;
     private static String mServerInfoUrl = "";
-    private static String mApkFileDownloadUrl = "";
-    private volatile static ServerInfo mInstance;
-
     private IServerInfoStatus mServerInfoStatus;
 
-    private String serverVersion;
-    private String serverTime;
-    private String serverApkVersin;
-
-
-    public String getServerVersion() {
-        return serverVersion;
-    }
-
-    public String getServerTime() {
-        return serverTime;
-    }
-
-    public String getServerApkVersin() {
-        return serverApkVersin;
-    }
-
-
-    private ServerInfo() {
-        infoId = Constant.SERVER_INFO_ID;
-    }
-
-    public static ServerInfo getInstance() {
+    public static SyncServerTime getInstance() {
         if (mInstance == null) {
             synchronized (ServerInfo.class) {
                 if (mInstance == null) {
-                    mInstance = new ServerInfo();
+                    mInstance = new SyncServerTime();
                 }
             }
         }
@@ -63,10 +38,14 @@ public class ServerInfo extends UpdateInterface {
         this.mServerInfoStatus = serverInfoStatus;
     }
 
-    public void getServerInfo() {
+    public String getServerTime() {
+        return serverTime;
+    }
+
+    public void getRequestServerTime() {
         mServerInfoUrl = SharedUtil.getJiebaoServletAddresFromSP
-                (BaqiangApplication
-                        .getContext(), NetworkConstant.APP_UPDATE_INFO);
+                (BaqiangApplication.getContext(), NetworkConstant
+                        .SYNC_SERVER_TIME);
 
         RequestParams params = new RequestParams(mServerInfoUrl);
         params.addQueryStringParameter("saleId", salesId);
@@ -83,19 +62,13 @@ public class ServerInfo extends UpdateInterface {
                         AppUpdateBean.class);
                 LogUtil.trace("appInfo:" + appInfo.toString());
 
-                serverVersion = appInfo.getServerVersion();
                 serverTime = appInfo.getServerTime();
-                serverApkVersin = appInfo.getBaQiangApkVersion();
-
-                // 请求成功
-                mServerInfoStatus.updateServerInfo(serverVersion, serverTime,
-                        serverApkVersin);
+                mServerInfoStatus.updateServerInfo("", serverTime, "");
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace(throwable.getMessage());
-                // 请求失败
                 mServerInfoStatus.showServerInfoError(throwable.getMessage());
             }
 
@@ -110,7 +83,5 @@ public class ServerInfo extends UpdateInterface {
             }
         });
 
-
     }
-
 }

@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -49,6 +48,8 @@ import java.util.Arrays;
 public class MainActivity extends BaseActivityWithTitleAndNumber implements
         View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String downloadApkAction = "com.jiebao.baqinag" +
+            ".download";
 
     @ViewInject(R.id.btn_data_collect)
     private Button mBtnDataCollect;
@@ -131,6 +132,46 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         }
     };
 
+    private BaQiangAPKDownloadReceiver mBaQiangAPKDownloadReceiver;
+
+    class BaQiangAPKDownloadReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            LogUtil.trace("BaQiangAPKDownloadReceiver；onReceive");
+            Log.e("ljz", "BaQiangAPKDownloadReceiver onReceive");
+
+            if (intent.getAction().equals(downloadApkAction)) {
+                boolean state = intent.getBooleanExtra("downloadstate", false);
+                if (state) {
+                    updateLoadingDialogMsg(getString(R.string
+                            .download_baqiangapk_success));
+                } else {
+                    updateLoadingDialogMsg(getString(R.string
+                            .download_baqiangapk_failed));
+                }
+                closeLoadinDialog();
+            }
+        }
+    }
+
+    public static int downloadSuccessCnt = 0;
+    public static int downloadFailedCnt = 0;
+    public static int updateSucessCnt = 0;
+    public static int downloadCnt = 0;
+
+    private final DownloadStatusHandler mHandler = new DownloadStatusHandler
+            (this);
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBaQiangAPKDownloadReceiver != null) {
+            unregisterReceiver(mBaQiangAPKDownloadReceiver);
+        }
+    }
+
     @Override
     public void initView() {
         setContent(R.layout.activity_main);
@@ -139,56 +180,22 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // 让容器默认获得焦点，渲染背景，选择第一个项目
-        mBtnDataCollect.setFocusable(true);
-        mBtnDataCollect.setFocusableInTouchMode(true);
-        mBtnDataCollect.requestFocus();
-        mBtnDataCollect.requestFocusFromTouch();
-    }
-
-    @Override
     public void initData() {
         LogUtil.trace();
 
         initListener();
 
+        // 同步捷宝服务器数据
         syncDataAction();
+
+        mBaQiangAPKDownloadReceiver = new BaQiangAPKDownloadReceiver();
+        registerReceiver(mBaQiangAPKDownloadReceiver, new IntentFilter
+                (downloadApkAction));
     }
 
-    private void syncDataAction() {
-//        DataSyncTask dataSyncTask = new DataSyncTask();
-//        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
-//        if(!Constant.DEBUG){
-//            dataSyncTask.execute("start_param");
-//        }
-
-        ServerInfoSyncTask serverInfoSyncTask = new ServerInfoSyncTask();
-        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
-        if (!Constant.DEBUG) {
-            Log.e("ljz", "ServerInfoSyncTask");
-            serverInfoSyncTask.execute("ServerInfoSyncTask");
-            showLoadinDialog();
-            updateLoadingDialogMsg(getString(R.string.sync_serverinfo));
-        }
-    }
-
-    private void initListener() {
-        mBtnDataCollect.setOnClickListener(this);
-        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
-
-        mBtnQuery.setOnClickListener(this);
-        mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-
-        mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-        mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
-
-        mBtnSettings.setOnClickListener(this);
-        mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         // 让容器默认获得焦点，渲染背景，选择第一个项目
         mBtnDataCollect.setFocusable(true);
@@ -250,39 +257,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
                 break;
             }
-
-
-        }
-    }
-
-    /**
-     * 显示ProgressDialog下载进度条
-     */
-    private void showProgressDialog() {
-        if (mDownloadProgressDialog == null) {
-            mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
-            mDownloadProgressDialog.setProgressStyle(ProgressDialog
-                    .STYLE_HORIZONTAL);
-            mDownloadProgressDialog.setCanceledOnTouchOutside(false);
-            mDownloadProgressDialog.setCancelable(false);
-            mDownloadProgressDialog.setTitle("提示信息：");
-            mDownloadProgressDialog.setMessage("正在下载资料列表...");
-            // 设置最大更新下载数据量
-            mDownloadProgressDialog.setMax(Constant.MAX_DOWNLOAD_COUNT);
-        }
-
-        if (!mDownloadProgressDialog.isShowing()) {
-            mDownloadProgressDialog.show();
-        }
-
-    }
-
-    /**
-     * 隐藏ProgressDialog下载进度条
-     */
-    private void closeProgressDialog() {
-        if (mDownloadProgressDialog != null) {
-            mDownloadProgressDialog.dismiss();
         }
     }
 
@@ -325,7 +299,117 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         return super.onKeyDown(keyCode, event);
     }
 
+    private void initListener() {
+        mBtnDataCollect.setOnClickListener(this);
+        mBtnDataCollect.setOnFocusChangeListener(mLlFocusChangeListener);
 
+        mBtnQuery.setOnClickListener(this);
+        mBtnQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        mBtnUpload.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnPhoneMsg.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnShipmentQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+        mBtnAreaQuery.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        mBtnSettings.setOnClickListener(this);
+        mBtnSettings.setOnFocusChangeListener(mLlFocusChangeListener);
+
+        // 让容器默认获得焦点，渲染背景，选择第一个项目
+        mBtnDataCollect.setFocusable(true);
+        mBtnDataCollect.setFocusableInTouchMode(true);
+        mBtnDataCollect.requestFocus();
+        mBtnDataCollect.requestFocusFromTouch();
+    }
+
+    private void syncDataAction() {
+        ServerInfoSyncTask serverInfoSyncTask = new ServerInfoSyncTask();
+        // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
+        if (!Constant.DEBUG) {
+            Log.e("ljz", "ServerInfoSyncTask");
+            serverInfoSyncTask.execute("ServerInfoSyncTask");
+            showLoadinDialog();
+            updateLoadingDialogMsg(getString(R.string.sync_serverinfo));
+        }
+    }
+
+    private void showProgressDialog() {
+        if (mDownloadProgressDialog == null) {
+            mDownloadProgressDialog = new ProgressDialog(MainActivity.this);
+            mDownloadProgressDialog.setProgressStyle(ProgressDialog
+                    .STYLE_HORIZONTAL);
+            mDownloadProgressDialog.setCanceledOnTouchOutside(false);
+            mDownloadProgressDialog.setCancelable(false);
+            mDownloadProgressDialog.setTitle("提示信息：");
+            mDownloadProgressDialog.setMessage("正在下载资料列表...");
+            // 设置最大更新下载数据量
+            mDownloadProgressDialog.setMax(Constant.MAX_DOWNLOAD_COUNT);
+        }
+
+        if (!mDownloadProgressDialog.isShowing()) {
+            mDownloadProgressDialog.show();
+        }
+    }
+
+    private void setLinearLayoutBackground(View v, boolean hasFocus) {
+        if (hasFocus) {
+            v.setBackgroundResource(R.color.back_transpant);
+        } else {
+            v.setBackgroundResource(R.color.bg_transparent);
+        }
+    }
+
+    private int resolveServerAppVersionCode(String versionInfo) {
+        String[] array = versionInfo.split("_");
+        String versionCode = array[1];
+        return Integer.parseInt(versionCode.replace(".apk", ""));
+    }
+
+    private int getCurrentVersionCode() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            //getPackageName()是你当前类的包名，0代表是获取版本信息
+            PackageInfo packInfo = packageManager.getPackageInfo
+                    (getPackageName(), 0);
+            LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionCode);
+            return packInfo.versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    /**
+     * 请求服务器时间，更新设备当前时间
+     */
+    class ServerTimeSyncTask extends AsyncTask<String, Integer, Long> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Long doInBackground(String... strings) {
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            // MainThread
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            // MainThread
+        }
+
+    }
+
+    /**
+     * 捷宝服务器请求更新apk，异步任务
+     */
     class ServerInfoSyncTask extends AsyncTask<String, Integer, Long>
             implements IServerInfoStatus {
 
@@ -337,8 +421,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         protected Long doInBackground(String... strings) {
             ServerInfo.getInstance().setDataDownloadStatus(this);
+            // 执行服务器数据请求
             ServerInfo.getInstance().getServerInfo();
-            Log.e("ljz", "doInBackground");
+            LogUtil.e("ljz", "doInBackground");
 
             return null;
         }
@@ -359,7 +444,9 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         public void updateServerInfo(String serverinfo, String time, String
                 apkVersion) {
             LogUtil.trace("get updateServerInfo done ");
+
             Message serverMsg = Message.obtain();
+            // 捷宝服务器数据同步成功
             serverMsg.what = Constant.DOWNLOAD_SERVERINFO_SUCCESS;
             mHandler.sendMessage(serverMsg);
         }
@@ -368,60 +455,14 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         public void showServerInfoError(String errorMsg) {
             LogUtil.trace("showServerInfoError ");
+
+            // 捷宝服务器数据同步失败
             Message serverMsg = Message.obtain();
             serverMsg.what = Constant.UPDATE_SEVERINFO_FAILED;
             mHandler.sendMessage(serverMsg);
         }
 
     }
-
-    private static final String downloadApkAction = "com.jiebao.baqinag" +
-            ".download";
-
-    class BaQiangAPKDownloadReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            LogUtil.trace("BaQiangAPKDownloadReceiver；onReceive");
-            Log.e("ljz", "BaQiangAPKDownloadReceiver onReceive");
-
-            if (intent.getAction().equals(downloadApkAction)) {
-                boolean state = intent.getBooleanExtra("downloadstate", false);
-                if (state) {
-                    updateLoadingDialogMsg(getString(R.string
-                            .download_baqiangapk_success));
-                } else {
-                    updateLoadingDialogMsg(getString(R.string
-                            .download_baqiangapk_failed));
-                }
-                closeLoadinDialog();
-            }
-        }
-    }
-
-    private BaQiangAPKDownloadReceiver mBaQiangAPKDownloadReceiver;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mBaQiangAPKDownloadReceiver = new BaQiangAPKDownloadReceiver();
-        registerReceiver(mBaQiangAPKDownloadReceiver, new IntentFilter
-                (downloadApkAction));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBaQiangAPKDownloadReceiver != null)
-            unregisterReceiver(mBaQiangAPKDownloadReceiver);
-    }
-
-
-    public static int downloadCnt = 0;
-    public static int downloadSuccessCnt = 0;
-    public static int downloadFailedCnt = 0;
-    public static int updateSucessCnt = 0;
 
     /**
      * 异步下载任务
@@ -456,22 +497,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 updateInterface.setDataDownloadStatus(this);
                 updateInterface.updateData();
             }
-
-//            // 更新网点数据
-//            UpdateSalesServiceData.getInstance().setDataDownloadStatus(this);
-//            UpdateSalesServiceData.getInstance().updateData();
-
-//            // 更新快件类型正常
-//            UpdateShipmentType.getInstance().setDataDownloadStatus(this);
-//            UpdateShipmentType.getInstance().updateData();
-
-//            // 更新留仓原因正常
-//            UpdateLiuCangType.getInstance().setDataDownloadStatus(this);
-//            UpdateLiuCangType.getInstance().updateData();
-
-//            // 更新车辆信息正常
-//            UpdateVehicleInfo.getInstance().setDataDownloadStatus(this);
-//            UpdateVehicleInfo.getInstance().updateData();
 
             return null;
         }
@@ -559,43 +584,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         }
     }
 
-    /**
-     * 根据Button的状态，改变LinearLayout的背景
-     *
-     * @param v
-     * @param hasFocus
-     */
-    private void setLinearLayoutBackground(View v, boolean hasFocus) {
-        if (hasFocus) {
-            v.setBackgroundResource(R.color.back_transpant);
-        } else {
-            v.setBackgroundResource(R.color.bg_transparent);
-        }
-    }
-
-    private int resolveServerAppVersionCode(String versionInfo) {
-        String[] array = versionInfo.split("_");
-        String versionCode = array[1];
-        return Integer.parseInt(versionCode.replace(".apk", ""));
-    }
-
-    private int getCurrentVersionCode() {
-        try {
-            PackageManager packageManager = getPackageManager();
-            //getPackageName()是你当前类的包名，0代表是获取版本信息
-            PackageInfo packInfo = packageManager.getPackageInfo
-                    (getPackageName(), 0);
-            LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionCode);
-            return packInfo.versionCode;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 1;
-    }
-
-    private final DownloadStatusHandler mHandler = new DownloadStatusHandler
-            (this);
-
     private class DownloadStatusHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
 
@@ -605,7 +593,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
         @Override
         public void handleMessage(Message msg) {
-
             MainActivity activity = mActivity.get();
             if (activity == null) {
                 super.handleMessage(msg);
@@ -615,17 +602,17 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
             switch (msg.what) {
                 case Constant.DOWNLOAD_SERVERINFO_SUCCESS: {
                     //update system time
-                    String time = ServerInfo.getInstance().getServerTime();
-
-                    if (time != null) {
-                        Intent timeIntent = new Intent();
-                        timeIntent.setAction("com.time.UPDATETIME");
-                        timeIntent.putExtra("time", Long.parseLong(time));
-                        MainActivity.this.sendBroadcast(timeIntent);
-                        LogUtil.trace("start to update system time");
-                        updateLoadingDialogMsg(getString(R.string
-                                .sync_servertimer));
-                    }
+//                    String time = ServerInfo.getInstance().getServerTime();
+//
+//                    if (time != null) {
+//                        Intent timeIntent = new Intent();
+//                        timeIntent.setAction("com.time.UPDATETIME");
+//                        timeIntent.putExtra("time", Long.parseLong(time));
+//                        MainActivity.this.sendBroadcast(timeIntent);
+//                        LogUtil.trace("start to update system time");
+//                        updateLoadingDialogMsg(getString(R.string
+//                                .sync_servertimer));
+//                    }
 
                     if ((!("unknown".equals(ServerInfo.getInstance()
                             .getServerApkVersin()))) &&
@@ -641,16 +628,16 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                                                         .APK_DOWNLOAD_URL);
                         if (mApkFileDownloadUrl != null) {
                             Intent service = new Intent(MainActivity.this,
-                                    DownLoadApkFileService
-                                            .class);
+                                    DownLoadApkFileService.class);
                             service.putExtra("downloadurl",
                                     mApkFileDownloadUrl);
                             Toast.makeText(MainActivity.this, "正在下载更新APK中",
-                                    Toast.LENGTH_LONG)
-                                    .show();
+                                    Toast.LENGTH_LONG).show();
                             startService(service);
                             updateLoadingDialogMsg(getString(R.string
                                     .download_baqiangapk));
+                        } else {
+                            // do nothing
                         }
 
                     } else {
@@ -685,7 +672,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
 
                 case Constant.DOWNLOAD_FAILED: {
-
                     Log.e("ljz", "DOWNLOAD_FAILED downloadCnt " + downloadCnt
                             + " downloadSuccessCnt " + downloadSuccessCnt
                             + " downloadFailedCnt " + downloadFailedCnt
@@ -774,7 +760,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                     DataSyncTask salesDataSyncTask = new DataSyncTask();
                     salesDataSyncTask.setUpdateInterface
                             (UpdateSalesServiceData.getInstance());
-                    // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
                     if (!Constant.DEBUG) {
                         salesDataSyncTask.execute("salesDataSyncTask");
                     }
@@ -785,13 +770,11 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                     DataSyncTask salesDataSyncTask = new DataSyncTask();
                     salesDataSyncTask.setUpdateInterface
                             (UpdateSalesServiceData.getInstance());
-                    // FIXME 参数用于选择性下载，比如：start_param_1下载指定内容
                     if (!Constant.DEBUG) {
                         salesDataSyncTask.execute("salesDataSyncTask");
                     }
                     break;
                 }
-
 
                 //put it download in the end
                 case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
@@ -814,7 +797,6 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                     Log.e("ljz", "UPDATE_LIUCANGTYPEINFO_FAILED");
                     break;
                 }
-
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
                     activity.mDownloadProgressDialog.setMessage(activity
