@@ -447,6 +447,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         public void showServerInfoError(String errorMsg) {
             LogUtil.trace("showServerInfoError ServerTimeSyncTask ");
+            Log.e("ljz", "ServerTimeSyncTask showServerInfoError" + errorMsg);
         }
 
     }
@@ -506,6 +507,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         public void showServerInfoError(String errorMsg) {
             LogUtil.trace("showServerInfoError ");
+
+            Log.e("ljz", "ServerInfoSyncTask  " + errorMsg);
 
             // 捷宝服务器数据同步失败
             Message serverMsg = Message.obtain();
@@ -632,7 +635,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
             Message dlerrMsg = Message.obtain();
             dlerrMsg.what = Constant.DOWNLOAD_FAILED;
-            mHandler.sendMessage(errMsg);
+            mHandler.sendMessage(dlerrMsg);
         }
     }
 
@@ -651,8 +654,13 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 return;
             }
 
+            Log.e("ljz", "msg.what " + msg.what);
+
             switch (msg.what) {
                 case Constant.DOWNLOAD_SERVERINFO_SUCCESS: {
+
+                    Log.e("ljz", "DOWNLOAD_SERVERINFO_SUCCESS");
+
                     //update system time
 //                    String time = ServerInfo.getInstance().getServerTime();
 //
@@ -734,13 +742,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                     break;
                 }
                 case Constant.UPDATE_SEVERINFO_FAILED: {
-                    closeLoadinDialog();
-                    /*Toast.makeText(MainActivity.this, activity.getString(R
-                            .string
-                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show
-                            ();*/
 
-                    // MainThread 强制更新后台数据
+                    Log.e("ljz", "UPDATE_SEVERINFO_FAILED");
+
+                    closeLoadinDialog();
+
+//                    Toast.makeText(MainActivity.this, activity.getString(R
+//                            .string
+//                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
+
                     showProgressDialog();
 
                     //set count 0 begin download data
@@ -761,23 +771,29 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
 
                 case Constant.DOWNLOAD_FAILED: {
+
+
+                    Log.e("ljz", "DOWNLOAD_FAILED");
+
                     Log.e("ljz", "DOWNLOAD_FAILED downloadCnt " + downloadCnt
                             + " downloadSuccessCnt " + downloadSuccessCnt
                             + " downloadFailedCnt " + downloadFailedCnt
                             + " updateSucessCnt " + updateSucessCnt);
 
-                    activity.mDownloadProgressDialog.incrementProgressBy
-                            (Constant.MAX_DOWNLOAD_STEP);
+//                    activity.mDownloadProgressDialog.incrementProgressBy
+//                            (Constant.MAX_DOWNLOAD_STEP);
                     if ((downloadCnt == Constant.MAX_DOWNLOAD_COUNT)) {
                         activity.mDownloadProgressDialog.dismiss();
                     }
                     break;
                 }
                 case Constant.DOWNLOAD_SUCCESS: {
+                    Log.e("ljz", "DOWNLOAD_SUCCESS");
                     break;
                 }
 
                 case Constant.UPDATE_SUCCESS: {
+                    Log.e("ljz", "UPDATE_SUCCESS");
                     break;
                 }
                 case Constant.DOWNLOAD_UPDATE_DONE: {
@@ -798,12 +814,17 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
 
                 case Constant.STARTDOWNLOAD_SALESINFO: {
+                    Log.e("ljz", "STARTDOWNLOAD_SALESINFO");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .download_salesinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SALESINFO_SUCCESS: {
+
+                    Log.e("ljz", "DOWNLOAD_SALESINFO_SUCCESS");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .update_salesinfo));
@@ -833,12 +854,16 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
 
                 case Constant.STARTDOWNLOAD_SHIPMENTTYPEINFO: {
+                    Log.e("ljz", "STARTDOWNLOAD_SHIPMENTTYPEINFO");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .download_shipmenttypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS: {
+                    Log.e("ljz", "DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .update_shipmenttypeinfo));
@@ -867,12 +892,16 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
                 //put it download in the end
                 case Constant.STARTDOWNLOAD_LIUCANGTYPEINFO: {
+                    Log.e("ljz", "STARTDOWNLOAD_LIUCANGTYPEINFO");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .download_liucangtypeinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_LIUCANGTYPEINFO_SUCCESS: {
+                    Log.e("ljz", "DOWNLOAD_LIUCANGTYPEINFO_SUCCESS");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .update_liucangtypeinfo));
@@ -888,12 +917,15 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 }
 
                 case Constant.STARTDOWNLOAD_VEHICEINFO: {
+                    Log.e("ljz", "STARTDOWNLOAD_VEHICEINFO");
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .download_vehiceinfo));
                     break;
                 }
                 case Constant.DOWNLOAD_VEHICEINFO_SUCCESS: {
+                    Log.e("ljz", "DOWNLOAD_VEHICEINFO_SUCCESS");
+
                     activity.mDownloadProgressDialog.setMessage(activity
                             .getString(R.string
                                     .update_vehiceinfo));
@@ -921,6 +953,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 }
 
                 case Constant.DO_ALL_FINISH: {
+                    Log.e("ljz", "DO_ALL_FINISH");
+
                     activity.mDownloadProgressDialog.dismiss();
                 }
 
