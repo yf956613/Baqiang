@@ -403,7 +403,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         protected Long doInBackground(String... strings) {
 
-            Log.e("ljz", "doInBackground" +Arrays.toString
+            Log.e("ljz", "doInBackground" + Arrays.toString
                     (strings));
 
             SyncServerTime.getInstance().setDataDownloadStatus(this);
@@ -429,17 +429,19 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         public void updateServerInfo(String serverinfo, String time, String
                 apkVersion) {
 
-                LogUtil.trace("ServerTimeSyncTask " + serverinfo +  " " + time + " " + apkVersion);
-                Log.e("ljz", "ServerTimeSyncTask " + serverinfo +  " " + time + " " + apkVersion);
+            LogUtil.trace("ServerTimeSyncTask " + serverinfo + " " + time + "" +
+                    " " + apkVersion);
+            Log.e("ljz", "ServerTimeSyncTask " + serverinfo + " " + time + " " +
+                    "" + apkVersion);
 
-                if (time != null && time.length() > 0) {
-                    Intent timeIntent = new Intent();
-                    timeIntent.setAction("com.time.UPDATETIME");
-                    timeIntent.putExtra("time", Long.parseLong(time));
-                    MainActivity.this.sendBroadcast(timeIntent);
-                    LogUtil.trace("start to update system time");
-                    updateLoadingDialogMsg(getString(R.string.sync_servertimer));
-                }
+            if (time != null && time.length() > 0) {
+                Intent timeIntent = new Intent();
+                timeIntent.setAction("com.time.UPDATETIME");
+                timeIntent.putExtra("time", Long.parseLong(time));
+                MainActivity.this.sendBroadcast(timeIntent);
+                LogUtil.trace("start to update system time");
+                updateLoadingDialogMsg(getString(R.string.sync_servertimer));
+            }
         }
 
         @Override
@@ -463,7 +465,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
         @Override
         protected Long doInBackground(String... strings) {
 
-            Log.e("ljz", "doInBackground" +Arrays.toString
+            Log.e("ljz", "doInBackground" + Arrays.toString
                     (strings));
 
             ServerInfo.getInstance().setDataDownloadStatus(this);
@@ -491,7 +493,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 apkVersion) {
             LogUtil.trace("get updateServerInfo done ");
 
-            Log.e("ljz", "ServerInfoSyncTask " + serverinfo +  " " + time + " " + apkVersion);
+            Log.e("ljz", "ServerInfoSyncTask " + serverinfo + " " + time + " " +
+                    "" + apkVersion);
 
             Message serverMsg = Message.obtain();
             // 捷宝服务器数据同步成功
@@ -539,7 +542,7 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
             LogUtil.trace("doInBackground parameters:" + Arrays.toString
                     (strings));
 
-            Log.e("ljz", "doInBackground" +Arrays.toString
+            Log.e("ljz", "doInBackground" + Arrays.toString
                     (strings));
 
             if (updateInterface != null) {
@@ -697,7 +700,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                             downloadSuccessCnt = 0;
                             downloadFailedCnt = 0;
                             updateSucessCnt = 0;
-                            DataSyncTask shipmentDataSyncTask = new DataSyncTask();
+                            DataSyncTask shipmentDataSyncTask = new
+                                    DataSyncTask();
                             shipmentDataSyncTask.setUpdateInterface
                                     (UpdateShipmentType.getInstance());
                             if (!Constant.DEBUG) {
@@ -731,9 +735,10 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
                 }
                 case Constant.UPDATE_SEVERINFO_FAILED: {
                     closeLoadinDialog();
-                    Toast.makeText(MainActivity.this, activity.getString(R
+                    /*Toast.makeText(MainActivity.this, activity.getString(R
                             .string
-                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
+                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show
+                            ();*/
 
                     // MainThread 强制更新后台数据
                     showProgressDialog();
