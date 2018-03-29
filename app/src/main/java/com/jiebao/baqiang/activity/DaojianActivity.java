@@ -346,11 +346,12 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
      * 解析上一站网点信息
      * <p>
      * 1. 数据源从SalesServiceDBHelper中取；
-     * 2. 做二次过滤，如果 到/发件扫描判断 开关为 开状态，上一站只显示类型为“网点”的项
+     * 2. 做二次过滤，如果 到/发件扫描判断 开关为 开状态，上一站只显示类型为“中心”的项
      */
     private List<String> resolvePreviousStationData() {
         boolean isOpen = SharedUtil.getBoolean(DaojianActivity.this, Constant
                 .PREFERENCE_KEY_SCAN_SWITCH);
+        LogUtil.trace("-->" + isOpen);
 
         return isOpen ? SalesServiceDBHelper.getSalesServiceOfCentreOrBranch
                 (2) :
@@ -633,8 +634,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                                     .LENGTH_SHORT).show();
                             setHeaderRightViewText("未上传：" +
                                     searchUnloadDataForUpdate
-                                    (Constant
-                                            .SYNC_UNLOAD_DATA_TYPE_DJ));
+                                            (Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_DJ));
                             return true;
                         }
 

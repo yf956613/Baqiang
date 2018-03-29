@@ -46,7 +46,7 @@ public class SalesServiceDBHelper {
     /**
      * 根据type值，获取不同类型的站点列表
      *
-     * @param type 1：类型为中心；2：类型为网点
+     * @param type 1：类型为中心和网点；2：类型为中心
      * @return
      */
     public static List<String> getSalesServiceOfCentreOrBranch(int type) {
@@ -56,7 +56,7 @@ public class SalesServiceDBHelper {
         switch (type) {
             case 1: {
                 try {
-                    mData = dbManager.selector(SalesService.class).where("类型", "=", "中心").findAll();
+                    mData = dbManager.selector(SalesService.class).findAll();
                 } catch (DbException e) {
                     LogUtil.trace();
                     e.printStackTrace();
@@ -68,7 +68,7 @@ public class SalesServiceDBHelper {
             }
             case 2: {
                 try {
-                    mData = dbManager.selector(SalesService.class).where("类型", "=", "网点").findAll();
+                    mData = dbManager.selector(SalesService.class).where("类型", "=", "中心").findAll();
                 } catch (DbException e) {
                     LogUtil.trace();
                     e.printStackTrace();

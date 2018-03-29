@@ -5,7 +5,6 @@ import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianDispatchFileName;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.util.LogUtil;
 
@@ -15,7 +14,6 @@ import org.xutils.common.util.KeyValue;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -521,7 +519,7 @@ public class CommonDbHelperToUploadFile<T> {
                 uploadFile.uploadFile();
             } else if (records.get(0) instanceof StayHouseFileContent) {
                 // StayHouseFileContent类型
-                uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.FJ_TYPE);
+                uploadFile = new CommonUploadFile(CommonUploadFile.UploadFileType.LC_TYPE);
 
                 for (int index = 0; index < records.size(); index++) {
                     StayHouseFileContent record = (StayHouseFileContent) records.get(index);
