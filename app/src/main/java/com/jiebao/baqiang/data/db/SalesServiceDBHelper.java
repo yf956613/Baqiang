@@ -36,7 +36,8 @@ public class SalesServiceDBHelper {
 
         List<String> mArrayInfo = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
-            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
+                    (index).get网点名称());
         }
 
         return mArrayInfo;
@@ -68,7 +69,8 @@ public class SalesServiceDBHelper {
             }
             case 2: {
                 try {
-                    mData = dbManager.selector(SalesService.class).where("类型", "=", "中心").findAll();
+                    mData = dbManager.selector(SalesService.class).where
+                            ("类型", "=", "中心").findAll();
                 } catch (DbException e) {
                     LogUtil.trace();
                     e.printStackTrace();
@@ -81,7 +83,8 @@ public class SalesServiceDBHelper {
 
         List<String> mArrayInfo = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
-            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get(index).get网点名称());
+            mArrayInfo.add(mData.get(index).get网点编号() + "  " + mData.get
+                    (index).get网点名称());
         }
 
         return mArrayInfo;
@@ -96,11 +99,35 @@ public class SalesServiceDBHelper {
     public static String getServerIdFromName(String serverName) {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
-            List<SalesService> data = dbManager.selector(SalesService.class).where("网点名称",
+            List<SalesService> data = dbManager.selector(SalesService.class)
+                    .where("网点名称",
                     "like", serverName).limit(1).findAll();
 
             if (data != null && data.size() != 0) {
                 return data.get(0).get网点编号();
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 根据网点编号，获取网点名称
+     *
+     * @param serverID
+     * @return
+     */
+    public static String getServerNameFromId(String serverID) {
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            List<SalesService> data = dbManager.selector(SalesService.class)
+                    .where("网点编号",
+                    "like", serverID).limit(1).findAll();
+
+            if (data != null && data.size() != 0) {
+                return data.get(0).get网点名称();
             }
         } catch (DbException e) {
             e.printStackTrace();
@@ -119,7 +146,8 @@ public class SalesServiceDBHelper {
         if (!TextUtils.isEmpty(serverName)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<SalesService> data = dbManager.selector(SalesService.class).where("网点名称",
+                List<SalesService> data = dbManager.selector(SalesService
+                        .class).where("网点名称",
                         "like", serverName).limit(1).findAll();
                 if (data != null && data.size() != 0) {
                     return true;

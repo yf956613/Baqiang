@@ -165,11 +165,11 @@ public class ZCFajianFileContent extends IFileContentBean {
     @Column(name = "VehicleID")
     private String mVehicleID;
 
-    public String getmVehicleID() {
+    public String getVehicleID() {
         return mVehicleID;
     }
 
-    public void setmVehicleID(String mVehicleID) {
+    public void setVehicleID(String mVehicleID) {
         this.mVehicleID = mVehicleID;
     }
 
@@ -200,8 +200,10 @@ public class ZCFajianFileContent extends IFileContentBean {
     }
 
     public ZCFajianFileContent(String mNextStation, Date mScanDate, String
-            mGoodsType, String mShipmentType, String mShipmentNumber, String mScanEmployeeNumber,
-                               String mOperateDate, String mWeight, String mVehicleID, String
+            mGoodsType, String mShipmentType, String mShipmentNumber, String
+            mScanEmployeeNumber,
+                               String mOperateDate, String mWeight, String
+                                       mVehicleID, String
                                        mStatus, String mIsUsed) {
         this.mScannerType = TYPE_SUFFIX;
         this.mNextStation = mNextStation;
@@ -232,10 +234,12 @@ public class ZCFajianFileContent extends IFileContentBean {
 
         // 添加网点编号
         stringBuffer.append(this.mNextStation);
-        stringBuffer.append(countBlankAndAppend(this.mNextStation, NEXT_STATION));
+        stringBuffer.append(countBlankAndAppend(this.mNextStation,
+                NEXT_STATION));
 
         // 添加扫描时间
-        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format(mScanDate));
+        stringBuffer.append(new SimpleDateFormat("yyyyMMddHHmmss").format
+                (mScanDate));
 
         // 物品类别
         stringBuffer.append(this.mGoodsType);
@@ -246,11 +250,13 @@ public class ZCFajianFileContent extends IFileContentBean {
 
         // 运单编号
         stringBuffer.append(this.mShipmentNumber);
-        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber, SHIPMENT_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mShipmentNumber,
+                SHIPMENT_NUMBER));
 
         // 扫描员工编号
         stringBuffer.append(this.mScanEmployeeNumber);
-        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber, SCAN_EMPLOYEE_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mScanEmployeeNumber,
+                SCAN_EMPLOYEE_NUMBER));
 
         // 操作日期
         stringBuffer.append(this.mOperateDate);
@@ -265,7 +271,8 @@ public class ZCFajianFileContent extends IFileContentBean {
         stringBuffer.append(appendBlankSpace(BLANK_SPACE1));
         //车辆识别码
         stringBuffer.append(this.mVehicleID);
-        stringBuffer.append(countBlankAndAppend(this.mVehicleID, IDENTFY_NUMBER));
+        stringBuffer.append(countBlankAndAppend(this.mVehicleID,
+                IDENTFY_NUMBER));
 
         // 其他空格
         stringBuffer.append(appendBlankSpace(OTHERS));
@@ -315,13 +322,20 @@ public class ZCFajianFileContent extends IFileContentBean {
 
     @Override
     public String toString() {
-        return "ZCFajianFileContent{" + "mScannerType='" + mScannerType + '\'' + ", " +
-                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" + mScanDate + '\'' + ", " +
-                "" + "" + "" + "" + "" + "" + "" + "" + "" + "mGoodsType='" + mGoodsType + '\'' +
-                ", " + "mShipmentType='" + mShipmentType + '\'' + ", mShipmentNumber='" +
-                mShipmentNumber + '\'' + ", " + "mScanEmployeeNumber='" + mScanEmployeeNumber +
-                '\'' + ", " + "mOperateDate='" + mOperateDate + '\'' + ", " + "mWeight='" +
-                mWeight + '\'' + ", mVehicleID='" + mVehicleID + '\'' + ", mStatus='" + mStatus +
+        return "ZCFajianFileContent{" + "mScannerType='" + mScannerType +
+                '\'' + ", " +
+                "mNextStation='" + mNextStation + '\'' + ", mScanDate='" +
+                mScanDate + '\'' + ", " +
+                "" + "" + "" + "" + "" + "" + "" + "" + "" + "mGoodsType='" +
+                mGoodsType + '\'' +
+                ", " + "mShipmentType='" + mShipmentType + '\'' + ", " +
+                "mShipmentNumber='" +
+                mShipmentNumber + '\'' + ", " + "mScanEmployeeNumber='" +
+                mScanEmployeeNumber +
+                '\'' + ", " + "mOperateDate='" + mOperateDate + '\'' + ", " +
+                "mWeight='" +
+                mWeight + '\'' + ", mVehicleID='" + mVehicleID + '\'' + ", " +
+                "mStatus='" + mStatus +
                 '\'' + ", " + "mIsUsed='" + mIsUsed + '\'' + '}';
     }
 }

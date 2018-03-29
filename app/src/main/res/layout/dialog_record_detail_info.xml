@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--运单号-->
+            <LinearLayout
+                android:id="@+id/ll_shipment_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="运单号："/>
+
+                <TextView
+                    android:id="@+id/tv_shipment_number"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="400000002634"/>
+            </LinearLayout>
+
+            <!--快件类型-->
+            <LinearLayout
+                android:id="@+id/ll_shipment_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="快件类型："/>
+
+                <TextView
+                    android:id="@+id/tv_shipment_type"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="汽运"/>
+            </LinearLayout>
+
+            <!--上一站-->
+            <LinearLayout
+                android:id="@+id/ll_previous_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="上一站："/>
+
+                <TextView
+                    android:id="@+id/tv_previous_station"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="嘉兴D"/>
+            </LinearLayout>
+
+            <!--下一站-->
+            <LinearLayout
+                android:id="@+id/ll_next_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="下一站："/>
+
+                <TextView
+                    android:id="@+id/tv_next_station"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="贵州铜仁"/>
+            </LinearLayout>
+
+            <!--留仓原因-->
+            <LinearLayout
+                android:id="@+id/ll_stay_house_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="留仓原因："/>
+
+                <TextView
+                    android:id="@+id/tv_stay_house_reason"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="爆仓"/>
+            </LinearLayout>
+
+            <!--车辆码-->
+            <LinearLayout
+                android:id="@+id/ll_vehicle_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="车辆码："/>
+
+                <TextView
+                    android:id="@+id/tv_vehicle_code"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="G000000001"/>
+            </LinearLayout>
+
+            <!--工号-->
+            <LinearLayout
+                android:id="@+id/ll_employee_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="工号："/>
+
+                <TextView
+                    android:id="@+id/tv_operator"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="117"/>
+            </LinearLayout>
+
+            <!--网点编号-->
+            <LinearLayout
+                android:id="@+id/ll_server_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="网点编号："/>
+
+                <TextView
+                    android:id="@+id/tv_sale_id"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="0020"/>
+            </LinearLayout>
+
+            <!--扫描时间-->
+            <LinearLayout
+                android:id="@+id/ll_scan_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/RecordSearchDialogTitleStyle"
+                    android:text="扫描时间："/>
+
+                <TextView
+                    android:id="@+id/tv_scan_time"
+                    style="@style/RecordSearchDialogContentStyle"
+                    android:text="2018-03-17 15:50:13"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"/>
+
+        <Button
+            android:id="@+id/btn_redo_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="重传"/>
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除"/>
+    </LinearLayout>
+
+</LinearLayout>

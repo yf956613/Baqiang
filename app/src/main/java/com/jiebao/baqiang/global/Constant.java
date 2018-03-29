@@ -19,8 +19,10 @@ public class Constant {
 
     //public static final String UPDATE_URL_PREFIX =
     // "http://120.76.79.124:8090/upgrade/";
-    public static final String UPDATE_URL_PREFIX = "http://www" + ".kjb1688.com:8090/upgrade/";
-    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX + "external/checkupdate.htm";
+    public static final String UPDATE_URL_PREFIX = "http://www" + "" +
+            ".kjb1688.com:8090/upgrade/";
+    public static final String UPDATE_VERSION_URL = UPDATE_URL_PREFIX +
+            "external/checkupdate.htm";
 
 
     public final static String APP_CODE = "stockbao_android";
@@ -102,12 +104,18 @@ public class Constant {
     public static final int REQUEST_FOR_SCAN = 1000;
 
     public enum LogAction {
-        ACTION_OPEN_BILL, ACTION_DELETE_BILL, ACTION_DELETE_ALL_BILL, ACTION_EXPORT_BILL,
-        ACTION_EXPORT_ALL_BILL, ACTION_EXPORT_ADD_LOACTION, ACTION_DELETE_LOACTION,
-        ACTION_MODIFY_NUM, ACTION_UPLOAD_BILL, ACTION_UPLOAD_ALL_BILL, ACTION_DOWNLOAD_PARAM,
-        ACTION_DOWNLOAD_MATERIAL, ACTION_DOWNLOAD_WAREHOUSE, ACTION_DOWNLOAD_USER,
-        ACTION_CLEAR_DATA, ACTION_IMPORT_DATA, ACTION_GOODS_QUERY, ACTION_PARAM_SET,
-        ACTION_IMPORT_SET, ACTION_EXPORT_SET, ACTION_DISPLAY_SET, ACTION_TIME_SET,
+        ACTION_OPEN_BILL, ACTION_DELETE_BILL, ACTION_DELETE_ALL_BILL,
+        ACTION_EXPORT_BILL,
+        ACTION_EXPORT_ALL_BILL, ACTION_EXPORT_ADD_LOACTION,
+        ACTION_DELETE_LOACTION,
+        ACTION_MODIFY_NUM, ACTION_UPLOAD_BILL, ACTION_UPLOAD_ALL_BILL,
+        ACTION_DOWNLOAD_PARAM,
+        ACTION_DOWNLOAD_MATERIAL, ACTION_DOWNLOAD_WAREHOUSE,
+        ACTION_DOWNLOAD_USER,
+        ACTION_CLEAR_DATA, ACTION_IMPORT_DATA, ACTION_GOODS_QUERY,
+        ACTION_PARAM_SET,
+        ACTION_IMPORT_SET, ACTION_EXPORT_SET, ACTION_DISPLAY_SET,
+        ACTION_TIME_SET,
     }
 
     public static final int DOWNLOAD_FAILED = 0;
@@ -128,36 +136,56 @@ public class Constant {
     public static final int VEHICEINFO_ID = BASE_INFO_ID + 5;
 
     public static final int STARTDOWNLOAD_INFO = 100;
-    public static final int STARTDOWNLOAD_SERVERINFO = STARTDOWNLOAD_INFO + SERVER_INFO_ID;
-    public static final int STARTDOWNLOAD_SALESINFO = STARTDOWNLOAD_INFO + SALESINFO_ID;
-    public static final int STARTDOWNLOAD_SHIPMENTTYPEINFO = STARTDOWNLOAD_INFO +
-            SHIPMENTTYPEINFO_ID;
-    public static final int STARTDOWNLOAD_LIUCANGTYPEINFO = STARTDOWNLOAD_INFO + LIUCANGTYPEINFO_ID;
-    public static final int STARTDOWNLOAD_VEHICEINFO = STARTDOWNLOAD_INFO + VEHICEINFO_ID;
+    public static final int STARTDOWNLOAD_SERVERINFO = STARTDOWNLOAD_INFO +
+            SERVER_INFO_ID;
+    public static final int STARTDOWNLOAD_SALESINFO = STARTDOWNLOAD_INFO +
+            SALESINFO_ID;
+    public static final int STARTDOWNLOAD_SHIPMENTTYPEINFO =
+            STARTDOWNLOAD_INFO +
+                    SHIPMENTTYPEINFO_ID;
+    public static final int STARTDOWNLOAD_LIUCANGTYPEINFO =
+            STARTDOWNLOAD_INFO + LIUCANGTYPEINFO_ID;
+    public static final int STARTDOWNLOAD_VEHICEINFO = STARTDOWNLOAD_INFO +
+            VEHICEINFO_ID;
 
     public static final int DOWNLOAD_INFO_SUCCESS = 1000;
-    public static final int DOWNLOAD_SERVERINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + SERVER_INFO_ID;
-    public static final int DOWNLOAD_SALESINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + SALESINFO_ID;
-    public static final int DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS +
-            SHIPMENTTYPEINFO_ID;
-    public static final int DOWNLOAD_LIUCANGTYPEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS +
-            LIUCANGTYPEINFO_ID;
-    public static final int DOWNLOAD_VEHICEINFO_SUCCESS = DOWNLOAD_INFO_SUCCESS + VEHICEINFO_ID;
+    public static final int DOWNLOAD_SERVERINFO_SUCCESS =
+            DOWNLOAD_INFO_SUCCESS + SERVER_INFO_ID;
+    public static final int DOWNLOAD_SALESINFO_SUCCESS =
+            DOWNLOAD_INFO_SUCCESS + SALESINFO_ID;
+    public static final int DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS =
+            DOWNLOAD_INFO_SUCCESS +
+                    SHIPMENTTYPEINFO_ID;
+    public static final int DOWNLOAD_LIUCANGTYPEINFO_SUCCESS =
+            DOWNLOAD_INFO_SUCCESS +
+                    LIUCANGTYPEINFO_ID;
+    public static final int DOWNLOAD_VEHICEINFO_SUCCESS =
+            DOWNLOAD_INFO_SUCCESS + VEHICEINFO_ID;
 
     public static final int UPDATE_DATA_DONE = 2000;
-    public static final int UPDATE_SERVERINFO_DONE = UPDATE_DATA_DONE + SERVER_INFO_ID;
-    public static final int UPDATE_SALESINFO_DONE = UPDATE_DATA_DONE + SALESINFO_ID;
-    public static final int UPDATE_SHIPMENTTYPEINFO_DONE = UPDATE_DATA_DONE + SHIPMENTTYPEINFO_ID;
-    public static final int UPDATE_LIUCANGTYPEINFO_DONE = UPDATE_DATA_DONE + LIUCANGTYPEINFO_ID;
-    public static final int UPDATE_VEHICEINFO_DONE = UPDATE_DATA_DONE + VEHICEINFO_ID;
+    public static final int UPDATE_SERVERINFO_DONE = UPDATE_DATA_DONE +
+            SERVER_INFO_ID;
+    public static final int UPDATE_SALESINFO_DONE = UPDATE_DATA_DONE +
+            SALESINFO_ID;
+    public static final int UPDATE_SHIPMENTTYPEINFO_DONE = UPDATE_DATA_DONE +
+            SHIPMENTTYPEINFO_ID;
+    public static final int UPDATE_LIUCANGTYPEINFO_DONE = UPDATE_DATA_DONE +
+            LIUCANGTYPEINFO_ID;
+    public static final int UPDATE_VEHICEINFO_DONE = UPDATE_DATA_DONE +
+            VEHICEINFO_ID;
 
     public static final int UPDATE_DATA_FAILED = 0;
-    public static final int UPDATE_SEVERINFO_FAILED = UPDATE_DATA_FAILED - SERVER_INFO_ID;
-    public static final int UPDATE_SALESINFO_FAILED = UPDATE_DATA_FAILED - SALESINFO_ID;
-    public static final int UPDATE_SHIPMENTTYPEINFO_FAILED = UPDATE_DATA_FAILED -
-            SHIPMENTTYPEINFO_ID;
-    public static final int UPDATE_LIUCANGTYPEINFO_FAILED = UPDATE_DATA_FAILED - LIUCANGTYPEINFO_ID;
-    public static final int UPDATE_VEHICEINFO_FAILED = UPDATE_DATA_FAILED - VEHICEINFO_ID;
+    public static final int UPDATE_SEVERINFO_FAILED = UPDATE_DATA_FAILED -
+            SERVER_INFO_ID;
+    public static final int UPDATE_SALESINFO_FAILED = UPDATE_DATA_FAILED -
+            SALESINFO_ID;
+    public static final int UPDATE_SHIPMENTTYPEINFO_FAILED =
+            UPDATE_DATA_FAILED -
+                    SHIPMENTTYPEINFO_ID;
+    public static final int UPDATE_LIUCANGTYPEINFO_FAILED =
+            UPDATE_DATA_FAILED - LIUCANGTYPEINFO_ID;
+    public static final int UPDATE_VEHICEINFO_FAILED = UPDATE_DATA_FAILED -
+            VEHICEINFO_ID;
 
 
     public static final String ARG_USE_CAMERA = "useCamera";
@@ -195,13 +223,15 @@ public class Constant {
     }
 
     // TODO 用户保存在SharedPreference中的数据key名称
-    public static final String PRERENCE_LANGUAGE_CHOICE = "multiLanguageChoiced";
+    public static final String PRERENCE_LANGUAGE_CHOICE =
+            "multiLanguageChoiced";
     public static final String PREFERENCE_KEY_LANGUAGE = "defaultLanguage";
     public static final String PREFERENCE_KEY_SYSTEM_ARG = "system_arg";
     public static final String PREFERENCE_KEY_DEVICE_ID = "device_id";
 
     //
-    public static final String PREFERENCE_KEY_BAQIANG_FIRST_START = "baqiang_first_start";
+    public static final String PREFERENCE_KEY_BAQIANG_FIRST_START =
+            "baqiang_first_start";
 
     // 是否记住用户名和密码
     public static final String KEY_IS_REMEMBER_PSW = "is_remember_psw";
@@ -212,21 +242,29 @@ public class Constant {
     // 用户名 需要注意：此处用户名不包含网点编号
     public static final String PREFERENCE_KEY_USERNAME = "username";
     // 数据库服务器地址
-    public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS = "data_server_address";
+    public static final String PREFERENCE_KEY_DATA_SERVER_ADDRESS =
+            "data_server_address";
     // 数据库服务器端口
-    public static final String PREFERENCE_KEY_DATA_SERVER_PORT = "data_server_port";
+    public static final String PREFERENCE_KEY_DATA_SERVER_PORT =
+            "data_server_port";
     // 快件查询地址
-    public static final String PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS = "express_address";
+    public static final String PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS =
+            "express_address";
     // 捷宝数据服务器地址
-    public static final String PREFERENCE_KEY_JB_SERVER = "jiebao_server_address";
+    public static final String PREFERENCE_KEY_JB_SERVER =
+            "jiebao_server_address";
     // 捷宝数据服务器端口
-    public static final String PREFERENCE_KEY_JB_SERVER_PORT = "jiebao_server_port";
+    public static final String PREFERENCE_KEY_JB_SERVER_PORT =
+            "jiebao_server_port";
     // 称重预付款设置
-    public static final String PREFERENCE_KEY_WEIGH_FORE_PAYMENT = "weigh_fore_payment";
+    public static final String PREFERENCE_KEY_WEIGH_FORE_PAYMENT =
+            "weigh_fore_payment";
     // 称重录单设置
-    public static final String PREFERENCE_KEY_WEIGH_INPUT_BUSINESS = "weigh_input_business";
+    public static final String PREFERENCE_KEY_WEIGH_INPUT_BUSINESS =
+            "weigh_input_business";
     // 到件预付款设置
-    public static final String PREFERENCE_KEY_ARRIVAL_FORE_PAYMENT = "arrival_fore_payment";
+    public static final String PREFERENCE_KEY_ARRIVAL_FORE_PAYMENT =
+            "arrival_fore_payment";
     // 到/发件扫描判断开关
     public static final String PREFERENCE_KEY_SCAN_SWITCH = "scan_switch";
 
@@ -253,31 +291,41 @@ public class Constant {
     // 更新所有记录
     public static final int SYNC_UNLOAD_DATA_TYPE_ALL = 0;
     // 更新装车发件 未上传记录数
-    public static final int SYNC_UNLOAD_DATA_TYPE_ZCFJ = SYNC_UNLOAD_DATA_TYPE_ALL + 1;
+    public static final int SYNC_UNLOAD_DATA_TYPE_ZCFJ =
+            SYNC_UNLOAD_DATA_TYPE_ALL + 1;
     // 更新卸车到件 未上传记录数
-    public static final int SYNC_UNLOAD_DATA_TYPE_XCDJ = SYNC_UNLOAD_DATA_TYPE_ZCFJ + 1;
+    public static final int SYNC_UNLOAD_DATA_TYPE_XCDJ =
+            SYNC_UNLOAD_DATA_TYPE_ZCFJ + 1;
     // 更新到件 未上传记录数
-    public static final int SYNC_UNLOAD_DATA_TYPE_DJ = SYNC_UNLOAD_DATA_TYPE_XCDJ + 1;
+    public static final int SYNC_UNLOAD_DATA_TYPE_DJ =
+            SYNC_UNLOAD_DATA_TYPE_XCDJ + 1;
     // 更新发件 未上传记录数
-    public static final int SYNC_UNLOAD_DATA_TYPE_FJ = SYNC_UNLOAD_DATA_TYPE_DJ + 1;
+    public static final int SYNC_UNLOAD_DATA_TYPE_FJ =
+            SYNC_UNLOAD_DATA_TYPE_DJ + 1;
     // 更新留仓件 未上传记录数
-    public static final int SYNC_UNLOAD_DATA_TYPE_LCJ = SYNC_UNLOAD_DATA_TYPE_FJ + 1;
+    public static final int SYNC_UNLOAD_DATA_TYPE_LCJ =
+            SYNC_UNLOAD_DATA_TYPE_FJ + 1;
 
     // SP存储未上传记录数：装车发件
-    public static final String PREFERENCE_NAME_ZCFJ = "unload_number_records_zcfj";
+    public static final String PREFERENCE_NAME_ZCFJ =
+            "unload_number_records_zcfj";
     // SP存储未上传记录数：卸车到件
-    public static final String PREFERENCE_NAME_XCDJ = "unload_number_records_xcdj";
+    public static final String PREFERENCE_NAME_XCDJ =
+            "unload_number_records_xcdj";
     // SP存储未上传记录数：到件
     public static final String PREFERENCE_NAME_DJ = "unload_number_records_dj";
     // SP存储未上传记录数：发件
     public static final String PREFERENCE_NAME_FJ = "unload_number_records_fj";
     // SP存储未上传记录数：留仓件
-    public static final String PREFERENCE_NAME_LCJ = "unload_number_records_lcj";
+    public static final String PREFERENCE_NAME_LCJ =
+            "unload_number_records_lcj";
 
     // 自动上传记录
-    public static final String AUTO_ACTION_UPLOAD_RECORDS = "android.intent.action.jiebao.upload"
+    public static final String AUTO_ACTION_UPLOAD_RECORDS = "android.intent" +
+            ".action.jiebao.upload"
             + ".records";
-    public static final String PREFERENCE_NAME_AUTO_UPLOAD_TIME = "auto_upload_time";
+    public static final String PREFERENCE_NAME_AUTO_UPLOAD_TIME =
+            "auto_upload_time";
 
     public static final String SEARCH_NAME_ZCFJ = "装车发件";
     public static final String SEARCH_NAME_XCDJ = "卸车到件";

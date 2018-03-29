@@ -163,11 +163,11 @@ public class UnloadArrivalFileContent extends IFileContentBean {
     @Column(name = "VehicleID")
     private String mVehicleId;
 
-    public String getVehicleId() {
+    public String getVehicleID() {
         return mVehicleId;
     }
 
-    public void setVehicleId(String vehicleId) {
+    public void setVehicleID(String vehicleId) {
         this.mVehicleId = vehicleId;
     }
 

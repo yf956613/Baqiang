@@ -86,6 +86,28 @@ public class StayHouseReasonDBHelper {
     }
 
     /**
+     * 根据留仓编号查询名称
+     * @param id
+     * @return
+     */
+    public static String getReasonNameFromId(String id) {
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            List<LiucangBean> data = dbManager.selector(LiucangBean.class)
+                    .where("编号", "=",
+                            id).limit(1).findAll();
+
+            if (data != null && data.size() != 0) {
+                return data.get(0).get名称();
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
      * 判断是否存在指定留仓原因
      *
      * @param reason

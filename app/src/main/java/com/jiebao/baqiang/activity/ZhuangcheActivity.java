@@ -136,7 +136,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                     position, long id) {
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
-                mZcFajianFileContent.setmVehicleID(vehicleId);
+                mZcFajianFileContent.setVehicleID(vehicleId);
             }
         });
         mTvVehicleId.setOnKeyListener(new View.OnKeyListener() {
@@ -443,7 +443,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
                                 mTvVehicleId.dismissDropDown();
                                 mTvVehicleId.setText(list.get(0), false);
 
-                                mZcFajianFileContent.setmVehicleID(list.get(0));
+                                mZcFajianFileContent.setVehicleID(list.get(0));
 
                                 Editable spannable = mTvVehicleId.getText();
                                 Selection.setSelection(spannable, spannable

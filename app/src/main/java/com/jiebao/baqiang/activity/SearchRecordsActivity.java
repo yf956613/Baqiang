@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
+import com.jiebao.baqiang.data.db.SalesServiceDBHelper;
+import com.jiebao.baqiang.data.db.StayHouseReasonDBHelper;
 import com.jiebao.baqiang.data.db.XcdjDBHelper;
 import com.jiebao.baqiang.data.db.ZcFajianDBHelper;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
@@ -71,15 +74,14 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
     public void initData() {
         Intent intent = this.getIntent();
         // 开始时间的秒数，默认是：00；结束时间的秒数，默认是：59
-        String searchType = intent.getStringExtra("search_type");
+        final String searchType = intent.getStringExtra("search_type");
         final String beginTime = intent.getStringExtra("start_time");
         String endTime = intent.getStringExtra("end_time");
         // type:装车发件; begin:2018-3-22 00:00; end:2018-3-22 23:59 -->
         // 20180320204809
         // begin:20180322000000; end:20180322235959
         LogUtil.trace("begin:" + BQTimeUtil.convertSearchTime(beginTime, 1) +
-                "; end:" +
-                BQTimeUtil.convertSearchTime(endTime, 2));
+                "; end:" + BQTimeUtil.convertSearchTime(endTime, 2));
 
         try {
             long mBeginDate = new SimpleDateFormat("yyyyMMddHHmmss").parse
@@ -161,8 +163,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
             if (null != mListData && mListData.size() != 0) {
                 mSearchRecordsAdapter = new SearchRecordsAdapter
-                        (SearchRecordsActivity
-                                .this, mListData);
+                        (SearchRecordsActivity.this, mListData);
                 mListViewData.setAdapter(mSearchRecordsAdapter);
                 mListViewData.setOnItemClickListener(new AdapterView
                         .OnItemClickListener() {
@@ -172,39 +173,16 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                             int position, long id) {
                         LogUtil.trace("position:" + position + "; id:" + id);
 
-                        IFileContentBean bean = null;
-                        if (mListData.get(position) instanceof
-                                ZCFajianFileContent) {
-                            bean = (ZCFajianFileContent) mListData.get
-                                    (position);
-                        } else if (mListData.get(position) instanceof
-                                UnloadArrivalFileContent) {
-                            bean = (UnloadArrivalFileContent) mListData.get
-                                    (position);
-                        } else if (mListData.get(position) instanceof
-                                CargoArrivalFileContent) {
-                            bean = (CargoArrivalFileContent) mListData.get
-                                    (position);
-                        } else if (mListData.get(position) instanceof
-                                ShipmentFileContent) {
-                            bean = (ShipmentFileContent) mListData.get
-                                    (position);
-                        } else if (mListData.get(position) instanceof
-                                StayHouseFileContent) {
-                            bean = (StayHouseFileContent) mListData.get
-                                    (position);
-                        } else {
-                            // do nothing
-                        }
-
+                        final IFileContentBean bean = mListData.get(position);
                         if (bean != null) {
                             final AlertDialog dialog = new AlertDialog.Builder
                                     (SearchRecordsActivity.this).create();
                             dialog.setView(LayoutInflater.from
                                     (SearchRecordsActivity.this)
                                     .inflate(R.layout
-                                            .alert_dialog_search_detail, null));
+                                            .dialog_record_detail_info, null));
                             dialog.setCanceledOnTouchOutside(false);
+                            dialog.setTitle("记录详情");
                             dialog.show();
 
                             Button btnCancel = dialog.findViewById(R.id
@@ -226,7 +204,6 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 // do nothing
                             }
 
-                            final IFileContentBean finalBean = bean;
                             btnRedoUpload.setOnClickListener(new View
                                     .OnClickListener() {
 
@@ -241,11 +218,15 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                         return;
                                     } else {
                                         dialog.dismiss();
+                                        // 网络可用，显示Dialog
                                         showLoadinDialog();
                                     }
 
-                                    if (finalBean instanceof
-                                            ZCFajianFileContent) {
+                                    if (Constant.SEARCH_NAME_ZCFJ.equals
+                                            (searchType)) {
+                                        final ZCFajianFileContent
+                                                zcFajianFileContent =
+                                                (ZCFajianFileContent) bean;
                                         new CommonDbHelperToUploadFile<ZCFajianFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -272,9 +253,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
-                                                (finalBean);
-                                    } else if (finalBean instanceof
-                                            UnloadArrivalFileContent) {
+                                                (zcFajianFileContent);
+                                    } else if (Constant.SEARCH_NAME_XCDJ.equals
+                                            (searchType)) {
+                                        final UnloadArrivalFileContent
+                                                unloadArrivalFileContent =
+                                                (UnloadArrivalFileContent) bean;
                                         new CommonDbHelperToUploadFile<UnloadArrivalFileContent>
                                                 ().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -297,9 +281,13 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                             public boolean onFinish() {
                                                 return false;
                                             }
-                                        }).uploadSingleRecord(finalBean);
-                                    } else if (finalBean instanceof
-                                            CargoArrivalFileContent) {
+                                        }).uploadSingleRecord
+                                                (unloadArrivalFileContent);
+                                    } else if (Constant.SEARCH_NAME_DJ.equals
+                                            (searchType)) {
+                                        final CargoArrivalFileContent
+                                                cargoArrivalFileContent =
+                                                (CargoArrivalFileContent) bean;
                                         new CommonDbHelperToUploadFile<CargoArrivalFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -326,9 +314,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
-                                                (finalBean);
-                                    } else if (finalBean instanceof
-                                            ShipmentFileContent) {
+                                                (cargoArrivalFileContent);
+                                    } else if (Constant.SEARCH_NAME_FJ.equals
+                                            (searchType)) {
+                                        final ShipmentFileContent
+                                                shipmentFileContent =
+                                                (ShipmentFileContent) bean;
                                         new CommonDbHelperToUploadFile<ShipmentFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -355,9 +346,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
-                                                (finalBean);
-                                    } else if (finalBean instanceof
-                                            StayHouseFileContent) {
+                                                (shipmentFileContent);
+                                    } else if (Constant.SEARCH_NAME_LCJ
+                                            .equals(searchType)) {
+                                        final StayHouseFileContent
+                                                stayHouseFileContent =
+                                                (StayHouseFileContent) bean;
                                         new CommonDbHelperToUploadFile<StayHouseFileContent>()
                                                 .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
@@ -384,12 +378,12 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
-                                                (finalBean);
+                                                (stayHouseFileContent);
                                     } else {
                                         // do nothing
                                     }
                                 }
-                            });
+                            }); // end for on click listener
 
                             Button btnDelete = dialog.findViewById(R.id
                                     .btn_delete);
@@ -403,85 +397,80 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                 @Override
                                 public void onClick(View v) {
-                                    if (finalBean instanceof
-                                            ZCFajianFileContent) {
+                                    if (Constant.SEARCH_NAME_ZCFJ.equals
+                                            (searchType)) {
                                         if (ZcFajianDBHelper.isRecordUpload
-                                                (finalBean.getId())) {
+                                                (bean.getId())) {
                                             Toast.makeText
                                                     (SearchRecordsActivity.this,
                                                             "记录已上传，不能删除", Toast
-                                                                    .LENGTH_SHORT).show();
+                                                                    .LENGTH_SHORT)
+                                                    .show();
                                         } else {
                                             if (ZcFajianDBHelper
                                                     .deleteFindedBean
-                                                            (finalBean.getId
+                                                            (bean.getId
                                                                     ())) {
                                                 syncViewAfterUpload(Constant
                                                         .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                             }
                                         }
-                                    } else if (finalBean instanceof
-                                            UnloadArrivalFileContent) {
+                                    } else if (Constant.SEARCH_NAME_XCDJ
+                                            .equals(searchType)) {
                                         if (XcdjDBHelper.isRecordUpload
-                                                (finalBean.getId())) {
+                                                (bean.getId())) {
                                             Toast.makeText
                                                     (SearchRecordsActivity.this,
                                                             "记录已上传，不能删除", Toast
                                                                     .LENGTH_SHORT).show();
                                         } else {
                                             if (XcdjDBHelper.deleteFindedBean
-                                                    (finalBean.getId())) {
+                                                    (bean.getId())) {
                                                 syncViewAfterUpload(Constant
                                                         .SYNC_UNLOAD_DATA_TYPE_XCDJ);
                                             }
                                         }
-                                    } else if (finalBean instanceof
-                                            CargoArrivalFileContent) {
+                                    } else if (Constant.SEARCH_NAME_DJ.equals
+                                            (searchType)) {
                                         if (DaojianDBHelper.isRecordUpload
-                                                (finalBean.getId())) {
+                                                (bean.getId())) {
                                             Toast.makeText
                                                     (SearchRecordsActivity.this,
                                                             "记录已上传，不能删除", Toast
                                                                     .LENGTH_SHORT).show();
                                         } else {
-                                            if (DaojianDBHelper
-                                                    .deleteFindedBean
-                                                            (finalBean.getId
-                                                                    ())) {
+                                            if (DaojianDBHelper.deleteFindedBean
+                                                    (bean.getId())) {
                                                 syncViewAfterUpload(Constant
                                                         .SYNC_UNLOAD_DATA_TYPE_DJ);
                                             }
                                         }
-                                    } else if (finalBean instanceof
-                                            ShipmentFileContent) {
+                                    } else if (Constant.SEARCH_NAME_FJ.equals
+                                            (searchType)) {
                                         if (FajianDBHelper.isRecordUpload
-                                                (finalBean.getId())) {
+                                                (bean.getId())) {
                                             Toast.makeText
                                                     (SearchRecordsActivity.this,
                                                             "记录已上传，不能删除", Toast
                                                                     .LENGTH_SHORT).show();
                                         } else {
-                                            if (FajianDBHelper
-                                                    .deleteFindedBean
-                                                            (finalBean.getId()
-                                                            )) {
+                                            if (FajianDBHelper.deleteFindedBean
+                                                    (bean.getId())) {
                                                 syncViewAfterUpload(Constant
                                                         .SYNC_UNLOAD_DATA_TYPE_FJ);
                                             }
                                         }
-                                    } else if (finalBean instanceof
-                                            StayHouseFileContent) {
+                                    } else if (Constant.SEARCH_NAME_LCJ
+                                            .equals(searchType)) {
                                         if (LiucangDBHelper.isRecordUpload
-                                                (finalBean.getId())) {
+                                                (bean.getId())) {
                                             Toast.makeText
                                                     (SearchRecordsActivity.this,
                                                             "记录已上传，不能删除", Toast
                                                                     .LENGTH_SHORT).show();
                                         } else {
-                                            if (LiucangDBHelper
-                                                    .deleteFindedBean
-                                                            (finalBean.getId
-                                                                    ())) {
+                                            if (LiucangDBHelper.deleteFindedBean
+                                                    (bean.getId())) {
                                                 syncViewAfterUpload(Constant
                                                         .SYNC_UNLOAD_DATA_TYPE_LCJ);
                                             }
@@ -490,12 +479,41 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                     dialog.dismiss();
                                 }
-                            });
+                            }); // end for delete on click listener
 
+
+                            initDialogView(dialog, searchType);
+                            // 运单号
                             TextView tvShipmentNumber = dialog.findViewById(R.id
                                     .tv_shipment_number);
                             tvShipmentNumber.setText(bean.getShipmentNumber());
-
+                            // 快件类型
+                            TextView tvShipmentType = dialog.findViewById(R
+                                    .id.tv_shipment_type);
+                            tvShipmentType.setText(bean.getShipmentType());
+                            // 上一站
+                            TextView tvPreviousStation = dialog.findViewById
+                                    (R.id.tv_previous_station);
+                            tvPreviousStation.setText(SalesServiceDBHelper
+                                    .getServerNameFromId(bean.getPreviousStation
+                                            ()));
+                            // 下一站
+                            TextView tvNextStation = dialog.findViewById(R.id
+                                    .tv_next_station);
+                            tvNextStation.setText(SalesServiceDBHelper
+                                    .getServerNameFromId(bean.getNextStation
+                                            ()));
+                            // 留仓原因
+                            TextView tvStayhouseReason = dialog.findViewById
+                                    (R.id.tv_stay_house_reason);
+                            tvStayhouseReason.setText(StayHouseReasonDBHelper
+                                    .getReasonNameFromId(bean.getStayReason()));
+                            // 车辆码
+                            TextView tvVehicleCode = dialog.findViewById(R.id
+                                    .tv_vehicle_code);
+                            tvVehicleCode.setText(bean.getVehicleID());
+                            LogUtil.trace("bean:" + bean.toString());
+                            // 工号
                             TextView tvOperator = dialog.findViewById(R.id
                                     .tv_operator);
                             tvOperator.setText(bean.getScanEmployeeNumber());
@@ -504,24 +522,25 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                     (SearchRecordsActivity
                                             .this, Constant
                                             .PREFERENCE_KEY_SALE_SERVICE);
-                            TextView tvOperatorID = dialog.findViewById(R.id
-                                    .tv_operator_id);
-                            tvOperatorID.setText(bean.getScanEmployeeNumber()
-                                    .replace(idString,
-                                            ""));
+                            // 网点编号
                             TextView tvSaleID = dialog.findViewById(R.id
                                     .tv_sale_id);
                             tvSaleID.setText(idString);
-
+                            // 扫描时间
                             TextView tvScanTime = dialog.findViewById(R.id
                                     .tv_scan_time);
                             tvScanTime.setText(bean.getOperateDate());
+                        } else {
+                            // do nothing
                         }
-                    }
+
+
+                    } // on item click
                 });
             } else {
                 // do nothing
             }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -670,7 +689,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                         }
 
                                         @Override
-                                        public boolean onError(Throwable throwable, boolean b) {
+                                        public boolean onError(Throwable
+                                                                       throwable, boolean b) {
                                             return false;
                                         }
 
@@ -694,6 +714,52 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
         initData();
         if (mSearchRecordsAdapter != null) {
             mSearchRecordsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 根据搜索类型，设置布局
+     *
+     * @param dialog
+     * @param type
+     */
+    private void initDialogView(AlertDialog dialog, String type) {
+        LinearLayout mLiShipmentId = dialog.findViewById(R.id.ll_shipment_id);
+        LinearLayout mLiShipmentType = dialog.findViewById(R.id
+                .ll_shipment_type);
+        LinearLayout mLiPreviousStation = dialog.findViewById(R.id
+                .ll_previous_station);
+        LinearLayout mLiNextStation = dialog.findViewById(R.id.ll_next_station);
+        LinearLayout mLiStayHouseReason = dialog.findViewById(R.id
+                .ll_stay_house_reason);
+        LinearLayout mLiVehicleId = dialog.findViewById(R.id.ll_vehicle_id);
+        LinearLayout mLiEmployeeId = dialog.findViewById(R.id.ll_employee_id);
+        LinearLayout mLiServerId = dialog.findViewById(R.id.ll_server_id);
+        LinearLayout mLiScanDate = dialog.findViewById(R.id.ll_scan_date);
+
+        if (Constant.SEARCH_NAME_ZCFJ.equals(type)) {
+            mLiPreviousStation.setVisibility(View.GONE);
+            mLiStayHouseReason.setVisibility(View.GONE);
+        } else if (Constant.SEARCH_NAME_XCDJ.equals(type)) {
+            mLiShipmentType.setVisibility(View.GONE);
+            mLiNextStation.setVisibility(View.GONE);
+            mLiStayHouseReason.setVisibility(View.GONE);
+        } else if (Constant.SEARCH_NAME_DJ.equals(type)) {
+            mLiShipmentType.setVisibility(View.GONE);
+            mLiNextStation.setVisibility(View.GONE);
+            mLiVehicleId.setVisibility(View.GONE);
+            mLiStayHouseReason.setVisibility(View.GONE);
+        } else if (Constant.SEARCH_NAME_FJ.equals(type)) {
+            mLiPreviousStation.setVisibility(View.GONE);
+            mLiVehicleId.setVisibility(View.GONE);
+            mLiStayHouseReason.setVisibility(View.GONE);
+        } else if (Constant.SEARCH_NAME_LCJ.equals(type)) {
+            mLiShipmentType.setVisibility(View.GONE);
+            mLiPreviousStation.setVisibility(View.GONE);
+            mLiNextStation.setVisibility(View.GONE);
+            mLiVehicleId.setVisibility(View.GONE);
+        } else {
+            // do nothing
         }
     }
 

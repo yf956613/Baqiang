@@ -130,7 +130,7 @@ public class UnloadCargoArrivalActivity extends
                 // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String vehicleId = mTvVehicleId.getText().toString();
                 LogUtil.d(TAG, "serverID:" + vehicleId);
-                mUnloadArrivalFileContent.setVehicleId(vehicleId);
+                mUnloadArrivalFileContent.setVehicleID(vehicleId);
             }
         });
         mTvVehicleId.setOnKeyListener(new View.OnKeyListener() {
@@ -380,7 +380,7 @@ public class UnloadCargoArrivalActivity extends
                                 mTvVehicleId.dismissDropDown();
                                 mTvVehicleId.setText(list.get(0), false);
 
-                                mUnloadArrivalFileContent.setVehicleId(list
+                                mUnloadArrivalFileContent.setVehicleID(list
                                         .get(0));
 
                                 Editable spannable = mTvVehicleId.getText();
