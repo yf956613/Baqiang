@@ -333,20 +333,35 @@
     <string name="filter_vcode">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="filter_vcode_number">0123456789</string>
 
-    <string name="download_salesinfo_success">成功下载网点信息,正在更新本地数据....</string>
-    <string name="download_shipmenttypeinfo_success">成功下载快件方式,正在更新本地数据....</string>
-    <string name="download_liucangtypeinfo_success">成功下载留仓原因,正在更新本地数据....</string>
-    <string name="download_vehiceinfo_success">成功下载车辆信息,正在更新本地数据....</string>
-
     <string name="download_salesinfo">正在下载网点信息....</string>
     <string name="download_shipmenttypeinfo">正在下载快件方式....</string>
     <string name="download_liucangtypeinfo">正在下载留仓原因....</string>
     <string name="download_vehiceinfo">正在下载车辆信息....</string>
 
+    <string name="download_salesinfo_success">成功下载网点信息,正在更新本地数据...</string>
+    <string name="download_shipmenttypeinfo_success">成功下载快件方式,,正在更新本地数据...</string>
+    <string name="download_liucangtypeinfo_success">成功下载留仓原因,正在更新本地数据...</string>
+    <string name="download_vehiceinfo_success">成功下载车辆信息,正在更新本地数据...</string> 
+    
+    <string name="download_salesinfo_failed">下载网点信息失败</string>
+    <string name="download_shipmenttypeinfo_failed">下载快件方式失败</string>
+    <string name="download_liucangtypeinfo_failed">下载留仓原因失败</string>
+    <string name="download_vehiceinfo_failed">下载车辆信息失败</string> 
+    
     <string name="update_salesinfo">正在更新本地网点信息....</string>
     <string name="update_shipmenttypeinfo">正在更新本地快件方式....</string>
     <string name="update_liucangtypeinfo">正在更新本地留仓原因....</string>
     <string name="update_vehiceinfo">正在更新本地车辆信息....</string>
+
+    <string name="update_salesinfo_success">成功更新本地网点信息</string>
+    <string name="update_shipmenttypeinfo_success">成功更新本地快件方式</string>
+    <string name="update_liucangtypeinfo_success">成功更新本地留仓原因</string>
+    <string name="update_vehiceinfo_success">成功更新本地车辆信息</string>
+
+    <string name="update_salesinfo_failed">更新本地网点信息失败</string>
+    <string name="update_shipmenttypeinfo_failed">更新本地快件方式失败</string>
+    <string name="update_liucangtypeinfo_failed">更新本地留仓原因失败</string>
+    <string name="update_vehiceinfo_failed">更新本地车辆信息失败</string>
 
     <string name="sync_serverinfo">正在同步服务器信息....</string>
     <string name="sync_serverinfo_success">同步服务器信息成功</string>

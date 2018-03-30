@@ -367,13 +367,13 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
         switch (view.getId()) {
             // 装车发件
             case R.id.btn_load_send: {
-                gotoZhuangche();
+                // gotoZhuangche();
                 break;
             }
 
             // 卸车到件
             case R.id.btn_unload_receive_package: {
-                gotoUpload();
+                // gotoUpload();
                 break;
             }
 

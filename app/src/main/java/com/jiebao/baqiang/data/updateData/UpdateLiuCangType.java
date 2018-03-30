@@ -2,6 +2,7 @@ package com.jiebao.baqiang.data.updateData;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
@@ -88,6 +89,7 @@ public class UpdateLiuCangType extends UpdateInterface {
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
                 mDataDownloadStatus.downLoadError(infoId,throwable.getMessage());
+                mDataDownloadStatus.updateError(infoId,"download liucang data error !");
             }
 
             @Override
@@ -115,7 +117,9 @@ public class UpdateLiuCangType extends UpdateInterface {
 
         List<LiucangBean> liucangBean = liucangListInfo.getLiuCangInfo();
         if (liucangBean == null || liucangBean.size() == 0) {
-            LogUtil.trace("--- save LiucangBean data over ---");
+            LogUtil.trace("--- save LiucangBean data failed ---");
+            Log.e("ljz", "save LiucangBean data failed");
+            mDataDownloadStatus.updateError(infoId,"save LiucangBean data failed");
             return false;
         } else {
             DbManager db = BQDataBaseHelper.getDb();
@@ -135,7 +139,7 @@ public class UpdateLiuCangType extends UpdateInterface {
                     db.save(reason);
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(infoId,exception.getLocalizedMessage());
+                    mDataDownloadStatus.updateError(infoId,exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }

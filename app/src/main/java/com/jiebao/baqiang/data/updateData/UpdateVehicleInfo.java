@@ -2,6 +2,7 @@ package com.jiebao.baqiang.data.updateData;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.jiebao.baqiang.application.BaqiangApplication;
@@ -88,6 +89,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
                 mDataDownloadStatus.downLoadError(infoId, throwable.getMessage());
+                mDataDownloadStatus.updateError(infoId,"download vehicle data error !");
             }
 
             @Override
@@ -116,6 +118,8 @@ public class UpdateVehicleInfo extends UpdateInterface {
         List<VehicleInfo> vehicleInfos = vehicleInfoList.getVehicleInfo();
         if (vehicleInfos == null || vehicleInfos.size() == 0) {
             LogUtil.trace("--- save VehicleInfo data over ---");
+            Log.e("ljz", "save VehicleInfo data failed");
+            mDataDownloadStatus.updateError(infoId,"save VehicleInfo data failed");
             return false;
         } else {
             DbManager db = BQDataBaseHelper.getDb();
@@ -134,7 +138,7 @@ public class UpdateVehicleInfo extends UpdateInterface {
                             (index).get车辆识别号()));
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(infoId, exception.getLocalizedMessage());
+                    mDataDownloadStatus.updateError(infoId, exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }

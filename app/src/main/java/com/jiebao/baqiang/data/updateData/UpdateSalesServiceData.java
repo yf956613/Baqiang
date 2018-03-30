@@ -3,6 +3,7 @@ package com.jiebao.baqiang.data.updateData;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,6 +91,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
             public void onError(Throwable throwable, boolean b) {
                 // FIXME Login跳转到MainActivity，数据同步失败，提示失败原因，并选择是否再次更新数据
                 mDataDownloadStatus.downLoadError(infoId, TAG + ": " + throwable.getMessage());
+                mDataDownloadStatus.updateError(infoId,"download sales data error !");
             }
 
             @Override
@@ -117,7 +119,9 @@ public class UpdateSalesServiceData extends UpdateInterface {
         List<SalesService> saleInfo;
         saleInfo = salesServiceList.getSalesServiceList();
         if (saleInfo == null || saleInfo.size() == 0) {
-            LogUtil.trace("--- save SalesService data over ---");
+            LogUtil.trace("--- save SalesService data failed ---");
+            Log.e("ljz", "save SalesService data failed");
+            mDataDownloadStatus.updateError(infoId,"save SalesService data failed");
             // 避免在无数据的情况下，删除数据库
             return false;
         } else {
@@ -145,7 +149,7 @@ public class UpdateSalesServiceData extends UpdateInterface {
                     db.save(salesService);
                 } catch (Exception exception) {
                     // 反馈出错信息
-                    mDataDownloadStatus.downLoadError(infoId,exception.getLocalizedMessage());
+                    mDataDownloadStatus.updateError(infoId,exception.getLocalizedMessage());
                     exception.printStackTrace();
                 }
             }

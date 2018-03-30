@@ -18,9 +18,9 @@ import org.xutils.x;
 public class SyncServerTime extends UpdateInterface {
     private static final String TAG = SyncServerTime.class.getSimpleName();
 
-    private String serverVersion;
-    private String serverTime;
-    private String serverApkVersin;
+    private String serverVersion = null;
+    private String serverTime = null;
+    private String serverApkVersin = null;
 
     private volatile static SyncServerTime mInstance;
     private static String mServerInfoUrl = "";

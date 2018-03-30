@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             Log.e("jiebao", "first start reset default value");
 
             SharedUtil.putString(this, Constant
-                    .PREFERENCE_KEY_DATA_SERVER_ADDRESS, "10.1.1.187");
+                    .PREFERENCE_KEY_DATA_SERVER_ADDRESS, "10.1.2.47");
             SharedUtil.putString(this, Constant
                     .PREFERENCE_KEY_DATA_SERVER_PORT, "8086");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER,
@@ -106,9 +106,9 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             SharedUtil.putString(this, Constant
                     .PREFERENCE_KEY_JB_SERVER_PORT, "9876");
             SharedUtil.putString(this, Constant
-                    .PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "10.1.1.187");
+                    .PREFERENCE_KEY_EXPRESS_QUERY_ADDRESS, "10.1.2.47");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_SALE_SERVICE,
-                    "0020");
+                    "A");
             SharedUtil.putString(this, Constant
                     .PREFERENCE_KEY_BAQIANG_FIRST_START, "false");
 
@@ -232,15 +232,16 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
         RequestParams params = new RequestParams(mLoginUrl);
         params.addQueryStringParameter("saleId", SharedUtil.getString
                 (LoginActivity.this,
-                Constant.PREFERENCE_KEY_SALE_SERVICE));
+                        Constant.PREFERENCE_KEY_SALE_SERVICE));
         params.addQueryStringParameter("userName", SharedUtil.getString
                 (LoginActivity.this,
-                Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil.getString
-                (LoginActivity.this,
-                Constant.PREFERENCE_KEY_USERNAME));
+                        Constant.PREFERENCE_KEY_SALE_SERVICE) + SharedUtil
+                .getString
+                        (LoginActivity.this,
+                                Constant.PREFERENCE_KEY_USERNAME));
         params.addQueryStringParameter("password", SharedUtil.getString
                 (LoginActivity.this,
-                Constant.PREFERENCE_KEY_PSW));
+                        Constant.PREFERENCE_KEY_PSW));
         params.setConnectTimeout(45 * 1000);
 
         // TODO 从日志看出，下述回调都是在MainThread运行的
@@ -259,7 +260,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
                         if ("1".equals(loginResponse.getAuthRet())) {
                             Toast.makeText(BaqiangApplication.getContext(),
                                     "登录成功", Toast
-                                    .LENGTH_SHORT).show();
+                                            .LENGTH_SHORT).show();
                             //here we set password edittext ""
                             mEtPassward.setText("");
                             startActivity(new Intent(LoginActivity.this,
@@ -272,7 +273,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
                     } else {
                         Toast.makeText(BaqiangApplication.getContext(),
                                 "服务器数据解析错误", Toast
-                                .LENGTH_SHORT).show();
+                                        .LENGTH_SHORT).show();
                     }
                 }
             }
@@ -310,10 +311,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
     private boolean isCheckNetworkAddressAccess() {
         String dataServerAddress = SharedUtil.getString(LoginActivity.this,
                 Constant
-                .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
+                        .PREFERENCE_KEY_DATA_SERVER_ADDRESS);
         String dataServerPort = SharedUtil.getString(LoginActivity.this,
                 Constant
-                .PREFERENCE_KEY_DATA_SERVER_PORT);
+                        .PREFERENCE_KEY_DATA_SERVER_PORT);
 
         if (TextUtils.isEmpty(dataServerAddress) || TextUtils.isEmpty
                 (dataServerPort)) {
@@ -339,7 +340,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             //检测是否有写的权限
             int permission = ActivityCompat.checkSelfPermission(activity,
                     "android.permission" +
-                    ".WRITE_EXTERNAL_STORAGE");
+                            ".WRITE_EXTERNAL_STORAGE");
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
                 ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
