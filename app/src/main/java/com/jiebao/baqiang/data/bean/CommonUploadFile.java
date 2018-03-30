@@ -176,12 +176,16 @@ public class CommonUploadFile {
                 Gson gson = new Gson();
                 UploadFileResponseBean loginResponse = gson.fromJson(s,
                         UploadFileResponseBean
-                        .class);
+                                .class);
 
-                if (loginResponse.getUploadRet() == 1) {
-                    mCallbackListener.uploadSuccess(s);
+                if (loginResponse != null) {
+                    if (loginResponse.getUploadRet() == 1) {
+                        mCallbackListener.uploadSuccess(s);
+                    } else {
+                        // do nothing 可能其他原因导致失败
+                    }
                 } else {
-                    // do nothing 可能其他原因导致失败
+                    // 解析出错
                 }
             }
 

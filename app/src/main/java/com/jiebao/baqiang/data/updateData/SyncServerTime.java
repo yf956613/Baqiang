@@ -63,16 +63,18 @@ public class SyncServerTime extends UpdateInterface {
                 Gson gson = new Gson();
                 AppUpdateBean appInfo = gson.fromJson(serverInfo,
                         AppUpdateBean.class);
-                LogUtil.trace("appInfo:" + appInfo.toString());
+                if (appInfo != null) {
+                    LogUtil.trace("appInfo:" + appInfo.toString());
 
-                serverVersion = appInfo.getServerVersion();
-                serverTime = appInfo.getServerTime();
-                serverApkVersin = appInfo.getBaQiangApkVersion();
-
-                // 请求成功
-                mServerInfoStatus.updateServerInfo(serverVersion, serverTime,
-                        serverApkVersin);
-
+                    serverVersion = appInfo.getServerVersion();
+                    serverTime = appInfo.getServerTime();
+                    serverApkVersin = appInfo.getBaQiangApkVersion();
+                    mServerInfoStatus.updateServerInfo(serverVersion,
+                            serverTime, serverApkVersin);
+                } else {
+                    // 解析出错
+                    mServerInfoStatus.showServerInfoError("数据解析出错");
+                }
             }
 
             @Override

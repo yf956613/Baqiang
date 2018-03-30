@@ -81,21 +81,23 @@ public class ServerInfo extends UpdateInterface {
                 Gson gson = new Gson();
                 AppUpdateBean appInfo = gson.fromJson(serverInfo,
                         AppUpdateBean.class);
-                LogUtil.trace("appInfo:" + appInfo.toString());
+                if (appInfo != null) {
+                    LogUtil.trace("appInfo:" + appInfo.toString());
 
-                serverVersion = appInfo.getServerVersion();
-                serverTime = appInfo.getServerTime();
-                serverApkVersin = appInfo.getBaQiangApkVersion();
+                    serverVersion = appInfo.getServerVersion();
+                    serverTime = appInfo.getServerTime();
+                    serverApkVersin = appInfo.getBaQiangApkVersion();
 
-                // 请求成功
-                mServerInfoStatus.updateServerInfo(serverVersion, serverTime,
-                        serverApkVersin);
+                    mServerInfoStatus.updateServerInfo(serverVersion,
+                            serverTime, serverApkVersin);
+                } else {
+                    mServerInfoStatus.showServerInfoError("数据解析出错");
+                }
             }
 
             @Override
             public void onError(Throwable throwable, boolean b) {
                 LogUtil.trace(throwable.getMessage());
-                // 请求失败
                 mServerInfoStatus.showServerInfoError(throwable.getMessage());
             }
 
