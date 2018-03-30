@@ -557,6 +557,13 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
             public void onClick(View v) {
                 LogUtil.trace("mSearchFlag:" + mSearchFlag);
 
+                if (!NetworkUtils.isNetworkConnected(SearchRecordsActivity
+                        .this)) {
+                    Toast.makeText(SearchRecordsActivity.this, "网络不可用，请检查网络", Toast
+                            .LENGTH_SHORT).show();
+                    return;
+                }
+
                 // 重传当前ListView中的所有记录
                 if (SearchType.ZCFJ.equals(mSearchFlag) && mListData != null
                         && mListData.size()
