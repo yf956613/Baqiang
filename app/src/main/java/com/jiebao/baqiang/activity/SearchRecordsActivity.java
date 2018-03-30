@@ -250,6 +250,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                                     @Override
                                                     public boolean onFinish() {
+                                                        closeLoadinDialog();
+
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
@@ -279,6 +281,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                             @Override
                                             public boolean onFinish() {
+                                                closeLoadinDialog();
                                                 return false;
                                             }
                                         }).uploadSingleRecord
@@ -311,6 +314,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                                     @Override
                                                     public boolean onFinish() {
+                                                        closeLoadinDialog();
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
@@ -343,6 +347,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                                     @Override
                                                     public boolean onFinish() {
+                                                        closeLoadinDialog();
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
@@ -375,6 +380,7 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                                     @Override
                                                     public boolean onFinish() {
+                                                        closeLoadinDialog();
                                                         return false;
                                                     }
                                                 }).uploadSingleRecord
@@ -572,6 +578,9 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 @Override
                                 public boolean onError(Throwable throwable,
                                                        boolean b) {
+                                    // 刷新UI，重写执行查询操作
+                                    syncViewAfterUpload(Constant
+                                            .SYNC_UNLOAD_DATA_TYPE_ZCFJ);
                                     return false;
                                 }
 
@@ -601,6 +610,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 @Override
                                 public boolean onError(Throwable throwable,
                                                        boolean b) {
+                                    syncViewAfterUpload(Constant
+                                            .SYNC_UNLOAD_DATA_TYPE_XCDJ);
                                     return false;
                                 }
 
@@ -630,8 +641,9 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
 
                                         @Override
                                         public boolean onError(Throwable
-                                                                       throwable,
-                                                               boolean b) {
+                                                                       throwable, boolean b) {
+                                            syncViewAfterUpload(Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_DJ);
                                             return false;
                                         }
 
@@ -661,6 +673,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                 @Override
                                 public boolean onError(Throwable throwable,
                                                        boolean b) {
+                                    syncViewAfterUpload(Constant
+                                            .SYNC_UNLOAD_DATA_TYPE_FJ);
                                     return false;
                                 }
 
@@ -691,6 +705,8 @@ public class SearchRecordsActivity extends BaseActivityWithTitleAndNumber {
                                         @Override
                                         public boolean onError(Throwable
                                                                        throwable, boolean b) {
+                                            syncViewAfterUpload(Constant
+                                                    .SYNC_UNLOAD_DATA_TYPE_LCJ);
                                             return false;
                                         }
 

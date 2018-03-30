@@ -3,7 +3,7 @@ package com.jiebao.baqiang.data.bean;
 import org.xutils.common.Callback;
 
 /**
- * Created by Administrator on 2018/3/23 0023.
+ * 待上传文件状态回调接口，其实例放置在待上传文件中，将网络状态回调给CommonDbHelperToUploadFile
  */
 
 public interface ICommonUpdateFileCallBack {

@@ -749,7 +749,8 @@ public class MainActivity extends BaseActivityWithTitleAndNumber implements
 
 //                    Toast.makeText(MainActivity.this, activity.getString(R
 //                            .string
-//                            .sync_serverinfo_failed), Toast.LENGTH_LONG).show();
+//                            .sync_serverinfo_failed), Toast.LENGTH_LONG)
+// .show();
 
                     showProgressDialog();
 

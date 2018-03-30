@@ -149,7 +149,6 @@ public class CommonUploadFile {
      * @return
      */
     public void uploadFile() {
-        LogUtil.trace("<3333333333333>");
         mUploadUrl = SharedUtil.getServletAddresFromSP(BaqiangApplication
                         .getContext(),
                 NetworkConstant.UPLOAD_SERVLET);
@@ -172,7 +171,8 @@ public class CommonUploadFile {
 
             @Override
             public void onSuccess(String s) {
-                LogUtil.trace("s" + s);
+                LogUtil.trace("uploadFile:onSuccess-->" + s);
+
                 Gson gson = new Gson();
                 UploadFileResponseBean loginResponse = gson.fromJson(s,
                         UploadFileResponseBean
@@ -191,18 +191,22 @@ public class CommonUploadFile {
 
             @Override
             public void onError(Throwable throwable, boolean b) {
-                LogUtil.trace("error:" + throwable.getLocalizedMessage());
+                LogUtil.trace("uploadFile:onError:" + throwable
+                        .getLocalizedMessage());
 
                 mCallbackListener.uploadError(throwable, b);
             }
 
             @Override
             public void onCancelled(CancelledException e) {
+                LogUtil.trace("uploadFile:onCancelled:" + e
+                        .getLocalizedMessage());
                 mCallbackListener.uploadCancel(e);
             }
 
             @Override
             public void onFinished() {
+                LogUtil.trace("onFinished:");
                 mCallbackListener.uploadFinish();
             }
         });

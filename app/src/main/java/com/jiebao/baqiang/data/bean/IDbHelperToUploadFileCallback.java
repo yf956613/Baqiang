@@ -1,7 +1,8 @@
 package com.jiebao.baqiang.data.bean;
 
 /**
- * Created by Administrator on 2018/3/24 0024.
+ * Activity和CommonDbHelperToUploadFile之间接口，将DB状态反馈给Activity
+ * ；实例存在于CommonDbHelperToUploadFile中
  */
 
 public interface IDbHelperToUploadFileCallback {

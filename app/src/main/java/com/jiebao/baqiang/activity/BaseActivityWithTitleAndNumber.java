@@ -45,9 +45,11 @@ import com.jiebao.baqiang.util.SharedUtil;
  * Created by Administrator on 2018/3/13 0013.
  */
 
-public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity implements Header,
+public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity
+        implements Header,
         Footer, Content, View.OnTouchListener {
-    private static final String TAG = BaseActivityWithTitleAndNumber.class.getSimpleName();
+    private static final String TAG = BaseActivityWithTitleAndNumber.class
+            .getSimpleName();
 
     public final int REQUEST_CAMARA_CODE = 100;
     private int FOOTER_BUTTONS_NUM = 4;
@@ -96,26 +98,36 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     };
 
     private void initAttributes() {
-        mHeaderLayout = (FrameLayout) View.inflate(this, R.layout.header_layout_un_upload, null);
-        mHeaderLeftView = (TextView) mHeaderLayout.findViewById(R.id.headerLeftView);
-        mHeaderRightView = (TextView) mHeaderLayout.findViewById(R.id.headerRithtView);
+        mHeaderLayout = (FrameLayout) View.inflate(this, R.layout
+                .header_layout_un_upload, null);
+        mHeaderLeftView = (TextView) mHeaderLayout.findViewById(R.id
+                .headerLeftView);
+        mHeaderRightView = (TextView) mHeaderLayout.findViewById(R.id
+                .headerRithtView);
         mHeaderLayout.setId(R.id.HEADER_LAYOUT_ID);
 
         mContentLayout = new RelativeLayout(this);
         mContent = new View(this);
-        mContentViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
+        mContentViewParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        contentLayout = (ViewGroup) View.inflate(this, R.layout.activity_base_content, null);
-        mGlobalLayout = (RelativeLayout) contentLayout.findViewById(R.id.global_layout);
+        contentLayout = (ViewGroup) View.inflate(this, R.layout
+                .activity_base_content, null);
+        mGlobalLayout = (RelativeLayout) contentLayout.findViewById(R.id
+                .global_layout);
 
-        mFooterLayout = (LinearLayout) View.inflate(this, R.layout.footer_layout, null);
+        mFooterLayout = (LinearLayout) View.inflate(this, R.layout
+                .footer_layout, null);
         mFooterLayout.setId(R.id.FOOTER_LAYOUT_ID);
 
-        mHeaderLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
+        mHeaderLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mFooterLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
+        mFooterLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        mContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams
+        mContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams
                 .MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
         mFooterLayout.setLayoutParams(mFooterLayoutParams);
@@ -149,15 +161,18 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case Constant.F1_KEY_CODE: {
-                    new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
+                    new CommonDbHelperToUploadFile<ZCFajianFileContent>()
+                            .setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                         @Override
                         public boolean onSuccess(String s) {
                             // 文件上传存在延时
-                            Toast.makeText(BaseActivityWithTitleAndNumber.this, "文件上传成功", Toast
+                            Toast.makeText(BaseActivityWithTitleAndNumber
+                                    .this, "文件上传成功", Toast
                                     .LENGTH_SHORT).show();
                             // F1事件，传递给Activity更新UI
-                            syncViewAfterUpload(Constant.SYNC_UNLOAD_DATA_TYPE_ALL);
+                            syncViewAfterUpload(Constant
+                                    .SYNC_UNLOAD_DATA_TYPE_ALL);
                             return true;
                         }
 
@@ -168,6 +183,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
 
                         @Override
                         public boolean onFinish() {
+                            syncViewAfterUpload(Constant
+                                    .SYNC_UNLOAD_DATA_TYPE_ALL);
                             return false;
                         }
                     }).uploadUnloadRecords();
@@ -202,12 +219,14 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 TextView footTxt = (TextView) mFooterLayout.getChildAt(index);
                 String[] suffStrs = getFootTxtPrefix();
                 if (index < footTxtNum) {
-                    if (BaqiangApplication.getOperateType() == 1 && suffStrs != null)
+                    if (BaqiangApplication.getOperateType() == 1 && suffStrs
+                            != null)
                         footTxt.setText(suffStrs[index] + footTxtStr[index]);
                     else footTxt.setText(footTxtStr[index]);
 
                     if (index == footTxtNum - 1) {
-                        footTxt.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+                        footTxt.setGravity(Gravity.RIGHT | Gravity
+                                .CENTER_VERTICAL);
                     }
                 } else {
                     footTxt.setVisibility(View.GONE);
@@ -233,7 +252,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         if (isSupportScan()) {
             ScanHelper.getInstance().Open_Barcode(this);
             boolean isActivityNeedFocus = isActivityNeedFocus();
-            ScanHelper.getInstance().setScanListener(this.getClass().getName(), mScanListener,
+            ScanHelper.getInstance().setScanListener(this.getClass().getName
+                            (), mScanListener,
                     isActivityNeedFocus);
         }
     }
@@ -305,7 +325,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     }
 
     @Override
-    public void setHeaderRightViewText(String rightText, int color, float size) {
+    public void setHeaderRightViewText(String rightText, int color, float
+            size) {
         mHeaderRightView.setText(rightText);
         mHeaderRightViewTextColor = color;
         mHeaderRightViewTextSize = size;
@@ -323,8 +344,10 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         mFooterLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         mGlobalLayout.addView(mFooterLayout, mFooterLayoutParams);
 
-        mContentLayoutParams.addRule(RelativeLayout.BELOW, R.id.HEADER_LAYOUT_ID);
-        mContentLayoutParams.addRule(RelativeLayout.ABOVE, R.id.FOOTER_LAYOUT_ID);
+        mContentLayoutParams.addRule(RelativeLayout.BELOW, R.id
+                .HEADER_LAYOUT_ID);
+        mContentLayoutParams.addRule(RelativeLayout.ABOVE, R.id
+                .FOOTER_LAYOUT_ID);
         mGlobalLayout.addView(mContentLayout, mContentLayoutParams);
 
         setContentView(contentLayout);
@@ -357,9 +380,11 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     }
 
     private TextView loadingTextView = null;
+
     public void updateLoadingDialogMsg(String msg) {
 
-        if (loadingBulider != null && loadingTextView != null && loadingBulider.isShowing()) {
+        if (loadingBulider != null && loadingTextView != null &&
+                loadingBulider.isShowing()) {
             loadingTextView.setText(msg);
         }
     }
@@ -373,17 +398,21 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         }
 
         if (null == loadingBulider) {
-            View view = LayoutInflater.from(this).inflate(R.layout.layout_widget_loading, null);
-            loadingTextView = (TextView)view.findViewById(R.id.id_load_text);
-            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R
+            View view = LayoutInflater.from(this).inflate(R.layout
+                    .layout_widget_loading, null);
+            loadingTextView = (TextView) view.findViewById(R.id.id_load_text);
+            AlertDialog.Builder builder = new AlertDialog.Builder(new
+                    ContextThemeWrapper(this, R
                     .style.myLoadingTheme));
             loadingBulider = builder.create();
             loadingBulider.setCancelable(false);
             loadingBulider.setView(view, 0, 0, 0, 0);
-            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            loadingBulider.setOnKeyListener(new DialogInterface.OnKeyListener
+                    () {
 
                 @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                public boolean onKey(DialogInterface dialog, int keyCode,
+                                     KeyEvent event) {
                     // TODO 屏蔽Back按键
                     /*if (keyCode == KeyEvent.KEYCODE_BACK) {
                         closeLoadinDialog();
@@ -415,7 +444,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case MotionEvent.ACTION_MOVE: {
                 int dx = (int) event.getRawX() - mLastX;
                 int dy = (int) event.getRawY() - mLastY;
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v.getLayoutParams();
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v
+                        .getLayoutParams();
                 int lastLeftMargin = lp.leftMargin;
                 int lastTopMargin = lp.topMargin;
 
@@ -425,14 +455,17 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                 if (rawLeftMargin < 0) {
                     rawLeftMargin = 0;
                 }
-                if (rawLeftMargin + v.getWidth() > AppUtil.getWindowWidthSize()) {
+                if (rawLeftMargin + v.getWidth() > AppUtil.getWindowWidthSize
+                        ()) {
                     rawLeftMargin = AppUtil.getWindowWidthSize() - v.getWidth();
                 }
                 if (rawTopMargin < 0) {
                     rawTopMargin = 0;
                 }
-                if (rawTopMargin + v.getHeight() > AppUtil.getWindowHeightSize()) {
-                    rawTopMargin = AppUtil.getWindowHeightSize() - v.getHeight();
+                if (rawTopMargin + v.getHeight() > AppUtil
+                        .getWindowHeightSize()) {
+                    rawTopMargin = AppUtil.getWindowHeightSize() - v
+                            .getHeight();
                 }
                 lp.setMargins(rawLeftMargin, rawTopMargin, 0, 0);
                 v.setLayoutParams(lp);
@@ -483,23 +516,28 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         switch (updateType) {
             case Constant.SYNC_UNLOAD_DATA_TYPE_ALL: {
                 unloadRecords = ZcFajianDBHelper.findUnloadRecords();
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ,
+                        unloadRecords);
                 LogUtil.trace("ZcFajian: unloadRecords-->" + unloadRecords);
 
                 unloadRecords = XcdjDBHelper.findUnloadRecords();
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ,
+                        unloadRecords);
                 LogUtil.trace("Xcdj: unloadRecords-->" + unloadRecords);
 
                 unloadRecords = DaojianDBHelper.findUnloadRecords();
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ,
+                        unloadRecords);
                 LogUtil.trace("Dj: unloadRecords:" + unloadRecords);
 
                 unloadRecords = FajianDBHelper.findUnloadRecords();
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ,
+                        unloadRecords);
                 LogUtil.trace("Fj:unloadRecords:" + unloadRecords);
 
                 unloadRecords = LiucangDBHelper.findUnloadRecords();
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ,
+                        unloadRecords);
                 LogUtil.trace("LCJ:unloadRecords:" + unloadRecords);
 
                 break;
@@ -508,7 +546,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case Constant.SYNC_UNLOAD_DATA_TYPE_ZCFJ: {
                 unloadRecords = ZcFajianDBHelper.findUnloadRecords();
                 // 更新SP存储值
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_ZCFJ,
+                        unloadRecords);
 
                 LogUtil.trace("ZCFJ:unloadRecords:" + unloadRecords);
                 break;
@@ -517,7 +556,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case Constant.SYNC_UNLOAD_DATA_TYPE_XCDJ: {
                 unloadRecords = XcdjDBHelper.findUnloadRecords();
                 // 更新SP存储值
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_XCDJ,
+                        unloadRecords);
 
                 LogUtil.trace("XCDJ:unloadRecords:" + unloadRecords);
                 break;
@@ -526,7 +566,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case Constant.SYNC_UNLOAD_DATA_TYPE_DJ: {
                 unloadRecords = DaojianDBHelper.findUnloadRecords();
                 // 更新SP存储值
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_DJ,
+                        unloadRecords);
 
                 LogUtil.trace("DJ:unloadRecords:" + unloadRecords);
                 break;
@@ -535,7 +576,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case Constant.SYNC_UNLOAD_DATA_TYPE_FJ: {
                 unloadRecords = FajianDBHelper.findUnloadRecords();
                 // 更新SP存储值
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_FJ,
+                        unloadRecords);
 
                 LogUtil.trace("FJ:unloadRecords:" + unloadRecords);
                 break;
@@ -544,7 +586,8 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             case Constant.SYNC_UNLOAD_DATA_TYPE_LCJ: {
                 unloadRecords = LiucangDBHelper.findUnloadRecords();
                 // 更新SP存储值
-                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
+                SharedUtil.putInt(this, Constant.PREFERENCE_NAME_LCJ,
+                        unloadRecords);
 
                 LogUtil.trace("LCJ:unloadRecords:" + unloadRecords);
                 break;

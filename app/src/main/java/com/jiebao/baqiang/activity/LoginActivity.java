@@ -100,7 +100,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
             SharedUtil.putString(this, Constant
                     .PREFERENCE_KEY_DATA_SERVER_ADDRESS, "10.1.1.187");
             SharedUtil.putString(this, Constant
-                    .PREFERENCE_KEY_DATA_SERVER_PORT, "9876");
+                    .PREFERENCE_KEY_DATA_SERVER_PORT, "8086");
             SharedUtil.putString(this, Constant.PREFERENCE_KEY_JB_SERVER,
                     "193.112.127.158");
             SharedUtil.putString(this, Constant
