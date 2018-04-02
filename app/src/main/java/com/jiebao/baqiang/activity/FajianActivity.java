@@ -19,13 +19,9 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FilterListener;
 import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
 import com.jiebao.baqiang.data.bean.CommonScannerBaseAdapter;
 import com.jiebao.baqiang.data.bean.CommonScannerListViewBean;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
-import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
-import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.SalesServiceDBHelper;
 import com.jiebao.baqiang.data.db.ShipmentTypeDBHelper;
@@ -33,10 +29,8 @@ import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
-import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
-
-import org.xutils.DbManager;
+import com.jiebao.baqiang.util.TextStringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -234,8 +228,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else if (!ShipmentTypeDBHelper.checkShipmentType
-                        (mTvShipmentType.getText()
-                                .toString())) {
+                        (mTvShipmentType.getText().toString())) {
                     Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                             .LENGTH_SHORT).show();
 
@@ -276,28 +269,59 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
             return;
-        }
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
+                // 判断当前条码是否已录入
+                Toast.makeText(FajianActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT)
+                        .show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(FajianActivity.this, "运单号已存在", Toast.LENGTH_SHORT)
-                    .show();
-            mDeviceVibrator.vibrate(1000);
+                mIsScanRunning = true;
+                triggerForScanner();
 
+                return;
+            } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
+                    .getText().toString())) {
+                // 再次判断下一站网点信息 是否正常
+                Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
+
+                mIsScanRunning = true;
+                triggerForScanner();
+
+                return;
+            } else if (!ShipmentTypeDBHelper.checkShipmentType
+                    (mTvShipmentType.getText().toString())) {
+                // 再次判断快件信息 是否正常
+                Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
+
+                mIsScanRunning = true;
+                triggerForScanner();
+
+                return;
+            } else {
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
+
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                } else {
+                    // do nothing
+                }
+
+                triggerForScanner();
+                mIsScanRunning = true;
+            }
+        } else {
             mIsScanRunning = true;
             triggerForScanner();
-
-            return;
         }
 
-        boolean isInsertSuccess = insertForScanner(barcode);
-        LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-        updateUIForScanner(barcode);
-        if (isInsertSuccess) {
-            increaseOrDecreaseRecords(1);
-        }
-
-        triggerForScanner();
-        mIsScanRunning = true;
     }
 
     @Override
@@ -329,7 +353,10 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_ensure: {
-                uploadListViewDataToServer();
+                // uploadListViewDataToServer();
+                // 保存键入条码
+                storeManualBarcode(mEtShipmentNumber.getText().toString()
+                        .trim());
                 break;
             }
 
@@ -465,7 +492,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         mShipmentFileContent.setScanDate(scanDate);
         mShipmentFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
-        mShipmentFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd")
+        mShipmentFileContent.setOperateDate(new SimpleDateFormat("yyyyMMdd")
                 .format(scanDate));
         return FajianDBHelper.insertDataToDatabase(mShipmentFileContent);
     }
@@ -691,64 +718,56 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     }
 
     /**
-     * 将ListView当前录入记录上传服务器，根据ID上传
+     * 确认按键功能修改：保存键入的运单号
+     *
+     * @param barcode
+     * @return
      */
-    private void uploadListViewDataToServer() {
-        if (mListData == null) {
-            return;
-        } else if (mListData != null && mListData.size() == 0) {
-            return;
-        }
+    private boolean storeManualBarcode(String barcode) {
+        if (TextUtils.isEmpty(barcode)) {
+            return false;
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
+                // 判断当前条码是否已录入
+                Toast.makeText(FajianActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT)
+                        .show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (!NetworkUtils.isNetworkConnected(FajianActivity
-                .this)) {
-            Toast.makeText(FajianActivity.this, "网络不可用，请检查网络", Toast
-                    .LENGTH_SHORT).show();
-            return;
-        }
+                return false;
+            } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
+                    .getText().toString())) {
+                // 再次判断下一站网点信息 是否正常
+                Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        showLoadinDialog();
+                return false;
+            } else if (!ShipmentTypeDBHelper.checkShipmentType
+                    (mTvShipmentType.getText().toString())) {
+                // 再次判断快件信息 是否正常
+                Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        DbManager db = BQDataBaseHelper.getDb();
-        List<ShipmentFileContent> list = null;
-        if (mListData != null && mListData.size() != 0) {
-            ArrayList<IFileContentBean> uploadContent = new ArrayList<>();
-            // 根据当前ListView中的数据，上传记录
-            for (int index = 0; index < mListData.size(); index++) {
-                // 1. 循环找到 item 的 ID
-                uploadContent.add(mListData.get(index).getScannerBean());
+                return false;
+            } else {
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                } else {
+                    // do nothing
+                }
+
+                return true;
             }
-
-            new CommonDbHelperToUploadFile<ShipmentFileContent>()
-                    .setCallbackListener(new IDbHelperToUploadFileCallback() {
-
-                        @Override
-                        public boolean onSuccess(String s) {
-                            // 文件上传存在延时
-                            Toast.makeText(FajianActivity.this, "文件上传成功", Toast
-                                    .LENGTH_SHORT).show();
-                            setHeaderRightViewText("未上传：" +
-                                    searchUnloadDataForUpdate
-                                            (Constant
-                                                    .SYNC_UNLOAD_DATA_TYPE_ZCFJ));
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onError(Throwable throwable, boolean b) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onFinish() {
-                            closeLoadinDialog();
-                            FajianActivity.this.finish();
-
-                            return false;
-                        }
-                    }).redoUploadRecords(uploadContent);
         } else {
             // do nothing
         }
+
+        return false;
     }
+
 }

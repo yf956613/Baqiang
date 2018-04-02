@@ -454,7 +454,7 @@ public class UnloadCargoArrivalActivity extends
                 ());
         // 该结果从 扫码时间 转化得来
         mUnloadArrivalFileContent.setOperateDate(new SimpleDateFormat
-                ("yyyMMdd").format(scanDate));
+                ("yyyyMMdd").format(scanDate));
         return XcdjDBHelper.insertDataToDatabase(mUnloadArrivalFileContent);
     }
 

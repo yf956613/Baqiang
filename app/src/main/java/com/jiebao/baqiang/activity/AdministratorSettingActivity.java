@@ -503,8 +503,8 @@ public class AdministratorSettingActivity extends
     private void deleteTableRecords() {
         Date dateLimited = new Date(new Date().getTime() -
                 SEVEN_TIME_DATE);
-        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyMMddHHmmss").format
-                (new Date()) + "; 清除：" + new SimpleDateFormat("yyyMMddHHmmss")
+        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format
+                (new Date()) + "; 清除：" + new SimpleDateFormat("yyyyMMddHHmmss")
                 .format(dateLimited) + "; 之前的数据");
 
         try {

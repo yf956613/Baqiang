@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文本字符串工具类
@@ -198,5 +200,17 @@ public class TextStringUtil {
         return 1;
     }
 
+    /**
+     * 输入字符串是否仅包含数字和字母
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isStringFormatCorrect(String str) {
+        String strPattern = "[a-zA-Z0-9]+";
+        Pattern p = Pattern.compile(strPattern);
+        Matcher m = p.matcher(str);
+        return m.matches();
+    }
 
 }

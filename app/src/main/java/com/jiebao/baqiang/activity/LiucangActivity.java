@@ -19,30 +19,25 @@ import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.adapter.FilterListener;
 import com.jiebao.baqiang.adapter.TestTipsAdatper;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
-import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
 import com.jiebao.baqiang.data.bean.CommonScannerBaseAdapter;
 import com.jiebao.baqiang.data.bean.CommonScannerListViewBean;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
-import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
-import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.db.StayHouseReasonDBHelper;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
-import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
-
-import org.xutils.DbManager;
+import com.jiebao.baqiang.util.TextStringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LiucangActivity extends BaseActivityWithTitleAndNumber implements View
+public class LiucangActivity extends BaseActivityWithTitleAndNumber
+        implements View
         .OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "LiucangActivity";
 
@@ -84,14 +79,18 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
     @Override
     public void initData() {
-        ScanHelper.getInstance().barcodeManager.setScanTime(Constant.TIME_SCAN_DELAY);
+        ScanHelper.getInstance().barcodeManager.setScanTime(Constant
+                .TIME_SCAN_DELAY);
 
-        mDeviceVibrator = (Vibrator) this.getSystemService(this.VIBRATOR_SERVICE);
+        mDeviceVibrator = (Vibrator) this.getSystemService(this
+                .VIBRATOR_SERVICE);
 
-        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id.tv_stay_reason);
+        mTvStayHouseReason = LiucangActivity.this.findViewById(R.id
+                .tv_stay_reason);
         mTvStayHouseReason.setAdapter(mReasonData);
         // 监听EditText是否获取焦点
-        mTvStayHouseReason.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mTvStayHouseReason.setOnFocusChangeListener(new View
+                .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -105,12 +104,16 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 }
             }
         });
-        mTvStayHouseReason.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTvStayHouseReason.setOnItemClickListener(new AdapterView
+                .OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String stayHouseReason = mTvStayHouseReason.getText().toString();
-                String reasonID = StayHouseReasonDBHelper.getReasonIdFromName(stayHouseReason);
+            public void onItemClick(AdapterView<?> parent, View view, int
+                    position, long id) {
+                String stayHouseReason = mTvStayHouseReason.getText()
+                        .toString();
+                String reasonID = StayHouseReasonDBHelper.getReasonIdFromName
+                        (stayHouseReason);
                 if (!TextUtils.isEmpty(reasonID)) {
                     // 更新下一站网点编号
                     mStayHouseFileContent.setStayReason(reasonID);
@@ -130,7 +133,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             }
         });
 
-        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id.et_shipment_number);
+        mEtShipmentNumber = LiucangActivity.this.findViewById(R.id
+                .et_shipment_number);
 
         mBtnSure = LiucangActivity.this.findViewById(R.id.btn_ensure);
         mBtnCancel = LiucangActivity.this.findViewById(R.id.btn_back);
@@ -150,9 +154,11 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                if (!StayHouseReasonDBHelper.checkCurrentReason(mTvStayHouseReason.getText()
-                        .toString())) {
-                    Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast.LENGTH_SHORT).show();
+                if (!StayHouseReasonDBHelper.checkCurrentReason
+                        (mTvStayHouseReason.getText()
+                                .toString())) {
+                    Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
+                            .LENGTH_SHORT).show();
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
@@ -191,29 +197,47 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
             return;
-        }
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
+                Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(LiucangActivity.this, "运单号已存在", Toast.LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+                mIsScanRunning = true;
+                triggerForScanner();
 
+                return;
+            } else if (!StayHouseReasonDBHelper.checkCurrentReason
+                    (mTvStayHouseReason.getText()
+                            .toString())) {
+                Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
+
+                mIsScanRunning = true;
+                triggerForScanner();
+
+                return;
+            } else {
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                    mDeviceVibrator.vibrate(1000);
+                } else {
+                    // do nothing
+                }
+
+                triggerForScanner();
+                mIsScanRunning = true;
+            }
+        } else {
             mIsScanRunning = true;
             triggerForScanner();
-
-            return;
         }
 
-        boolean isInsertSuccess = insertForScanner(barcode);
-        LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-        updateUIForScanner(barcode);
-        if (isInsertSuccess) {
-            increaseOrDecreaseRecords(1);
-        }
-
-        triggerForScanner();
-        mIsScanRunning = true;
     }
-
 
     @Override
     protected void timeout(long timeout) {
@@ -227,11 +251,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public void clickHappend(int position) {
         LogUtil.trace("position:" + position);
 
-        StayHouseFileContent barcode = (StayHouseFileContent) mListData.get(position)
+        StayHouseFileContent barcode = (StayHouseFileContent) mListData.get
+                (position)
                 .getScannerBean();
         // 此处ListView中数据是有ID值的
         if (LiucangDBHelper.isRecordUpload(barcode.getId())) {
-            Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
@@ -242,13 +268,17 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ensure: {
-                uploadListViewDataToServer();
+                // uploadListViewDataToServer();
+                // 存储手动输入的运单号
+                storeManualBarcode(mEtShipmentNumber.getText().toString()
+                        .trim());
                 break;
             }
 
             case R.id.btn_back: {
                 LiucangActivity.this.finish();
-                LogUtil.trace("All size:" + LiucangDBHelper.getAllUsedRecords());
+                LogUtil.trace("All size:" + LiucangDBHelper.getAllUsedRecords
+                        ());
                 break;
             }
         }
@@ -267,10 +297,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                 CommonScannerListViewBean listViewBean = mListData.get(index);
 
                 // origin data
-                StayHouseFileContent barcode = (StayHouseFileContent) listViewBean.getScannerBean();
+                StayHouseFileContent barcode = (StayHouseFileContent)
+                        listViewBean.getScannerBean();
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
-                StayHouseFileContent bean = LiucangDBHelper.getNewInRecord(barcode
-                        .getShipmentNumber(), barcode.getScanDate());
+                StayHouseFileContent bean = LiucangDBHelper.getNewInRecord
+                        (barcode
+                                .getShipmentNumber(), barcode.getScanDate());
 
                 listViewBean.setScannerBean(bean);
             }
@@ -286,40 +318,48 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
 
     private void prepareDataForView() {
         mStayHouseReason = StayHouseReasonDBHelper.getReasonFromDB();
-        mReasonData = new TestTipsAdatper(LiucangActivity.this, mStayHouseReason, new
+        mReasonData = new TestTipsAdatper(LiucangActivity.this,
+                mStayHouseReason, new
                 FilterListener() {
 
-            @Override
-            public void getFilterData(List<String> list) {
-                if (list != null) {
-                    if (list.size() == 1) {
-                        String[] arr = list.get(0).toString().split("  ");
-                        mTvStayHouseReason.dismissDropDown();
+                    @Override
+                    public void getFilterData(List<String> list) {
+                        if (list != null) {
+                            if (list.size() == 1) {
+                                String[] arr = list.get(0).toString().split("" +
+                                        "  ");
+                                mTvStayHouseReason.dismissDropDown();
 
-                        if (arr != null) {
-                            if (arr.length >= 2) {
-                                mTvStayHouseReason.setText(arr[1], false);
-                                mStayHouseFileContent.setStayReason(arr[0]);
+                                if (arr != null) {
+                                    if (arr.length >= 2) {
+                                        mTvStayHouseReason.setText(arr[1],
+                                                false);
+                                        mStayHouseFileContent.setStayReason
+                                                (arr[0]);
+                                    }
+                                } else {
+                                    mTvStayHouseReason.setText(list.get(0)
+                                            .toString(), false);
+                                }
+
+                                Editable spannable = mTvStayHouseReason
+                                        .getText();
+                                Selection.setSelection(spannable, spannable
+                                        .length());
+                            } else {
+                                // do nothing
                             }
                         } else {
-                            mTvStayHouseReason.setText(list.get(0).toString(), false);
+                            // do nothing
                         }
-
-                        Editable spannable = mTvStayHouseReason.getText();
-                        Selection.setSelection(spannable, spannable.length());
-                    } else {
-                        // do nothing
                     }
-                } else {
-                    // do nothing
-                }
-            }
-        });
+                });
 
         mStayHouseFileContent = FileContentHelper.getStayHouseFileContent();
 
         mListData = new ArrayList<>();
-        mScannerBaseAdatper = new CommonScannerBaseAdapter(LiucangActivity.this, mListData);
+        mScannerBaseAdatper = new CommonScannerBaseAdapter(LiucangActivity
+                .this, mListData);
     }
 
     /**
@@ -334,7 +374,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         mStayHouseFileContent.setScanDate(scanDate);
         mStayHouseFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
-        mStayHouseFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd").format(scanDate));
+        mStayHouseFileContent.setOperateDate(new SimpleDateFormat("yyyyMMdd")
+                .format(scanDate));
         return LiucangDBHelper.insertDataToDatabase(mStayHouseFileContent);
     }
 
@@ -351,9 +392,12 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         mEtShipmentNumber.setText(barcode);
 
         // 把 instert 的 record 从数据库中取出来，该record内容是更新后的内容
-        StayHouseFileContent bean = LiucangDBHelper.getNewInRecord(mStayHouseFileContent
-                .getShipmentNumber(), mStayHouseFileContent.getScanDate());
-        CommonScannerListViewBean mCommonScannerListViewBean = new CommonScannerListViewBean();
+        StayHouseFileContent bean = LiucangDBHelper.getNewInRecord
+                (mStayHouseFileContent
+                        .getShipmentNumber(), mStayHouseFileContent
+                        .getScanDate());
+        CommonScannerListViewBean mCommonScannerListViewBean = new
+                CommonScannerListViewBean();
         mCommonScannerListViewBean.setId(++mScanCount);
         mCommonScannerListViewBean.setScannerBean(bean);
 
@@ -373,7 +417,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      * @param actionType 0：减少；1：增加
      */
     private void increaseOrDecreaseRecords(int actionType) {
-        int unloadRecords = SharedUtil.getInt(LiucangActivity.this, Constant.PREFERENCE_NAME_LCJ);
+        int unloadRecords = SharedUtil.getInt(LiucangActivity.this, Constant
+                .PREFERENCE_NAME_LCJ);
         LogUtil.trace("unloadRecords:" + unloadRecords);
 
         switch (actionType) {
@@ -388,7 +433,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
             }
         }
 
-        SharedUtil.putInt(LiucangActivity.this, Constant.PREFERENCE_NAME_LCJ, unloadRecords);
+        SharedUtil.putInt(LiucangActivity.this, Constant.PREFERENCE_NAME_LCJ,
+                unloadRecords);
         setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
                 .SYNC_UNLOAD_DATA_TYPE_LCJ));
     }
@@ -398,22 +444,27 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
      *
      * @param bean
      */
-    private void deleteChooseRecord(final StayHouseFileContent bean, final int position) {
+    private void deleteChooseRecord(final StayHouseFileContent bean, final
+    int position) {
         if (mListData != null && mListData.size() != 0) {
             LogUtil.trace("待删除的内容：" + bean.toString());
 
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(LiucangActivity
-                    .this);
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder
+                    (LiucangActivity
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
+                    "记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int barcodeID = bean.getId();
                     if (LiucangDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
+                        Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除",
+                                Toast.LENGTH_SHORT)
                                 .show();
                         return;
                     }
@@ -421,13 +472,15 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
                     // 根据ID值，设置record为不可用
                     LiucangDBHelper.deleteFindedBean(barcodeID);
                     // 刷新UI，ListView
-                    updateListViewForDelete(ZhuangcheActivity.DeleteAction.DELETE_ACTION_CHOOSE,
+                    updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                                    .DELETE_ACTION_CHOOSE,
                             position);
 
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -443,7 +496,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     /**
      * 删除操作执行后，触发刷新显示当前Activity的ListView
      */
-    private void updateListViewForDelete(ZhuangcheActivity.DeleteAction action, int position) {
+    private void updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                                                 action, int position) {
         switch (action) {
             case DELETE_ACTION_F2: {
                 if (mListData != null) {
@@ -490,41 +544,50 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
         }
 
         // ListView中最近录入的record
-        final StayHouseFileContent barcode = (StayHouseFileContent) mListData.get(0)
+        final StayHouseFileContent barcode = (StayHouseFileContent) mListData
+                .get(0)
                 .getScannerBean();
         final int barcodeID = barcode.getId();
 
         if (LiucangDBHelper.isRecordUpload(barcodeID)) {
-            Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast
+                    .LENGTH_SHORT).show();
             return;
         }
 
         if (mListData != null && mListData.size() != 0) {
-            LogUtil.trace("mListData.size:" + mListData.size() + "; " + "barcode:" + barcode
+            LogUtil.trace("mListData.size:" + mListData.size() + "; " +
+                    "barcode:" + barcode
                     .getShipmentNumber());
 
-            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(LiucangActivity
-                    .this);
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder
+                    (LiucangActivity
+                            .this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
-            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + " 记录？");
-            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
+                    " 记录？");
+            normalDialog.setPositiveButton("确定", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (LiucangDBHelper.isRecordUpload(barcodeID)) {
-                        Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除", Toast.LENGTH_SHORT)
+                        Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除",
+                                Toast.LENGTH_SHORT)
                                 .show();
                         return;
                     }
 
                     LiucangDBHelper.deleteFindedBean(barcodeID);
-                    updateListViewForDelete(ZhuangcheActivity.DeleteAction.DELETE_ACTION_F2, 0);
+                    updateListViewForDelete(ZhuangcheActivity.DeleteAction
+                            .DELETE_ACTION_F2, 0);
 
                     increaseOrDecreaseRecords(0);
                 }
             });
-            normalDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            normalDialog.setNegativeButton("取消", new DialogInterface
+                    .OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -538,61 +601,45 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber implements V
     }
 
     /**
-     * 将ListView当前录入记录上传服务器，根据ID上传
+     * 存入手动输入的运单号
+     *
+     * @param barcode
+     * @return
      */
-    private void uploadListViewDataToServer() {
-        if (mListData == null) {
-            return;
-        } else if (mListData != null && mListData.size() == 0) {
-            return;
-        }
+    private boolean storeManualBarcode(String barcode) {
+        if (TextUtils.isEmpty(barcode)) {
+            return false;
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
+                Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (!NetworkUtils.isNetworkConnected(LiucangActivity
-                .this)) {
-            Toast.makeText(LiucangActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
-            return;
-        }
+                return false;
+            } else if (!StayHouseReasonDBHelper.checkCurrentReason
+                    (mTvStayHouseReason.getText()
+                            .toString())) {
+                Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        showLoadinDialog();
+                return false;
+            } else {
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
 
-        DbManager db = BQDataBaseHelper.getDb();
-        List<StayHouseFileContent> list = null;
-        if (mListData != null && mListData.size() != 0) {
-            ArrayList<IFileContentBean> uploadContent = new ArrayList<>();
-            // 根据当前ListView中的数据，上传记录
-            for (int index = 0; index < mListData.size(); index++) {
-                // 1. 循环找到 item 的 ID
-                uploadContent.add(mListData.get(index).getScannerBean());
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                } else {
+                    // do nothing
+                }
             }
-
-            new CommonDbHelperToUploadFile<StayHouseFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
-
-                @Override
-                public boolean onSuccess(String s) {
-                    // 文件上传存在延时
-                    Toast.makeText(LiucangActivity.this, "文件上传成功", Toast.LENGTH_SHORT).show();
-                    setHeaderRightViewText("未上传：" + searchUnloadDataForUpdate(Constant
-                            .SYNC_UNLOAD_DATA_TYPE_LCJ));
-                    return true;
-                }
-
-                @Override
-                public boolean onError(Throwable throwable, boolean b) {
-                    return false;
-                }
-
-                @Override
-                public boolean onFinish() {
-                    closeLoadinDialog();
-                    LiucangActivity.this.finish();
-
-                    return false;
-                }
-            }).redoUploadRecords(uploadContent);
         } else {
             // do nothing
         }
+
+
+        return true;
     }
-
-
 }

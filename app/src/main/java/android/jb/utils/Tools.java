@@ -63,12 +63,7 @@ public class Tools {
         String date1 = format1.format(new Date(System.currentTimeMillis()));  
         return date1;// 2012-10-03 23:41:31  
     } 
-    
-	/**
-	 * "yyyy��MM��dd�� E"
-	 * 
-	 * @return
-	 */
+
 	public static String getNowDateWeek() {
 		Date date = new Date();
 		return formatrqxq.format(date);

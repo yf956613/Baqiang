@@ -548,7 +548,7 @@ public class ZhuangcheActivity extends BaseActivityWithTitleAndNumber
         mZcFajianFileContent.setScanDate(scanDate);
         mZcFajianFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
-        mZcFajianFileContent.setOperateDate(new SimpleDateFormat("yyyMMdd")
+        mZcFajianFileContent.setOperateDate(new SimpleDateFormat("yyyyMMdd")
                 .format(scanDate));
         return ZcFajianDBHelper.insertDataToDatabase(mZcFajianFileContent);
     }

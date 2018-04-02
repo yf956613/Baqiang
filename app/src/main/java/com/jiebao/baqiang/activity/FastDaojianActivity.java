@@ -14,21 +14,15 @@ import android.widget.Toast;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.custView.CouldDeleteListView;
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
-import com.jiebao.baqiang.data.bean.CommonDbHelperToUploadFile;
 import com.jiebao.baqiang.data.bean.CommonScannerBaseAdapter;
 import com.jiebao.baqiang.data.bean.CommonScannerListViewBean;
 import com.jiebao.baqiang.data.bean.FileContentHelper;
-import com.jiebao.baqiang.data.bean.IDbHelperToUploadFileCallback;
-import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.LogUtil;
-import com.jiebao.baqiang.util.NetworkUtils;
 import com.jiebao.baqiang.util.SharedUtil;
-
-import org.xutils.DbManager;
+import com.jiebao.baqiang.util.TextStringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,7 +96,6 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
                     mIsScanRunning = true;
                 }
 
-
                 return true;
             }
 
@@ -124,28 +117,35 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
             return;
-        }
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
+                Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
-            Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
-                    .LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+                mIsScanRunning = true;
+                triggerForScanner();
 
-            mIsScanRunning = true;
+                return;
+            }
+
+            boolean isInsertSuccess = insertForScanner(barcode);
+            LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
+
+            if (isInsertSuccess) {
+                updateUIForScanner(barcode);
+                increaseOrDecreaseRecords(1);
+                mDeviceVibrator.vibrate(1000);
+            } else {
+                // do nothing
+            }
+
             triggerForScanner();
-
-            return;
+            mIsScanRunning = true;
+        } else {
+            triggerForScanner();
+            mIsScanRunning = true;
         }
-
-        boolean isInsertSuccess = insertForScanner(barcode);
-        LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-        updateUIForScanner(barcode);
-        if (isInsertSuccess) {
-            increaseOrDecreaseRecords(1);
-        }
-
-        triggerForScanner();
-        mIsScanRunning = true;
     }
 
     @Override
@@ -160,7 +160,8 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ensure: {
-                uploadListViewDataToServer();
+                storeManualBarcode(mEtDeliveryNumber.getText().toString()
+                        .trim());
                 break;
             }
 
@@ -245,7 +246,7 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
         mCargoArrivalFileContent.setShipmentNumber(barcode);
         // 该结果从 扫码时间 转化得来
         mCargoArrivalFileContent.setOperateDate(new SimpleDateFormat
-                ("yyyMMdd").format(scanDate));
+                ("yyyyMMdd").format(scanDate));
         return DaojianDBHelper.insertDataToDatabase(mCargoArrivalFileContent);
     }
 
@@ -471,65 +472,38 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
     }
 
     /**
-     * 将ListView当前录入记录上传服务器，根据ID上传
+     * 保存手动输入的运单号
+     *
+     * @param barcode
+     * @return
      */
-    private void uploadListViewDataToServer() {
-        if (mListData == null) {
-            return;
-        } else if (mListData != null && mListData.size() == 0) {
-            return;
-        }
+    private boolean storeManualBarcode(String barcode) {
+        if (TextUtils.isEmpty(barcode)) {
+            return false;
+        } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
+            if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
+                Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
+                        .LENGTH_SHORT).show();
+                mDeviceVibrator.vibrate(1000);
 
-        if (!NetworkUtils.isNetworkConnected(FastDaojianActivity
-                .this)) {
-            Toast.makeText(FastDaojianActivity.this, "网络不可用，请检查网络", Toast
-                    .LENGTH_SHORT).show();
-            return;
-        }
+                return false;
+            } else {
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
 
-        showLoadinDialog();
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                } else {
+                    // do nothing
+                }
 
-        DbManager db = BQDataBaseHelper.getDb();
-        List<CargoArrivalFileContent> list = null;
-        if (mListData != null && mListData.size() != 0) {
-            ArrayList<IFileContentBean> uploadContent = new ArrayList<>();
-            // 根据当前ListView中的数据，上传记录
-            for (int index = 0; index < mListData.size(); index++) {
-                // 1. 循环找到 item 的 ID
-                uploadContent.add(mListData.get(index).getScannerBean());
+                return true;
             }
-
-            new CommonDbHelperToUploadFile<CargoArrivalFileContent>()
-                    .setCallbackListener(new IDbHelperToUploadFileCallback() {
-
-                        @Override
-                        public boolean onSuccess(String s) {
-                            // 文件上传存在延时
-                            Toast.makeText(FastDaojianActivity.this,
-                                    "文件上传成功", Toast
-                                            .LENGTH_SHORT).show();
-                            setHeaderRightViewText("未上传：" +
-                                    searchUnloadDataForUpdate
-                                            (Constant
-                                                    .SYNC_UNLOAD_DATA_TYPE_DJ));
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onError(Throwable throwable, boolean b) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onFinish() {
-                            closeLoadinDialog();
-                            FastDaojianActivity.this.finish();
-
-                            return false;
-                        }
-                    }).redoUploadRecords(uploadContent);
         } else {
             // do nothing
         }
+
+        return false;
     }
 }
