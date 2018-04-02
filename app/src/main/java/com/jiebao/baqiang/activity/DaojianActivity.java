@@ -237,8 +237,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         LogUtil.trace("position:" + position);
 
         CargoArrivalFileContent barcode = (CargoArrivalFileContent) mListData
-                .get(position)
-                .getScannerBean();
+                .get(position).getScannerBean();
         // 此处ListView中数据是有ID值的
         if (DaojianDBHelper.isRecordUpload(barcode.getId())) {
             Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除", Toast
@@ -281,8 +280,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                         listViewBean.getScannerBean();
                 // 刷新ListView 中的JavaBean，从数据库取，做一个替换操作
                 CargoArrivalFileContent bean = DaojianDBHelper.getNewInRecord
-                        (barcode
-                                .getShipmentNumber(), barcode.getScanDate());
+                        (barcode.getShipmentNumber(), barcode.getScanDate());
                 listViewBean.setScannerBean(bean);
             }
 

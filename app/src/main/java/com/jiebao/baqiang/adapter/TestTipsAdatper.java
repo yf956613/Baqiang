@@ -22,7 +22,8 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
     private MyFilter filter = null;
     private FilterListener listener = null;
 
-    public TestTipsAdatper(Context context, List<String> list, FilterListener filterListener) {
+    public TestTipsAdatper(Context context, List<String> list, FilterListener
+            filterListener) {
         this.list = list;
         this.context = context;
         this.listener = filterListener;
@@ -47,7 +48,8 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_list_tips, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout
+                    .item_list_tips, null);
             holder = new ViewHolder();
             holder.tv_ss = (TextView) convertView.findViewById(R.id.text1);
             convertView.setTag(holder);
@@ -84,8 +86,8 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
             } else {
                 List<String> mList = new ArrayList<String>();
                 for (String s : original) {
-                    if (s.trim().toLowerCase().contains(constraint.toString().trim().toLowerCase
-                            ())) {
+                    if (s.trim().toLowerCase().startsWith(constraint.toString
+                            ().trim().toLowerCase())) {
                         mList.add(s);
                     }
                 }
@@ -97,7 +99,8 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
         }
 
         @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
+        protected void publishResults(CharSequence constraint, FilterResults
+                results) {
             list = (List<String>) results.values;
 
             if (listener != null) {
