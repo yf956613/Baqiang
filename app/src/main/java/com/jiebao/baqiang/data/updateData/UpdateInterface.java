@@ -21,11 +21,12 @@ public class UpdateInterface {
         return infoId;
     }
 
+    // 网点编号
     public static String salesId = SharedUtil.getString(BaqiangApplication
             .getContext(), Constant.PREFERENCE_KEY_SALE_SERVICE);
+    // 用户名：网点编号和用户编号组成
     public static String userName = salesId + SharedUtil.getString
-            (BaqiangApplication
-            .getContext(), Constant.PREFERENCE_KEY_USERNAME);
+            (BaqiangApplication.getContext(), Constant.PREFERENCE_KEY_USERNAME);
     public static String psw = SharedUtil.getString(BaqiangApplication
             .getContext(), Constant.PREFERENCE_KEY_PSW);
 

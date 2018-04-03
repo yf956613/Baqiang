@@ -260,8 +260,7 @@ public class AdministratorSettingActivity extends
                     dialog.dismiss();
 
                     SharedUtil.putString(AdministratorSettingActivity.this,
-                            Constant
-                                    .PREFERENCE_KEY_SALE_SERVICE, etContent
+                            Constant.PREFERENCE_KEY_SALE_SERVICE, etContent
                                     .getText()
                                     .toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString

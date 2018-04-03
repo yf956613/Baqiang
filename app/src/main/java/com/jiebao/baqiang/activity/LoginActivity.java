@@ -261,6 +261,10 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements
                             Toast.makeText(BaqiangApplication.getContext(),
                                     "登录成功", Toast
                                             .LENGTH_SHORT).show();
+                            // 更新用户名
+                            SharedUtil.putString(LoginActivity.this, Constant
+                                    .PREFERENCE_KEY_USERNAME, mEtUserName
+                                    .getText().toString().trim());
                             //here we set password edittext ""
                             mEtPassward.setText("");
                             startActivity(new Intent(LoginActivity.this,
