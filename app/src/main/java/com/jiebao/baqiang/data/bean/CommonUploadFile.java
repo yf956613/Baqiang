@@ -154,9 +154,9 @@ public class CommonUploadFile {
                 NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
 
-        params.addQueryStringParameter("saleId", UpdateInterface.salesId);
-        params.addQueryStringParameter("userName", UpdateInterface.userName);
-        params.addQueryStringParameter("password", UpdateInterface.psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile

@@ -51,9 +51,9 @@ public class SyncServerTime extends UpdateInterface {
                         .SYNC_SERVER_TIME);
 
         RequestParams params = new RequestParams(mServerInfoUrl);
-        params.addQueryStringParameter("saleId", salesId);
-        params.addQueryStringParameter("userName", userName);
-        params.addQueryStringParameter("password", psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.setConnectTimeout(15 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {

@@ -1,15 +1,11 @@
 package com.jiebao.baqiang.data.zcfajianmentDispatch;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.IFileContentBean;
 import com.jiebao.baqiang.data.bean.UploadServerFile;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.dispatch.IShipmentFileUpload;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
-import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileIOUtils;
 import com.jiebao.baqiang.util.LogUtil;
@@ -72,9 +68,9 @@ public class TestUploadFile {
                 NetworkConstant.UPLOAD_SERVLET);
         RequestParams params = new RequestParams(mUploadUrl);
 
-        params.addQueryStringParameter("saleId", UpdateInterface.salesId);
-        params.addQueryStringParameter("userName", UpdateInterface.userName);
-        params.addQueryStringParameter("password", UpdateInterface.psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
         params.addQueryStringParameter(NetworkConstant.PKG_NAME, mFile.getName());

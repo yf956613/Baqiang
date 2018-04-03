@@ -69,9 +69,10 @@ public class ServerInfo extends UpdateInterface {
                         .getContext(), NetworkConstant.APP_UPDATE_INFO);
 
         RequestParams params = new RequestParams(mServerInfoUrl);
-        params.addQueryStringParameter("saleId", salesId);
-        params.addQueryStringParameter("userName", userName);
-        params.addQueryStringParameter("password", psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface
+                .getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.setConnectTimeout(6 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {

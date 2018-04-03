@@ -12,7 +12,6 @@ import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.SalesServiceList;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.global.Constant;
-import com.jiebao.baqiang.global.IDownloadStatus;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -61,9 +60,9 @@ public class UpdateSalesServiceData extends UpdateInterface {
                 NetworkConstant.NEXT_SALES_SERVICE_SERVLET);
 
         RequestParams params = new RequestParams(mSalesServiceUrl);
-        params.addQueryStringParameter("saleId", salesId);
-        params.addQueryStringParameter("userName", userName);
-        params.addQueryStringParameter("password", psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.setConnectTimeout(45 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {

@@ -51,6 +51,13 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
     private boolean mIsScanRunning = false;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ScanHelper.getInstance().barcodeManager.Barcode_Stop();
+    }
+
+    @Override
     public void initView() {
         setContent(R.layout.activity_fast_daojian);
         setHeaderLeftViewText("快速到件");

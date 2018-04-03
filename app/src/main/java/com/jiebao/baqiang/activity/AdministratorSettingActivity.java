@@ -356,10 +356,10 @@ public class AdministratorSettingActivity extends
                 RequestParams params = new RequestParams(mUpdateAPPUrl);
 
                 params.addQueryStringParameter("saleId", UpdateInterface
-                        .salesId);
+                        .getSalesId());
                 params.addQueryStringParameter("userName", UpdateInterface
-                        .userName);
-                params.addQueryStringParameter("password", UpdateInterface.psw);
+                        .getUserName());
+                params.addQueryStringParameter("password", UpdateInterface.getPsw());
 
                 x.http().post(params, new Callback.CommonCallback<String>() {
 

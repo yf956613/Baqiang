@@ -61,9 +61,9 @@ public class UpdateLiuCangType extends UpdateInterface {
                 , NetworkConstant.LiuCang_TYPE);
 
         RequestParams params = new RequestParams(mUpdateLiuCangTypeUrl);
-        params.addQueryStringParameter("saleId", salesId);
-        params.addQueryStringParameter("userName", userName);
-        params.addQueryStringParameter("password", psw);
+        params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.setConnectTimeout(45 * 1000);
 
         x.http().post(params, new Callback.CommonCallback<String>() {

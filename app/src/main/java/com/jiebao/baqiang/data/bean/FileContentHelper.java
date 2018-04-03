@@ -6,7 +6,7 @@ import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
 import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
-import com.jiebao.baqiang.util.TextStringUtil;
+import com.jiebao.baqiang.util.LogUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class FileContentHelper {
         // 运单编号
         String shipmentNumber = "";
         // 扫描员工编号
-        String scanEmployeeNumber = UpdateInterface.userName;
+        String scanEmployeeNumber = UpdateInterface.getUserName();
         // 操作日期 <-- 扫码时间（必须相同）
         String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 重量
@@ -46,8 +46,10 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "Used";
 
-        return new ZCFajianFileContent(nextStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, identify, status, isUsed);
+        return new ZCFajianFileContent(nextStation, scanDate, goodsType,
+                shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight,
+                identify, status, isUsed);
     }
 
     /**
@@ -67,7 +69,7 @@ public class FileContentHelper {
         // 运单编号
         String shipmentNumber = "";
         // 扫描员工编号
-        String scanEmployeeNumber = UpdateInterface.userName;
+        String scanEmployeeNumber = UpdateInterface.getUserName();
         // 操作日期
         String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 重量
@@ -79,8 +81,10 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "Used";
 
-        return new UnloadArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, vehicleID, status, isUsed);
+        return new UnloadArrivalFileContent(previousStation, scanDate,
+                goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight,
+                vehicleID, status, isUsed);
     }
 
     /**
@@ -100,7 +104,7 @@ public class FileContentHelper {
         // 运单编号
         String shipmentNumber = "";
         // 扫描员工编号
-        String scanEmployeeNumber = UpdateInterface.userName;
+        String scanEmployeeNumber = UpdateInterface.getUserName();
         // 操作日期
         String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 重量
@@ -110,8 +114,10 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "Used";
 
-        return new CargoArrivalFileContent(previousStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
+        return new CargoArrivalFileContent(previousStation, scanDate,
+                goodsType, shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight,
+                status, isUsed);
     }
 
     /**
@@ -132,7 +138,8 @@ public class FileContentHelper {
         // 运单编号
         String shipmentNumber = "";
         // 扫描员工编号
-        String scanEmployeeNumber = UpdateInterface.userName;
+        String scanEmployeeNumber = UpdateInterface.getUserName();
+        LogUtil.trace("--->" + scanEmployeeNumber);
         // 操作日期
         String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 重量
@@ -142,8 +149,10 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "Used";
 
-        return new ShipmentFileContent(nextStation, scanDate, goodsType, shipmentType,
-                shipmentNumber, scanEmployeeNumber, operateDate, weight, status, isUsed);
+        return new ShipmentFileContent(nextStation, scanDate, goodsType,
+                shipmentType,
+                shipmentNumber, scanEmployeeNumber, operateDate, weight,
+                status, isUsed);
     }
 
     /**
@@ -161,7 +170,7 @@ public class FileContentHelper {
         // 运单编号
         String shipmentNumber = "";
         // 扫描员工编号
-        String scanEmployeeNumber = UpdateInterface.userName;
+        String scanEmployeeNumber = UpdateInterface.getUserName();
         // 操作日期
         String operateDate = new SimpleDateFormat("yyyyMMdd").format(scanDate);
         // 是否上传状态
@@ -169,7 +178,8 @@ public class FileContentHelper {
         // 是否可用
         String isUsed = "Used";
 
-        return new StayHouseFileContent(scanDate, stayHouseReason, shipmentType, shipmentNumber,
+        return new StayHouseFileContent(scanDate, stayHouseReason,
+                shipmentType, shipmentNumber,
                 scanEmployeeNumber, operateDate, status, isUsed);
     }
 }
