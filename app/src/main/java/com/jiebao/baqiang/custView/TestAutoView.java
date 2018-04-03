@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.jiebao.baqiang.util.LogUtil;
@@ -14,7 +13,8 @@ import com.jiebao.baqiang.util.LogUtil;
  * Created by Administrator on 2018/3/19 0019.
  */
 
-public class TestAutoView extends android.support.v7.widget.AppCompatAutoCompleteTextView {
+public class TestAutoView extends android.support.v7.widget
+        .AppCompatAutoCompleteTextView {
     private static final String TAG = TestAutoView.class.getSimpleName();
 
     public TestAutoView(Context context) {
@@ -34,12 +34,16 @@ public class TestAutoView extends android.support.v7.widget.AppCompatAutoComplet
         LogUtil.trace("text:" + text);
 
         clearComposingText();
-
+        // special format(get the last String content)
         String[] arr = text.toString().split("  ");
-        if (arr != null && arr.length >= 2) {
-            setText(arr[1]);
+        if (arr != null) {
+            if (arr.length >= 2) {
+                setText(arr[1]);
+            } else {
+                setText(text);
+            }
         } else {
-            setText(text);
+            // do nothing
         }
 
         // make sure we keep the caret at the end of the text view
@@ -54,6 +58,8 @@ public class TestAutoView extends android.support.v7.widget.AppCompatAutoComplet
             case KeyEvent.KEYCODE_ENTER: {
                 if (TextUtils.isEmpty(getText().toString())) {
                     showDropDown();
+                } else {
+                    // do nothing
                 }
             }
         }

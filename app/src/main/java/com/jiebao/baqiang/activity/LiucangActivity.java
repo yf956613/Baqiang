@@ -37,8 +37,8 @@ import java.util.Date;
 import java.util.List;
 
 public class LiucangActivity extends BaseActivityWithTitleAndNumber
-        implements View
-        .OnClickListener, CouldDeleteListView.DelButtonClickListener {
+        implements View.OnClickListener, CouldDeleteListView
+        .DelButtonClickListener {
     private static final String TAG = "LiucangActivity";
 
     private AutoCompleteTextView mTvStayHouseReason;
@@ -46,19 +46,13 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     private Button mBtnSure, mBtnCancel;
     private CouldDeleteListView mListView;
 
-    // 留仓原因
     private List<String> mStayHouseReason;
-    // 用在View上的Adapter
     private TestTipsAdatper mReasonData;
-
-    // 插入数据库中的一行数据
     private StayHouseFileContent mStayHouseFileContent;
 
-    // 用于更新ListView界面数据
     private List<CommonScannerListViewBean> mListData;
     private CommonScannerBaseAdapter mScannerBaseAdatper;
 
-    // 此处作为全局扫描次数的记录，用于更新ListView的ID
     private int mScanCount;
     private Vibrator mDeviceVibrator;
     private boolean mIsScanRunning = false;
@@ -88,19 +82,17 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         mTvStayHouseReason = LiucangActivity.this.findViewById(R.id
                 .tv_stay_reason);
         mTvStayHouseReason.setAdapter(mReasonData);
-        // 监听EditText是否获取焦点
         mTvStayHouseReason.setOnFocusChangeListener(new View
                 .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // 如果当前内容为空，则提示；同时，编辑时自动提示
                     if (TextUtils.isEmpty(mTvStayHouseReason.getText())) {
                         mTvStayHouseReason.showDropDown();
                     }
                 } else {
-                    LogUtil.trace("mTvNextStation no hasFocus");
+                    // do nothing
                 }
             }
         });
@@ -115,8 +107,10 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                 String reasonID = StayHouseReasonDBHelper.getReasonIdFromName
                         (stayHouseReason);
                 if (!TextUtils.isEmpty(reasonID)) {
-                    // 更新下一站网点编号
                     mStayHouseFileContent.setStayReason(reasonID);
+                } else {
+                    Toast.makeText(LiucangActivity.this, "无法获取留仓原因编号", Toast
+                            .LENGTH_SHORT).show();
                 }
             }
         });
@@ -151,26 +145,23 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         super.onKeyDown(keyCode, event);
 
         LogUtil.trace("keyCode:" + keyCode);
-
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 if (!StayHouseReasonDBHelper.checkCurrentReason
-                        (mTvStayHouseReason.getText()
-                                .toString())) {
+                        (mTvStayHouseReason.getText().toString())) {
                     Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                             .LENGTH_SHORT).show();
                     mDeviceVibrator.vibrate(1000);
                     return true;
                 } else {
-                    LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
                     if (!mIsScanRunning) {
-                        // 没有扫码，发出一次扫码广播
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         LiucangActivity.this.sendBroadcast(intent);
-                        LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
                         mIsScanRunning = true;
+                    } else {
+                        // do nothing
                     }
                 }
 
@@ -196,54 +187,41 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            return;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else if (!StayHouseReasonDBHelper.checkCurrentReason
                     (mTvStayHouseReason.getText()
                             .toString())) {
                 Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
-                    mDeviceVibrator.vibrate(1000);
                 } else {
                     // do nothing
                 }
-
-                triggerForScanner();
-                mIsScanRunning = true;
             }
         } else {
-            mIsScanRunning = true;
-            triggerForScanner();
+            Toast.makeText(LiucangActivity.this, "运单表号存在非可用字符，手动输入运单号",
+                    Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
+        mIsScanRunning = true;
+        triggerForScanner();
     }
 
     @Override
     protected void timeout(long timeout) {
         super.timeout(timeout);
-
-        LogUtil.trace("timeout:" + timeout);
         mIsScanRunning = false;
     }
 
@@ -608,22 +586,17 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            return false;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else if (!StayHouseReasonDBHelper.checkCurrentReason
-                    (mTvStayHouseReason.getText()
-                            .toString())) {
+                    (mTvStayHouseReason.getText().toString())) {
                 Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -636,10 +609,11 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                 }
             }
         } else {
-            // do nothing
+            Toast.makeText(LiucangActivity.this, "运单表号存在非可用字符，手动输入运单号",
+                    Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
-
-        return true;
+        return false;
     }
 }

@@ -2,7 +2,6 @@ package com.jiebao.baqiang.data.db;
 
 import android.text.TextUtils;
 
-import com.jiebao.baqiang.data.bean.SalesService;
 import com.jiebao.baqiang.data.bean.ShipmentType;
 import com.jiebao.baqiang.util.LogUtil;
 
@@ -33,7 +32,8 @@ public class ShipmentTypeDBHelper {
         List<String> mShipmentData = new ArrayList<>();
         for (int index = 0; index < mData.size(); index++) {
             // 采用固定格式便于解析快件类型
-            mShipmentData.add(mData.get(index).get类型编号() + "  " + mData.get(index).get类型名称());
+            mShipmentData.add(mData.get(index).get类型编号() + "  " + mData.get
+                    (index).get类型名称());
         }
 
         Collections.sort(mShipmentData);
@@ -41,11 +41,17 @@ public class ShipmentTypeDBHelper {
         return mShipmentData;
     }
 
+    /**
+     * 通过类型名称查询类型编号
+     *
+     * @param shipmentName
+     * @return
+     */
     public static String getShipmentTypeIDFromName(String shipmentName) {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentType> data = dbManager.selector(ShipmentType.class).where("类型名称",
-                    "like", shipmentName).limit(1).findAll();
+            List<ShipmentType> data = dbManager.selector(ShipmentType.class)
+                    .where("类型名称", "=", shipmentName).limit(1).findAll();
 
             if (data != null && data.size() != 0) {
                 return data.get(0).get类型编号();
@@ -68,7 +74,8 @@ public class ShipmentTypeDBHelper {
         if (!TextUtils.isEmpty(shipmentName)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<ShipmentType> data = dbManager.selector(ShipmentType.class).where("类型名称",
+                List<ShipmentType> data = dbManager.selector(ShipmentType
+                        .class).where("类型名称",
                         "like", shipmentName).limit(1).findAll();
                 if (data != null && data.size() != 0) {
                     return true;

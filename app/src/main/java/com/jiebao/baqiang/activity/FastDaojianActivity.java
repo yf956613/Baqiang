@@ -84,18 +84,15 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
-                LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
-
                 if (!mIsScanRunning) {
-                    // 没有扫码，发出一次扫码广播
                     Intent intent = new Intent();
                     intent.setAction("com.jb.action.F4key");
                     intent.putExtra("F4key", "down");
                     FastDaojianActivity.this.sendBroadcast(intent);
-                    LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
                     mIsScanRunning = true;
+                } else {
+                    // do nothing
                 }
-
                 return true;
             }
 
@@ -116,36 +113,31 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            return;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
-            }
-
-            boolean isInsertSuccess = insertForScanner(barcode);
-            LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-
-            if (isInsertSuccess) {
-                updateUIForScanner(barcode);
-                increaseOrDecreaseRecords(1);
-                mDeviceVibrator.vibrate(1000);
             } else {
-                // do nothing
-            }
+                boolean isInsertSuccess = insertForScanner(barcode);
+                LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
 
-            triggerForScanner();
-            mIsScanRunning = true;
+                if (isInsertSuccess) {
+                    updateUIForScanner(barcode);
+                    increaseOrDecreaseRecords(1);
+                } else {
+                    // do nothing
+                }
+            }
         } else {
-            triggerForScanner();
-            mIsScanRunning = true;
+            Toast.makeText(FastDaojianActivity.this, "运单表号存在非可用字符，手动输入运单号",
+                    Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
+
+        triggerForScanner();
+        mIsScanRunning = true;
     }
 
     @Override
@@ -479,29 +471,26 @@ public class FastDaojianActivity extends BaseActivityWithTitleAndNumber
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            return false;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(FastDaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
                 } else {
                     // do nothing
                 }
-
-                return true;
             }
         } else {
-            // do nothing
+            Toast.makeText(FastDaojianActivity.this, "运单表号存在非可用字符，手动输入运单号",
+                    Toast.LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
         return false;

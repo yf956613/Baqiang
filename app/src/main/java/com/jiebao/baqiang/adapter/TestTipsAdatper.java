@@ -51,7 +51,7 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
             convertView = LayoutInflater.from(context).inflate(R.layout
                     .item_list_tips, null);
             holder = new ViewHolder();
-            holder.tv_ss = (TextView) convertView.findViewById(R.id.text1);
+            holder.tv_ss = convertView.findViewById(R.id.text1);
             convertView.setTag(holder);
         }
         holder = (ViewHolder) convertView.getTag();
@@ -68,7 +68,7 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
     }
 
     class MyFilter extends Filter {
-        private List<String> original = new ArrayList<String>();
+        private List<String> original = new ArrayList<>();
 
         public MyFilter(List<String> list) {
             this.original = list;
@@ -84,7 +84,7 @@ public class TestTipsAdatper extends BaseAdapter implements Filterable {
                 results.values = original;
                 results.count = original.size();
             } else {
-                List<String> mList = new ArrayList<String>();
+                List<String> mList = new ArrayList<>();
                 for (String s : original) {
                     if (s.trim().toLowerCase().startsWith(constraint.toString
                             ().trim().toLowerCase())) {

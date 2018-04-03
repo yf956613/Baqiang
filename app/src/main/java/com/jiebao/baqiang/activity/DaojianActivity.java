@@ -51,9 +51,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     private CouldDeleteListView mListView;
     private EditText mEtDeliveryNumber;
 
-    // 上一站网点信息
     private List<String> mPreviousStationInfo;
-    // 上一站快速提示数据适配器
     private TestTipsAdatper mPreviousStationAdapter;
 
     private CargoArrivalFileContent mCargoArrivalFileContent;
@@ -96,12 +94,13 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // 如果当前内容为空，则提示；同时，编辑时自动提示
                     if (TextUtils.isEmpty(mTvPreviousStation.getText())) {
                         mTvPreviousStation.showDropDown();
+                    } else {
+                        // do nothing
                     }
                 } else {
-                    LogUtil.trace("mTvPreviousStation no hasFocus");
+                    // do nothing
                 }
             }
         });
@@ -111,13 +110,14 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int
                     position, long id) {
-                // 一旦选定上一站，则解析网点编号，更新ShipmentFileContent实体内容
                 String serverName = mTvPreviousStation.getText().toString();
                 String serverID = SalesServiceDBHelper.getServerIdFromName
                         (serverName);
                 if (!TextUtils.isEmpty(serverID)) {
-                    // 更新下一站网点编号
                     mCargoArrivalFileContent.setPreviousStation(serverID);
+                } else {
+                    Toast.makeText(DaojianActivity.this, "无法获取网点编号", Toast
+                            .LENGTH_SHORT).show();
                 }
             }
         });
@@ -156,18 +156,16 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                         .getText().toString())) {
                     Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
-
                     mDeviceVibrator.vibrate(1000);
-                    return true;
                 } else {
-                    LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
                     if (!mIsScanRunning) {
-                        // 没有扫码，发出一次扫码广播
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         DaojianActivity.this.sendBroadcast(intent);
                         mIsScanRunning = true;
+                    } else {
+                        // do nothing
                     }
                 }
 
@@ -191,27 +189,17 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            return;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation
                     .getText().toString())) {
                 Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -219,26 +207,23 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
-
-                    mDeviceVibrator.vibrate(1000);
                 } else {
                     // do nothing
                 }
-
-                triggerForScanner();
-                mIsScanRunning = true;
             }
         } else {
-            mIsScanRunning = true;
-            triggerForScanner();
+            Toast.makeText(DaojianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
+                    .LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
+
+        mIsScanRunning = true;
+        triggerForScanner();
     }
 
     @Override
     protected void timeout(long timeout) {
         super.timeout(timeout);
-
-        LogUtil.trace("timeout:" + timeout);
         mIsScanRunning = false;
     }
 
@@ -308,41 +293,40 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     private void prepareDataForView() {
         mPreviousStationInfo = resolvePreviousStationData();
         mPreviousStationAdapter = new TestTipsAdatper(DaojianActivity.this,
-                mPreviousStationInfo,
-                new FilterListener() {
+                mPreviousStationInfo, new FilterListener() {
 
-                    @Override
-                    public void getFilterData(List<String> list) {
-                        if (list != null) {
-                            if (list.size() == 1) {
-                                String[] arr = list.get(0).toString().split("" +
-                                        "  ");
-                                mTvPreviousStation.dismissDropDown();
+            @Override
+            public void getFilterData(List<String> list) {
+                if (list != null) {
+                    if (list.size() == 1) {
+                        String[] arr = list.get(0).toString().split("" + "  ");
+                        mTvPreviousStation.dismissDropDown();
 
-                                if (arr != null) {
-                                    if (arr.length >= 2) {
-                                        mTvPreviousStation.setText(arr[1],
-                                                false);
-                                        mCargoArrivalFileContent
-                                                .setPreviousStation(arr[0]);
-                                    }
-                                } else {
-                                    mTvPreviousStation.setText(list.get(0)
-                                            .toString(), false);
-                                }
-
-                                Editable spannable = mTvPreviousStation
-                                        .getText();
-                                Selection.setSelection(spannable, spannable
-                                        .length());
+                        if (arr != null) {
+                            if (arr.length >= 2) {
+                                mTvPreviousStation.setText(arr[1], false);
+                                mCargoArrivalFileContent.setPreviousStation
+                                        (arr[0]);
                             } else {
                                 // do nothing
                             }
                         } else {
-                            // do nothing
+                            mTvPreviousStation.setText(list.get(0)
+                                    .toString(), false);
                         }
+
+                        Editable spannable = mTvPreviousStation
+                                .getText();
+                        Selection.setSelection(spannable, spannable
+                                .length());
+                    } else {
+                        // do nothing
                     }
-                });
+                } else {
+                    // do nothing
+                }
+            }
+        });
 
         mCargoArrivalFileContent = FileContentHelper
                 .getCargoArrivalFileContent();
@@ -362,10 +346,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         boolean isOpen = SharedUtil.getBoolean(DaojianActivity.this, Constant
                 .PREFERENCE_KEY_SCAN_SWITCH);
         LogUtil.trace("-->" + isOpen);
-
         return isOpen ? SalesServiceDBHelper.getSalesServiceOfCentreOrBranch
-                (2) :
-                SalesServiceDBHelper.getSalesServiceOfCentreOrBranch(1);
+                (2) : SalesServiceDBHelper.getSalesServiceOfCentreOrBranch(1);
     }
 
     /**
@@ -613,21 +595,17 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            return false;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation
                     .getText().toString())) {
                 Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -637,13 +615,13 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 } else {
                     // do nothing
                 }
-
-                return true;
             }
         } else {
-            // do nothing
+            Toast.makeText(DaojianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
+                    .LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
-        return true;
+        return false;
     }
 }

@@ -38,8 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 public class FajianActivity extends BaseActivityWithTitleAndNumber implements
-        View
-                .OnClickListener, CouldDeleteListView.DelButtonClickListener {
+        View.OnClickListener, CouldDeleteListView.DelButtonClickListener {
     private static final String TAG = "FajianActivity";
 
     private AutoCompleteTextView mTvShipmentType;
@@ -95,19 +94,19 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
 
         mTvNextStation = FajianActivity.this.findViewById(R.id.tv_next_station);
         mTvNextStation.setAdapter(mNextStationAdapter);
-        // 监听EditText是否获取焦点
         mTvNextStation.setOnFocusChangeListener(new View
                 .OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // 如果当前内容为空，则提示；同时，编辑时自动提示
                     if (TextUtils.isEmpty(mTvNextStation.getText())) {
                         mTvNextStation.showDropDown();
+                    } else {
+                        // do nothing
                     }
                 } else {
-                    LogUtil.trace("mTvNextStation no hasFocus");
+                    // do nothing
                 }
             }
         });
@@ -117,13 +116,15 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int
                     position, long id) {
-                // 一旦选定下一站，则解析网点编号，更新ShipmentFileContent实体内容
+                // TestAutoView.replaceText-->onItemClick-->mShipmentFileContent
                 String serverName = mTvNextStation.getText().toString();
                 String serverID = SalesServiceDBHelper.getServerIdFromName
                         (serverName);
                 if (!TextUtils.isEmpty(serverID)) {
-                    // 更新下一站网点编号
                     mShipmentFileContent.setNextStation(serverID);
+                } else {
+                    Toast.makeText(FajianActivity.this, "无法获取指定网点编号", Toast
+                            .LENGTH_SHORT).show();
                 }
             }
         });
@@ -150,25 +151,22 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // 如果当前内容为空，则提示；同时，编辑时自动提示
                     if (TextUtils.isEmpty(mTvShipmentType.getText())) {
-                        // mTvShipmentType.showDropDown();
-
                         mTvShipmentType.setText("汽运");
                         String shipmentTypeID = ShipmentTypeDBHelper
-                                .getShipmentTypeIDFromName
-                                        ("汽运");
+                                .getShipmentTypeIDFromName("汽运");
                         if (!TextUtils.isEmpty(shipmentTypeID)) {
                             mShipmentFileContent.setShipmentType
                                     (shipmentTypeID);
                         } else {
-                            // do nothing
+                            Toast.makeText(FajianActivity.this,
+                                    "无法获取指定快件类型编号", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // do nothing
                     }
                 } else {
-                    LogUtil.trace("mTvShipmentType no hasFocus");
+                    // do nothing
                 }
             }
         });
@@ -178,15 +176,19 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int
                     position, long id) {
-                // 一旦选定快件类型，则解析快件类型编号，更新ShipmentFileContent实体内容
+                // TestAutoView.replaceText-->onItemClick-->mShipmentFileContent
                 String shipmentTypeName = mTvShipmentType.getText().toString();
-                String shipmentTypeID = ShipmentTypeDBHelper
-                        .getShipmentTypeIDFromName
-                                (shipmentTypeName);
-                if (!TextUtils.isEmpty(shipmentTypeID)) {
-                    mShipmentFileContent.setShipmentType(shipmentTypeID);
+                if (!TextUtils.isEmpty(shipmentTypeName)) {
+                    String shipmentTypeID = ShipmentTypeDBHelper
+                            .getShipmentTypeIDFromName(shipmentTypeName);
+                    if (!TextUtils.isEmpty(shipmentTypeID)) {
+                        mShipmentFileContent.setShipmentType(shipmentTypeID);
+                    } else {
+                        Toast.makeText(FajianActivity.this, "未查询到指定快件类型编号",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    // do nothing
+                    // nothing item is clicked
                 }
             }
         });
@@ -224,29 +226,23 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                         .getText().toString())) {
                     Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
-
                     mDeviceVibrator.vibrate(1000);
-                    return true;
                 } else if (!ShipmentTypeDBHelper.checkShipmentType
                         (mTvShipmentType.getText().toString())) {
                     Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                             .LENGTH_SHORT).show();
-
                     mDeviceVibrator.vibrate(1000);
-                    return true;
                 } else {
-                    LogUtil.trace("mIsScanRunning:" + mIsScanRunning);
                     if (!mIsScanRunning) {
-                        // 没有扫码，发出一次扫码广播
                         Intent intent = new Intent();
                         intent.setAction("com.jb.action.F4key");
                         intent.putExtra("F4key", "down");
                         FajianActivity.this.sendBroadcast(intent);
-                        LogUtil.trace("3: mIsScanRunning=" + mIsScanRunning);
                         mIsScanRunning = true;
+                    } else {
+                        // do nothing
                     }
                 }
-
                 return true;
             }
 
@@ -268,67 +264,45 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            return;
+            // to nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
-                // 判断当前条码是否已录入
                 Toast.makeText(FajianActivity.this, "运单号已存在", Toast
-                        .LENGTH_SHORT)
-                        .show();
+                        .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
                     .getText().toString())) {
-                // 再次判断下一站网点信息 是否正常
                 Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else if (!ShipmentTypeDBHelper.checkShipmentType
                     (mTvShipmentType.getText().toString())) {
-                // 再次判断快件信息 是否正常
                 Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                mIsScanRunning = true;
-                triggerForScanner();
-
-                return;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
-
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
                 } else {
                     // do nothing
                 }
-
-                triggerForScanner();
-                mIsScanRunning = true;
             }
         } else {
-            mIsScanRunning = true;
-            triggerForScanner();
+            Toast.makeText(FajianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
+                    .LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
+        mIsScanRunning = true;
+        triggerForScanner();
     }
 
     @Override
     protected void timeout(long timeout) {
         super.timeout(timeout);
-
-        LogUtil.trace("timeout:" + timeout);
         mIsScanRunning = false;
     }
 
@@ -337,8 +311,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         LogUtil.trace("position:" + position);
 
         ShipmentFileContent barcode = (ShipmentFileContent) mListData.get
-                (position)
-                .getScannerBean();
+                (position).getScannerBean();
         // 此处ListView中数据是有ID值的
         if (FajianDBHelper.isRecordUpload(barcode.getId())) {
             Toast.makeText(FajianActivity.this, "当前记录已上传，不能删除", Toast
@@ -354,7 +327,6 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         switch (view.getId()) {
             case R.id.btn_ensure: {
                 // uploadListViewDataToServer();
-                // 保存键入条码
                 storeManualBarcode(mEtShipmentNumber.getText().toString()
                         .trim());
                 break;
@@ -377,7 +349,6 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         // F1事件和自动上传事件 触发刷新UI；更新部分仅仅是当前ListView中的记录
         if (mListData != null) {
             LogUtil.trace("size:" + mListData.size());
-
             for (int index = 0; index < mListData.size(); index++) {
                 CommonScannerListViewBean listViewBean = mListData.get(index);
 
@@ -397,85 +368,83 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                 mListView.setStackFromBottom(true);
             }
             mListView.setStackFromBottom(false);
+        } else {
+            // do nothing
         }
     }
 
     private void prepareDataForView() {
         mNextStationInfo = SalesServiceDBHelper.getAllSalesServiceData();
         mNextStationAdapter = new TestTipsAdatper(FajianActivity.this,
-                mNextStationInfo, new
-                FilterListener() {
+                mNextStationInfo, new FilterListener() {
 
-                    @Override
-                    public void getFilterData(List<String> list) {
-                        if (list != null) {
-                            if (list.size() == 1) {
-                                String[] arr = list.get(0).toString().split("" +
-                                        "  ");
-                                mTvNextStation.dismissDropDown();
+            @Override
+            public void getFilterData(List<String> list) {
+                if (list != null) {
+                    if (list.size() == 1) {
+                        String[] arr = list.get(0).toString().split("" + "  ");
+                        mTvNextStation.dismissDropDown();
 
-                                if (arr != null) {
-                                    if (arr.length >= 2) {
-                                        mTvNextStation.setText(arr[1], false);
-                                        mShipmentFileContent.setNextStation
-                                                (arr[0]);
-                                    }
-                                } else {
-                                    mTvNextStation.setText(list.get(0)
-                                            .toString(), false);
-                                }
-
-                                Editable spannable = mTvNextStation.getText();
-                                Selection.setSelection(spannable, spannable
-                                        .length());
+                        if (arr != null) {
+                            if (arr.length >= 2) {
+                                mTvNextStation.setText(arr[1], false);
+                                mShipmentFileContent.setNextStation(arr[0]);
                             } else {
                                 // do nothing
                             }
                         } else {
-                            // do nothing
+                            mTvNextStation.setText(list.get(0).toString(),
+                                    false);
                         }
+
+                        Editable spannable = mTvNextStation.getText();
+                        Selection.setSelection(spannable, spannable
+                                .length());
+                    } else {
+                        // do nothing
                     }
-                });
+                } else {
+                    // do nothing
+                }
+            }
+        });
 
         mShipmentTypeInfo = ShipmentTypeDBHelper.getShipmentTypeInfo();
         mShipmentTypeAdapter = new TestTipsAdatper(FajianActivity.this,
-                mShipmentTypeInfo, new
-                FilterListener() {
+                mShipmentTypeInfo, new FilterListener() {
 
-                    @Override
-                    public void getFilterData(List<String> list) {
-                        if (list != null) {
-                            if (list.size() == 1) {
-                                String[] arr = list.get(0).toString().split("" +
-                                        "  ");
-                                mTvShipmentType.dismissDropDown();
+            @Override
+            public void getFilterData(List<String> list) {
+                if (list != null) {
+                    if (list.size() == 1) {
+                        String[] arr = list.get(0).toString().split("" + "  ");
+                        mTvShipmentType.dismissDropDown();
 
-                                if (arr != null) {
-                                    if (arr.length >= 2) {
-                                        mTvShipmentType.setText(arr[1], false);
-                                        mShipmentFileContent.setShipmentType
-                                                (arr[0]);
-                                    }
-                                } else {
-                                    mTvShipmentType.setText(list.get(0)
-                                            .toString(), false);
-                                }
-
-                                Editable spannable = mTvShipmentType.getText();
-                                Selection.setSelection(spannable, spannable
-                                        .length());
+                        if (arr != null) {
+                            if (arr.length >= 2) {
+                                mTvShipmentType.setText(arr[1], false);
+                                mShipmentFileContent.setShipmentType(arr[0]);
                             } else {
                                 // do nothing
                             }
                         } else {
-                            // do nothing
+                            mTvShipmentType.setText(list.get(0)
+                                    .toString(), false);
                         }
+
+                        Editable spannable = mTvShipmentType.getText();
+                        Selection.setSelection(spannable, spannable
+                                .length());
+                    } else {
+                        // do nothing
                     }
-                });
+                } else {
+                    // do nothing
+                }
+            }
+        });
 
         mShipmentFileContent = FileContentHelper.getShipmentFileContent();
-
-        // 用于显示扫描列表的信息
         mListData = new ArrayList<>();
         mScannerBaseAdatper = new CommonScannerBaseAdapter(FajianActivity
                 .this, mListData);
@@ -725,32 +694,25 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            return false;
+            // do nothing
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
                 // 判断当前条码是否已录入
                 Toast.makeText(FajianActivity.this, "运单号已存在", Toast
-                        .LENGTH_SHORT)
-                        .show();
+                        .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
                     .getText().toString())) {
                 // 再次判断下一站网点信息 是否正常
                 Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else if (!ShipmentTypeDBHelper.checkShipmentType
                     (mTvShipmentType.getText().toString())) {
                 // 再次判断快件信息 是否正常
                 Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                         .LENGTH_SHORT).show();
                 mDeviceVibrator.vibrate(1000);
-
-                return false;
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -760,11 +722,11 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                 } else {
                     // do nothing
                 }
-
-                return true;
             }
         } else {
-            // do nothing
+            Toast.makeText(FajianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
+                    .LENGTH_SHORT).show();
+            mDeviceVibrator.vibrate(1000);
         }
 
         return false;
