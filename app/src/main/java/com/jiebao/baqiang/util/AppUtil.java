@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 
 import com.jiebao.baqiang.application.BaqiangApplication;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class AppUtil {
@@ -24,8 +25,8 @@ public class AppUtil {
         PackageInfo info = null;
         try {
             String packageName = context.getPackageName();
-            info = context.getPackageManager().getPackageInfo(packageName,
-                    PackageManager.GET_ACTIVITIES);
+            info = context.getPackageManager().getPackageInfo(packageName, PackageManager
+                    .GET_ACTIVITIES);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,25 +65,25 @@ public class AppUtil {
     public static PowerManager.WakeLock mWakeLock;
 
 
-	public static void setScreenBright(boolean isBright) {
-		if(mWakeLock == null) {
-			PowerManager pm = (PowerManager) BaqiangApplication.getContext().getSystemService(Context.POWER_SERVICE);
-			mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "cinema");
-		}
-		if(isBright) {
-           if (mWakeLock != null && mWakeLock.isHeld())
-                return;
-            mWakeLock.acquire(); //设置保持唤醒
+    public static void setScreenBright(boolean isBright) {
+        if (mWakeLock == null) {
+            PowerManager pm = (PowerManager) BaqiangApplication.getContext().getSystemService
+                    (Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager
+                    .ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "cinema");
         }
-		else {
-            if (mWakeLock != null && mWakeLock.isHeld())
-			    mWakeLock.release();
-			mWakeLock = null;
-		}
-	}
+        if (isBright) {
+            if (mWakeLock != null && mWakeLock.isHeld()) return;
+            mWakeLock.acquire(); //设置保持唤醒
+        } else {
+            if (mWakeLock != null && mWakeLock.isHeld()) mWakeLock.release();
+            mWakeLock = null;
+        }
+    }
 
     public static boolean IsNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) BaqiangApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager) BaqiangApplication.getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkinfo = manager.getActiveNetworkInfo();
         if (networkinfo == null || !networkinfo.isAvailable()) {// 当前网络不可用
             return false;
@@ -103,7 +104,7 @@ public class AppUtil {
     }
 
     //重新启动app
-    public static void restartApp(){
+    public static void restartApp() {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -114,7 +115,30 @@ public class AppUtil {
     }
 
     public static int dip2px(float dpValue) {
-        final float scale = BaqiangApplication.getContext().getResources().getDisplayMetrics().density;
+        final float scale = BaqiangApplication.getContext().getResources().getDisplayMetrics()
+                .density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static String getSystemProperty(Context context, String key) throws
+            IllegalArgumentException {
+        String ret = "";
+        try {
+            ClassLoader cl = context.getClassLoader();
+            Class SystemProperties = cl.loadClass("android.os" + "" + "" + ".SystemProperties");
+            Class[] paramTypes = new Class[1];
+            paramTypes[0] = String.class;
+            Method get = SystemProperties.getMethod("get", paramTypes);
+            Object[] params = new Object[1];
+            params[0] = new String(key);
+            ret = (String) get.invoke(SystemProperties, params);
+        } catch (IllegalArgumentException iAE) {
+            throw iAE;
+        } catch (Exception e) {
+            ret = "";
+            //TODO } return ret;
+        }
+
+        return ret;
     }
 }

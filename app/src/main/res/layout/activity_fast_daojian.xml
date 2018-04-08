@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/shipment_number"
@@ -13,12 +13,12 @@
 
         <TextView
             style="@style/PreviousInfoTextView"
-            android:text="运单号"/>
+            android:text="运单号" />
 
         <!--设置最小的匹配输入次数-->
         <EditText
             android:id="@+id/et_shipment_number"
-            style="@style/ShipmentNumberStyle"/>
+            style="@style/ShipmentNumberStyle" />
     </LinearLayout>
 
     <LinearLayout
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_below="@id/shipment_number"
-        android:background="@color/colorPrimary"
+        android:background="@color/grey"
         android:orientation="horizontal">
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="序号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -43,7 +43,7 @@
             android:layout_weight="3"
             android:gravity="center"
             android:text="单号"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -52,7 +52,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="状态"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -73,7 +73,7 @@
             android:background="@drawable/btn_selector"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btn_back"
@@ -86,7 +86,7 @@
             android:background="@drawable/btn_selector"
             android:text="@string/tab_back"
             android:textAllCaps="false"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <com.jiebao.baqiang.custView.CouldDeleteListView
@@ -95,6 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/ll_btn_function"
         android:layout_below="@id/listview_title"
+        android:listSelector="@drawable/btn_selector"
         android:transcriptMode="alwaysScroll"></com.jiebao.baqiang.custView.CouldDeleteListView>
 
 </RelativeLayout>

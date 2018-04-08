@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_below="@id/shipment_number"
-        android:background="@color/colorPrimary"
+        android:background="@color/grey"
         android:orientation="horizontal">
 
         <TextView
@@ -111,6 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/ll_btn_function"
         android:layout_below="@id/listview_title"
+        android:listSelector="@drawable/btn_selector"
         android:transcriptMode="alwaysScroll"></com.jiebao.baqiang.custView.CouldDeleteListView>
 
 </RelativeLayout>

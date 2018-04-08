@@ -170,6 +170,7 @@
         <item name="android:layout_weight">2</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <!--运单号样式-->

@@ -14,6 +14,8 @@ public class Constant {
     public final static int F1_KEY_CODE = 131;
     // F2按键键值
     public final static int F2_KEY_CODE = 132;
+    // F3按键键值
+    public final static int F3_KEY_CODE = 133;
 
     public final static String CLIENT_VERSION = "1";
 
