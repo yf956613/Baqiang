@@ -33,8 +33,11 @@ public class LiucangDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
             if (dbManager != null) {
+                // 删除指定时间之前，且是上传或无用数据
                 List<StayHouseFileContent> stayHouseFileContents = dbManager.selector
-                        (StayHouseFileContent.class).where("ScanDate", "<=", date).findAll();
+                        (StayHouseFileContent.class).where("ScanDate", "<=", date).and
+                        ("IsUpload", "=", "Load").or("ScanDate", "<=", date).and("IsUsed", "=",
+                        "Unused").findAll();
                 if (stayHouseFileContents != null && stayHouseFileContents.size() != 0) {
                     for (int index = 0; index < stayHouseFileContents.size(); index++) {
                         dbManager.delete(StayHouseFileContent.class, WhereBuilder.b("id", "=",

@@ -33,8 +33,11 @@ public class DaojianDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
             if (dbManager != null) {
+                // 删除指定时间之前，且是上传或无用数据
                 List<CargoArrivalFileContent> cargoArrivalFileContents = dbManager.selector
-                        (CargoArrivalFileContent.class).where("ScanDate", "<=", date).findAll();
+                        (CargoArrivalFileContent.class).where("ScanDate", "<=", date).and
+                        ("IsUpload", "=", "Load").or("ScanDate", "<=", date).and("IsUsed", "=",
+                        "Unused").findAll();
                 if (cargoArrivalFileContents != null && cargoArrivalFileContents.size() != 0) {
                     for (int index = 0; index < cargoArrivalFileContents.size(); index++) {
                         dbManager.delete(CargoArrivalFileContent.class, WhereBuilder.b("id", "=",

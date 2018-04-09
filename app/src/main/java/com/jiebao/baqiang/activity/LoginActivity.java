@@ -291,16 +291,22 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
      * 删除DB中存放的记录，具体参考Constant中字段
      */
     private void deleteTableRecords() {
-        File rootFile = new File(Environment.getExternalStorageDirectory().getPath());
-        FileUtil.deleteFile(new File(rootFile.getPath() + "/BaQiang"));
+        new Thread(new Runnable() {
 
-        Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
-        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
-                "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
+            @Override
+            public void run() {
+                File rootFile = new File(Environment.getExternalStorageDirectory().getPath());
+                FileUtil.deleteFile(new File(rootFile.getPath() + "/BaQiang"));
 
-        DaojianDBHelper.deleteSpecialTimeRecords(dateLimited);
-        FajianDBHelper.deleteSpecialTimeRecords(dateLimited);
-        LiucangDBHelper.deleteSpecialTimeRecords(dateLimited);
+                Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
+                LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
+                        "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
+
+                DaojianDBHelper.deleteSpecialTimeRecords(dateLimited);
+                FajianDBHelper.deleteSpecialTimeRecords(dateLimited);
+                LiucangDBHelper.deleteSpecialTimeRecords(dateLimited);
+            }
+        }).start();
     }
 
     /**

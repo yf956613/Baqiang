@@ -627,6 +627,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
     }
 
     private void showLockWindow() {
+        LogUtil.trace();
         if (mLockPopupWindow != null) {
             if (!mLockPopupWindow.isShowing()) {
                 mLockPopupWindow.showAtLocation(this.findViewById(R.id.headerLeftView), Gravity
@@ -641,10 +642,12 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                     .BOTTOM, 0, 0);
         }
 
-        sendLockWindowBroadcast(true);
+        sendLockWindowBroadcast(false);
     }
 
     private void dimissLockWindow() {
+        LogUtil.trace();
+
         if (mLockPopupWindow != null) {
             if (mLockPopupWindow.isShowing()) {
                 mLockPopupWindow.dismiss();
@@ -655,7 +658,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
             // do nothing
         }
 
-        sendLockWindowBroadcast(false);
+        sendLockWindowBroadcast(true);
     }
 
     private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
@@ -671,7 +674,7 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         Intent intent = new Intent();
         intent.setAction(PERSIST_SETTINGS);
         intent.putExtra(PERSIST_SETTINGS_KEY, "persist.sys.input_enable");
-        intent.putExtra(PERSIST_SETTINGS_VALUE, isLocked);
+        intent.putExtra(PERSIST_SETTINGS_VALUE, "" + isLocked);
 
         this.sendBroadcast(intent);
     }

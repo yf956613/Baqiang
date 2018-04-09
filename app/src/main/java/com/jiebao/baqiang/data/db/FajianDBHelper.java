@@ -33,8 +33,11 @@ public class FajianDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
         try {
             if (dbManager != null) {
+                // 删除指定时间之前，且是上传或无用数据
                 List<ShipmentFileContent> shipmentFileContents = dbManager.selector
-                        (ShipmentFileContent.class).where("ScanDate", "<=", date).findAll();
+                        (ShipmentFileContent.class).where("ScanDate", "<=", date).and("IsUpload",
+                        "=", "Load").or("ScanDate", "<=", date).and("IsUsed", "=", "Unused")
+                        .findAll();
                 if (shipmentFileContents != null && shipmentFileContents.size() != 0) {
                     for (int index = 0; index < shipmentFileContents.size(); index++) {
                         dbManager.delete(ShipmentFileContent.class, WhereBuilder.b("id", "=",
