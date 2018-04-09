@@ -155,7 +155,6 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case Constant.F1_KEY_CODE: {
-                    LogUtil.trace("---->F1");
                     new CommonDbHelperToUploadFile<ZCFajianFileContent>().setCallbackListener(new IDbHelperToUploadFileCallback() {
 
                         @Override
@@ -179,6 +178,24 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
                             return false;
                         }
                     }).uploadUnloadRecords();
+                    return true;
+                }
+
+                case Constant.F3_KEY_CODE: {
+                    LogUtil.trace("--->F3");
+
+                    if (mLockPopupWindow != null) {
+                        if (mLockPopupWindow.isShowing()) {
+                            // 当前锁屏显示状态，接收到按键值，解除锁定
+                            dimissLockWindow();
+                            // 发送广播
+                        } else {
+                            showLockWindow();
+                        }
+                    } else {
+                        showLockWindow();
+                    }
+
                     return true;
                 }
             }
@@ -609,16 +626,54 @@ public abstract class BaseActivityWithTitleAndNumber extends FragmentActivity im
         mLockPopupWindow.update();
     }
 
-    public void showLockWindow() {
+    private void showLockWindow() {
         if (mLockPopupWindow != null) {
+            if (!mLockPopupWindow.isShowing()) {
+                mLockPopupWindow.showAtLocation(this.findViewById(R.id.headerLeftView), Gravity
+                        .BOTTOM, 0, 0);
+            } else {
+                // do nothing
+            }
+        } else {
+            initLockWindow();
+
             mLockPopupWindow.showAtLocation(this.findViewById(R.id.headerLeftView), Gravity
                     .BOTTOM, 0, 0);
         }
+
+        sendLockWindowBroadcast(true);
     }
 
-    public void dimissLockWindow() {
+    private void dimissLockWindow() {
         if (mLockPopupWindow != null) {
-            mLockPopupWindow.dismiss();
+            if (mLockPopupWindow.isShowing()) {
+                mLockPopupWindow.dismiss();
+            } else {
+                // do nothing
+            }
+        } else {
+            // do nothing
         }
+
+        sendLockWindowBroadcast(false);
     }
+
+    private static final String PERSIST_SETTINGS = "com.jiebao.persist.set";
+    private static final String PERSIST_SETTINGS_KEY = "persistKey";
+    private static final String PERSIST_SETTINGS_VALUE = "persistValue";
+
+    /**
+     * 给Settings 发送锁屏广播
+     *
+     * @param isLocked true 锁屏； false 不锁屏
+     */
+    private void sendLockWindowBroadcast(boolean isLocked) {
+        Intent intent = new Intent();
+        intent.setAction(PERSIST_SETTINGS);
+        intent.putExtra(PERSIST_SETTINGS_KEY, "persist.sys.input_enable");
+        intent.putExtra(PERSIST_SETTINGS_VALUE, isLocked);
+
+        this.sendBroadcast(intent);
+    }
+
 }

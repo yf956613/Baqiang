@@ -147,12 +147,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.LockWindowReceiver">
-            <intent-filter>
-                <action android:name="com.jiebao.input_enable" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>
