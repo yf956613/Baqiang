@@ -17,6 +17,9 @@ public class Constant {
     // F3按键键值
     public final static int F3_KEY_CODE = 133;
 
+    // 7天
+    public static long SEVEN_TIME_DATE = 604800000L;
+
     public final static String CLIENT_VERSION = "1";
 
     //public static final String UPDATE_URL_PREFIX =

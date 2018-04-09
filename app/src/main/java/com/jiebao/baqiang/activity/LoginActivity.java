@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,10 +21,14 @@ import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
 import com.jiebao.baqiang.data.bean.LoginResponse;
+import com.jiebao.baqiang.data.db.DaojianDBHelper;
+import com.jiebao.baqiang.data.db.FajianDBHelper;
+import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.scan.ScanHelper;
 import com.jiebao.baqiang.util.AppUtil;
+import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
@@ -32,7 +37,10 @@ import org.xutils.http.RequestParams;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class LoginActivity extends BaseActivityWithTitleAndNumber implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
@@ -210,6 +218,9 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
             return;
         }
 
+        // 删除7天之前记录
+        deleteTableRecords();
+
         RequestParams params = new RequestParams(mLoginUrl);
         params.addQueryStringParameter("saleId", SharedUtil.getString(LoginActivity.this,
                 Constant.PREFERENCE_KEY_SALE_SERVICE));
@@ -274,6 +285,22 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
                 closeLoadinDialog();
             }
         });
+    }
+
+    /**
+     * 删除DB中存放的记录，具体参考Constant中字段
+     */
+    private void deleteTableRecords() {
+        File rootFile = new File(Environment.getExternalStorageDirectory().getPath());
+        FileUtil.deleteFile(new File(rootFile.getPath() + "/BaQiang"));
+
+        Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
+        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
+                "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
+
+        DaojianDBHelper.deleteSpecialTimeRecords(dateLimited);
+        FajianDBHelper.deleteSpecialTimeRecords(dateLimited);
+        LiucangDBHelper.deleteSpecialTimeRecords(dateLimited);
     }
 
     /**

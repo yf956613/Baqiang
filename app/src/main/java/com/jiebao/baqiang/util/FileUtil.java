@@ -454,4 +454,18 @@ public class FileUtil {
         } else return true;
 
     }
+
+    public static void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File f = files[i];
+                deleteFile(f);
+            }
+            // 注释这行：保留文件夹，只删除文件
+            file.delete();
+        } else if (file.exists()) {
+            file.delete();
+        }
+    }
 }

@@ -20,6 +20,9 @@ import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
 import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
 import com.jiebao.baqiang.data.db.BQDataBaseHelper;
+import com.jiebao.baqiang.data.db.DaojianDBHelper;
+import com.jiebao.baqiang.data.db.FajianDBHelper;
+import com.jiebao.baqiang.data.db.LiucangDBHelper;
 import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
@@ -27,6 +30,7 @@ import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.service.DownLoadApkFileService;
+import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
@@ -47,11 +51,9 @@ import java.util.List;
  * Created by yaya on 2018/2/26.
  */
 
-public class AdministratorSettingActivity extends
-        BaseActivityWithTitleAndNumber implements View
+public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber implements View
         .OnClickListener {
-    private static final String TAG = AdministratorSettingActivity.class
-            .getSimpleName();
+    private static final String TAG = AdministratorSettingActivity.class.getSimpleName();
 
     @ViewInject(R.id.btn_server_config)
     private Button mBtnServerConfig;
@@ -238,14 +240,13 @@ public class AdministratorSettingActivity extends
      */
     private void showAlertDialogForServerID() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setView(LayoutInflater.from(this).inflate(R.layout
-                .alert_dialog_set_serviceid, null));
+        dialog.setView(LayoutInflater.from(this).inflate(R.layout.alert_dialog_set_serviceid,
+                null));
         dialog.show();
         dialog.getWindow().setContentView(R.layout.alert_dialog_set_serviceid);
         Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
         Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
-        final EditText etContent = (EditText) dialog.findViewById(R.id
-                .et_content);
+        final EditText etContent = (EditText) dialog.findViewById(R.id.et_content);
         etContent.setText(SharedUtil.getString(AdministratorSettingActivity
                 .this, Constant.PREFERENCE_KEY_SALE_SERVICE));
 
@@ -259,15 +260,12 @@ public class AdministratorSettingActivity extends
                 } else {
                     dialog.dismiss();
 
-                    SharedUtil.putString(AdministratorSettingActivity.this,
-                            Constant.PREFERENCE_KEY_SALE_SERVICE, etContent
-                                    .getText()
-                                    .toString());
+                    SharedUtil.putString(AdministratorSettingActivity.this, Constant
+                            .PREFERENCE_KEY_SALE_SERVICE, etContent.getText().toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString
                             (AdministratorSettingActivity.this, "server_id"));*/
-                    Toast.makeText(AdministratorSettingActivity.this,
-                            "网点编号存储成功", Toast
-                                    .LENGTH_SHORT).show();
+                    Toast.makeText(AdministratorSettingActivity.this, "网点编号存储成功", Toast
+                            .LENGTH_SHORT).show();
                 }
             }
         });
@@ -282,14 +280,12 @@ public class AdministratorSettingActivity extends
 
     private void showAlertDialogForDeviceID() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setView(LayoutInflater.from(this).inflate(R.layout
-                .alert_dialog_device_id, null));
+        dialog.setView(LayoutInflater.from(this).inflate(R.layout.alert_dialog_device_id, null));
         dialog.show();
         dialog.getWindow().setContentView(R.layout.alert_dialog_device_id);
         Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
         Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
-        final EditText etContent = (EditText) dialog.findViewById(R.id
-                .et_content);
+        final EditText etContent = (EditText) dialog.findViewById(R.id.et_content);
         etContent.setText(SharedUtil.getString(AdministratorSettingActivity
                 .this, "device_id"));
 
@@ -304,16 +300,12 @@ public class AdministratorSettingActivity extends
                     dialog.dismiss();
 
                     // 保存网点编号
-                    SharedUtil.putString(AdministratorSettingActivity.this,
-                            Constant
-                                    .PREFERENCE_KEY_DEVICE_ID, etContent
-                                    .getText()
-                                    .toString());
+                    SharedUtil.putString(AdministratorSettingActivity.this, Constant
+                            .PREFERENCE_KEY_DEVICE_ID, etContent.getText().toString());
                     /*LogUtil.trace("return:" + SharedUtil.getString
                             (AdministratorSettingActivity.this, "device_id"));*/
-                    Toast.makeText(AdministratorSettingActivity.this,
-                            "巴枪编号存储成功", Toast
-                                    .LENGTH_SHORT).show();
+                    Toast.makeText(AdministratorSettingActivity.this, "巴枪编号存储成功", Toast
+                            .LENGTH_SHORT).show();
                 }
             }
         });
@@ -335,30 +327,24 @@ public class AdministratorSettingActivity extends
     private static String mApkFileDownloadUrl = "";
 
     private void showAlertDialogForAppUpdate() {
-        new AlertDialog.Builder(this).setTitle("软件升级").setMessage("确定升级软件？")
-                .setNegativeButton
-                        ("取消", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle("软件升级").setMessage("确定升级软件？").setNegativeButton
+                ("取消", new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int
-                                    which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        }).setPositiveButton("确定", new DialogInterface
-                .OnClickListener() {
+            }
+        }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 请求服务器获取最新apk信息 APP_UPDATE_INFO
-                mUpdateAPPUrl = SharedUtil.getJiebaoServletAddresFromSP
-                        (BaqiangApplication
-                                .getContext(), NetworkConstant.APP_UPDATE_INFO);
+                mUpdateAPPUrl = SharedUtil.getJiebaoServletAddresFromSP(BaqiangApplication
+                        .getContext(), NetworkConstant.APP_UPDATE_INFO);
                 RequestParams params = new RequestParams(mUpdateAPPUrl);
 
-                params.addQueryStringParameter("saleId", UpdateInterface
-                        .getSalesId());
-                params.addQueryStringParameter("userName", UpdateInterface
-                        .getUserName());
+                params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
+                params.addQueryStringParameter("userName", UpdateInterface.getUserName());
                 params.addQueryStringParameter("password", UpdateInterface.getPsw());
 
                 x.http().post(params, new Callback.CommonCallback<String>() {
@@ -368,38 +354,29 @@ public class AdministratorSettingActivity extends
                         LogUtil.trace();
 
                         Gson gson = new Gson();
-                        AppUpdateBean appInfo = gson.fromJson(serverInfo,
-                                AppUpdateBean.class);
+                        AppUpdateBean appInfo = gson.fromJson(serverInfo, AppUpdateBean.class);
                         LogUtil.trace("appInfo:" + appInfo.toString());
 
                         if ("unknown".equals(appInfo.getBaQiangApkVersion())) {
-                            Toast.makeText(AdministratorSettingActivity.this,
-                                    "服务器未放置Apk文件",
+                            Toast.makeText(AdministratorSettingActivity.this, "服务器未放置Apk文件",
                                     Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        if (getCurrentVersionCode() <
-                                resolveServerAppVersionCode(appInfo)) {
+                        if (getCurrentVersionCode() < resolveServerAppVersionCode(appInfo)) {
                             LogUtil.trace("start to download");
-                            mApkFileDownloadUrl = SharedUtil
-                                    .getJiebaoServletAddresFromSP
-                                            (BaqiangApplication.getContext(),
-                                                    NetworkConstant
-                                                            .APK_DOWNLOAD_URL);
+                            mApkFileDownloadUrl = SharedUtil.getJiebaoServletAddresFromSP
+                                    (BaqiangApplication.getContext(), NetworkConstant
+                                            .APK_DOWNLOAD_URL);
 
-                            Intent service = new Intent
-                                    (AdministratorSettingActivity.this,
-                                            DownLoadApkFileService.class);
-                            service.putExtra("downloadurl",
-                                    mApkFileDownloadUrl);
-                            Toast.makeText(AdministratorSettingActivity.this,
-                                    "正在下载中", Toast
-                                            .LENGTH_LONG).show();
+                            Intent service = new Intent(AdministratorSettingActivity.this,
+                                    DownLoadApkFileService.class);
+                            service.putExtra("downloadurl", mApkFileDownloadUrl);
+                            Toast.makeText(AdministratorSettingActivity.this, "正在下载中", Toast
+                                    .LENGTH_LONG).show();
                             startService(service);
                         } else {
-                            Toast.makeText(AdministratorSettingActivity.this,
-                                    "APK已经是最新版本!",
+                            Toast.makeText(AdministratorSettingActivity.this, "APK已经是最新版本!",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -434,14 +411,12 @@ public class AdministratorSettingActivity extends
 
     private void showDialogForWipeData() {
         final AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setView(LayoutInflater.from(this).inflate(R.layout
-                .alert_dialog_wipe_data, null));
+        dialog.setView(LayoutInflater.from(this).inflate(R.layout.alert_dialog_wipe_data, null));
         dialog.show();
         dialog.getWindow().setContentView(R.layout.alert_dialog_wipe_data);
         Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
         Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
-        final EditText etContent = (EditText) dialog.findViewById(R.id
-                .et_content);
+        final EditText etContent = (EditText) dialog.findViewById(R.id.et_content);
 
         btnPositive.setOnClickListener(new View.OnClickListener() {
 
@@ -456,9 +431,8 @@ public class AdministratorSettingActivity extends
                         wipeAppData();
                     } else {
                         // 密码错误
-                        Toast.makeText(AdministratorSettingActivity.this,
-                                "密码错误", Toast
-                                        .LENGTH_SHORT).show();
+                        Toast.makeText(AdministratorSettingActivity.this, "密码错误", Toast
+                                .LENGTH_SHORT).show();
                     }
                     dialog.dismiss();
                 }
@@ -478,13 +452,12 @@ public class AdministratorSettingActivity extends
      * 删除sdcard存储的文件，包括：bqDB目录、BaQiang目录、bqapk目录
      */
     private void wipeAppData() {
-        File rootFile = new File(Environment.getExternalStorageDirectory()
-                .getPath());
+        File rootFile = new File(Environment.getExternalStorageDirectory().getPath());
         LogUtil.trace("path:" + rootFile.getAbsolutePath());
 
         // 删除目录
-        deleteFile(new File(rootFile.getPath() + "/bqapk"));
-        deleteFile(new File(rootFile.getPath() + "/BaQiang"));
+        FileUtil.deleteFile(new File(rootFile.getPath() + "/bqapk"));
+        FileUtil.deleteFile(new File(rootFile.getPath() + "/BaQiang"));
 
         // FIXME 暂时不删除数据库文件，修改为删除Table中的Records
         // deleteFile(new File(rootFile.getPath() + "/bqDB"));
@@ -492,113 +465,17 @@ public class AdministratorSettingActivity extends
         deleteTableRecords();
     }
 
-
-    // 7天
-    private static long SEVEN_TIME_DATE = 604800000L;
-
     /**
      * 删除DB中存放的记录，具体参考Constant中字段
      */
     private void deleteTableRecords() {
-        Date dateLimited = new Date(new Date().getTime() -
-                SEVEN_TIME_DATE);
-        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format
-                (new Date()) + "; 清除：" + new SimpleDateFormat("yyyyMMddHHmmss")
-                .format(dateLimited) + "; 之前的数据");
+        Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
+        LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
+                "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
 
-        try {
-            // 装车发件
-            DbManager dbManager = BQDataBaseHelper.getDb();
-            if (dbManager != null) {
-                List<ZCFajianFileContent> zcFajianFileContents = dbManager
-                        .selector
-                                (ZCFajianFileContent.class).where
-                                ("ScanDate", "<=", dateLimited).findAll();
-                if (zcFajianFileContents != null) {
-                    for (int index = 0; index < zcFajianFileContents.size();
-                         index++) {
-                        dbManager.delete(ZCFajianFileContent.class,
-                                WhereBuilder.b("id", "=", zcFajianFileContents
-                                        .get(index).getId()));
-                    }
-                }
-
-                // 卸车到件
-                List<UnloadArrivalFileContent> unloadArrivalFileContents =
-                        dbManager.selector(UnloadArrivalFileContent.class).where
-                                ("ScanDate", "<=", dateLimited).findAll();
-                if (unloadArrivalFileContents != null) {
-                    for (int index = 0; index < unloadArrivalFileContents
-                            .size();
-                         index++) {
-                        dbManager.delete(UnloadArrivalFileContent.class,
-                                WhereBuilder.b("id", "=",
-                                        unloadArrivalFileContents
-                                                .get(index).getId()));
-                    }
-                }
-
-                // 到件
-                List<CargoArrivalFileContent> cargoArrivalFileContents =
-                        dbManager.selector(CargoArrivalFileContent.class).where
-                                ("ScanDate", "<=", dateLimited).findAll();
-                if (cargoArrivalFileContents != null) {
-                    for (int index = 0; index < cargoArrivalFileContents.size();
-                         index++) {
-                        dbManager.delete(CargoArrivalFileContent.class,
-                                WhereBuilder.b("id", "=",
-                                        cargoArrivalFileContents
-                                                .get(index).getId()));
-                    }
-                }
-
-                // 发件
-                List<ShipmentFileContent> shipmentFileContents =
-                        dbManager.selector(ShipmentFileContent.class).where
-                                ("ScanDate", "<=", dateLimited).findAll();
-                if (shipmentFileContents != null) {
-                    for (int index = 0; index < shipmentFileContents.size();
-                         index++) {
-                        dbManager.delete(ShipmentFileContent.class,
-                                WhereBuilder.b("id", "=", shipmentFileContents
-                                        .get(index).getId()));
-                    }
-                }
-
-                // 留仓件
-                List<StayHouseFileContent> stayHouseFileContents =
-                        dbManager.selector(StayHouseFileContent.class).where
-                                ("ScanDate", "<=", dateLimited).findAll();
-
-                if (stayHouseFileContents != null) {
-                    for (int index = 0; index < stayHouseFileContents.size();
-                         index++) {
-                        dbManager.delete(StayHouseFileContent.class,
-                                WhereBuilder.b("id", "=", stayHouseFileContents
-                                        .get(index)
-                                        .getId()));
-                    }
-                }
-            } else {
-                // do nothing
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void deleteFile(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File f = files[i];
-                deleteFile(f);
-            }
-            // 注释这行：保留文件夹，只删除文件
-            file.delete();
-        } else if (file.exists()) {
-            file.delete();
-        }
+        DaojianDBHelper.deleteSpecialTimeRecords(dateLimited);
+        FajianDBHelper.deleteSpecialTimeRecords(dateLimited);
+        LiucangDBHelper.deleteSpecialTimeRecords(dateLimited);
     }
 
     @Override
@@ -676,8 +553,7 @@ public class AdministratorSettingActivity extends
         try {
             PackageManager packageManager = getPackageManager();
             //getPackageName()是你当前类的包名，0代表是获取版本信息
-            PackageInfo packInfo = packageManager.getPackageInfo
-                    (getPackageName(), 0);
+            PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
             LogUtil.d(TAG, "当前apk版本号：" + packInfo.versionCode);
             return packInfo.versionCode;
         } catch (Exception e) {

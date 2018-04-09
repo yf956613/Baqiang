@@ -25,20 +25,41 @@ public class FajianDBHelper {
     private static final String TAG = FajianDBHelper.class.getSimpleName();
 
     /**
+     * 删除指定时间的记录
+     *
+     * @param date
+     */
+    public static void deleteSpecialTimeRecords(Date date) {
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            if (dbManager != null) {
+                List<ShipmentFileContent> shipmentFileContents = dbManager.selector
+                        (ShipmentFileContent.class).where("ScanDate", "<=", date).findAll();
+                if (shipmentFileContents != null && shipmentFileContents.size() != 0) {
+                    for (int index = 0; index < shipmentFileContents.size(); index++) {
+                        dbManager.delete(ShipmentFileContent.class, WhereBuilder.b("id", "=",
+                                shipmentFileContents.get(index).getId()));
+                    }
+                }
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 获取新加入的记录内容，根据运单号和扫码时间，可以唯一确定一条记录
      *
      * @param barcode：运单号
      * @param scanTime：扫描时间
      * @return
      */
-    public static ShipmentFileContent getNewInRecord(String barcode, Date
-            scanTime) {
+    public static ShipmentFileContent getNewInRecord(String barcode, Date scanTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class).where
-                    ("ShipmentID", "=", barcode).and("ScanDate", "=",
-                    scanTime).findAll();
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("ShipmentID", "=", barcode).and("ScanDate", "=", scanTime).findAll();
             if (list != null && list.size() == 1) {
                 return list.get(0);
             } else {
@@ -66,17 +87,13 @@ public class FajianDBHelper {
         if (BQDataBaseHelper.tableIsExist(Constant.DB_TABLE_NAME_SHIPMENT)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<ShipmentFileContent> bean = dbManager.selector
-                        (ShipmentFileContent.class)
-                        .where("ShipmentID", "=", barcode).and("IsUsed", "=",
-                                "Used").findAll();
+                List<ShipmentFileContent> bean = dbManager.selector(ShipmentFileContent.class)
+                        .where("ShipmentID", "=", barcode).and("IsUsed", "=", "Used").findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("size:" + bean.size());
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(new
-                                        SimpleDateFormat
-                                        ("yyyyMMddHHmmss").format(bean.get
-                                        (index).getScanDate()),
+                        long[] delta = TextStringUtil.getDistanceTimes(new SimpleDateFormat
+                                ("yyyyMMddHHmmss").format(bean.get(index).getScanDate()),
                                 TextStringUtil.getFormatTimeString());
                         if (BQTimeUtil.isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
@@ -116,10 +133,8 @@ public class FajianDBHelper {
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date
-                    (beginTime)).and
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list;
@@ -139,17 +154,14 @@ public class FajianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUsableRecords(long beginTime, long
-            endTime) {
+    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class)
-                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new
-                            Date(beginTime)).and
-                            ("ScanDate", "<=", new Date(endTime)).findAll();
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -168,15 +180,12 @@ public class FajianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUploadRecords(long beginTime, long
-            endTime) {
+    public static int findTimeLimitedUploadRecords(long beginTime, long endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector
-                    (ShipmentFileContent.class).where("IsUsed", "=",
-                    "Used").and("IsUpload", "=", "Load").and("ScanDate",
-                    ">=", new Date(beginTime)).and
-                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Load").and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -195,17 +204,12 @@ public class FajianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUnloadRecords(long beginTime, long
-            endTime) {
+    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class)
-                    .where("IsUsed", "=", "Used").and("IsUpload", "=",
-                            "Unload").and("ScanDate",
-                            ">=", new Date(beginTime)).and("ScanDate", "<=",
-                            new Date(endTime))
-                    .findAll();
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -224,8 +228,7 @@ public class FajianDBHelper {
      * 2. 生成了 ID；
      * 3. 生成了 是否可用、是否上传的状态；
      */
-    public static boolean insertDataToDatabase(final ShipmentFileContent
-                                                       shipmentFileContent) {
+    public static boolean insertDataToDatabase(final ShipmentFileContent shipmentFileContent) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             db.save(shipmentFileContent);
@@ -251,8 +254,7 @@ public class FajianDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<ShipmentFileContent> list = dbManager.selector
-                    (ShipmentFileContent.class).where
+            List<ShipmentFileContent> list = dbManager.selector(ShipmentFileContent.class).where
                     ("id", "=", recordID).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
@@ -281,12 +283,10 @@ public class FajianDBHelper {
         List<ShipmentFileContent> list = null;
         try {
             // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(ShipmentFileContent.class).where("是否上传",
-                    "like", "未上传").and
+            list = db.selector(ShipmentFileContent.class).where("是否上传", "like", "未上传").and
                     ("是否可用", "=", "可用").findAll();
             if (null != list && list.size() != 0) {
-                ShipmentDispatchFileName mShipmentDispatchFileName = new
-                        ShipmentDispatchFileName();
+                ShipmentDispatchFileName mShipmentDispatchFileName = new ShipmentDispatchFileName();
                 if (mShipmentDispatchFileName.linkToTXTFile()) {
                     UploadServerFile mShipmentUploadFile = new UploadServerFile
                             (mShipmentDispatchFileName.getFileInstance());
@@ -294,13 +294,10 @@ public class FajianDBHelper {
                     for (int index = 0; index < list.size(); index++) {
                         ShipmentFileContent javaBean = list.get(index);
                         String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mShipmentUploadFile.writeContentToFile(content,
-                                true)) {
+                        if (mShipmentUploadFile.writeContentToFile(content, true)) {
                             WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean
-                                    .getShipmentNumber());
-                            db.update(ShipmentFileContent.class,
-                                    whereBuilder, new KeyValue
+                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
+                            db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
                                     ("是否上传", "已上传"));
                         } else {
                             // TODO 写入文件失败
@@ -331,8 +328,7 @@ public class FajianDBHelper {
     public static int findUsableRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class).where
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
                     ("IsUsed", "=", "Used").findAll();
             if (list != null) {
                 return list.size();
@@ -356,10 +352,8 @@ public class FajianDBHelper {
     public static int findUnloadRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<ShipmentFileContent> list = db.selector(ShipmentFileContent
-                    .class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
-                    .findAll();
+            List<ShipmentFileContent> list = db.selector(ShipmentFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").findAll();
             if (list != null) {
                 return list.size();
             }
@@ -384,8 +378,7 @@ public class FajianDBHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("id", "=", barcodeID);
-            db.update(ShipmentFileContent.class, whereBuilder, new KeyValue
-                    ("IsUsed", "Unused"));
+            db.update(ShipmentFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
 
             return true;
         } catch (DbException e) {

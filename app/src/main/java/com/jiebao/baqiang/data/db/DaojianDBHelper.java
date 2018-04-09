@@ -25,6 +25,30 @@ public class DaojianDBHelper {
     private static final String TAG = DaojianDBHelper.class.getSimpleName();
 
     /**
+     * 删除指定时间的记录
+     *
+     * @param date
+     */
+    public static void deleteSpecialTimeRecords(Date date) {
+        DbManager dbManager = BQDataBaseHelper.getDb();
+        try {
+            if (dbManager != null) {
+                List<CargoArrivalFileContent> cargoArrivalFileContents = dbManager.selector
+                        (CargoArrivalFileContent.class).where("ScanDate", "<=", date).findAll();
+                if (cargoArrivalFileContents != null && cargoArrivalFileContents.size() != 0) {
+                    for (int index = 0; index < cargoArrivalFileContents.size(); index++) {
+                        dbManager.delete(CargoArrivalFileContent.class, WhereBuilder.b("id", "=",
+                                cargoArrivalFileContents.get(index).getId()));
+                    }
+                }
+            }
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 获取所有记录数（可用类型的）
      * <p>
      * 1. 数据必须是可用的
@@ -57,7 +81,8 @@ public class DaojianDBHelper {
      * @param endTime
      * @return
      */
-    public static List<CargoArrivalFileContent> getLimitedTimeRecords(long beginTime, long endTime) {
+    public static List<CargoArrivalFileContent> getLimitedTimeRecords(long beginTime, long
+            endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
@@ -88,9 +113,9 @@ public class DaojianDBHelper {
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<CargoArrivalFileContent> list = db.selector(CargoArrivalFileContent.class)
-                    .where("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
-                            ("ScanDate", "<=", new Date(endTime)).findAll();
+            List<CargoArrivalFileContent> list = db.selector(CargoArrivalFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+                    ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -109,15 +134,12 @@ public class DaojianDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUploadRecords(long beginTime, long
-            endTime) {
+    public static int findTimeLimitedUploadRecords(long beginTime, long endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<CargoArrivalFileContent> list = db.selector
-                    (CargoArrivalFileContent.class).where("IsUsed", "=",
-                    "Used").and("IsUpload", "=", "Load").and("ScanDate",
-                    ">=", new Date(beginTime)).and
-                    ("ScanDate", "<=", new Date(endTime)).findAll();
+            List<CargoArrivalFileContent> list = db.selector(CargoArrivalFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Load").and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -139,10 +161,9 @@ public class DaojianDBHelper {
     public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<CargoArrivalFileContent> list = db.selector(CargoArrivalFileContent.class)
-                    .where("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate",
-                            ">=", new Date(beginTime)).and("ScanDate", "<=", new Date(endTime))
-                    .findAll();
+            List<CargoArrivalFileContent> list = db.selector(CargoArrivalFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
