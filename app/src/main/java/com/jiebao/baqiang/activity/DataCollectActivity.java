@@ -462,17 +462,17 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
      * 到件
      */
     private void daojian() {
-        final AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setView(LayoutInflater.from(this).inflate(R.layout
-                .alert_dialog_daojian_activity, null));
-        dialog.show();
-        dialog.getWindow().setContentView(R.layout
-                .alert_dialog_daojian_activity);
-        Button btnPositive = (Button) dialog.findViewById(R.id
-                .btn_activity_fast);
-        Button btnNegative = (Button) dialog.findViewById(R.id
-                .btn_activity_common);
+        AlertDialog.Builder builder = new AlertDialog.Builder
+                (DataCollectActivity.this);
+        View view = LayoutInflater.from(DataCollectActivity.this).inflate(R.layout
+                .alert_dialog_daojian_activity, null);
+        builder.setView(view);
+        final AlertDialog dialog = builder.show();
 
+        Button btnPositive = view.findViewById(R.id
+                .btn_activity_fast);
+        Button btnNegative = view.findViewById(R.id
+                .btn_activity_common);
         btnPositive.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -480,7 +480,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
                 Intent intent = new Intent(DataCollectActivity.this,
                         FastDaojianActivity.class);
                 startActivity(intent);
-
                 dialog.dismiss();
             }
         });
@@ -491,7 +490,6 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
                 Intent intent = new Intent(DataCollectActivity.this,
                         DaojianActivity.class);
                 startActivity(intent);
-
                 dialog.dismiss();
             }
         });
