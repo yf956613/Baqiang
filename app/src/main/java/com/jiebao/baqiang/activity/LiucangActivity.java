@@ -142,9 +142,6 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        super.onKeyDown(keyCode, event);
-
-        LogUtil.trace("keyCode:" + keyCode);
         switch (keyCode) {
             case Constant.SCAN_KEY_CODE: {
                 if (!StayHouseReasonDBHelper.checkCurrentReason
