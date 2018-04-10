@@ -22,6 +22,8 @@ public class Constant {
     // 7天
     public final static long SEVEN_TIME_DATE = 604800000L;
 
+    public final static int TEST_ADD_RECORDS_NUMBER = 500;
+
     public final static String CLIENT_VERSION = "1";
 
     //public static final String UPDATE_URL_PREFIX =
@@ -150,7 +152,7 @@ public class Constant {
             SALESINFO_ID;
     public static final int STARTDOWNLOAD_SHIPMENTTYPEINFO =
             STARTDOWNLOAD_INFO +
-            SHIPMENTTYPEINFO_ID;
+                    SHIPMENTTYPEINFO_ID;
     public static final int STARTDOWNLOAD_LIUCANGTYPEINFO =
             STARTDOWNLOAD_INFO + LIUCANGTYPEINFO_ID;
     public static final int STARTDOWNLOAD_VEHICEINFO = STARTDOWNLOAD_INFO +
@@ -163,10 +165,10 @@ public class Constant {
             DOWNLOAD_INFO_SUCCESS + SALESINFO_ID;
     public static final int DOWNLOAD_SHIPMENTTYPEINFO_SUCCESS =
             DOWNLOAD_INFO_SUCCESS +
-            SHIPMENTTYPEINFO_ID;
+                    SHIPMENTTYPEINFO_ID;
     public static final int DOWNLOAD_LIUCANGTYPEINFO_SUCCESS =
             DOWNLOAD_INFO_SUCCESS +
-            LIUCANGTYPEINFO_ID;
+                    LIUCANGTYPEINFO_ID;
     public static final int DOWNLOAD_VEHICEINFO_SUCCESS =
             DOWNLOAD_INFO_SUCCESS + VEHICEINFO_ID;
 
@@ -178,10 +180,10 @@ public class Constant {
             + SALESINFO_ID;
     public static final int DOWNLOAD_SHIPMENTTYPEINFO_FAILED =
             DOWNLOAD_INFO_FAILED +
-            SHIPMENTTYPEINFO_ID;
+                    SHIPMENTTYPEINFO_ID;
     public static final int DOWNLOAD_LIUCANGTYPEINFO_FAILED =
             DOWNLOAD_INFO_FAILED +
-            LIUCANGTYPEINFO_ID;
+                    LIUCANGTYPEINFO_ID;
     public static final int DOWNLOAD_VEHICEINFO_FAILED = DOWNLOAD_INFO_FAILED
             + VEHICEINFO_ID;
 
@@ -193,10 +195,10 @@ public class Constant {
             SALESINFO_ID;
     public static final int UPDATE_SHIPMENTTYPEINFO_SUCCESS =
             UPDATE_DATA_SUCCESS +
-            SHIPMENTTYPEINFO_ID;
+                    SHIPMENTTYPEINFO_ID;
     public static final int UPDATE_LIUCANGTYPEINFO_SUCCESS =
             UPDATE_DATA_SUCCESS +
-            LIUCANGTYPEINFO_ID;
+                    LIUCANGTYPEINFO_ID;
     public static final int UPDATE_VEHICEINFO_SUCCESS = UPDATE_DATA_SUCCESS +
             VEHICEINFO_ID;
 
@@ -207,7 +209,7 @@ public class Constant {
             SALESINFO_ID;
     public static final int UPDATE_SHIPMENTTYPEINFO_FAILED =
             UPDATE_DATA_FAILED +
-            SHIPMENTTYPEINFO_ID;
+                    SHIPMENTTYPEINFO_ID;
     public static final int UPDATE_LIUCANGTYPEINFO_FAILED =
             UPDATE_DATA_FAILED + LIUCANGTYPEINFO_ID;
     public static final int UPDATE_VEHICEINFO_FAILED = UPDATE_DATA_FAILED +

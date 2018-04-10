@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -395,6 +396,11 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
 
                 break;
             }
+
+            case R.id.btn_tray_un_bagging: {
+                gotoTestMode();
+                break;
+            }
         }
     }
 
@@ -464,7 +470,8 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
     private void daojian() {
         AlertDialog.Builder builder = new AlertDialog.Builder
                 (DataCollectActivity.this);
-        View view = LayoutInflater.from(DataCollectActivity.this).inflate(R.layout
+        View view = LayoutInflater.from(DataCollectActivity.this).inflate(R
+                .layout
                 .alert_dialog_daojian_activity, null);
         builder.setView(view);
         final AlertDialog dialog = builder.show();
@@ -501,6 +508,51 @@ public class DataCollectActivity extends BaseActivityWithTitleAndNumber
     private void liucang() {
         Intent intent = new Intent(this, LiucangActivity.class);
         startActivity(intent);
+    }
+
+    private void gotoTestMode() {
+        LogUtil.trace("进入测试模式");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder
+                (DataCollectActivity.this);
+        View view = LayoutInflater.from(DataCollectActivity.this).inflate(R
+                .layout.test_mode_alert_dialog, null);
+        builder.setView(view);
+        final AlertDialog dialog = builder.show();
+
+        Button btnPositive = view.findViewById(R.id.btn_add);
+        Button btnNegative = view.findViewById(R.id.btn_cancel);
+        final EditText etContent = view.findViewById(R.id.et_content);
+
+        btnPositive.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                String str = etContent.getText().toString();
+                if (str == null || "".equals(str) || "".equals(str.trim())) {
+                    etContent.setError("密码不能为空");
+                } else {
+                    if ("888888".equals(str)) {
+                        Intent intent = new Intent(DataCollectActivity.this,
+                                TestModeActivity.class);
+                        DataCollectActivity.this.startActivity(intent);
+                    } else {
+                        // 密码错误
+                        Toast.makeText(DataCollectActivity.this, "密码错误", Toast
+                                .LENGTH_SHORT).show();
+                    }
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        btnNegative.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                dialog.dismiss();
+            }
+        });
     }
 
     /**

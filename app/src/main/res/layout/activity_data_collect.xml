@@ -557,7 +557,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:text="16.托盘拆分"
+                            android:text="16.测试"
                             android:textColor="@color/black"
                             android:textSize="15sp" />
 

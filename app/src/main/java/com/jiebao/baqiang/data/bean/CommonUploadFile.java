@@ -155,7 +155,8 @@ public class CommonUploadFile {
         RequestParams params = new RequestParams(mUploadUrl);
 
         params.addQueryStringParameter("saleId", UpdateInterface.getSalesId());
-        params.addQueryStringParameter("userName", UpdateInterface.getUserName());
+        params.addQueryStringParameter("userName", UpdateInterface
+                .getUserName());
         params.addQueryStringParameter("password", UpdateInterface.getPsw());
         params.addBodyParameter("file", mFile);
         params.addQueryStringParameter(NetworkConstant.PKG_OWER, "zhang");
@@ -171,12 +172,11 @@ public class CommonUploadFile {
 
             @Override
             public void onSuccess(String s) {
-                LogUtil.trace("uploadFile:onSuccess-->" + s);
+                LogUtil.trace("uploadFile:onSuccess-->" + s + "; type:" + type);
 
                 Gson gson = new Gson();
                 UploadFileResponseBean loginResponse = gson.fromJson(s,
-                        UploadFileResponseBean
-                                .class);
+                        UploadFileResponseBean.class);
 
                 if (loginResponse != null) {
                     if (loginResponse.getUploadRet() == 1) {

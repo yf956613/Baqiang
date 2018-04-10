@@ -1,7 +1,6 @@
 package com.jiebao.baqiang.data.stay;
 
 import com.jiebao.baqiang.data.bean.IFileContentBean;
-import com.jiebao.baqiang.util.LogUtil;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
@@ -225,9 +224,7 @@ public class StayHouseFileContent extends IFileContentBean {
 
         // 其他空格
         stringBuffer.append(appendBlankSpace(OTHERS));
-        LogUtil.trace(stringBuffer + ";");
 
-        LogUtil.d(TAG, "length of StringBuffer is " + stringBuffer.length());
         return new String(stringBuffer);
     }
 

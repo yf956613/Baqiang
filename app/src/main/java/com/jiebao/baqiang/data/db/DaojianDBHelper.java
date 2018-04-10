@@ -1,8 +1,7 @@
 package com.jiebao.baqiang.data.db;
 
 import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
-import com.jiebao.baqiang.data.arrival.CargoArrivalFileName;
-import com.jiebao.baqiang.data.bean.UploadServerFile;
+import com.jiebao.baqiang.data.bean.FileContentHelper;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -14,6 +13,7 @@ import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -352,49 +352,51 @@ public class DaojianDBHelper {
     }
 
     /**
-     * 上传数据库中所有 未上传的 到件 记录
-     * <p>
-     * 不更新SP中统计值
+     * 增加指定数目的记录，仅供测试用
+     *
+     * @return
      */
-    public static void uploadDaojianUnloadRecords() {
+    public static boolean addSpecialNumberRecords() {
         DbManager db = BQDataBaseHelper.getDb();
-        List<CargoArrivalFileContent> list = null;
+
+        List<CargoArrivalFileContent> list = new ArrayList<>();
+        Date scanDate = new Date();
+        CargoArrivalFileContent value = FileContentHelper.getCargoArrivalFileContent();
+        value.setPreviousStation("0006");
+        value.setScanDate(scanDate);
+        value.setShipmentNumber("0000000000");
+        value.setOperateDate(new SimpleDateFormat("yyyyMMdd").format(scanDate));
+
+        for (int index = 0; index < Constant.TEST_ADD_RECORDS_NUMBER; index++) {
+            list.add(value);
+        }
         try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(CargoArrivalFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                CargoArrivalFileName mCargoArrivalFileName = new CargoArrivalFileName();
-                if (mCargoArrivalFileName.linkToTXTFile()) {
-                    UploadServerFile mUploadServerFile = new UploadServerFile
-                            (mCargoArrivalFileName.getFileInstance());
-
-                    for (int index = 0; index < list.size(); index++) {
-                        CargoArrivalFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            db.update(CargoArrivalFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    // 6. 文件上传服务器
-                    mUploadServerFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
+            db.save(list);
+            return true;
         } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
+            LogUtil.trace(e.getMessage());
             e.printStackTrace();
         }
+
+        return false;
+    }
+
+    /**
+     * 将所有记录的 是否上传 状态，设置为未上传 仅供测试
+     *
+     * @return
+     */
+    public static boolean reversalAllRecords() {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            db.update(CargoArrivalFileContent.class, WhereBuilder.b("IsUpload",
+                    "=", "Load"), new KeyValue("IsUpload", "Unload"));
+            return true;
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

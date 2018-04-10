@@ -250,7 +250,6 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_ensure: {
-                // uploadListViewDataToServer();
                 storeManualBarcode(mEtDeliveryNumber.getText().toString()
                         .trim());
                 break;
@@ -258,9 +257,6 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
 
             case R.id.btn_back: {
                 DaojianActivity.this.finish();
-                LogUtil.trace("All size:" + DaojianDBHelper.findUsableRecords
-                        ());
-
                 break;
             }
         }

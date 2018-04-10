@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试模式：模拟数据"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:gravity="center"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="该操作只能在模拟10.1.1.187服务器上执行。\n请输入密码："/>
+
+        <EditText
+            android:id="@+id/et_content"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"/>
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定"/>
+    </LinearLayout>
+
+</LinearLayout>

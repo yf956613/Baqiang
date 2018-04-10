@@ -1,8 +1,7 @@
 package com.jiebao.baqiang.data.db;
 
-import com.jiebao.baqiang.data.bean.UploadServerFile;
+import com.jiebao.baqiang.data.bean.FileContentHelper;
 import com.jiebao.baqiang.data.stay.StayHouseFileContent;
-import com.jiebao.baqiang.data.stay.StayHouseFileName;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.util.BQTimeUtil;
 import com.jiebao.baqiang.util.LogUtil;
@@ -14,6 +13,7 @@ import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,13 +34,19 @@ public class LiucangDBHelper {
         try {
             if (dbManager != null) {
                 // 删除指定时间之前，且是上传或无用数据
-                List<StayHouseFileContent> stayHouseFileContents = dbManager.selector
-                        (StayHouseFileContent.class).where("ScanDate", "<=", date).and
-                        ("IsUpload", "=", "Load").or("ScanDate", "<=", date).and("IsUsed", "=",
+                List<StayHouseFileContent> stayHouseFileContents = dbManager
+                        .selector
+                        (StayHouseFileContent.class).where("ScanDate", "<=",
+                                date).and
+                        ("IsUpload", "=", "Load").or("ScanDate", "<=", date)
+                        .and("IsUsed", "=",
                         "Unused").findAll();
-                if (stayHouseFileContents != null && stayHouseFileContents.size() != 0) {
-                    for (int index = 0; index < stayHouseFileContents.size(); index++) {
-                        dbManager.delete(StayHouseFileContent.class, WhereBuilder.b("id", "=",
+                if (stayHouseFileContents != null && stayHouseFileContents
+                        .size() != 0) {
+                    for (int index = 0; index < stayHouseFileContents.size();
+                         index++) {
+                        dbManager.delete(StayHouseFileContent.class,
+                                WhereBuilder.b("id", "=",
                                 stayHouseFileContents.get(index).getId()));
                     }
                 }
@@ -62,8 +68,10 @@ public class LiucangDBHelper {
     public static int findUnloadRecords() {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").findAll();
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                    .findAll();
             if (list != null) {
                 return list.size();
             }
@@ -79,7 +87,8 @@ public class LiucangDBHelper {
         // 返回按键，不上传文件
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.findAll(StayHouseFileContent.class);
+            List<StayHouseFileContent> list = db.findAll(StayHouseFileContent
+                    .class);
             if (list != null) {
                 return list.size();
             }
@@ -104,7 +113,8 @@ public class LiucangDBHelper {
         DbManager dbManager = BQDataBaseHelper.getDb();
 
         try {
-            List<StayHouseFileContent> list = dbManager.selector(StayHouseFileContent.class)
+            List<StayHouseFileContent> list = dbManager.selector
+                    (StayHouseFileContent.class)
                     .where("id", "=", recordID).findAll();
             if (list != null && list.size() != 0) {
                 LogUtil.trace("search size:" + list.size());
@@ -130,11 +140,14 @@ public class LiucangDBHelper {
      * @param scanTime：扫描时间
      * @return
      */
-    public static StayHouseFileContent getNewInRecord(String barcode, Date scanTime) {
+    public static StayHouseFileContent getNewInRecord(String barcode, Date
+            scanTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("ShipmentID", "=", barcode).and("ScanDate", "=", scanTime).findAll();
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("ShipmentID", "=", barcode).and("ScanDate", "=",
+                    scanTime).findAll();
             if (list != null && list.size() == 1) {
                 return list.get(0);
             } else {
@@ -161,7 +174,8 @@ public class LiucangDBHelper {
         try {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("id", "=", barcodeID);
-            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue("IsUsed", "Unused"));
+            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue
+                    ("IsUsed", "Unused"));
 
             return true;
         } catch (DbException e) {
@@ -179,7 +193,8 @@ public class LiucangDBHelper {
      * 2. 生成了 ID；
      * 3. 生成了 是否可用、是否上传的状态；
      */
-    public static boolean insertDataToDatabase(final StayHouseFileContent stayHouseFileContent) {
+    public static boolean insertDataToDatabase(final StayHouseFileContent
+                                                       stayHouseFileContent) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
             db.save(stayHouseFileContent);
@@ -206,13 +221,17 @@ public class LiucangDBHelper {
         if (BQDataBaseHelper.tableIsExist(Constant.DB_TABLE_NAME_STAY_HOUSE)) {
             DbManager dbManager = BQDataBaseHelper.getDb();
             try {
-                List<StayHouseFileContent> bean = dbManager.selector(StayHouseFileContent.class)
-                        .where("ShipmentID", "=", barcode).and("IsUsed", "=", "Used").findAll();
+                List<StayHouseFileContent> bean = dbManager.selector
+                        (StayHouseFileContent.class)
+                        .where("ShipmentID", "=", barcode).and("IsUsed", "=",
+                                "Used").findAll();
                 if (bean != null && bean.size() != 0) {
                     LogUtil.trace("size:" + bean.size());
                     for (int index = 0; index < bean.size(); index++) {
-                        long[] delta = TextStringUtil.getDistanceTimes(new SimpleDateFormat
-                                ("yyyyMMddHHmmss").format(bean.get(index).getScanDate()),
+                        long[] delta = TextStringUtil.getDistanceTimes(new
+                                        SimpleDateFormat
+                                        ("yyyyMMddHHmmss").format(bean.get
+                                        (index).getScanDate()),
                                 TextStringUtil.getFormatTimeString());
                         if (BQTimeUtil.isTimeOutOfRange(delta)) {
                             // 超出指定时间，存入数据库 --> return false
@@ -252,8 +271,10 @@ public class LiucangDBHelper {
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date
+                    (beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list;
@@ -273,13 +294,16 @@ public class LiucangDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUsableRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUsableRecords(long beginTime, long
+            endTime) {
         LogUtil.trace("beginTime:" + beginTime + "; endTime:" + endTime);
 
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date(beginTime)).and
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("IsUsed", "=", "Used").and("ScanDate", ">=", new Date
+                    (beginTime)).and
                     ("ScanDate", "<=", new Date(endTime)).findAll();
             if (list != null) {
                 return list.size();
@@ -299,12 +323,16 @@ public class LiucangDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUploadRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUploadRecords(long beginTime, long
+            endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Load").and("ScanDate", ">=",
-                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Load").and
+                    ("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date
+                    (endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -323,12 +351,16 @@ public class LiucangDBHelper {
      * @param endTime
      * @return
      */
-    public static int findTimeLimitedUnloadRecords(long beginTime, long endTime) {
+    public static int findTimeLimitedUnloadRecords(long beginTime, long
+            endTime) {
         DbManager db = BQDataBaseHelper.getDb();
         try {
-            List<StayHouseFileContent> list = db.selector(StayHouseFileContent.class).where
-                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload").and("ScanDate", ">=",
-                    new Date(beginTime)).and("ScanDate", "<=", new Date(endTime)).findAll();
+            List<StayHouseFileContent> list = db.selector
+                    (StayHouseFileContent.class).where
+                    ("IsUsed", "=", "Used").and("IsUpload", "=", "Unload")
+                    .and("ScanDate", ">=",
+                    new Date(beginTime)).and("ScanDate", "<=", new Date
+                            (endTime)).findAll();
             if (list != null) {
                 return list.size();
             }
@@ -341,48 +373,53 @@ public class LiucangDBHelper {
     }
 
     /**
-     * 上传数据库中所有 未上传的 留仓件 记录
-     * <p>
-     * 不更新SP中统计值
+     * 增加指定数目的记录，仅供测试用
+     *
+     * @return
      */
-    public static void uploadLiucangUnloadRecords() {
+    public static boolean addSpecialNumberRecords() {
         DbManager db = BQDataBaseHelper.getDb();
-        List<StayHouseFileContent> list = null;
+
+        List<StayHouseFileContent> list = new ArrayList<>();
+        Date scanDate = new Date();
+        StayHouseFileContent value = FileContentHelper
+                .getStayHouseFileContent();
+        value.setScanDate(scanDate);
+        value.setShipmentNumber("0000000000");
+        value.setShipmentType("");
+        value.setStayReason("10");
+        value.setOperateDate(new SimpleDateFormat("yyyyMMdd").format(scanDate));
+
+        for (int index = 0; index < Constant.TEST_ADD_RECORDS_NUMBER; index++) {
+            list.add(value);
+        }
         try {
-            // FIXME 1. 查询数据库中标识位是“未上传”的记录，且是数据可用
-            list = db.selector(StayHouseFileContent.class).where("是否上传", "like", "未上传").and
-                    ("是否可用", "=", "可用").findAll();
-            if (null != list && list.size() != 0) {
-                StayHouseFileName mStayHouseFileName = new StayHouseFileName();
-                if (mStayHouseFileName.linkToTXTFile()) {
-                    UploadServerFile mUploadServerFile = new UploadServerFile(mStayHouseFileName
-                            .getFileInstance());
-
-                    for (int index = 0; index < list.size(); index++) {
-                        StayHouseFileContent javaBean = list.get(index);
-                        String content = javaBean.getmCurrentValue() + "\r\n";
-                        if (mUploadServerFile.writeContentToFile(content, true)) {
-                            WhereBuilder whereBuilder = WhereBuilder.b();
-                            whereBuilder.and("运单编号", "=", javaBean.getShipmentNumber());
-                            db.update(StayHouseFileContent.class, whereBuilder, new KeyValue
-                                    ("是否上传", "已上传"));
-                        } else {
-                            // TODO 写入文件失败
-                            LogUtil.trace("写入文件失败");
-                        }
-                    }
-
-                    mUploadServerFile.uploadFile();
-                } else {
-                    // TODO 创建文件失败
-                    LogUtil.trace("创建文件失败");
-                }
-            } else {
-                LogUtil.trace("当前数据库没有需要上传数据");
-            }
+            db.save(list);
+            return true;
         } catch (DbException e) {
-            LogUtil.d(TAG, "崩溃信息:" + e.getLocalizedMessage());
+            LogUtil.trace(e.getMessage());
             e.printStackTrace();
         }
+
+        return false;
+    }
+
+    /**
+     * 将所有记录的 是否上传 状态，设置为未上传 仅供测试
+     *
+     * @return
+     */
+    public static boolean reversalAllRecords() {
+        DbManager db = BQDataBaseHelper.getDb();
+        try {
+            db.update(StayHouseFileContent.class, WhereBuilder.b("IsUpload",
+                    "=", "Load"), new KeyValue("IsUpload", "Unload"));
+            return true;
+        } catch (DbException e) {
+            LogUtil.trace(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

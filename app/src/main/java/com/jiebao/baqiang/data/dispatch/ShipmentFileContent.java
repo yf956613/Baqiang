@@ -253,9 +253,6 @@ public class ShipmentFileContent extends IFileContentBean {
 
         // 其他空格
         stringBuffer.append(appendBlankSpace(OTHERS));
-        LogUtil.trace(stringBuffer + ";");
-
-        LogUtil.d(TAG, "length of StringBuffer is " + stringBuffer.length());
         return new String(stringBuffer);
     }
 

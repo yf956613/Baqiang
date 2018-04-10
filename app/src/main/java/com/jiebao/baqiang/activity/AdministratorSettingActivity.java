@@ -16,17 +16,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.jiebao.baqiang.R;
 import com.jiebao.baqiang.application.BaqiangApplication;
-import com.jiebao.baqiang.data.arrival.CargoArrivalFileContent;
-import com.jiebao.baqiang.data.arrival.UnloadArrivalFileContent;
 import com.jiebao.baqiang.data.bean.AppUpdateBean;
-import com.jiebao.baqiang.data.db.BQDataBaseHelper;
 import com.jiebao.baqiang.data.db.DaojianDBHelper;
 import com.jiebao.baqiang.data.db.FajianDBHelper;
 import com.jiebao.baqiang.data.db.LiucangDBHelper;
-import com.jiebao.baqiang.data.dispatch.ShipmentFileContent;
-import com.jiebao.baqiang.data.stay.StayHouseFileContent;
 import com.jiebao.baqiang.data.updateData.UpdateInterface;
-import com.jiebao.baqiang.data.zcfajianmentDispatch.ZCFajianFileContent;
 import com.jiebao.baqiang.global.Constant;
 import com.jiebao.baqiang.global.NetworkConstant;
 import com.jiebao.baqiang.service.DownLoadApkFileService;
@@ -34,10 +28,7 @@ import com.jiebao.baqiang.util.FileUtil;
 import com.jiebao.baqiang.util.LogUtil;
 import com.jiebao.baqiang.util.SharedUtil;
 
-import org.xutils.DbManager;
 import org.xutils.common.Callback;
-import org.xutils.db.sqlite.WhereBuilder;
-import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -45,7 +36,6 @@ import org.xutils.x;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by yaya on 2018/2/26.
@@ -414,9 +404,9 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
         dialog.setView(LayoutInflater.from(this).inflate(R.layout.alert_dialog_wipe_data, null));
         dialog.show();
         dialog.getWindow().setContentView(R.layout.alert_dialog_wipe_data);
-        Button btnPositive = (Button) dialog.findViewById(R.id.btn_add);
-        Button btnNegative = (Button) dialog.findViewById(R.id.btn_cancel);
-        final EditText etContent = (EditText) dialog.findViewById(R.id.et_content);
+        Button btnPositive = dialog.findViewById(R.id.btn_add);
+        Button btnNegative = dialog.findViewById(R.id.btn_cancel);
+        final EditText etContent = dialog.findViewById(R.id.et_content);
 
         btnPositive.setOnClickListener(new View.OnClickListener() {
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="发件"
+            android:textSize="30sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_fajian_add"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="增加记录"
+                android:textSize="30sp"/>
+
+            <Button
+                android:id="@+id/btn_fajian_status_reversal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="状态翻转"
+                android:textSize="30sp"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="到件"
+            android:textSize="30sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_daojian_add"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="增加记录"
+                android:textSize="30sp"/>
+
+            <Button
+                android:id="@+id/btn_daojian_status_reversal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="状态翻转"
+                android:textSize="30sp"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="留仓件"
+            android:textSize="30sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_liucang_add"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="增加记录"
+                android:textSize="30sp"/>
+
+            <Button
+                android:id="@+id/btn_liucang_status_reversal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="状态翻转"
+                android:textSize="30sp"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
