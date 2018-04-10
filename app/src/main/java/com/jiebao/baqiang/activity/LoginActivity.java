@@ -38,7 +38,6 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -298,7 +297,7 @@ public class LoginActivity extends BaseActivityWithTitleAndNumber implements Vie
                 File rootFile = new File(Environment.getExternalStorageDirectory().getPath());
                 FileUtil.deleteFile(new File(rootFile.getPath() + "/BaQiang"));
 
-                Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
+                Date dateLimited = new Date(new Date().getTime() - Constant.DOUBLE_SEVEN_TIME_DATE);
                 LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
                         "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
 

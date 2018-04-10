@@ -19,8 +19,8 @@ public class Constant {
 
     public final static int DEVICE_VIBRATE_TIME = 500;
 
-    // 7天
-    public final static long SEVEN_TIME_DATE = 604800000L;
+    // 7天 14天 --> 1209600000
+    public final static long DOUBLE_SEVEN_TIME_DATE = 1209600000L;
 
     public final static int TEST_ADD_RECORDS_NUMBER = 500;
 

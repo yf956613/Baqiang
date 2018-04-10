@@ -459,7 +459,7 @@ public class AdministratorSettingActivity extends BaseActivityWithTitleAndNumber
      * 删除DB中存放的记录，具体参考Constant中字段
      */
     private void deleteTableRecords() {
-        Date dateLimited = new Date(new Date().getTime() - Constant.SEVEN_TIME_DATE);
+        Date dateLimited = new Date(new Date().getTime() - Constant.DOUBLE_SEVEN_TIME_DATE);
         LogUtil.trace("当前时间：" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "; " +
                 "清除：" + new SimpleDateFormat("yyyyMMddHHmmss").format(dateLimited) + "; 之前的数据");
 
