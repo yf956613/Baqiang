@@ -226,12 +226,12 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                         .getText().toString())) {
                     Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
-                    mDeviceVibrator.vibrate(1000);
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else if (!ShipmentTypeDBHelper.checkShipmentType
                         (mTvShipmentType.getText().toString())) {
                     Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                             .LENGTH_SHORT).show();
-                    mDeviceVibrator.vibrate(1000);
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     if (!mIsScanRunning) {
                         Intent intent = new Intent();
@@ -264,28 +264,31 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            // to nothing
+            Toast.makeText(FajianActivity.this, "运单编号为空", Toast.LENGTH_SHORT)
+                    .show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(FajianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
                     .getText().toString())) {
                 Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!ShipmentTypeDBHelper.checkShipmentType
                     (mTvShipmentType.getText().toString())) {
                 Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -293,7 +296,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         } else {
             Toast.makeText(FajianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
                     .LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         mIsScanRunning = true;
@@ -551,8 +554,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                     .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (FajianActivity
-                            .this);
+                    (FajianActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
@@ -564,8 +566,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                 public void onClick(DialogInterface dialog, int which) {
                     if (FajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(FajianActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -601,8 +602,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
             LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (FajianActivity
-                            .this);
+                    (FajianActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
@@ -615,8 +615,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                     int barcodeID = bean.getId();
                     if (FajianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(FajianActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -624,8 +623,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
                     FajianDBHelper.deleteFindedBean(barcodeID);
                     // 刷新UI，ListView
                     updateListViewForDelete(ZhuangcheActivity.DeleteAction
-                                    .DELETE_ACTION_CHOOSE,
-                            position);
+                            .DELETE_ACTION_CHOOSE, position);
 
                     increaseOrDecreaseRecords(0);
                 }
@@ -694,31 +692,34 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            // do nothing
+            Toast.makeText(FajianActivity.this, "运单编号为空", Toast.LENGTH_SHORT)
+                    .show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (FajianDBHelper.isExistCurrentBarcode(barcode)) {
                 // 判断当前条码是否已录入
                 Toast.makeText(FajianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvNextStation
                     .getText().toString())) {
                 // 再次判断下一站网点信息 是否正常
                 Toast.makeText(FajianActivity.this, "下一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!ShipmentTypeDBHelper.checkShipmentType
                     (mTvShipmentType.getText().toString())) {
                 // 再次判断快件信息 是否正常
                 Toast.makeText(FajianActivity.this, "快件类型信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -726,7 +727,7 @@ public class FajianActivity extends BaseActivityWithTitleAndNumber implements
         } else {
             Toast.makeText(FajianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
                     .LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         return false;

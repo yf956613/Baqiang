@@ -156,7 +156,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                         .getText().toString())) {
                     Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                             .LENGTH_SHORT).show();
-                    mDeviceVibrator.vibrate(1000);
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     if (!mIsScanRunning) {
                         Intent intent = new Intent();
@@ -189,17 +189,18 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            // do nothing
+            Toast.makeText(DaojianActivity.this, "扫描单号为空", Toast
+                    .LENGTH_SHORT).show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation
                     .getText().toString())) {
                 Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -207,6 +208,8 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -214,7 +217,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         } else {
             Toast.makeText(DaojianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
                     .LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         mIsScanRunning = true;
@@ -437,8 +440,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
             LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (DaojianActivity
-                            .this);
+                    (DaojianActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
@@ -451,8 +453,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                     int barcodeID = bean.getId();
                     if (DaojianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -548,8 +549,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                     .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (DaojianActivity
-                            .this);
+                    (DaojianActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
@@ -561,8 +561,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
                 public void onClick(DialogInterface dialog, int which) {
                     if (DaojianDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(DaojianActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -595,23 +594,26 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            // do nothing
+            Toast.makeText(DaojianActivity.this, "输入单号为空", Toast
+                    .LENGTH_SHORT).show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (DaojianDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(DaojianActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!SalesServiceDBHelper.checkServerInfo(mTvPreviousStation
                     .getText().toString())) {
                 Toast.makeText(DaojianActivity.this, "上一站网点信息异常", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -619,7 +621,7 @@ public class DaojianActivity extends BaseActivityWithTitleAndNumber
         } else {
             Toast.makeText(DaojianActivity.this, "运单表号存在非可用字符，手动输入运单号", Toast
                     .LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         return false;

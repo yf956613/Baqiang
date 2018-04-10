@@ -151,7 +151,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                         (mTvStayHouseReason.getText().toString())) {
                     Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                             .LENGTH_SHORT).show();
-                    mDeviceVibrator.vibrate(1000);
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                     return true;
                 } else {
                     if (!mIsScanRunning) {
@@ -187,24 +187,27 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
     protected void fillCode(String barcode) {
         LogUtil.d(TAG, "barcode:" + barcode);
         if (TextUtils.isEmpty(barcode)) {
-            // do nothing
+            Toast.makeText(LiucangActivity.this, "运单编号为空", Toast.LENGTH_SHORT)
+                    .show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!StayHouseReasonDBHelper.checkCurrentReason
                     (mTvStayHouseReason.getText()
                             .toString())) {
                 Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -212,7 +215,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         } else {
             Toast.makeText(LiucangActivity.this, "运单表号存在非可用字符，手动输入运单号",
                     Toast.LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         mIsScanRunning = true;
@@ -428,8 +431,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
             LogUtil.trace("待删除的内容：" + bean.toString());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (LiucangActivity
-                            .this);
+                    (LiucangActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + bean.getShipmentNumber() + " " +
@@ -442,8 +444,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                     int barcodeID = bean.getId();
                     if (LiucangDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -539,8 +540,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                     .getShipmentNumber());
 
             final AlertDialog.Builder normalDialog = new AlertDialog.Builder
-                    (LiucangActivity
-                            .this);
+                    (LiucangActivity.this);
             normalDialog.setTitle("提示");
             normalDialog.setCancelable(false);
             normalDialog.setMessage("是否删除：" + barcode.getShipmentNumber() + "" +
@@ -552,8 +552,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                 public void onClick(DialogInterface dialog, int which) {
                     if (LiucangDBHelper.isRecordUpload(barcodeID)) {
                         Toast.makeText(LiucangActivity.this, "当前记录已上传，不能删除",
-                                Toast.LENGTH_SHORT)
-                                .show();
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -586,17 +585,18 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
      */
     private boolean storeManualBarcode(String barcode) {
         if (TextUtils.isEmpty(barcode)) {
-            // do nothing
+            Toast.makeText(LiucangActivity.this, "运单编号为空", Toast.LENGTH_SHORT)
+                    .show();
         } else if (TextStringUtil.isStringFormatCorrect(barcode)) {
             if (LiucangDBHelper.isExistCurrentBarcode(barcode)) {
                 Toast.makeText(LiucangActivity.this, "运单号已存在", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else if (!StayHouseReasonDBHelper.checkCurrentReason
                     (mTvStayHouseReason.getText().toString())) {
                 Toast.makeText(LiucangActivity.this, "留仓原因出错", Toast
                         .LENGTH_SHORT).show();
-                mDeviceVibrator.vibrate(1000);
+                mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
             } else {
                 boolean isInsertSuccess = insertForScanner(barcode);
                 LogUtil.trace("isInsertSuccess:" + isInsertSuccess);
@@ -604,6 +604,8 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
                 if (isInsertSuccess) {
                     updateUIForScanner(barcode);
                     increaseOrDecreaseRecords(1);
+
+                    mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
                 } else {
                     // do nothing
                 }
@@ -611,7 +613,7 @@ public class LiucangActivity extends BaseActivityWithTitleAndNumber
         } else {
             Toast.makeText(LiucangActivity.this, "运单表号存在非可用字符，手动输入运单号",
                     Toast.LENGTH_SHORT).show();
-            mDeviceVibrator.vibrate(1000);
+            mDeviceVibrator.vibrate(Constant.DEVICE_VIBRATE_TIME);
         }
 
         return false;
